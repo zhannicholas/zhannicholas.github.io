@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang='en'><head>
+  <meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta name='description' content='这是Leetcoce上的第279个问题，解题的方法很有启发意义，以此备忘。 题目描述 给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, &hell'>
+<meta name='theme-color' content='#ffcd00'>
+
+<meta property='og:title' content='完全平方数 • Nicholas Z.'>
+<meta property='og:description' content='这是Leetcoce上的第279个问题，解题的方法很有启发意义，以此备忘。 题目描述 给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, &hell'>
+<meta property='og:url' content='https://zhannicholas.github.io/blogs/perfect-squares/'>
+<meta property='og:site_name' content='Nicholas Z.'>
+<meta property='og:type' content='article'><meta property='article:section' content='blogs'><meta property='article:tag' content='Leetcode'><meta property='article:published_time' content='2018-08-07T07:15:52&#43;08:00'/><meta property='article:modified_time' content='2018-08-07T07:15:52&#43;08:00'/><meta name='twitter:card' content='summary'>
+
+<meta name="generator" content="Hugo 0.58.1" />
+
+  <title>完全平方数 • Nicholas Z.</title>
+  <link rel='canonical' href='https://zhannicholas.github.io/blogs/perfect-squares/'>
+  
+  
+  <link rel='icon' href='/favicon.ico'>
+<link rel='stylesheet' href='/assets/css/main.6a060eb7.css'><link rel='stylesheet' href='/css/custom.css'><style>
+:root{--color-accent:#ffcd00;}
+</style>
+
+  
+
+</head>
+<body class='page type-blogs has-sidebar'>
+
+  <div class='site'><div id='sidebar' class='sidebar'>
+  <a class='screen-reader-text' href='#main-menu'>Skip to Main Menu</a>
+
+  <div class='container'><section class='widget widget-about sep-after'>
+  <header>
+    
+    <div class='logo'>
+      <a href='/'>
+        <img src='/images/logo.png'>
+      </a>
+    </div>
+    
+    <h2 class='title site-title '>
+      <a href='/'>
+      Nicholas Z.
+      </a>
+    </h2>
+    <div class='desc'>
+    Follow the light that never fails......
+    </div>
+  </header>
+
+</section>
+<section class='widget widget-taxonomy_cloud sep-after'>
+  <header>
+    <h4 class='title widget-title'>Tags</h4>
+  </header>
+
+  <div class='container list-container'>
+  <ul class='list taxonomy-cloud'><li>
+        <a href='/tags/git/' style='font-size:1em'>Git</a>
+      </li><li>
+        <a href='/tags/hugo/' style='font-size:1em'>Hugo</a>
+      </li><li>
+        <a href='/tags/java/' style='font-size:1.0769230769230769em'>Java</a>
+      </li><li>
+        <a href='/tags/leetcode/' style='font-size:1.2307692307692308em'>Leetcode</a>
+      </li><li>
+        <a href='/tags/linux/' style='font-size:1em'>Linux</a>
+      </li><li>
+        <a href='/tags/python/' style='font-size:1em'>Python</a>
+      </li><li>
+        <a href='/tags/redis/' style='font-size:1em'>Redis</a>
+      </li><li>
+        <a href='/tags/%E7%AE%97%E6%B3%95/' style='font-size:1.6923076923076923em'>算法</a>
+      </li><li>
+        <a href='/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/' style='font-size:2em'>设计模式</a>
+      </li></ul>
+</div>
+
+
+</section>
+</div>
+
+  <div class='sidebar-overlay'></div>
+</div><div class='main'><nav id='main-menu' class='menu main-menu' aria-label='Main Menu'>
+  <div class='container'>
+    <a class='screen-reader-text' href='#content'>Skip to Content</a>
+
+<button id='sidebar-toggler' class='sidebar-toggler' aria-controls='sidebar'>
+  <span class='screen-reader-text'>Toggle Sidebar</span>
+  <span class='open'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <line x1="3" y1="12" x2="21" y2="12" />
+  <line x1="3" y1="6" x2="21" y2="6" />
+  <line x1="3" y1="18" x2="21" y2="18" />
+  
+</svg>
+</span>
+  <span class='close'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <line x1="18" y1="6" x2="6" y2="18" />
+  <line x1="6" y1="6" x2="18" y2="18" />
+  
+</svg>
+</span>
+</button>
+    <ul><li class='item'>
+        <a href='/'>Home</a>
+      </li><li class='item'>
+        <a href='/blogs/'>Blogs</a>
+      </li><li class='item'>
+        <a href='/about/'>About</a>
+      </li><li class='item'>
+        <a href='https://github.com/zhannicholas/blog'>Repo</a>
+      </li></ul>
+  </div>
+</nav><div class='header-widgets'>
+        <div class='container'></div>
+      </div>
+
+      <header id='header' class='header site-header'>
+        <div class='container sep-after'>
+          <div class='header-info'><p class='site-title title'>Nicholas Z.</p><p class='desc site-desc'>Follow the light that never fails......</p>
+          </div>
+        </div>
+      </header>
+
+      <main id='content'>
+
+
+<article lang='en' class='entry'>
+  <header class='header entry-header'>
+  <div class='container sep-after'>
+    <div class='header-info'>
+      <h1 class='title'>完全平方数</h1>
+      
+
+    </div>
+    <div class='entry-meta'>
+  <span class='posted-on'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+  <line x1="16" y1="2" x2="16" y2="6"/>
+  <line x1="8" y1="2" x2="8" y2="6"/>
+  <line x1="3" y1="10" x2="21" y2="10"/>
+  
+</svg>
+<span class='screen-reader-text'>Posted on </span>
+  <time class='entry-date' datetime='2018-08-07T07:15:52&#43;08:00'>2018, Aug 07</time>
+</span>
+
+  
+  
+<span class='reading-time'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <circle cx="12" cy="12" r="10"/>
+  <polyline points="12 6 12 12 15 15"/>
+  
+</svg>
+4 mins read
+</span>
+
+
+</div>
+
+
+  </div>
+</header>
+
+  
+  
+
+  <div class='container entry-content'>
+  
+
+<p>这是Leetcoce上的第<a href="https://leetcode-cn.com/problems/perfect-squares/description/" target="_blank">279</a>个问题，解题的方法很有启发意义，以此备忘。</p>
+
+<h1 id="题目描述">题目描述</h1>
+
+<p>给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, &hellip;）使得它们的和等于 n。你需要让组成和的完全平方数的个数最少。</p>
+
+<p>示例 1:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-example" data-lang="example">输入: n = 12
+输出: 3
+解释: 12 = 4 + 4 + 4.</code></pre></div>
+<p>示例 2:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-example" data-lang="example">输入: n = 13
+输出: 2
+解释: 13 = 4 + 9.</code></pre></div>
+<h1 id="解决方案">解决方案</h1>
+
+<h2 id="一个错误的方法">一个错误的方法</h2>
+
+<p>最开始的想法是依次对每个数进行开方操作，这样能够找到比它小的最接近它的完全平方数。代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#a6e22e">int</span> numSquares1(<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">n</span>){
+        <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">step</span> <span style="color:#f92672">=</span> 0;
+        <span style="color:#66d9ef">while</span>(n <span style="color:#f92672">&gt;</span> 0){
+            n <span style="color:#f92672">-=</span> Math.<span style="color:#a6e22e">pow</span>((<span style="color:#66d9ef">int</span>)(Math.<span style="color:#a6e22e">sqrt</span>(n)), 2);
+            step <span style="color:#f92672">++</span>;
+        }
+        <span style="color:#66d9ef">return</span> step;
+    }</code></pre></div>
+<p>这段代码使用的是贪心算法的思想，每次找比 <strong><code>n</code></strong> 小的最大的完全平方数。错误的原因是：这个贪心策略在这里 <strong>并不适用</strong> 。题目中就有一个反例：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-example" data-lang="example">12 = 4 + 4 + 4</code></pre></div>
+<h2 id="一个正确的方式">一个正确的方式</h2>
+
+<p>贪心策略不适用，又不想使用暴力解法。那么有没有好一点的解题方法呢？答案是有的：可以把原问题转化为一个 <strong>图论</strong> 中的问题。转化方法如下：</p>
+
+<ol>
+<li>对于从 <strong><code>n</code></strong> 到 <strong><code>0</code></strong> 的每一个数字，让其成为图中的一个顶点；</li>
+<li>如果图中的两个数字之间相差一个完全平方数，则连接它们；</li>
+</ol>
+
+<p><img src="/images/perfect-squares.png" alt="perfect-squares" /></p>
+
+<p>这样一来，原来的问题就转化为求：<strong><code>n</code></strong> 到 <strong><code>0</code></strong> 之间的 <strong>最短路径</strong> 的问题。使用广度优先遍历的策略就可以找出答案。</p>
+
+<p>java代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 最开始是想用贪心算法来求解，但是后来发现贪心算法在这里并不适用。比如:12 = 4 + 4 + 4;
+</span><span style="color:#75715e">     * 这里可以将问题转化为一个求图中的最短路径的问题：
+</span><span style="color:#75715e">     *      从n到0,每个数字表示一个节点。如果两个数字之间相差一个完全平方数，则连接它们。
+</span><span style="color:#75715e">     *      最终会得到一个无权图，此时原问题就转化为求这个无权图中n到0的最短路径。
+</span><span style="color:#75715e">     * 使用BFS的思想对图进行层序遍历，从n所在层到0所在层
+</span><span style="color:#75715e">     * @param n     给定的正整数n
+</span><span style="color:#75715e">     * @return      和为n需要的最少的完全平方数
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">int</span> numSquares(<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">n</span>){
+        <span style="color:#66d9ef">if</span>(n <span style="color:#f92672">&lt;=</span> 0){
+            <span style="color:#66d9ef">return</span> 0;
+        }
+        <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">step</span> <span style="color:#f92672">=</span> 0;   <span style="color:#75715e">// 存放最终结果
+</span><span style="color:#75715e"></span>        Queue<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">queue</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> LinkedList<span style="color:#f92672">&lt;&gt;</span>();
+        queue.<span style="color:#a6e22e">offer</span>(n); <span style="color:#75715e">// 初始节点n入队
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">size</span> <span style="color:#f92672">=</span> queue.<span style="color:#a6e22e">size</span>();    <span style="color:#75715e">// 保存当前层的节点数
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span>(<span style="color:#f92672">!</span>queue.<span style="color:#a6e22e">isEmpty</span>()){
+            <span style="color:#66d9ef">if</span>(size <span style="color:#f92672">==</span> 0){
+                size <span style="color:#f92672">=</span> queue.<span style="color:#a6e22e">size</span>();
+                step <span style="color:#f92672">++</span>;
+            }
+            <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">number</span> <span style="color:#f92672">=</span> queue.<span style="color:#a6e22e">poll</span>();  <span style="color:#75715e">// 队首元素出队
+</span><span style="color:#75715e"></span>            size <span style="color:#f92672">--</span>;
+            <span style="color:#66d9ef">if</span>(number <span style="color:#f92672">==</span> 0){
+                <span style="color:#66d9ef">return</span> step;    <span style="color:#75715e">// 到达终点0，结束程序
+</span><span style="color:#75715e"></span>            }
+            <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> 1;number <span style="color:#f92672">&gt;=</span> i <span style="color:#f92672">*</span> i;i <span style="color:#f92672">++</span>){    <span style="color:#75715e">// number内还存在完全平方数
+</span><span style="color:#75715e"></span>                queue.<span style="color:#a6e22e">offer</span>(number <span style="color:#f92672">-</span> i <span style="color:#f92672">*</span> i);
+            }
+        }
+    }</code></pre></div>
+<p>不幸的是：这段代码在Leetcode上 <strong>超时</strong> 了。</p>
+
+<p>于是我改用了 <strong>Pair&lt;&gt;</strong> 对的形式，减少了对上面代码中<code>size</code>取值的判断次数，期望程序能快一点。代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#a6e22e">int</span> numSquares2(<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">n</span>){
+        <span style="color:#66d9ef">if</span>(n <span style="color:#f92672">&lt;=</span> 0){
+            <span style="color:#66d9ef">return</span> 0;
+        }
+        <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">step</span> <span style="color:#f92672">=</span> 0;   <span style="color:#75715e">// 存放最终结果
+</span><span style="color:#75715e"></span>        Queue<span style="color:#f92672">&lt;</span>Pair<span style="color:#f92672">&lt;</span>Integer, Integer<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">queue</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> LinkedList<span style="color:#f92672">&lt;&gt;</span>();
+        queue.<span style="color:#a6e22e">offer</span>(<span style="color:#66d9ef">new</span> Pair<span style="color:#f92672">&lt;&gt;</span>(n, 0)); <span style="color:#75715e">// 初始节点n入队
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span>(<span style="color:#f92672">!</span>queue.<span style="color:#a6e22e">isEmpty</span>()){
+            Pair<span style="color:#f92672">&lt;</span>Integer, Integer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">pair</span> <span style="color:#f92672">=</span> queue.<span style="color:#a6e22e">poll</span>();  <span style="color:#75715e">// 队首元素出队
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">number</span> <span style="color:#f92672">=</span> pair.<span style="color:#a6e22e">getKey</span>();
+            step <span style="color:#f92672">=</span> pair.<span style="color:#a6e22e">getValue</span>();
+            <span style="color:#66d9ef">if</span>(number <span style="color:#f92672">==</span> 0){
+                <span style="color:#66d9ef">return</span> step;    <span style="color:#75715e">// 到达终点0，结束程序
+</span><span style="color:#75715e"></span>            }
+            <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> 1;number <span style="color:#f92672">-</span> i <span style="color:#f92672">*</span> i <span style="color:#f92672">&gt;=</span> 0;i <span style="color:#f92672">++</span>){    <span style="color:#75715e">// number内还存在完全平方数
+</span><span style="color:#75715e"></span>                queue.<span style="color:#a6e22e">offer</span>(<span style="color:#66d9ef">new</span> Pair<span style="color:#f92672">&lt;&gt;</span>(number <span style="color:#f92672">-</span> i <span style="color:#f92672">*</span> i, step <span style="color:#f92672">+</span> 1));
+            }
+        }
+
+        <span style="color:#66d9ef">return</span> step;
+    }</code></pre></div>
+<p>然而：还是 <strong>超时</strong> 了。</p>
+
+<p>于是我开始仔细看这一段代码，发现了引起性能问题的最大原因：<strong>对于较大的数字，每次执行for循环的时候，都会往队列中推入很多重复的路径。比如要到达数字1所在的节点，可能从2、5、10、17、26&hellip;出发</strong> 。只要减少了重复的路径，程序的性能应该就会有不少的提升。为了解决重复复访问的问题，我新开了一个数组，用来判断某个节点是否已被访问，现在只将没有被访问过的节点推入队列。</p>
+
+<p>java代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#a6e22e">int</span> numSquares3(<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">n</span>){
+        <span style="color:#66d9ef">if</span>(n <span style="color:#f92672">&lt;=</span> 0){
+            <span style="color:#66d9ef">return</span> 0;
+        }
+        <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">step</span> <span style="color:#f92672">=</span> 0;   <span style="color:#75715e">// 存放最终结果
+</span><span style="color:#75715e"></span>        Queue<span style="color:#f92672">&lt;</span>Pair<span style="color:#f92672">&lt;</span>Integer, Integer<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">queue</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> LinkedList<span style="color:#f92672">&lt;&gt;</span>();
+        queue.<span style="color:#a6e22e">offer</span>(<span style="color:#66d9ef">new</span> Pair<span style="color:#f92672">&lt;&gt;</span>(n, 0)); <span style="color:#75715e">// 初始节点n入队
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">boolean</span>[] <span style="color:#a6e22e">visited</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">boolean</span>[n <span style="color:#f92672">+</span> 1];    <span style="color:#75715e">// 用来保存已经访问过的节点
+</span><span style="color:#75715e"></span>        visited[n] <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;
+        <span style="color:#66d9ef">while</span>(<span style="color:#f92672">!</span>queue.<span style="color:#a6e22e">isEmpty</span>()){
+            Pair<span style="color:#f92672">&lt;</span>Integer, Integer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">pair</span> <span style="color:#f92672">=</span> queue.<span style="color:#a6e22e">poll</span>();  <span style="color:#75715e">// 队首元素出队
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">number</span> <span style="color:#f92672">=</span> pair.<span style="color:#a6e22e">getKey</span>();
+            step <span style="color:#f92672">=</span> pair.<span style="color:#a6e22e">getValue</span>();
+            <span style="color:#66d9ef">if</span>(number <span style="color:#f92672">==</span> 0){
+                <span style="color:#66d9ef">return</span> step;    <span style="color:#75715e">// 到达终点0，结束程序
+</span><span style="color:#75715e"></span>            }
+            <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> 1;number <span style="color:#f92672">-</span> i <span style="color:#f92672">*</span> i <span style="color:#f92672">&gt;=</span> 0;i <span style="color:#f92672">++</span>){    <span style="color:#75715e">// number内还存在完全平方数
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>visited[number <span style="color:#f92672">-</span> i <span style="color:#f92672">*</span> i]) {
+                    queue.<span style="color:#a6e22e">offer</span>(<span style="color:#66d9ef">new</span> Pair<span style="color:#f92672">&lt;&gt;</span>(number <span style="color:#f92672">-</span> i <span style="color:#f92672">*</span> i, step <span style="color:#f92672">+</span> 1));
+                    visited[number <span style="color:#f92672">-</span> i <span style="color:#f92672">*</span> i] <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;     <span style="color:#75715e">// 更新visited[]
+</span><span style="color:#75715e"></span>                }
+            }
+        }
+
+        <span style="color:#66d9ef">return</span> step;
+    }</code></pre></div>
+<p>Accepted!耶~</p>
+
+<p>终于能够看到用时极短的答案是怎么做的了。原来它们使用了 <strong>数论</strong> 的知识。我赶紧去补了一下 <strong>四平方定理</strong> 。</p>
+
+<p><strong>四平方和定理</strong> ：<code>任何一个正整数都可以表示成不超过四个整数的平方之和</code>。</p>
+
+<p><strong>推论</strong> ： <code>当n是形如:</code>\(4^a(8b + 7)(a &gt;= 0;b &gt;= 0)\)<code>n不能表示成3个整数的平方和</code></p>
+
+<p>借助这两条定理，我自己实现了一下。
+java代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 使用四平方和定理及其推论
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">int</span> numSquares4(<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">n</span>){
+        <span style="color:#66d9ef">while</span>(n <span style="color:#f92672">%</span> 4 <span style="color:#f92672">==</span> 0){
+            n <span style="color:#f92672">/=</span> 4;
+        }
+        <span style="color:#66d9ef">if</span>(n <span style="color:#f92672">%</span> 8 <span style="color:#f92672">==</span> 7){
+            <span style="color:#66d9ef">return</span> 4;
+        }
+        <span style="color:#75715e">// 判断一个数是由一个还是两个平方数组成
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> (<span style="color:#66d9ef">int</span>)Math.<span style="color:#a6e22e">sqrt</span>(n);
+        <span style="color:#66d9ef">if</span>(r <span style="color:#f92672">*</span> r <span style="color:#f92672">==</span> n){
+            <span style="color:#66d9ef">return</span> 1;
+        }
+        <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">t</span> <span style="color:#f92672">=</span> 1;t <span style="color:#f92672">*</span> t <span style="color:#f92672">&lt;=</span> n;t <span style="color:#f92672">++</span>){
+            <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">k</span> <span style="color:#f92672">=</span> (<span style="color:#66d9ef">int</span>)Math.<span style="color:#a6e22e">sqrt</span>(n <span style="color:#f92672">-</span> t <span style="color:#f92672">*</span> t);
+            <span style="color:#66d9ef">if</span>(k <span style="color:#f92672">*</span> k <span style="color:#f92672">+</span> t <span style="color:#f92672">*</span> t <span style="color:#f92672">==</span> n){
+                <span style="color:#66d9ef">return</span> 2;
+            }
+        }
+        <span style="color:#66d9ef">return</span> 3;
+    }</code></pre></div>
+</div>
+
+  
+<footer class='entry-footer'>
+  <div class='container sep-before'><div class='categories'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M22,19a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V5A2,2,0,0,1,4,3H9l2,3h9a2,2,0,0,1,2,2Z"/>
+  
+</svg>
+<span class='screen-reader-text'>Categories: </span><a class='category' href='/categories/leetcode/'>Leetcode</a></div>
+<div class='tags'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M20.59,13.41l-7.17,7.17a2,2,0,0,1-2.83,0L2,12V2H12l8.59,8.59A2,2,0,0,1,20.59,13.41Z"/>
+  <line x1="7" y1="7" x2="7" y2="7"/>
+  
+</svg>
+<span class='screen-reader-text'>Tags: </span><a class='tag' href='/tags/leetcode/'>Leetcode</a></div>
+
+  </div>
+</footer>
+
+
+</article>
+
+<nav class='entry-nav'>
+  <div class='container'><div class='prev-entry sep-before'>
+      <a href='/blogs/java%E4%B8%AD%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/'>
+        <span aria-hidden='true'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <line x1="20" y1="12" x2="4" y2="12"/>
+  <polyline points="10 18 4 12 10 6"/>
+  
+</svg>
+ Previous</span>
+        <span class='screen-reader-text'>Previous post: </span>Java中反转字符串的几种方法</a>
+    </div><div class='next-entry sep-before'>
+      <a href='/blogs/java-web%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+        <span class='screen-reader-text'>Next post: </span>Java Web复习笔记<span aria-hidden='true'>Next <svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <line x1="4" y1="12" x2="20" y2="12"/>
+  <polyline points="14 6 20 12 14 18"/>
+  
+</svg>
+</span>
+      </a>
+    </div></div>
+</nav>
+
+
+
+
+      </main>
+
+      <footer id='footer' class='footer'>
+        <div class='container sep-before'><section class='widget widget-social_menu sep-after'><nav aria-label='Social Menu'>
+    <ul><li>
+        <a href='https://github.com/zhannicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Github account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://facebook.com/zhannicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Facebook account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://twitter.com/nicholas132817' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Twitter account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://instagram.com/zhanicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Instagram account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+  <line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='mailto:nicholas13281@gmail.com' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Contact via Email</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+  <polyline points="22,6 12,13 2,6"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://codepen.io/zhannicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Codepen account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+  <line x1="12" y1="22" x2="12" y2="15.5"/>
+  <polyline points="22 8.5 12 15.5 2 8.5"/>
+  <polyline points="2 15.5 12 8.5 22 15.5"/>
+  <line x1="12" y1="2" x2="12" y2="8.5"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://gitlab.com/zhannicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Gitlab account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 4.82 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.49h8.1l2.44-7.51A.42.42 0 0 1 18.6 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.51L23 13.45a.84.84 0 0 1-.35.94z"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Linkedin account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+  <rect x="2" y="9" width="4" height="12"/>
+  <circle cx="4" cy="4" r="2"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://t.me/zhannicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Telegram account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="m 22.05,1.577 c -0.393,-0.016 -0.784,0.08 -1.117,0.235 -0.484,0.186 -4.92,1.902 -9.41,3.64 C 9.263,6.325 7.005,7.198 5.267,7.867 3.53,8.537 2.222,9.035 2.153,9.059 c -0.46,0.16 -1.082,0.362 -1.61,0.984 -0.79581202,1.058365 0.21077405,1.964825 1.004,2.499 1.76,0.564 3.58,1.102 5.087,1.608 0.556,1.96 1.09,3.927 1.618,5.89 0.174,0.394 0.553,0.54 0.944,0.544 l -0.002,0.02 c 0,0 0.307,0.03 0.606,-0.042 0.3,-0.07 0.677,-0.244 1.02,-0.565 0.377,-0.354 1.4,-1.36 1.98,-1.928 l 4.37,3.226 0.035,0.02 c 0,0 0.484,0.34 1.192,0.388 0.354,0.024 0.82,-0.044 1.22,-0.337 0.403,-0.294 0.67,-0.767 0.795,-1.307 0.374,-1.63 2.853,-13.427 3.276,-15.38 L 23.676,4.725 C 23.972,3.625 23.863,2.617 23.18,2.02 22.838,1.723 22.444,1.593 22.05,1.576 Z"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://scholar.google.com/citations?user=qc6CJjYAAAAhfohgoJ' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Google_scholar account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M21.328 2.002v9.2M8.695 7.85c.014-.787-.11-2.236.28-2.89.623-1.045.856-1.39 1.797-1.989 1.953-.988 4.296.692 4.296.692.803.564 1.672 2.1 1.672 2.1l1.368-1.824-5.444-1.754-3.515 1.34L6.08 7.681m9.109 3.42s.65-.633 1.168-1.085c.461-.402.516-.714.6-.914.18-.426.268-.909.268-1.446 0-.7-.131-1.274-.388-1.735-.031-.053 0 0-.097-.157l4.588-3.762H10.32L3.672 7.85l5.023-.024c.23 1.237.619 1.575 1.019 2.222.744.719 1.13 1.194 2.215 1.194.254 0 2.6-.057 2.842-.09 0 0 .546 1.199-.133 1.71-.41.31.576 1.304.576 1.304s-5.577.831-6.523 1.427a4.13 4.13 0 0 0-1.306 1.277 3.034 3.034 0 0 0-.493 1.665c0 .502.106.955.32 1.357.214.403.493.733.84.99.345.258.744.473 1.194.649.45.174.896.297 1.342.367a8.348 8.348 0 0 0 3.41-.166 7.754 7.754 0 0 0 1.964-.807 4.28 4.28 0 0 0 1.49-1.443c.38-.609.57-1.292.57-2.049 0-.574-.116-1.096-.347-1.57a3.755 3.755 0 0 0-.847-1.164c-.335-.302-2.19-1.837-2.19-1.837"/>
+  
+</svg>
+</a>
+      </li></ul>
+  </nav>
+</section><div class='copyright'>
+  <p> &copy; 2018-2019 Nicholas Z. </p>
+</div>
+
+        </div>
+      </footer>
+
+    </div>
+  </div><script>window.__assets_js_src="/assets/js/"</script>
+
+<script src='/assets/js/main.67d669ac.js'></script><script src='/js/custom.js'></script><script type='text/x-mathjax-config'>
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"processEscapes":true}})
+</script>
+
+<script type='text/javascript' async src='//unpkg.com/mathjax/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+
+</body>
+
+</html>
+

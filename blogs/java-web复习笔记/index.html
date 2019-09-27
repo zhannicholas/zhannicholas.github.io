@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang='en'><head>
+  <meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta name='description' content='Java WEB复习笔记 这是为了准备秋招面试而对Java Web开发进行的复习。 首先，对于一个Java Web应用，它由一组Servlet、HTML页、'>
+<meta name='theme-color' content='#ffcd00'>
+
+<meta property='og:title' content='Java Web复习笔记 • nicholas Z.'>
+<meta property='og:description' content='Java WEB复习笔记 这是为了准备秋招面试而对Java Web开发进行的复习。 首先，对于一个Java Web应用，它由一组Servlet、HTML页、'>
+<meta property='og:url' content='https://zhannicholas.github.io/blogs/java-web%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+<meta property='og:site_name' content='Nicholas Z.'>
+<meta property='og:type' content='article'><meta property='og:image' content='https://www.gravatar.com/avatar/32b37da8889be5bf637828ae6b5a8c91?s=256'><meta property='article:author' content='https://facebook.com/zhannicholas'><meta property='article:section' content='blogs'><meta property='article:tag' content='Java'><meta property='article:published_time' content='2018-08-19T23:02:41&#43;08:00'/><meta property='article:modified_time' content='2018-08-19T23:02:41&#43;08:00'/><meta name='twitter:card' content='summary'><meta name='twitter:creator' content='@zhannicholas'>
+
+<meta name="generator" content="Hugo 0.58.1" />
+
+  <title>Java Web复习笔记 • nicholas Z.</title>
+  <link rel='canonical' href='https://zhannicholas.github.io/blogs/java-web%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+  
+  
+  <link rel='icon' href='/favicon.ico'>
+<link rel='stylesheet' href='/assets/css/main.6a060eb7.css'><link rel='stylesheet' href='/css/custom.css'><style>
+:root{--color-accent:#ffcd00;}
+</style>
+
+  
+
+</head>
+<body class='page type-blogs has-sidebar'>
+
+  <div class='site'><div id='sidebar' class='sidebar'>
+  <a class='screen-reader-text' href='#main-menu'>Skip to Main Menu</a>
+
+  <div class='container'><section class='widget widget-about sep-after'>
+  <header>
+    
+    <div class='logo'>
+      <a href='/'>
+        <img src='/images/logo.png'>
+      </a>
+    </div>
+    
+    <h2 class='title site-title '>
+      <a href='/'>
+      Nicholas Z.
+      </a>
+    </h2>
+    <div class='desc'>
+    Follow the light that never fails......
+    </div>
+  </header>
+
+</section>
+<section class='widget widget-taxonomy_cloud sep-after'>
+  <header>
+    <h4 class='title widget-title'>Tags</h4>
+  </header>
+
+  <div class='container list-container'>
+  <ul class='list taxonomy-cloud'><li>
+        <a href='/tags/git/' style='font-size:1em'>Git</a>
+      </li><li>
+        <a href='/tags/hugo/' style='font-size:1em'>Hugo</a>
+      </li><li>
+        <a href='/tags/java/' style='font-size:1.0769230769230769em'>Java</a>
+      </li><li>
+        <a href='/tags/leetcode/' style='font-size:1.2307692307692308em'>Leetcode</a>
+      </li><li>
+        <a href='/tags/linux/' style='font-size:1em'>Linux</a>
+      </li><li>
+        <a href='/tags/python/' style='font-size:1em'>Python</a>
+      </li><li>
+        <a href='/tags/redis/' style='font-size:1em'>Redis</a>
+      </li><li>
+        <a href='/tags/%E7%AE%97%E6%B3%95/' style='font-size:1.6923076923076923em'>算法</a>
+      </li><li>
+        <a href='/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/' style='font-size:2em'>设计模式</a>
+      </li></ul>
+</div>
+
+
+</section>
+</div>
+
+  <div class='sidebar-overlay'></div>
+</div><div class='main'><nav id='main-menu' class='menu main-menu' aria-label='Main Menu'>
+  <div class='container'>
+    <a class='screen-reader-text' href='#content'>Skip to Content</a>
+
+<button id='sidebar-toggler' class='sidebar-toggler' aria-controls='sidebar'>
+  <span class='screen-reader-text'>Toggle Sidebar</span>
+  <span class='open'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <line x1="3" y1="12" x2="21" y2="12" />
+  <line x1="3" y1="6" x2="21" y2="6" />
+  <line x1="3" y1="18" x2="21" y2="18" />
+  
+</svg>
+</span>
+  <span class='close'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <line x1="18" y1="6" x2="6" y2="18" />
+  <line x1="6" y1="6" x2="18" y2="18" />
+  
+</svg>
+</span>
+</button>
+    <ul><li class='item'>
+        <a href='/'>Home</a>
+      </li><li class='item'>
+        <a href='/blogs/'>Blogs</a>
+      </li><li class='item'>
+        <a href='/about/'>About</a>
+      </li><li class='item'>
+        <a href='https://github.com/zhannicholas/blog'>Repo</a>
+      </li></ul>
+  </div>
+</nav><div class='header-widgets'>
+        <div class='container'></div>
+      </div>
+
+      <header id='header' class='header site-header'>
+        <div class='container sep-after'>
+          <div class='header-info'><p class='site-title title'>Nicholas Z.</p><p class='desc site-desc'>Follow the light that never fails......</p>
+          </div>
+        </div>
+      </header>
+
+      <main id='content'>
+
+
+<article lang='en' class='entry'>
+  <header class='header entry-header'>
+  <div class='container sep-after'>
+    <div class='header-info'>
+      <h1 class='title'>Java Web复习笔记</h1>
+      
+
+    </div>
+    <div class='entry-meta'>
+  <span class='posted-on'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+  <line x1="16" y1="2" x2="16" y2="6"/>
+  <line x1="8" y1="2" x2="8" y2="6"/>
+  <line x1="3" y1="10" x2="21" y2="10"/>
+  
+</svg>
+<span class='screen-reader-text'>Posted on </span>
+  <time class='entry-date' datetime='2018-08-19T23:02:41&#43;08:00'>2018, Aug 19</time>
+</span>
+
+  <span class='byline'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M21,21V20c0-2.76-4-5-9-5s-9,2.24-9,5v1"/>
+  <path d="M16,6.37A4,4,0,1,1,12.63,3,4,4,0,0,1,16,6.37Z"/>
+  
+</svg>
+<span class='screen-reader-text'> by </span><a href='/authors/zhannicholas'>nicholas Z.</a></span>
+  
+<span class='reading-time'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <circle cx="12" cy="12" r="10"/>
+  <polyline points="12 6 12 12 15 15"/>
+  
+</svg>
+19 mins read
+</span>
+
+
+</div>
+
+
+  </div>
+</header>
+
+  
+  
+<details class='container entry-toc'>
+  <summary class='title'>
+    <span>Table of Contents</span>
+  </summary>
+  <nav id="TableOfContents">
+<ul>
+<li><a href="#java-web复习笔记">Java WEB复习笔记</a>
+<ul>
+<li><a href="#servlet">Servlet</a>
+<ul>
+<li><a href="#servlet的功能">Servlet的功能</a></li>
+<li><a href="#sevlet容器">Sevlet容器</a></li>
+<li><a href="#servlet生命周期方法">Servlet生命周期方法</a></li>
+<li><a href="#servletconfig接口">ServletConfig接口</a></li>
+<li><a href="#servletcontext接口">ServletContext接口</a></li>
+<li><a href="#servletrequest接口">ServletRequest接口</a>
+<ul>
+<li><a href="#get-post请求">GET&amp;POST请求</a></li>
+<li><a href="#获取请求参数">获取请求参数</a></li>
+</ul></li>
+<li><a href="#servletresponse接口">ServletResponse接口</a></li>
+<li><a href="#genericservlet">GenericServlet</a></li>
+<li><a href="#httpservlet">HttpServlet</a></li>
+</ul></li>
+<li><a href="#jsp">JSP</a>
+<ul>
+<li><a href="#jsp运行原理">JSP运行原理</a></li>
+<li><a href="#jsp页面的隐含对象">JSP页面的隐含对象</a></li>
+<li><a href="#jsp基本语法">JSP基本语法</a>
+<ul>
+<li><a href="#jsp模板元素">JSP模板元素</a></li>
+<li><a href="#jsp表达式">JSP表达式</a></li>
+<li><a href="#jsp脚本片段">JSP脚本片段</a></li>
+<li><a href="#jsp声明">JSP声明</a></li>
+</ul></li>
+<li><a href="#jsp中对域对象的属性操作">JSP中对域对象的属性操作</a></li>
+<li><a href="#jsp指令">JSP指令</a></li>
+<li><a href="#jsp标签">JSP标签</a></li>
+<li><a href="#请求的转发与重定向">请求的转发与重定向</a>
+<ul>
+<li><a href="#请求转发">请求转发</a></li>
+<li><a href="#请求的重定向">请求的重定向</a></li>
+<li><a href="#请求转发和重定向的比较">请求转发和重定向的比较</a></li>
+</ul></li>
+<li><a href="#cookie与session">Cookie与Session</a>
+<ul>
+<li><a href="#cookie">Cookie</a></li>
+<li><a href="#session">Session</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#jdbc">JDBC</a>
+<ul>
+<li><a href="#driver接口">Driver接口</a></li>
+<li><a href="#加载与注册jdbc驱动">加载与注册JDBC驱动</a></li>
+<li><a href="#建立数据库连接">建立数据库连接</a></li>
+<li><a href="#数据库的查询和更新">数据库的查询和更新</a></li>
+<li><a href="#resultset">ResultSet</a></li>
+<li><a href="#常用数据类型转换表">常用数据类型转换表</a></li>
+<li><a href="#使用jdbc驱动程序处理元数据">使用JDBC驱动程序处理元数据</a>
+<ul>
+<li><a href="#databasemetadata类">DatabaseMetaData类</a></li>
+<li><a href="#resultsetmetadata类">ResultSetMetaData类</a></li>
+</ul></li>
+<li><a href="#数据库连接池">数据库连接池</a></li>
+</ul></li>
+<li><a href="#mvc设计模式">MVC设计模式</a>
+<ul>
+<li><a href="#模型">模型</a></li>
+<li><a href="#视图">视图</a></li>
+<li><a href="#控制器">控制器</a></li>
+</ul></li>
+<li><a href="#filter-过滤器">Filter(过滤器)</a>
+<ul>
+<li><a href="#filter接口">Filter接口</a></li>
+<li><a href="#filter的配置">Filter的配置</a>
+<ul>
+<li><a href="#filter的注册">Filter的注册</a></li>
+<li><a href="#filter的映射">Filter的映射</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#listener-监听器">Listener(监听器)</a>
+<ul>
+<li><a href="#listener的分类">Listener的分类</a>
+<ul>
+<li><a href="#监听域对象自身的创建和销毁的listener">监听域对象自身的创建和销毁的Listener</a></li>
+<li><a href="#监听域对象中属性的增加-删除或修改的listener">监听域对象中属性的增加、删除或修改的Listener</a></li>
+<li><a href="#监听绑定到httpsession域中某个对象状态的listener">监听绑定到HttpSession域中某个对象状态的Listener</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+</details>
+
+
+  <div class='container entry-content'>
+  
+
+<h1 id="java-web复习笔记">Java WEB复习笔记</h1>
+
+<blockquote>
+<p>这是为了准备秋招面试而对Java Web开发进行的复习。</p>
+</blockquote>
+
+<p>首先，对于一个Java Web应用，它由一组Servlet、HTML页、实用类、以及其它可以被绑定的资源构成。它运行于实现了Servlet规范的Servlet容器中。</p>
+
+<h2 id="servlet">Servlet</h2>
+
+<p>Java Servlet和平台无关，它运行于Servlet容器中。Servlet容器负责Servlet和客户端的通信以及调用Servlet的方法，Servlet和客户端的通信采用的是 <strong>请求/响应</strong> 模式。</p>
+
+<h3 id="servlet的功能">Servlet的功能</h3>
+
+<ol>
+<li>创建并返回基于客户端请求的动态HTML页面。</li>
+<li>创建可嵌入到现有HTML页面中的HTML片段。</li>
+<li>与其它服务器资源进行通信。</li>
+</ol>
+
+<h3 id="sevlet容器">Sevlet容器</h3>
+
+<p>Servlet容器可以创建Servlet，并调用Servlet相关生命周期方法。还是运行JSP等的软件环境。</p>
+
+<h3 id="servlet生命周期方法">Servlet生命周期方法</h3>
+
+<ol>
+<li>构造器：只调用一次。只有第一次请求Servlet的时候，才调用构造器，创建Servlet实例。即Servlet使 <strong>单实例</strong> 的。</li>
+<li><code>init()</code>方法：只调用一次。在Servlet实例创建完毕后立即被调用，用于初始化当前Servlet。</li>
+<li><code>service()</code>方法：每次请求都会调用，用于相应请求。</li>
+<li><code>destroy()</code>方法：只调用一次。在当前Servlet所在的Web应用被卸载前调用，用于释放当前Servlet所占有的资源。</li>
+</ol>
+
+<h3 id="servletconfig接口">ServletConfig接口</h3>
+
+<p>这个接口封装了 <strong>当前</strong> Servlet的配置信息，并可以获取ServletContext对象。</p>
+
+<ul>
+<li><code>String getServletName();</code>: 获取Servlet的配置名。</li>
+<li><code>ServletContext getServletContext();</code>: 获取对应的ServletConfig对象。</li>
+<li><code>String getInitParameter(String var1);</code>: 获取指定参数名的初始化参数。</li>
+<li><code>Enumeration&lt;String&gt; getInitParameterNames();</code>: 获取参数名组成的Enumerarion。</li>
+</ul>
+
+<h3 id="servletcontext接口">ServletContext接口</h3>
+
+<p>Servlet引擎为每一个Web应用都创建一个对应的ServletContext对象。这个对象由Web应用中 <strong>所有</strong> 的Servlet所共享。它实际代表了当前的Web应用。</p>
+
+<p>ServletContext有很多的功能，比如：</p>
+
+<ol>
+<li><p>获取当前Web应用的初始化参数</p>
+
+<ul>
+<li><code>String getInitParameter(String var1);</code>: 获取指定参数名的初始化参数。</li>
+<li><code>Enumeration&lt;String&gt; getInitParameterNames();</code>: 获取参数名组成的Enumerarion。</li>
+</ul></li>
+
+<li><p>获取虚拟路径所映射的本地路径
+-<code>String getRealPath(String var1);</code></p></li>
+
+<li><p>访问资源文件</p></li>
+
+<li><p>记录日志</p></li>
+
+<li><p>设置和获取应用属性</p></li>
+</ol>
+
+<h3 id="servletrequest接口">ServletRequest接口</h3>
+
+<p>ServletRequest接口封装了请求信息，可以从中获取任何请求信息。</p>
+
+<h4 id="get-post请求">GET&amp;POST请求</h4>
+
+<ol>
+<li>GET方式
+
+<ul>
+<li>将请求信息附加在请求地址后面</li>
+<li>传送的数据量有限</li>
+<li>传输信息在浏览器地址栏 <strong>可见</strong></li>
+<li>常见于输入URL或点击网页上的超链接</li>
+</ul></li>
+<li>POST方式
+
+<ul>
+<li>将数据作为HTTP消息的实体内容传送</li>
+<li>传送的数据量比GET方式大得多。</li>
+<li>传输信息在浏览器地址栏 <strong>不可见</strong></li>
+<li>主要用于提交表单数据</li>
+</ul></li>
+</ol>
+
+<h4 id="获取请求参数">获取请求参数</h4>
+
+<ol>
+<li><code>String getParameter(String var1);</code>: 根据请求参数的名字返回参数值。</li>
+<li><code>Enumeration&lt;String&gt; getParameterNames();</code>：返回参数名对应的Enumaration对象。</li>
+<li><code>String[] getParameterValues(String var1);</code>：根据请求参数的名字返回请求参数对应的数组，如获取多选框信息。</li>
+<li><code>Map&lt;String, String[]&gt; getParameterMap();</code>：返回请求参数的键值对。</li>
+</ol>
+
+<h3 id="servletresponse接口">ServletResponse接口</h3>
+
+<p>ServletResponse接口封装了响应信息，给客户端的响应取决于本接口实现的方法。常用的方法有：</p>
+
+<ul>
+<li><code>PrintWriter getWriter() throws IOException;</code>: 返回一个PrintWriter对象。然后我们可以调用该对象的<code>print(&quot;something&quot;)</code>方法打印信息到浏览器上。</li>
+<li><code>void setContentType(String var1);</code>: 设置响应的内容类型。</li>
+</ul>
+
+<h3 id="genericservlet">GenericServlet</h3>
+
+<p>GenericServlet同时实现了Servlet接口、ServletConfig接口和 Serializable接口，和各种协议无关。HttpServlet就继承于它。</p>
+
+<h3 id="httpservlet">HttpServlet</h3>
+
+<p>HttpServlet继承自GeniricServlet实现类，用于 HTTP协议。它在<code>service()</code>方法中将使用<code>HttpServletRequest.getMothod()</code>方法来获取请求方式，然后根据不同的请求方式创建不同的具体的处理方式。</p>
+
+<h2 id="jsp">JSP</h2>
+
+<blockquote>
+<p>JSP页面由HTML语句和嵌套在其中的Java代码组成。本质还是Servet。JSP页面中的java代码需要嵌套在<code>&lt;%</code>和<code>%&gt;</code>中。</p>
+</blockquote>
+
+<h3 id="jsp运行原理">JSP运行原理</h3>
+
+<p>当Web容器接收到以<code>.jsp</code>为扩展名的URL请求时，将该请求转交给JSP引擎处理。每个JSP页面在第一次被访问的时候，JSP引擎都会把它翻译为一个Servlet源程序并编译。然后Web容器就可以像调用普通Servlet程序一样来处理这个由JSP页面翻译而来的Servlet程序。</p>
+
+<h3 id="jsp页面的隐含对象">JSP页面的隐含对象</h3>
+
+<p>这些隐含对象不用声明，可以直接使用。一共有9个。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> _jspService(<span style="color:#66d9ef">final</span> <span style="color:#a6e22e">javax</span>.<span style="color:#a6e22e">servlet</span>.<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HttpServletRequest</span> request, <span style="color:#66d9ef">final</span> <span style="color:#a6e22e">javax</span>.<span style="color:#a6e22e">servlet</span>.<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HttpServletResponse</span> response)
+      <span style="color:#66d9ef">throws</span> <span style="color:#a6e22e">java</span>.<span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">IOException</span>, javax.<span style="color:#a6e22e">servlet</span>.<span style="color:#a6e22e">ServletException</span> {
+
+    <span style="color:#66d9ef">final</span> <span style="color:#a6e22e">javax</span>.<span style="color:#a6e22e">servlet</span>.<span style="color:#a6e22e">jsp</span>.<span style="color:#a6e22e">PageContext</span> pageContext;
+    javax.<span style="color:#a6e22e">servlet</span>.<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HttpSession</span> <span style="color:#a6e22e">session</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+    <span style="color:#66d9ef">final</span> <span style="color:#a6e22e">javax</span>.<span style="color:#a6e22e">servlet</span>.<span style="color:#a6e22e">ServletContext</span> application;
+    <span style="color:#66d9ef">final</span> <span style="color:#a6e22e">javax</span>.<span style="color:#a6e22e">servlet</span>.<span style="color:#a6e22e">ServletConfig</span> config;
+    javax.<span style="color:#a6e22e">servlet</span>.<span style="color:#a6e22e">jsp</span>.<span style="color:#a6e22e">JspWriter</span> <span style="color:#a6e22e">out</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+    <span style="color:#66d9ef">final</span> <span style="color:#a6e22e">java</span>.<span style="color:#a6e22e">lang</span>.<span style="color:#a6e22e">Object</span> page <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>;
+    javax.<span style="color:#a6e22e">servlet</span>.<span style="color:#a6e22e">jsp</span>.<span style="color:#a6e22e">JspWriter</span> <span style="color:#a6e22e">_jspx_out</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+    javax.<span style="color:#a6e22e">servlet</span>.<span style="color:#a6e22e">jsp</span>.<span style="color:#a6e22e">PageContext</span> <span style="color:#a6e22e">_jspx_page_context</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+
+    <span style="color:#75715e">// 内嵌Java代码翻译后的位置，这里有第9个隐含对象: exception
+</span><span style="color:#75715e"></span>
+  }</code></pre></div>
+<p>9个隐含对象分别是：</p>
+
+<ol>
+<li><code>request</code>: HttpServletRequest的一个对象。</li>
+<li><code>response</code>: HttpSevletResponse的一个对象。</li>
+<li><code>pageContext</code>: PageContext的一个对象，可以从中获取到其它8个隐含对象以及页面的其它信息。</li>
+<li><code>session</code>: HttpSession的一个对象，代表浏览器和服务器的一次会话。</li>
+<li><code>application</code>: ServletContext的一个对象，代表当前的Web应用。</li>
+<li><code>config</code>: ServletConfig的一个对象。</li>
+<li><code>out</code>: JspWriter的一个对象。调用<code>out.println()</code>可直接把字符串打印到浏览器。</li>
+<li><code>page</code>： 指向当前JSP对应的Servlet对象的引用，使Object类型，只能使用Object类的方法。</li>
+<li><code>exception</code>：异常对象。在JSP页面中声明了<code>isErrorPage=true</code>后才会启用。</li>
+</ol>
+
+<h3 id="jsp基本语法">JSP基本语法</h3>
+
+<h4 id="jsp模板元素">JSP模板元素</h4>
+
+<p>JSP中的HTML代码就是JSP模板元素。这是整个网页的骨架。</p>
+
+<h4 id="jsp表达式">JSP表达式</h4>
+
+<p>可以使用JSP表达式直接将一个Java变量或者表达式的计算结果输出到浏览器。待输出的变量或者表达式要在<code>&lt;%=</code>和<code>%&gt;</code>之间。</p>
+
+<ul>
+<li>计算结果是一个字符串。</li>
+<li>变量或表达式后面不能有分号，因为每个表达式都被翻译为一条<code>out.print()</code>语句。</li>
+</ul>
+
+<h4 id="jsp脚本片段">JSP脚本片段</h4>
+
+<p>脚本片段就是嵌套在<code>&lt;%</code>和<code>%&gt;</code>之间的Java代码。这些脚本片段将被原封不动的被搬进JSP页面翻译成Servlet的<code>_JspService()</code>方法中。</p>
+
+<ul>
+<li>多个脚本片段中的代码是可以相互访问的。</li>
+<li>单个脚本片段中的Java语句可以不少完整的，但多个脚本片段组合后的结果必须是完整的。</li>
+</ul>
+
+<h4 id="jsp声明">JSP声明</h4>
+
+<p>JSP声明将Java代码封装在<code>&lt;%!</code>和<code>%&gt;</code>之间。这里面的代码会被插入到Servlet的<code>_jspService()</code>方法外面。
+常用来定义相关的静态代码块、成员变量和方法。</p>
+
+<h3 id="jsp中对域对象的属性操作">JSP中对域对象的属性操作</h3>
+
+<p>这里的域对象指的是<code>request</code>, <code>session</code>, <code>application</code>, <code>pageContext</code>这四个对象。它们都拥有下面的几个和属性相关的方法：</p>
+
+<ul>
+<li><code>Object getAttribute(String var1);</code>: 获取指定属性值。</li>
+<li><code>Enumeration&lt;String&gt; getAttributeNames();</code>: 获取所有属性名组成的Enumeration对象。</li>
+<li><code>void setAttribute(String var1, Object var2);</code>: 设置属性。</li>
+<li><code>void removeAttribute(String var1)</code>: 移除指定属性。</li>
+</ul>
+
+<p>它们的作用范围各不相同，下面从小到大排列：</p>
+
+<ul>
+<li><code>pageContext</code>: 仅限于当前页面，范围最小。</li>
+<li><code>request</code>: 仅限于同一个请求。</li>
+<li><code>session</code>: 仅限于一次会话（默认从浏览器打开到关闭）。</li>
+<li><code>application</code>: 仅限于当前Web应用，范围最大。</li>
+</ul>
+
+<h3 id="jsp指令">JSP指令</h3>
+
+<p>JSP指令用来告诉JSP引擎如何处理页面中的其余部分。基本的语法格式为：<code>&lt;%@ 指令 属性名=&quot;属性值&quot; %&gt;</code>。主要有一下三种指令：</p>
+
+<ol>
+<li>page指令：用来定义页面的各种属性。</li>
+<li>include指令：用来通知JSP引擎在翻译JSP页面的时候将其他文件中的内容包含进当前JSP页面翻译成的Servlet中。使用的是 <strong>相对路径</strong> 。</li>
+<li>taglib指令：用来引入所使用的标签库</li>
+</ol>
+
+<h3 id="jsp标签">JSP标签</h3>
+
+<ol>
+<li><code>&lt;jsp:include&gt;</code>标签：用来把应一个资源的输出内容插入到当前JSP页面的输出内容中。使用 <strong>相对路径</strong>。</li>
+<li><code>&lt;jsp:forward&gt;</code>标签：用于把请求转发个另一个资源。使用 <strong>相对路径</strong>。</li>
+<li><code>&lt;jsp:param&gt;</code>标签：用来向程序传递参数信息。使用 <strong>相对路径</strong>。</li>
+</ol>
+
+<h3 id="请求的转发与重定向">请求的转发与重定向</h3>
+
+<h4 id="请求转发">请求转发</h4>
+
+<p>可以使用<code>RequestDispatcher</code>接口中的<code>forward()</code>方法进行请求转发。这个接口中定义了两个方法：</p>
+
+<ol>
+<li><code>include(ServletRequest request, ServletResponse response)</code>方法：转发到请求到当前Web应用中的其他资源。</li>
+<li><code>forward(ServletRequest request, ServletResponse response)</code>方法：在响应中包含资源。</li>
+</ol>
+
+<p>可以使用<code>RequestDispatcher getRequestDispatcher(String forwardPath);</code>来获取<code>RequestDispatcer</code>。</p>
+
+<h4 id="请求的重定向">请求的重定向</h4>
+
+<p>可以使用<code>sendRedirect()</code>方法来进行请求的重定向。不仅可以重定向到当前应用程序中的其它资源，还可以到同一站点上的其它应用程序中的资源，甚至
+可以使用绝对路径到其它站点的资源。</p>
+
+<h4 id="请求转发和重定向的比较">请求转发和重定向的比较</h4>
+
+<p>本质区别：请求转发只向服务器发出 <strong>一次</strong> 请求，而重定向发出了 <strong>两次</strong> 请求。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="center">请求转发</th>
+<th align="center">请求重定向</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">地址栏变化</td>
+<td align="center">首次发出的请求地址</td>
+<td align="center">重定向后最后响应的那个地址</td>
+</tr>
+
+<tr>
+<td align="left">最终Servlet中的request对象</td>
+<td align="center">和中转的那个request是同一个对象</td>
+<td align="center">和中转的那个request不是同一个对象</td>
+</tr>
+
+<tr>
+<td align="left">作用范围</td>
+<td align="center">限于当前Web应用</td>
+<td align="center">服务器上任何资源</td>
+</tr>
+
+<tr>
+<td align="left">&ldquo;\&ldquo;</td>
+<td align="center">代表当前Web应用的根目录</td>
+<td align="center">代表整个Web站点的根目录</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="cookie与session">Cookie与Session</h3>
+
+<p>HTTP是一种无状态的协议。<code>Cookie</code>和<code>Session</code>是Servlet中的两种会话跟踪机制。</p>
+
+<h4 id="cookie">Cookie</h4>
+
+<p><code>Cookie</code>采用的是在 <strong>客户端</strong> 保持HTTP状态信息的方案。它是在当浏览器访问WEB服务器上的某个资源的时候，有WEB服务器在HTTP响应消息头中附带传送的一个小的文本文件。<em>一旦浏览器保存了这个Cookie，以后每次访问服务器的时候都会在HTTP消息头中将这个Cookie回传给服务器。</em></p>
+
+<ul>
+<li>可以通过<code>response</code>对象的<code>addCookie(Cookie cookie)</code>方法向浏览器写入Cookie。</li>
+<li>可以通过<code>request</code>对象的<code>getCookie()</code>方法从客户端获取Cookie。</li>
+</ul>
+
+<p>默认情况下的Cookie当关闭浏览器的时候会消失。可以通过<code>setMaxAge()</code>方法设置Cookie的存活时间。</p>
+
+<h4 id="session">Session</h4>
+
+<p><code>Session</code>采用的是在 <strong>服务端</strong> 保持HTTP状态信息的方案，以Cookie（默认实现方式，系统会创造一个名为JSESSIONID的输出cookie，称为session cookie）或者URL重写（禁用Cookie后的解决方案）为基础，使用<code>SessionId</code>唯一标识一个Session。</p>
+
+<ol>
+<li>Session的创建
+
+<ul>
+<li>当服务端的某个程序调用类似于<code>HttpServletRequest.getSession()</code>的方法的时候，Session对象 <strong>才会被创建</strong> 。</li>
+</ul></li>
+<li>Session的删除
+
+<ul>
+<li>程序调用<code>HttpSession.invalidate()</code>方法</li>
+<li>超过有效期</li>
+<li>服务端进程终止</li>
+</ul></li>
+<li>URL重写
+
+<ul>
+<li>使用<code>HttpServletResponse</code>接口定义的的<code>encodeURL()</code>或<code>encodeRedirectURL()</code>方法。</li>
+</ul></li>
+</ol>
+
+<h2 id="jdbc">JDBC</h2>
+
+<p>JDBC为Java程序员提供了一个独立于特定数据库管理系统、通用SQL数据库存取和操作的公共接口，可以使用它来连接提供了JDBC驱动的数据库。</p>
+
+<h3 id="driver接口">Driver接口</h3>
+
+<p><code>Java.sql.Driver</code>接口是所有JDBC驱动程序都需要实现的接口，由不同的厂商提供不同的实现。</p>
+
+<h3 id="加载与注册jdbc驱动">加载与注册JDBC驱动</h3>
+
+<ul>
+<li>可以通过调用<code>Class</code>类的静态方法<code>forName()</code>来加载JDBC驱动。</li>
+<li><code>DriverManager</code>类负责管理驱动程序，它会调用Driver接口的实现。</li>
+</ul>
+
+<h3 id="建立数据库连接">建立数据库连接</h3>
+
+<p>数据库连接用来向数据库服务器发送命令。</p>
+
+<ul>
+<li>可以调用<code>DriverManager</code>类的<code>getConnection()</code>方法建立到数据库的连接。还可以使用<code>Driver</code>接口的<code>connect()</code>方法建立到数据库的连接。其中<code>DriverManager</code>使用起来更加方便，还可以管理多个不同的驱动程序。</li>
+
+<li><p>JDBC URL用来标识一个被注册的驱动程序。驱动程序管理器会通过这个URL选择正确的驱动程序，从而建立到数据库的连接。JDBC URL的标准由三部分组成，各个部分之间用冒号<code>:</code>分隔。</p>
+
+<ul>
+<li>协议：JDBC中总是<code>jdbc</code></li>
+<li>子协议：用来标识一个数据库驱动程序</li>
+<li>子名称：为定位数据库提供足够的信息</li>
+</ul></li>
+</ul>
+
+<p>比如：使用mysql数据库的url连接可以是这样的：<code>jdbc:mysql：//localhost:3306/database</code>。
+<code>java.sql</code>中有三个接口分别定义了对数据库的不同访问方式：</p>
+
+<ol>
+<li>Statement接口
+
+<ul>
+<li><code>Statement</code>接口用来执行静态SQL语句。</li>
+<li>可以通过调用<code>Connection</code>对象的<code>createStatement()</code>方法创建<code>Statement</code>对象。剩下的两个接口都是这个接口的子类型。</li>
+</ul></li>
+<li>PreparedStatement
+
+<ul>
+<li><code>PreparedStatement</code>接口用来执行预编译的SQL语句。</li>
+<li>可以通过调用<code>Connection</code>对象的<code>prepareStatement()</code>方法来获取<code>PreparedStatement</code>对象。</li>
+<li><code>PreparedStatement</code>对象多代表的SQL语句中的参数用问号<code>?</code>来表示，并通过对应的<code>setXXX(index, value)</code>来设置这些参数。其中<code>index</code>从<code>1</code>开始。</li>
+<li>使用本接口可以防止SQL注入。</li>
+</ul></li>
+<li>CallableStatement
+
+<ul>
+<li><code>CallableStatement</code>接口用来执行SQL存储程序。</li>
+</ul></li>
+</ol>
+
+<h3 id="数据库的查询和更新">数据库的查询和更新</h3>
+
+<ol>
+<li>数据库更新
+
+<ul>
+<li>常用<code>int executeUpdate​(String sql)</code>方法可以进行数据库的插入、修改和删除操作。</li>
+</ul></li>
+<li>数据库查询
+
+<ul>
+<li>常用<code>ResultSet executeQuery​(String sql)</code>方法来进行数据库的查询操作。</li>
+</ul></li>
+</ol>
+
+<h3 id="resultset">ResultSet</h3>
+
+<p><code>ResultSet</code>接口以逻辑表格的形式封装了执行数据库操作得到的结果集。<code>ResultSet</code>对象维护了一个指向当前数据行的 <strong>游标</strong> 。初始的时候，游标在表格的第一行 <strong>之前</strong> 。可以通过<code>next()</code>方法移动到下一行，然后调用<code>getXXX(index)</code>或<code>getXXX(columnName)</code>来获取对应列的值。</p>
+
+<h3 id="常用数据类型转换表">常用数据类型转换表</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Java类型</th>
+<th align="left">SQL类型</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">int</td>
+<td align="left">INTEGER</td>
+</tr>
+
+<tr>
+<td align="left">long</td>
+<td align="left">BIGINT</td>
+</tr>
+
+<tr>
+<td align="left">short</td>
+<td align="left">SMALLINT</td>
+</tr>
+
+<tr>
+<td align="left">String</td>
+<td align="left">CHAR, VARCHAR, LONGVARCHAR</td>
+</tr>
+
+<tr>
+<td align="left">boolean</td>
+<td align="left">BIT</td>
+</tr>
+
+<tr>
+<td align="left">byte</td>
+<td align="left">TINYINT</td>
+</tr>
+
+<tr>
+<td align="left">byte array</td>
+<td align="left">BINARY, VARBINART</td>
+</tr>
+
+<tr>
+<td align="left">java.sql.Date</td>
+<td align="left">DATE</td>
+</tr>
+
+<tr>
+<td align="left">java.sql.Time</td>
+<td align="left">TIME</td>
+</tr>
+
+<tr>
+<td align="left">java.sql.Timestamp</td>
+<td align="left">TIMESTAMP</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="使用jdbc驱动程序处理元数据">使用JDBC驱动程序处理元数据</h3>
+
+<p>元数据是关于数据的数据。</p>
+
+<h4 id="databasemetadata类">DatabaseMetaData类</h4>
+
+<p><code>DatabaseMetaData</code>类提供了获取和数据库系统有关的各种信息的方法，也就是 <strong>元数据</strong> 。而又可以从<code>Connection</code>对象获得<code>DatabaseMetaData</code>的对象。</p>
+
+<h4 id="resultsetmetadata类">ResultSetMetaData类</h4>
+
+<p><code>ResultSetMetaData</code>类提供了获取<code>ResultSet</code>对象中列的类型和属性信息的方法。</p>
+
+<ul>
+<li>可以通过调用<code>ResultSet</code>对象的<code>getMetaData()</code>方法来获取它的对象。</li>
+<li>可以使用<code>getColumnCount()</code>方法来获取SQL语句中查询了多少列。</li>
+<li>可以使用<code>getColumnLabel(int colunm)</code>方法来获取指定列的别名。其中索引从1开始。</li>
+</ul>
+
+<h3 id="数据库连接池">数据库连接池</h3>
+
+<p>数据库连接池的基本思想是为数据库建立一个缓冲池，并预先往缓冲池里放入一定数量的连接。当需要和数据库建立连接时，直接从连接池里取出连接，用完之后再归还给连接池。</p>
+
+<p>数据库连接池负责分配、管理和释放数据库连接，它允许应用程序重复使用一个现有的数据库连接，而不是重新建立一个。</p>
+
+<h2 id="mvc设计模式">MVC设计模式</h2>
+
+<p>MVC把应用分为模型、视图和控制器三个模块，它们各自处理不同而任务。</p>
+
+<h3 id="模型">模型</h3>
+
+<p>模型应用程序的主体部分，表示业务数据和业务逻辑。一个模型可以为多个视图提供数据。</p>
+
+<h3 id="视图">视图</h3>
+
+<p>视图接收用户输入、向用户展示相关数据。但不进行任何实际的业务处理。</p>
+
+<h3 id="控制器">控制器</h3>
+
+<p>控制器接收用户请求并决定调用哪个模型去处理请求，然后决定调用哪个视图显示模型处理返回的数据。</p>
+
+<h2 id="filter-过滤器">Filter(过滤器)</h2>
+
+<blockquote>
+<p>Filter是Java Web的一个重要组件，它的基本功能是对Servlet容器调用Servlet的进程进行拦截（拦截请求和响应），从而在Servlet进行响应处理的 <strong>前后</strong> 实现一些特殊的功能。</p>
+</blockquote>
+
+<p>Servlet的API中定义了三个供开发人员编写Filter程序的接口：<code>Filter</code>, <code>FilterChain</code>, <code>FilterConfig</code>。Filter程序是一个实现了Filter接口的Java类，它和Servlet非常类似，并且由Servlet容器进行调用和执行。没有相应的Filter实现类可供继承，要开发Filter，需要自己实现接口。</p>
+
+<p>和使用Servlet类似，Filter程序需要在<code>web.xml</code>文件中注册和设置它所能拦截的资源（Jsp, Servlet, image, html），这也可以通过 <strong>注解</strong> 来完成。</p>
+
+<p>对于多个Filter拦截同一个url的情况：</p>
+
+<ul>
+<li><p>使用注解：多个Filter的执行顺序的由Filter实现类名的字符顺序来决定，这会给维护增加难度。比如：现在有<code>Test1Filter</code>和<code>Test2Filter</code>,它们都对<code>test.jsp</code>进行拦截。初始化的顺序是：<code>Test1Filter</code>先初始化，而后是<code>Test2Filter</code>。拦截执行的顺序是：<code>Test2Filter</code>在前，而<code>Test1Filter</code>在后。</p></li>
+
+<li><p>使用<code>web.xml</code>：执行按照<code>filer-mapping</code>声明顺序执行，这就更加清晰可见。最好使用后一种方法。</p></li>
+</ul>
+
+<h3 id="filter接口">Filter接口</h3>
+
+<ol>
+<li><code>default void init(FilterConfig filterConfig) throws ServletException</code>
+
+<ul>
+<li>Filer对象的初始化方法，在Filter对象被创建时（Filter对象在Servlet容器加载当前Web应用时被创建）执行，只执行 <strong>一次</strong></li>
+<li>FilterConfig类似于ServletConfig</li>
+</ul></li>
+<li><code>void doFilter(ServletRequest var1, ServletResponse var2, FilterChain var3)</code>
+
+<ul>
+<li>逻辑代码，每次拦截都会被调用</li>
+<li>FilterChain: 多个Filter构成的一个链。在特定的操作完成后，可以在当前Filter对象的<code>doFilter()</code>方法内部需要调用FilterChain 对象的<code>chain.doFilter(request,response)</code>方法才能把请求交付给Filter链中的下一个Filter或者目标Servlet程序去处理，也可以直接向客户端返回响应信息，或者利用RequestDispatcher的<code>forward()</code>和<code>include()</code>方法，以及HttpServletResponse的<code>sendRedirect()</code>方法将请求转向到其他资源。</li>
+</ul></li>
+<li><code>default void destroy()</code>
+
+<ul>
+<li>用来释放当前Filter所占用的资源，在Filter被销毁之前调用，只调用一次。</li>
+</ul></li>
+</ol>
+
+<h3 id="filter的配置">Filter的配置</h3>
+
+<h4 id="filter的注册">Filter的注册</h4>
+
+<p>在<code>web.xml</code>中注册Filter，使用<code>&lt;filter&gt;</code>元素，也可以用注解注册。使用<code>web.xml</code>时：</p>
+
+<ul>
+<li><code>&lt;filter-name&gt;</code>为Filter指定一个名字，不能为空。</li>
+<li><code>&lt;filter-class&gt;</code>为Filter的完整限定类名。</li>
+<li><code>&lt;init-param&gt;</code>用来设置初始化参数（使用<code>&lt;param-name&gt;</code>指定参数名，<code>&lt;param-value&gt;</code>指定参数值）。</li>
+</ul>
+
+<p>这一步骤使用注解会方便得多。</p>
+
+<h4 id="filter的映射">Filter的映射</h4>
+
+<p>使用<code>&lt;filter-mapping&gt;</code>元素，可以为一个Filter设置所负责拦截的资源，其中有两种方式可以指定：Servlet名称和资源访问的请求路径(url)。</p>
+
+<ul>
+<li><code>&lt;filter-name&gt;</code>子元素用于设置filter的注册名，该名必须是已经注册了的名字。</li>
+<li><code>&lt;url-pattern&gt;</code>用来设置拦截的请求路径</li>
+<li><code>&lt;servlet-name&gt;</code>用来指定拦截的Servlet名称</li>
+<li><code>&lt;dispatcher&gt;</code>指定所拦截的资源被Servlet容器调用的方式。可以是：<code>REQUEST</code>, <code>INCLUDE</code>, <code>FORWARD</code>和<code>ERROR</code>。默认是<code>REQUEST</code>。
+
+<ul>
+<li>REQUEST: 当用户 <strong>直接</strong> 访问页面的时候，这个Filter会被调用。如果目标资源是通过<code>RequestDispatcher</code>的<code>include()</code>或<code>forward()</code>方法访问的话，就不会被调用。</li>
+<li>INCLUDE: 只有当目标资源时通过<code>RequestDispatcher</code>的<code>include()</code>方法访问时，Filter才会被调用。</li>
+<li>FORWARD: 只有当目标资源时通过<code>RequestDispatcher</code>的<code>forward()</code>方法访问时，Filter才会被调用。</li>
+<li>ERROR: 只有当目标资源时通过声明式异常处理机制调用的时候，Filter才会被调用。</li>
+</ul></li>
+</ul>
+
+<h2 id="listener-监听器">Listener(监听器)</h2>
+
+<blockquote>
+<p>Listener是专门用来对其它对象身上发生的事件或者状态改变进行监听和采取相应处理的对象。</p>
+</blockquote>
+
+<p>Servlet监听器是Servlet规范中定义的一种特殊的类，用于监听Web应用程序中的<code>ServletContext</code>, <code>HttpSession</code>和<code>ServletRequest</code>等域对象的创建、销毁以及属性发生改变的事件。</p>
+
+<h3 id="listener的分类">Listener的分类</h3>
+
+<h4 id="监听域对象自身的创建和销毁的listener">监听域对象自身的创建和销毁的Listener</h4>
+
+<ol>
+<li>ServletContextListener接口
+
+<ul>
+<li>这个接口用于监听ServletContext对象的创建和销毁事件。当ServletContext对象被创建的时候，触发<code>contextInitialized()</code>方法；当ServletContext对象被销毁的时候，触发<code>contextDestroyed()</code>方法。常用来对当前Web应用进行初始化操作。</li>
+</ul></li>
+<li>HttpSessionListener接口
+
+<ul>
+<li>这个接口用于监听HttpSession对象的创建和销毁事件。当Session对象被创建的时候，触发<code>sessionCreated()</code>方法；当Session对象被销毁的时候，触发<code>sessionDestroyed()</code>方法。</li>
+</ul></li>
+<li>ServletRequestListener接口
+
+<ul>
+<li>这个接口用于监听ServletRequest对象的创建和销毁事件。当ServletRequest对象被创建的时候，触发<code>requestInitialized()</code>方法；当ServletRequest对象被销毁的时候，触发<code>requestDestroyed()</code>方法。</li>
+</ul></li>
+</ol>
+
+<h4 id="监听域对象中属性的增加-删除或修改的listener">监听域对象中属性的增加、删除或修改的Listener</h4>
+
+<p>有三个Listener接口，分别是<code>ServletContextAttributeListener</code>, <code>HttpSessionAttributeListener</code>和<code>ServletRequestAttributeLitener</code>。它们中分别定义了监听对应域对象的属性的增加、修改和删除的方法。方法名完全相同，只是接受的参数不同。分别是：<code>attributeAdded()</code>, <code>attributeReplaced()</code>和<code>attributeRemoved()</code>。</p>
+
+<h4 id="监听绑定到httpsession域中某个对象状态的listener">监听绑定到HttpSession域中某个对象状态的Listener</h4>
+
+<p>有两个特殊的Listener接口用来帮助JavaBean对象了解自己在Session域中的状态。分别是：</p>
+
+<ol>
+<li>HttpSessionBindingListener接口
+
+<ul>
+<li>感知自己被绑定到Session中。Web服务器此时会调用<code>valueBound()</code>方法。</li>
+<li>感知自己被从Session中解除绑定。Web服务器此时会调用<code>valueUnbound()</code>方法。</li>
+</ul></li>
+<li>HttpSessionActivationListener接口
+
+<ul>
+<li>绑定到HttpSession对象的对象将要随HttpSession对象被钝化之前，Web浏览器此时会调用<code>sessionWillPassivate()</code>方法。</li>
+<li>绑定到HttpSession对象的对象将要随HttpSession对象被活化之后，Web浏览器此时会调用<code>sessionDidActive()</code>方法。</li>
+</ul></li>
+</ol>
+
+<!-- ## 文件上传和下载
+
+### 基于表单的文件上传
+
+使用表单元素`<input type="file">`可以完成基于表单的文件上传操作，需要指定表单的`enctype`属性值为`multipart/form-data`，表示表单以二进制传输数据。默认为`application/x-www-form-urlencoded`，这种编码方案使用有限的字符集，不适合大容量的二进制数据或者包含了非ASCII字符的文本。 -->
+
+</div>
+
+  
+<footer class='entry-footer'>
+  <div class='container sep-before'><div class='categories'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M22,19a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V5A2,2,0,0,1,4,3H9l2,3h9a2,2,0,0,1,2,2Z"/>
+  
+</svg>
+<span class='screen-reader-text'>Categories: </span><a class='category' href='/categories/java-web/'>Java Web</a></div>
+<div class='tags'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M20.59,13.41l-7.17,7.17a2,2,0,0,1-2.83,0L2,12V2H12l8.59,8.59A2,2,0,0,1,20.59,13.41Z"/>
+  <line x1="7" y1="7" x2="7" y2="7"/>
+  
+</svg>
+<span class='screen-reader-text'>Tags: </span><a class='tag' href='/tags/java/'>Java</a></div>
+
+  </div>
+</footer>
+
+
+</article>
+
+<nav class='entry-nav'>
+  <div class='container'><div class='prev-entry sep-before'>
+      <a href='/blogs/perfect-squares/'>
+        <span aria-hidden='true'><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <line x1="20" y1="12" x2="4" y2="12"/>
+  <polyline points="10 18 4 12 10 6"/>
+  
+</svg>
+ Previous</span>
+        <span class='screen-reader-text'>Previous post: </span>完全平方数</a>
+    </div><div class='next-entry sep-before'>
+      <a href='/blogs/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E7%9A%847%E4%B8%AA%E5%8E%9F%E5%88%99/'>
+        <span class='screen-reader-text'>Next post: </span>面向对象设计的7个原则<span aria-hidden='true'>Next <svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <line x1="4" y1="12" x2="20" y2="12"/>
+  <polyline points="14 6 20 12 14 18"/>
+  
+</svg>
+</span>
+      </a>
+    </div></div>
+</nav>
+
+
+
+
+      </main>
+
+      <footer id='footer' class='footer'>
+        <div class='container sep-before'><section class='widget widget-social_menu sep-after'><nav aria-label='Social Menu'>
+    <ul><li>
+        <a href='https://github.com/zhannicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Github account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://facebook.com/zhannicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Facebook account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://twitter.com/nicholas132817' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Twitter account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://instagram.com/zhanicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Instagram account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+  <line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='mailto:nicholas13281@gmail.com' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Contact via Email</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+  <polyline points="22,6 12,13 2,6"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://codepen.io/zhannicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Codepen account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+  <line x1="12" y1="22" x2="12" y2="15.5"/>
+  <polyline points="22 8.5 12 15.5 2 8.5"/>
+  <polyline points="2 15.5 12 8.5 22 15.5"/>
+  <line x1="12" y1="2" x2="12" y2="8.5"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://gitlab.com/zhannicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Gitlab account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 4.82 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.49h8.1l2.44-7.51A.42.42 0 0 1 18.6 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.51L23 13.45a.84.84 0 0 1-.35.94z"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Linkedin account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+  <rect x="2" y="9" width="4" height="12"/>
+  <circle cx="4" cy="4" r="2"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://t.me/zhannicholas' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Telegram account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="m 22.05,1.577 c -0.393,-0.016 -0.784,0.08 -1.117,0.235 -0.484,0.186 -4.92,1.902 -9.41,3.64 C 9.263,6.325 7.005,7.198 5.267,7.867 3.53,8.537 2.222,9.035 2.153,9.059 c -0.46,0.16 -1.082,0.362 -1.61,0.984 -0.79581202,1.058365 0.21077405,1.964825 1.004,2.499 1.76,0.564 3.58,1.102 5.087,1.608 0.556,1.96 1.09,3.927 1.618,5.89 0.174,0.394 0.553,0.54 0.944,0.544 l -0.002,0.02 c 0,0 0.307,0.03 0.606,-0.042 0.3,-0.07 0.677,-0.244 1.02,-0.565 0.377,-0.354 1.4,-1.36 1.98,-1.928 l 4.37,3.226 0.035,0.02 c 0,0 0.484,0.34 1.192,0.388 0.354,0.024 0.82,-0.044 1.22,-0.337 0.403,-0.294 0.67,-0.767 0.795,-1.307 0.374,-1.63 2.853,-13.427 3.276,-15.38 L 23.676,4.725 C 23.972,3.625 23.863,2.617 23.18,2.02 22.838,1.723 22.444,1.593 22.05,1.576 Z"/>
+  
+</svg>
+</a>
+      </li><li>
+        <a href='https://scholar.google.com/citations?user=qc6CJjYAAAAhfohgoJ' target='_blank' rel='noopener'>
+          <span class='screen-reader-text'>Open Google_scholar account in new tab</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+  
+  <path d="M21.328 2.002v9.2M8.695 7.85c.014-.787-.11-2.236.28-2.89.623-1.045.856-1.39 1.797-1.989 1.953-.988 4.296.692 4.296.692.803.564 1.672 2.1 1.672 2.1l1.368-1.824-5.444-1.754-3.515 1.34L6.08 7.681m9.109 3.42s.65-.633 1.168-1.085c.461-.402.516-.714.6-.914.18-.426.268-.909.268-1.446 0-.7-.131-1.274-.388-1.735-.031-.053 0 0-.097-.157l4.588-3.762H10.32L3.672 7.85l5.023-.024c.23 1.237.619 1.575 1.019 2.222.744.719 1.13 1.194 2.215 1.194.254 0 2.6-.057 2.842-.09 0 0 .546 1.199-.133 1.71-.41.31.576 1.304.576 1.304s-5.577.831-6.523 1.427a4.13 4.13 0 0 0-1.306 1.277 3.034 3.034 0 0 0-.493 1.665c0 .502.106.955.32 1.357.214.403.493.733.84.99.345.258.744.473 1.194.649.45.174.896.297 1.342.367a8.348 8.348 0 0 0 3.41-.166 7.754 7.754 0 0 0 1.964-.807 4.28 4.28 0 0 0 1.49-1.443c.38-.609.57-1.292.57-2.049 0-.574-.116-1.096-.347-1.57a3.755 3.755 0 0 0-.847-1.164c-.335-.302-2.19-1.837-2.19-1.837"/>
+  
+</svg>
+</a>
+      </li></ul>
+  </nav>
+</section><div class='copyright'>
+  <p> &copy; 2018-2019 Nicholas Z. </p>
+</div>
+
+        </div>
+      </footer>
+
+    </div>
+  </div><script>window.__assets_js_src="/assets/js/"</script>
+
+<script src='/assets/js/main.67d669ac.js'></script><script src='/js/custom.js'></script>
+
+</body>
+
+</html>
+
