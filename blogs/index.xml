@@ -5,10 +5,19 @@
     <link>https://zhannicholas.github.io/blogs/</link>
     <description>Recent content in Blogs on Nicholas Z.</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Wed, 25 Sep 2019 19:24:06 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 30 Sep 2019 13:38:40 +0800</lastBuildDate>
     
 	<atom:link href="https://zhannicholas.github.io/blogs/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ZooKeeper单机与伪集群部署</title>
+      <link>https://zhannicholas.github.io/blogs/zookeeper%E5%8D%95%E6%9C%BA%E4%B8%8E%E4%BC%AA%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/</link>
+      <pubDate>Mon, 30 Sep 2019 13:38:40 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/blogs/zookeeper%E5%8D%95%E6%9C%BA%E4%B8%8E%E4%BC%AA%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/</guid>
+      <description>ZooKeeper是一个开源的分布式协调服务，可以为分布式计算环境维护配置信息、提供命名、同步、分组等服务。 单机部署 准备Java环境 ZooK</description>
+    </item>
     
     <item>
       <title>初见Redis</title>

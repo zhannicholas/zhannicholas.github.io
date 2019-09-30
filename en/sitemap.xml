@@ -4,7 +4,7 @@
   
   <url>
     <loc>https://zhannicholas.github.io/</loc>
-    <lastmod>2019-09-25T19:24:06+08:00</lastmod>
+    <lastmod>2019-09-30T13:38:40+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
@@ -19,7 +19,7 @@
   
   <url>
     <loc>https://zhannicholas.github.io/blogs/</loc>
-    <lastmod>2019-09-25T19:24:06+08:00</lastmod>
+    <lastmod>2019-09-30T13:38:40+08:00</lastmod>
   </url>
   
   <url>
@@ -28,7 +28,7 @@
   
   <url>
     <loc>https://zhannicholas.github.io/authors/</loc>
-    <lastmod>2019-09-25T19:24:06+08:00</lastmod>
+    <lastmod>2019-09-30T13:38:40+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
@@ -42,13 +42,8 @@
   </url>
   
   <url>
-    <loc>https://zhannicholas.github.io/tags/redis/</loc>
-    <lastmod>2019-09-25T19:24:06+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://zhannicholas.github.io/tags/</loc>
-    <lastmod>2019-09-25T19:24:06+08:00</lastmod>
+    <lastmod>2019-09-30T13:38:40+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
@@ -63,6 +58,21 @@
   
   <url>
     <loc>https://zhannicholas.github.io/authors/zhannicholas/</loc>
+    <lastmod>2019-09-30T13:38:40+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhannicholas.github.io/tags/zookeeper/</loc>
+    <lastmod>2019-09-30T13:38:40+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhannicholas.github.io/blogs/zookeeper%E5%8D%95%E6%9C%BA%E4%B8%8E%E4%BC%AA%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/</loc>
+    <lastmod>2019-09-30T13:38:40+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhannicholas.github.io/tags/redis/</loc>
     <lastmod>2019-09-25T19:24:06+08:00</lastmod>
   </url>
   
