@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>环境配置 on Nicholas Z.</title>
+    <title>环境配置 on Nicholas Zhan</title>
     <link>https://zhannicholas.github.io/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</link>
-    <description>Recent content in 环境配置 on Nicholas Z.</description>
+    <description>Recent content in 环境配置 on Nicholas Zhan</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Sat, 07 Jul 2018 09:38:08 +0800</lastBuildDate>
     
@@ -12,11 +12,11 @@
     
     <item>
       <title>配置Anaconda源</title>
-      <link>https://zhannicholas.github.io/blogs/anaconda-source-configuration/</link>
+      <link>https://zhannicholas.github.io/posts/python/anaconda-source-configuration/</link>
       <pubDate>Sat, 07 Jul 2018 09:38:08 +0800</pubDate>
       
-      <guid>https://zhannicholas.github.io/blogs/anaconda-source-configuration/</guid>
-      <description>Anaconda 是一个 python 的发行版，可以用来管理 python 的包和环境，同时它包含1000+的开源package。正如那句话一样： The Most Trusted Distribution for Data Science 还有一个没有包含那么多</description>
+      <guid>https://zhannicholas.github.io/posts/python/anaconda-source-configuration/</guid>
+      <description>Anaconda 是一个 python 的发行版，可以用来管理 python 的包和环境，同时它包含1000+的开源package。正如那句话一样：\ The Most Trusted Distribution for Data Science\ 还有一个没有包含那么</description>
     </item>
     
   </channel>

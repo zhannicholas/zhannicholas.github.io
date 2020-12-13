@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Leetcode on Nicholas Z.</title>
+    <title>Leetcode on Nicholas Zhan</title>
     <link>https://zhannicholas.github.io/tags/leetcode/</link>
-    <description>Recent content in Leetcode on Nicholas Z.</description>
+    <description>Recent content in Leetcode on Nicholas Zhan</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Tue, 07 Aug 2018 07:15:52 +0800</lastBuildDate>
     
@@ -12,37 +12,37 @@
     
     <item>
       <title>完全平方数</title>
-      <link>https://zhannicholas.github.io/blogs/perfect-squares/</link>
+      <link>https://zhannicholas.github.io/posts/leetcode/perfect-squares/</link>
       <pubDate>Tue, 07 Aug 2018 07:15:52 +0800</pubDate>
       
-      <guid>https://zhannicholas.github.io/blogs/perfect-squares/</guid>
+      <guid>https://zhannicholas.github.io/posts/leetcode/perfect-squares/</guid>
       <description>这是Leetcoce上的第279个问题，解题的方法很有启发意义，以此备忘。 题目描述 给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, &amp;hell</description>
     </item>
     
     <item>
       <title>Java中反转字符串的几种方法</title>
-      <link>https://zhannicholas.github.io/blogs/java%E4%B8%AD%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/</link>
+      <link>https://zhannicholas.github.io/posts/java/java%E4%B8%AD%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/</link>
       <pubDate>Fri, 20 Jul 2018 13:51:14 +0800</pubDate>
       
-      <guid>https://zhannicholas.github.io/blogs/java%E4%B8%AD%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/</guid>
+      <guid>https://zhannicholas.github.io/posts/java/java%E4%B8%AD%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/</guid>
       <description>这是Leetcode上的第344题，虽然很简单，但是涉及到一些技巧，于是我决定把我试过的方法记录下来。 题目描述 请编写一个函数，其功能是将输入</description>
     </item>
     
     <item>
       <title>寻找数组中的第K个最大的元素</title>
-      <link>https://zhannicholas.github.io/blogs/%E5%AF%BB%E6%89%BE%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%ACk%E4%B8%AA%E6%9C%80%E5%A4%A7%E7%9A%84%E5%85%83%E7%B4%A0/</link>
+      <link>https://zhannicholas.github.io/posts/leetcode/%E5%AF%BB%E6%89%BE%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%ACk%E4%B8%AA%E6%9C%80%E5%A4%A7%E7%9A%84%E5%85%83%E7%B4%A0/</link>
       <pubDate>Fri, 20 Jul 2018 10:33:07 +0800</pubDate>
       
-      <guid>https://zhannicholas.github.io/blogs/%E5%AF%BB%E6%89%BE%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%ACk%E4%B8%AA%E6%9C%80%E5%A4%A7%E7%9A%84%E5%85%83%E7%B4%A0/</guid>
+      <guid>https://zhannicholas.github.io/posts/leetcode/%E5%AF%BB%E6%89%BE%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%ACk%E4%B8%AA%E6%9C%80%E5%A4%A7%E7%9A%84%E5%85%83%E7%B4%A0/</guid>
       <description>这是Leetcode上的第215题：数组中的第k个最大元素。 问题描述 在未排序的数组中找到第 k 个最大的元素。请注意，你需要找的是数组排序后的第</description>
     </item>
     
     <item>
       <title>荷兰国旗问题</title>
-      <link>https://zhannicholas.github.io/blogs/%E8%8D%B7%E5%85%B0%E5%9B%BD%E6%97%97%E9%97%AE%E9%A2%98/</link>
+      <link>https://zhannicholas.github.io/posts/leetcode/%E8%8D%B7%E5%85%B0%E5%9B%BD%E6%97%97%E9%97%AE%E9%A2%98/</link>
       <pubDate>Thu, 19 Jul 2018 22:15:46 +0800</pubDate>
       
-      <guid>https://zhannicholas.github.io/blogs/%E8%8D%B7%E5%85%B0%E5%9B%BD%E6%97%97%E9%97%AE%E9%A2%98/</guid>
+      <guid>https://zhannicholas.github.io/posts/leetcode/%E8%8D%B7%E5%85%B0%E5%9B%BD%E6%97%97%E9%97%AE%E9%A2%98/</guid>
       <description>问题描述 荷兰国旗问题(Dutch national flag problem)是Dijkstra提出的一个经典的编程练习。原问题大概是这样说的： Dijkstra used the Dutch National Flag Problem* as a structured programming</description>
     </item>
     

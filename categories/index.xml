@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on Nicholas Z.</title>
+    <title>Categories on Nicholas Zhan</title>
     <link>https://zhannicholas.github.io/categories/</link>
-    <description>Recent content in Categories on Nicholas Z.</description>
+    <description>Recent content in Categories on Nicholas Zhan</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Sat, 27 Oct 2018 21:41:48 +0800</lastBuildDate>
     
@@ -11,11 +11,20 @@
     
     
     <item>
-      <title>《设计模式的艺术：软件开发人员内功修炼之道》读书笔记</title>
-      <link>https://zhannicholas.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%E4%BA%BA%E5%91%98%E5%86%85%E5%8A%9F%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <title>设计模式的艺术</title>
+      <link>https://zhannicholas.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/</link>
       <pubDate>Sat, 27 Oct 2018 21:41:48 +0800</pubDate>
       
-      <guid>https://zhannicholas.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%E4%BA%BA%E5%91%98%E5%86%85%E5%8A%9F%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <guid>https://zhannicholas.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>设计模式的艺术：软件开发人员内功修炼之道</title>
+      <link>https://zhannicholas.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%E4%BA%BA%E5%91%98%E5%86%85%E5%8A%9F%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/</link>
+      <pubDate>Sat, 13 Oct 2018 11:16:37 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%E4%BA%BA%E5%91%98%E5%86%85%E5%8A%9F%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/</guid>
       <description></description>
     </item>
     
@@ -47,11 +56,11 @@
     </item>
     
     <item>
-      <title>《算法导论》之旅</title>
-      <link>https://zhannicholas.github.io/categories/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA%E4%B9%8B%E6%97%85/</link>
+      <title>算法导论</title>
+      <link>https://zhannicholas.github.io/categories/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/</link>
       <pubDate>Wed, 11 Jul 2018 12:46:30 +0800</pubDate>
       
-      <guid>https://zhannicholas.github.io/categories/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA%E4%B9%8B%E6%97%85/</guid>
+      <guid>https://zhannicholas.github.io/categories/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/</guid>
       <description></description>
     </item>
     
@@ -65,11 +74,11 @@
     </item>
     
     <item>
-      <title>《C算法》学习笔记</title>
-      <link>https://zhannicholas.github.io/categories/c%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+      <title>C算法</title>
+      <link>https://zhannicholas.github.io/categories/c%E7%AE%97%E6%B3%95/</link>
       <pubDate>Sun, 03 Jun 2018 10:49:04 +0800</pubDate>
       
-      <guid>https://zhannicholas.github.io/categories/c%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+      <guid>https://zhannicholas.github.io/categories/c%E7%AE%97%E6%B3%95/</guid>
       <description></description>
     </item>
     
