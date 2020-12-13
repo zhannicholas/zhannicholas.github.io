@@ -5,10 +5,19 @@
     <link>https://zhannicholas.github.io/posts/reading_notes/</link>
     <description>Recent content in 阅读笔记 on Nicholas Zhan</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 27 Oct 2018 21:41:48 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 13 Dec 2020 20:16:09 +0800</lastBuildDate>
     
 	<atom:link href="https://zhannicholas.github.io/posts/reading_notes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Design_concepts_for_engineers</title>
+      <link>https://zhannicholas.github.io/posts/reading_notes/design_concepts_for_engineers/</link>
+      <pubDate>Sun, 13 Dec 2020 19:52:15 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/reading_notes/design_concepts_for_engineers/</guid>
+      <description>Taken from Design Concepts for Engineers (Fifth Edition) 2020.11.22 第1章 工程是什么 作为一名有抱负的工程师，你有很多需要学习的东西。你必须掌握工程的基础知识：数学、物理、化学和生物。你必须学</description>
+    </item>
     
   </channel>
 </rss>

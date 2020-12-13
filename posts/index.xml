@@ -5,19 +5,10 @@
     <link>https://zhannicholas.github.io/posts/</link>
     <description>Recent content in Posts on Nicholas Zhan</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 30 Sep 2019 13:38:40 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 13 Dec 2020 20:16:09 +0800</lastBuildDate>
     
 	<atom:link href="https://zhannicholas.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>ZooKeeper单机与伪集群部署</title>
-      <link>https://zhannicholas.github.io/posts/getting_started/zookeeper%E5%8D%95%E6%9C%BA%E4%B8%8E%E4%BC%AA%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/</link>
-      <pubDate>Mon, 30 Sep 2019 13:38:40 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/posts/getting_started/zookeeper%E5%8D%95%E6%9C%BA%E4%B8%8E%E4%BC%AA%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/</guid>
-      <description>ZooKeeper是一个开源的分布式协调服务，可以为分布式计算环境维护配置信息、提供命名、同步、分组等服务。 单机部署 准备Java环境 ZooK</description>
-    </item>
     
     <item>
       <title>初见Redis</title>
@@ -35,6 +26,15 @@
       
       <guid>https://zhannicholas.github.io/posts/linux/linux%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7%E5%B9%B6%E6%8E%88%E4%BA%88root%E6%9D%83%E9%99%90%E7%9A%84%E7%AE%80%E5%8D%95%E6%96%B9%E6%B3%95/</guid>
       <description>快速方法 使用root操作 Step 1: 添加一个用户 adduser username Step 2: 授予root权限 usermod -aG sudo username 但是&amp;hellip;&amp;hellip; 有些时候，这并不管用 在vultr</description>
+    </item>
+    
+    <item>
+      <title>Java Web复习笔记</title>
+      <link>https://zhannicholas.github.io/posts/grocery/java-web%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 19 Aug 2018 23:02:41 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/grocery/java-web%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+      <description>Java WEB复习笔记 这是为了准备秋招面试而对Java Web开发进行的复习。 首先，对于一个Java Web应用，它由一组Servlet、HTML页、</description>
     </item>
     
     <item>
@@ -89,15 +89,6 @@
       
       <guid>https://zhannicholas.github.io/posts/git/about-git/</guid>
       <description>开始 文件的三种状态 已提交(committed) 数据已经安全的保存在了本地的数据库中 已修改(modified) 修改了文件，但还没保存到数据库中</description>
-    </item>
-    
-    <item>
-      <title>用hugo和github pages搭建个人博客</title>
-      <link>https://zhannicholas.github.io/posts/getting_started/building-your-blogsite-with-github-pages-and-hugo/</link>
-      <pubDate>Tue, 15 May 2018 16:28:59 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/posts/getting_started/building-your-blogsite-with-github-pages-and-hugo/</guid>
-      <description>本文主要是想记录一下自己在win10下使用hugo和github pages搭建博客的过程，备忘。 为什么我要用hugo而不用hexo呢,最主要</description>
     </item>
     
   </channel>

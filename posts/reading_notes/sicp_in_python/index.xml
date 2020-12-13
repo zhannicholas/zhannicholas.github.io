@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SICP in Python on Nicholas Zhan</title>
+    <link>https://zhannicholas.github.io/posts/reading_notes/sicp_in_python/</link>
+    <description>Recent content in SICP in Python on Nicholas Zhan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 13 Dec 2020 20:16:09 +0800</lastBuildDate>
+    
+	<atom:link href="https://zhannicholas.github.io/posts/reading_notes/sicp_in_python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Building Abstractions with Functions</title>
+      <link>https://zhannicholas.github.io/posts/reading_notes/sicp_in_python/building_abstractions_with_functions/</link>
+      <pubDate>Sun, 13 Dec 2020 20:16:09 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/reading_notes/sicp_in_python/building_abstractions_with_functions/</guid>
+      <description>1.1 Introduction The nature of computers is described in Stanford’s introductory course as: The fundamental equation of computers is: computer = powerful + stupid. Computers are very powerful, looking at volumes of data very quickly. Computers can perform billions of operations per second, where each operation is pretty simple. Computers are also shockingly stupid and fragile. The operations that they can</description>
+    </item>
+    
+  </channel>
+</rss>

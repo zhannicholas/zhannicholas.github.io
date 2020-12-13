@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang='en' dir='auto'><head>
+  <meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta name='description' content='文章中涉及的源代码摘自 OpenJdk 11。 乐观锁与悲观锁 乐观锁与悲观锁是一种广义上的概念，体现了我们看待线程同步的不同角度。 乐观锁 乐观锁采用的思想是：冲'>
+<meta name='theme-color' content='#ffcd00'>
+
+<meta property='og:title' content='Locks • Nicholas Zhan'>
+<meta property='og:description' content='文章中涉及的源代码摘自 OpenJdk 11。 乐观锁与悲观锁 乐观锁与悲观锁是一种广义上的概念，体现了我们看待线程同步的不同角度。 乐观锁 乐观锁采用的思想是：冲'>
+<meta property='og:url' content='https://zhannicholas.github.io/posts/java/concurrency/locks/'>
+<meta property='og:site_name' content='Nicholas Zhan'>
+<meta property='og:type' content='article'><meta property='og:image' content='https://www.gravatar.com/avatar/3e86aee6ced3c468bfb237be2853ad75?s=256'><meta property='article:author' content='https://facebook.com/zhannicholas'><meta property='article:section' content='posts'><meta property='article:tag' content='Java'><meta property='article:published_time' content='2020-12-13T18:29:44&#43;08:00'/><meta property='article:modified_time' content='2020-12-13T18:29:44&#43;08:00'/><meta name='twitter:card' content='summary'><meta name='twitter:creator' content='@zhannicholas'>
+
+<meta name="generator" content="Hugo 0.74.3" />
+
+  <title>Locks • Nicholas Zhan</title>
+  <link rel='canonical' href='https://zhannicholas.github.io/posts/java/concurrency/locks/'>
+  
+  
+  <link rel='icon' href='/favicon.ico'>
+<link rel='stylesheet' href='/assets/css/main.ab98e12b.css'><link rel='stylesheet' href='/css/custom.css'><style>
+:root{--color-accent:#ffcd00;}
+</style>
+
+  
+
+</head>
+<body class='page type-posts has-sidebar'>
+
+  <div class='site'><div id='sidebar' class='sidebar'>
+  <a class='screen-reader-text' href='#main-menu'>Skip to Main Menu</a>
+
+  <div class='container'><section class='widget widget-about sep-after'>
+  <header>
+    
+    <div class='logo'>
+      <a href='/'>
+        <img src='/images/logo.png'>
+      </a>
+    </div>
+    
+    <h2 class='title site-title '>
+      <a href='/'>
+      Nicholas Zhan
+      </a>
+    </h2>
+    <div class='desc'>
+    Java Developer, Long-distance Runner, Cyclist
+    </div>
+  </header>
+
+</section>
+<section class='widget widget-sidebar_menu sep-after'><nav id='sidebar-menu' class='menu sidebar-menu' aria-label='Sidebar Menu'>
+    <div class='container'>
+      <ul><li class='item has-children'>
+  <a href='/posts/databases/'>Database</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/databases/redis/'>Redis</a></li><li class='item'>
+  <a href='/posts/databases/fundamentals/'>基础理论</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/java/'>Java</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/java/jakartaee/'>Jakarta EE</a></li><li class='item'>
+  <a href='/posts/java/concurrency/'>Java并发</a></li><li class='item'>
+  <a href='/posts/java/java_lang/'>Java语言</a></li><li class='item'>
+  <a href='/posts/java/jvm/'>JVM</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/operating_systems/'>操作系统</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/operating_systems/memory_management/'>内存管理</a></li><li class='item'>
+  <a href='/posts/operating_systems/virtualization/'>虚拟化</a></li><li class='item'>
+  <a href='/posts/operating_systems/processes_management/'>进程管理</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/computer_networks/'>计算机网络</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/computer_networks/http/'>HTTP</a></li><li class='item'>
+  <a href='/posts/computer_networks/fundamentals/'>基础知识</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/reading_notes/'>阅读笔记</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/reading_notes/algorithms_in_c/'>C算法</a></li><li class='item'>
+  <a href='/posts/reading_notes/sicp_in_python/'>SICP in Python</a></li><li class='item'>
+  <a href='/posts/reading_notes/the_art_of_multiprocessor_programming/'>多处理器编程的艺术</a></li><li class='item'>
+  <a href='/posts/reading_notes/modern_operating_systems/'>现代操作系统</a></li><li class='item'>
+  <a href='/posts/reading_notes/introduction_to_algorithms/'>算法导论</a></li><li class='item'>
+  <a href='/posts/reading_notes/%E7%AE%97%E6%B3%95%E8%B6%A3%E9%A2%98/'>算法趣题</a></li><li class='item'>
+  <a href='/posts/reading_notes/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/'>设计模式的艺术</a></li></ul></li></ul>
+    </div>
+  </nav>
+
+</section><section class='widget widget-taxonomy_cloud sep-after'>
+  <header>
+    <h4 class='title widget-title'>Tags</h4>
+  </header>
+
+  <div class='container list-container'>
+  <ul class='list taxonomy-cloud'><li>
+        <a href='/tags/git/' style='font-size:1em'>Git</a>
+      </li><li>
+        <a href='/tags/http/' style='font-size:1.7777777777777777em'>HTTP</a>
+      </li><li>
+        <a href='/tags/hugo/' style='font-size:1em'>Hugo</a>
+      </li><li>
+        <a href='/tags/jakartaee/' style='font-size:1.2222222222222223em'>JakartaEE</a>
+      </li><li>
+        <a href='/tags/java/' style='font-size:1.8888888888888888em'>Java</a>
+      </li><li>
+        <a href='/tags/jvm/' style='font-size:1.2222222222222223em'>JVM</a>
+      </li><li>
+        <a href='/tags/leetcode/' style='font-size:1.2222222222222223em'>Leetcode</a>
+      </li><li>
+        <a href='/tags/linux/' style='font-size:1em'>Linux</a>
+      </li><li>
+        <a href='/tags/os/' style='font-size:1.6666666666666665em'>OS</a>
+      </li><li>
+        <a href='/tags/python/' style='font-size:1em'>Python</a>
+      </li><li>
+        <a href='/tags/redis/' style='font-size:1.6666666666666665em'>Redis</a>
+      </li><li>
+        <a href='/tags/zookeeper/' style='font-size:1em'>ZooKeeper</a>
+      </li><li>
+        <a href='/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/' style='font-size:1em'>数据库</a>
+      </li><li>
+        <a href='/tags/%E7%AE%97%E6%B3%95/' style='font-size:2em'>算法</a>
+      </li><li>
+        <a href='/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/' style='font-size:1.2222222222222223em'>计算机网络</a>
+      </li><li>
+        <a href='/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/' style='font-size:1.5555555555555556em'>读书笔记</a>
+      </li></ul>
+</div>
+
+
+</section>
+</div>
+
+  <div class='sidebar-overlay'></div>
+</div><div class='main'><nav id='main-menu' class='menu main-menu' aria-label='Main Menu'>
+  <div class='container'>
+    <a class='screen-reader-text' href='#content'>Skip to Content</a>
+
+<button id='sidebar-toggler' class='sidebar-toggler' aria-controls='sidebar'>
+  <span class='screen-reader-text'>Toggle Sidebar</span>
+  <span class='open'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="3" y1="12" x2="21" y2="12" />
+  <line x1="3" y1="6" x2="21" y2="6" />
+  <line x1="3" y1="18" x2="21" y2="18" />
+
+</svg>
+</span>
+  <span class='close'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="18" y1="6" x2="6" y2="18" />
+  <line x1="6" y1="6" x2="18" y2="18" />
+
+</svg>
+</span>
+</button>
+    <ul><li class='item'>
+        <a href='/'>Home</a>
+      </li><li class='item'>
+        <a href='/posts/'>Posts</a>
+      </li><li class='item'>
+        <a href='/about/'>About</a>
+      </li><li class='item'>
+        <a href='https://github.com/zhannicholas/blog'>Repo</a>
+      </li></ul>
+  </div>
+</nav><div class='header-widgets'>
+        <div class='container'>
+    
+    
+    
+    <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+  <section class='widget widget-breadcrumbs sep-after'>
+    <nav id='breadcrumbs'>
+      <ol><li><a href='/'>Home</a></li><li><a href='/posts/'>Posts</a></li><li><a href='/posts/java/'>Java</a></li><li><a href='/posts/java/concurrency/'>Java并发</a></li><li><span>Locks</span></li></ol>
+    </nav>
+  </section></div>
+      </div>
+
+      <header id='header' class='header site-header'>
+        <div class='container sep-after'>
+          <div class='header-info'><p class='site-title title'>Nicholas Zhan</p><p class='desc site-desc'>Java Developer, Long-distance Runner, Cyclist</p>
+          </div>
+        </div>
+      </header>
+
+      <main id='content'>
+
+
+<article lang='en' class='entry'>
+  <header class='header entry-header'>
+  <div class='container sep-after'>
+    <div class='header-info'>
+      <h1 class='title'>Locks</h1>
+      
+
+    </div>
+    <div class='entry-meta'>
+  <span class='posted-on'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+  <line x1="16" y1="2" x2="16" y2="6"/>
+  <line x1="8" y1="2" x2="8" y2="6"/>
+  <line x1="3" y1="10" x2="21" y2="10"/>
+
+</svg>
+<span class='screen-reader-text'>Posted on </span>
+  <time class='entry-date' datetime='2020-12-13T18:29:44&#43;08:00'>2020, Dec 13</time>
+</span>
+
+  <span class='byline'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <path d="M21,21V20c0-2.76-4-5-9-5s-9,2.24-9,5v1"/>
+  <path d="M16,6.37A4,4,0,1,1,12.63,3,4,4,0,0,1,16,6.37Z"/>
+
+</svg>
+<span class='screen-reader-text'> by </span><a href='/authors/zhannicholas'>Nicholas Zhan</a></span>
+  
+<span class='reading-time'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <circle cx="12" cy="12" r="10"/>
+  <polyline points="12 6 12 12 15 15"/>
+
+</svg>
+14 mins read
+</span>
+
+
+</div>
+
+
+  </div>
+</header>
+
+  
+  
+<details class='container entry-toc'>
+  <summary class='title'>
+    <span>Table of Contents</span>
+  </summary>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#乐观锁与悲观锁">乐观锁与悲观锁</a>
+      <ul>
+        <li><a href="#乐观锁">乐观锁</a></li>
+        <li><a href="#悲观锁">悲观锁</a></li>
+      </ul>
+    </li>
+    <li><a href="#lock接口"><code>Lock</code>接口</a></li>
+    <li><a href="#synchronized-vs-lock"><code>synchronized</code> vs <code>Lock</code></a></li>
+    <li><a href="#abstractqueuedsynchronizeraqs">AbstractQueuedSynchronizer(AQS)</a>
+      <ul>
+        <li><a href="#aqs的实现分析"><code>AQS</code>的实现分析</a></li>
+      </ul>
+    </li>
+    <li><a href="#reentrantlock">ReentrantLock</a>
+      <ul>
+        <li><a href="#重入">重入</a></li>
+        <li><a href="#锁的公平性">锁的公平性</a></li>
+      </ul>
+    </li>
+    <li><a href="#readwritelock">ReadWriteLock</a>
+      <ul>
+        <li><a href="#reentrantreadwritelock">ReentrantReadWriteLock</a></li>
+      </ul>
+    </li>
+    <li><a href="#locksupport">LockSupport</a></li>
+    <li><a href="#contidion接口"><code>Contidion</code>接口</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav>
+</details>
+
+
+  <div class='container entry-content'>
+  <blockquote>
+<p>文章中涉及的源代码摘自 OpenJdk 11。</p>
+</blockquote>
+<h2 id="乐观锁与悲观锁">乐观锁与悲观锁</h2>
+<p>乐观锁与悲观锁是一种广义上的概念，体现了我们看待线程同步的不同角度。</p>
+<h3 id="乐观锁">乐观锁</h3>
+<p>乐观锁采用的思想是：<strong>冲突检测</strong>。例如：如果 A 和 B 同时编辑同一份文件，使用乐观锁策略， A 和 B 都能得到文件的一份拷贝并可以自由的编辑。假设 A 先完成工作，那么他可以毫无困难的更新他的修改。而当 B 在 A 提交之后完成工作并向提交他的修改时，并发控制策略将会起作用，如果检测到冲突，B 的提交将会被拒绝。</p>
+<p>乐观锁认为锁的持有者在使用数据的过程中不会有别的线程修改数据，所以不会添加锁，只有在提交数据时才会进行检测。Java 中的乐观锁大部分是通过 CAS (Compare And Swap) 实现的。CAS 是一种无锁算法，用来将某一内存地址的值从一个状态更新到另一个状态。CAS 操作包含三个参数：内存地址、预期原值和新值。如果内存地址的值和预期的原值相等的话，那么就可以把该位置的值更新为新值，否则不做任何修改。例如， <code>AtomicInteger</code> 类中的 <code>compareAndSet()</code> 方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">compareAndSet</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> expectedValue<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> newValue<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> U<span style="color:#f92672">.</span><span style="color:#a6e22e">compareAndSetInt</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">,</span> VALUE<span style="color:#f92672">,</span> expectedValue<span style="color:#f92672">,</span> newValue<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>CAS 虽然高效，但是它存在一个问题：在其调用期间，目标内存地址的值改变了数次，但该地址的当前值却有可能与调用者之前获取到的值相等，这在某些情况下是有问题的。也就是说，CAS 无法探测到“某个值被修改，然后再被改回原值”的情况，这就是所谓的  <strong>ABA 问题</strong>。ABA 问题的常见处理方式是添加版本号，线程每次修改值之后就更新版本号，JDK 中的 <code>AtomicStampedReference</code> 类就是一个典型的例子，它内部维护了一个“版本号” Stamp，每次在比较时既比较当前值又比较版本号，这样就解决了 ABA 问题。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AtomicStampedReference</span><span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Pair</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">final</span> T reference<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> stamp<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Pair</span><span style="color:#f92672">(</span>T reference<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> stamp<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">reference</span> <span style="color:#f92672">=</span> reference<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">stamp</span> <span style="color:#f92672">=</span> stamp<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Pair<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>T reference<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> stamp<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Pair<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;(</span>reference<span style="color:#f92672">,</span> stamp<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">compareAndSet</span><span style="color:#f92672">(</span>V   expectedReference<span style="color:#f92672">,</span>
+                                 V   newReference<span style="color:#f92672">,</span>
+                                 <span style="color:#66d9ef">int</span> expectedStamp<span style="color:#f92672">,</span>
+                                 <span style="color:#66d9ef">int</span> newStamp<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Pair<span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;</span> current <span style="color:#f92672">=</span> pair<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span>
+            expectedReference <span style="color:#f92672">==</span> current<span style="color:#f92672">.</span><span style="color:#a6e22e">reference</span> <span style="color:#f92672">&amp;&amp;</span>
+            expectedStamp <span style="color:#f92672">==</span> current<span style="color:#f92672">.</span><span style="color:#a6e22e">stamp</span> <span style="color:#f92672">&amp;&amp;</span>
+            <span style="color:#f92672">((</span>newReference <span style="color:#f92672">==</span> current<span style="color:#f92672">.</span><span style="color:#a6e22e">reference</span> <span style="color:#f92672">&amp;&amp;</span>
+              newStamp <span style="color:#f92672">==</span> current<span style="color:#f92672">.</span><span style="color:#a6e22e">stamp</span><span style="color:#f92672">)</span> <span style="color:#f92672">||</span>
+             casPair<span style="color:#f92672">(</span>current<span style="color:#f92672">,</span> Pair<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>newReference<span style="color:#f92672">,</span> newStamp<span style="color:#f92672">)));</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="悲观锁">悲观锁</h3>
+<p>悲观锁采用的思想是：<strong>冲突避免</strong>。例如：如果 A 和 B 都想编辑同一份文件，使用悲观锁策略，若 A 先获得文件的编辑权，那么 B 就不能对文件进行编辑了。只有当 A 编辑完成并提交之后，B 才能对该文件进行操作。</p>
+<p>悲观锁是比较保守的，它认为在自己使用数据时会有别的线程来修改数据，因此在获取数据时会先加锁，确保数据不会被其它线程修改。Java 中，<code>synchronized</code> 和 <code>Lock</code> 的实现类采用的都是悲观锁策略。</p>
+<h2 id="lock接口"><code>Lock</code>接口</h2>
+<p><code>Lock</code> 接口中定义了一组抽象的锁操作。与内置加锁机制不同的是，<code>Lock</code> 提供了一种无条件的、可轮询的、定时的以及可中断的锁获取操作，所有加锁和解锁的方法都是显式的。<code>Lock</code> 接口的定义如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Lock</span> <span style="color:#f92672">{</span>
+	<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">lock</span><span style="color:#f92672">();</span>
+	<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">lockInterruptibly</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> InterruptedException<span style="color:#f92672">;</span>
+	<span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">tryLock</span><span style="color:#f92672">();</span>
+	<span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">tryLock</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> timeout<span style="color:#f92672">,</span> TimeUnit unit<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> InterruptedException<span style="color:#f92672">;</span>
+	<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">unlock</span><span style="color:#f92672">();</span>
+	Condition <span style="color:#a6e22e">newCondition</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><code>ReentrantLock</code>实现了<code>Lock</code>接口，并提供了与<code>synchronized</code>相同的互斥性和内存可见性。获取<code>ReentrantLock</code>的语义与进入同步代码块一致，释放<code>RenentrantLock</code>的语义也同退出同步代码块一致。与<code>synchronized</code>一样，<code>ReentrantLock</code>也提供了可重入的加锁语义。但<code>ReentrantLock</code>比<code>synchronized</code>更加灵活，最典型的就是前者支持非公平和公平的锁获取机制，而后者只支持公平的锁获取机制。</p>
+<p>以下是<code>Lock</code>接口的标准使用形式，它比内置锁更复杂，并且必须在<code>finally</code>块中释放锁。否则，如果在被保护的代码中抛出了异常，这个锁将无法释放。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java">Lock lock <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ReentrantLock<span style="color:#f92672">();</span>
+<span style="color:#960050;background-color:#1e0010">…</span>
+lock<span style="color:#f92672">.</span><span style="color:#a6e22e">lock</span><span style="color:#f92672">();</span>
+<span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+	<span style="color:#75715e">// update object state
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// catch exceptions and restore invariants if necessary
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+	lock<span style="color:#f92672">.</span><span style="color:#a6e22e">unlock</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h2 id="synchronized-vs-lock"><code>synchronized</code> vs <code>Lock</code></h2>
+<ol>
+<li>前者是JVM隐式实现的，而后者是Java语言提供的API。</li>
+<li>前者的锁只能是非公平的，而后者的一些实现可以允许锁是公平的。</li>
+<li><code>synchronized</code>使用的是<code>Object</code>对象的<code>wait()</code>、<code>notify()</code>、<code>notifyAll()</code>调度机制，而<code>Lock</code>使用的是<code>Condition</code>接口的<code>await()</code>、<code>signal()</code>、<code>signalAll()</code>完成线程之间的调度。</li>
+<li><code>synchronized</code>的作用限于同步代码块（包括方法），而<code>Lock</code>需要手动给出锁的起始和结束位置。前者的执行是托管给JVM的，后者是通过代码手动控制的。</li>
+<li>前者会自动释放锁，而后者需要手动释放锁。</li>
+<li>前者只能以阻塞的方式获得锁，后者可以使用非阻塞的方式去获得锁。</li>
+</ol>
+<p>&hellip;</p>
+<h2 id="abstractqueuedsynchronizeraqs">AbstractQueuedSynchronizer(AQS)</h2>
+<p><code>Lock</code> 接口的实现基本都是通过聚合一个 <code>AbstractQueuedSynchronizer</code> 的子类来完成线程访问控制的。</p>
+<p><strong><code>AQS</code></strong>是一个用于构建锁和同步器的框架，<code>ReentrantLock</code>、<code>Semaphore</code>、<code>CountDownLatch</code>、<code>ReentrantReadWriteLock</code>、<code>SynchronousQueue</code>等都是基于它实现的。</p>
+<p>在基于<code>AQS</code>构建的同步器类中，最基本的操作包括各种形式的获取操作和释放操作。获取操作是一种依赖状态的操作，通常也会阻塞。相反，释放操作并不是一个阻塞操作，当执行释放操作时，所有在请求时被阻塞的线程都会开始执行。</p>
+<p><code>AQS</code>负责管理同步器类中的状态，它用一个int类型的字段 <strong><code>state</code></strong> 来保存状态信息，可以通过<code>getState()</code>、<code>setState()</code>以及<code>CompareAndSetState()</code>等方法来进行操作。<code>state</code>可以表示任意状态。例如：<code>ReentrantLock</code>用它来表示所有者线程已经重复获取该锁的次数；<code>Semaphore</code>用它表示剩余的许可数量；<code>CountDownLatch</code>用它来表示计数器当前的值；<code>ReentrantReadWriteLock</code>用<code>state</code>的高16位表示读状态，也就是获取读锁的次数，低16位表示获取写锁的次数。<!-- raw HTML omitted -->对于<code>AQS</code>来说，线程同步的关键就是对状态值<code>state</code>进行操作<!-- raw HTML omitted -->。</p>
+<p><code>AQS</code>是一个FIFO的双向队列，内部通过节点<code>head</code>和<code>tail</code>记录队首和队尾元素，队列元素的类型为<code>Node</code>。</p>
+<h3 id="aqs的实现分析"><code>AQS</code>的实现分析</h3>
+<h4 id="同步队列">同步队列</h4>
+<p><code>AQS</code>依赖内部的同步队列（一个FIFO的双向队列）来完成同步状态的管理，当前线程获取同步状态失败时，<code>AQS</code>会将当前线程以及等待状态等信息构成一个节点（<code>Node</code>）并将其加入同步队列，同时阻塞当前线程，当同步状态释放时，会把队首节点中的线程唤醒，使其再次尝试获取同步状态。</p>
+<h5 id="node节点"><code>Node</code>节点</h5>
+<p><code>Node</code>节点是构成同步队列的基础，<code>AQS</code>拥有首节点（<code>head</code>）和尾节点（<code>tail</code>）。<code>head</code>节点是获取同步状态成功的节点，它在释放同步状态时，会唤醒后继节点，而被唤醒的后继节点会在获取同步状态成功时将自己设置为<code>head</code>节点。</p>
+<p><code>Node</code>中的<code>thread</code>变量用来记录存放进<code>AQS</code>队列里面的线程。<code>Node</code>节点内部的<code>SHARED</code>用来标记该线程在共享模式阻塞，<code>EXCLUSIVE</code>用来标记线程在互斥模式阻塞。<code>waitStatus</code>记录当前节点的等待状态：</p>
+<ul>
+<li><strong>CANCELLED</strong>：由于在同步队列中等待的线程等待超时或者被中断，需要从同步队列中取消等待，节点进入该状态后将不在变化</li>
+<li><strong>SIGNAL</strong>：后继节点的线程处于等待状态，而当前节点的线程如果释放了同步状态或者被取消，将会通知后继节点，使后继节点的线程得以运行</li>
+<li><strong>CONDITION</strong>：节点在等待队列中，节点线程等待在<code>Condition</code>上，当其它线程调用了<code>Condition</code>的<code>signal()</code>方法后，该节点将会从等待队列移动到同步队列中</li>
+<li><strong>PROPAGATE</strong>：表示下一次共享式同步状态获取将会无条件地被传播下去</li>
+<li><strong>0</strong>：不处于以上任何一个状态
+<code>prev</code>表示当前节点的前驱节点（当节点从队尾加入同步队列时被设置），<code>next</code>表示当前节点的后继节点。</li>
+</ul>
+<h4 id="独占式同步状态的获取与释放">独占式同步状态的获取与释放</h4>
+<h5 id="获取锁">获取锁</h5>
+<p>通过调用<code>AQS</code>的<code>acquire(int arg)</code>方法，可以以互斥的形式获取同步状态并忽略中断。<code>acquire(int arg)</code>方法的代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">acquire</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> arg<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>tryAcquire<span style="color:#f92672">(</span>arg<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span>
+        acquireQueued<span style="color:#f92672">(</span>addWaiter<span style="color:#f92672">(</span>Node<span style="color:#f92672">.</span><span style="color:#a6e22e">EXCLUSIVE</span><span style="color:#f92672">),</span> arg<span style="color:#f92672">))</span>
+        selfInterrupt<span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>这段代码主要完成了获取同步状态、构造节点、加入同步队列以及在同步队列中自旋等待的相关操作。主要逻辑是：首先调用<code>AQS</code>子类自定义的<code>tryAcquire(int arg)</code>方法获取同步状态，若获取失败，则构造同步节点（<code>Node.EXCLUSIVE</code>）并通过<code>addWaiter(Node node)</code>方法将该节点加入到同步队列的队尾，最后调用<code>acquireQueued(Node node, int arg)</code>方法使该节点以自旋的方式获取同步状态（只有前驱节点为头节点时才能够尝试获取同步状态）。如果获取不到则尝试阻塞节点中的线程，被阻塞线程的唤醒主要<!-- raw HTML omitted -->依靠前驱节点的出队或阻塞线程被中断来实现<!-- raw HTML omitted -->。<code>acquireQueued()</code>方法源码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">acquireQueued</span><span style="color:#f92672">(</span><span style="color:#66d9ef">final</span> Node node<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> arg<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<span style="color:#66d9ef">boolean</span> interrupted <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+<span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(;;)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">final</span> Node p <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span><span style="color:#a6e22e">predecessor</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>p <span style="color:#f92672">==</span> head <span style="color:#f92672">&amp;&amp;</span> tryAcquire<span style="color:#f92672">(</span>arg<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+            setHead<span style="color:#f92672">(</span>node<span style="color:#f92672">);</span>
+            p<span style="color:#f92672">.</span><span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span> <span style="color:#75715e">// help GC
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> interrupted<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#75715e">// 判断获取锁失败后是否阻塞线程
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>shouldParkAfterFailedAcquire<span style="color:#f92672">(</span>p<span style="color:#f92672">,</span> node<span style="color:#f92672">))</span>
+            interrupted <span style="color:#f92672">|=</span> parkAndCheckInterrupt<span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Throwable t<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    cancelAcquire<span style="color:#f92672">(</span>node<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>interrupted<span style="color:#f92672">)</span>
+        selfInterrupt<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">throw</span> t<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>当获取锁失败后，<code>shouldParkAfterFailedAcquire()</code> 方法会决定是否挂起当前线程，方法的实现如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">shouldParkAfterFailedAcquire</span><span style="color:#f92672">(</span>Node pred<span style="color:#f92672">,</span> Node node<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">int</span> ws <span style="color:#f92672">=</span> pred<span style="color:#f92672">.</span><span style="color:#a6e22e">waitStatus</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>ws <span style="color:#f92672">==</span> Node<span style="color:#f92672">.</span><span style="color:#a6e22e">SIGNAL</span><span style="color:#f92672">)</span>
+        <span style="color:#75715e">/*
+</span><span style="color:#75715e">            * This node has already set status asking a release
+</span><span style="color:#75715e">            * to signal it, so it can safely park.
+</span><span style="color:#75715e">            */</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>ws <span style="color:#f92672">&gt;</span> 0<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">/*
+</span><span style="color:#75715e">            * Predecessor was cancelled. Skip over predecessors and
+</span><span style="color:#75715e">            * indicate retry.
+</span><span style="color:#75715e">            */</span>
+        <span style="color:#66d9ef">do</span> <span style="color:#f92672">{</span>
+            node<span style="color:#f92672">.</span><span style="color:#a6e22e">prev</span> <span style="color:#f92672">=</span> pred <span style="color:#f92672">=</span> pred<span style="color:#f92672">.</span><span style="color:#a6e22e">prev</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>pred<span style="color:#f92672">.</span><span style="color:#a6e22e">waitStatus</span> <span style="color:#f92672">&gt;</span> 0<span style="color:#f92672">);</span>
+        pred<span style="color:#f92672">.</span><span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> node<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">/*
+</span><span style="color:#75715e">            * waitStatus must be 0 or PROPAGATE.  Indicate that we
+</span><span style="color:#75715e">            * need a signal, but don&#39;t park yet.  Caller will need to
+</span><span style="color:#75715e">            * retry to make sure it cannot acquire before parking.
+</span><span style="color:#75715e">            */</span>
+        pred<span style="color:#f92672">.</span><span style="color:#a6e22e">compareAndSetWaitStatus</span><span style="color:#f92672">(</span>ws<span style="color:#f92672">,</span> Node<span style="color:#f92672">.</span><span style="color:#a6e22e">SIGNAL</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>从上面的代码中可以看出，线程被挂起的前提条件是：前驱节点的状态为 <code>SIGNAL</code>，<code>SIGNAL</code> 状态的含义是后继节点处于等待状态，当前节点释放锁后将会唤醒后继节点。</p>
+<p>整个加锁的流程到这里就已经走完了，最后的情况是：没有拿到锁的线程会在队列中被挂起，直到拥有锁的线程释放锁之后，才会去唤醒其他的线程去获取锁资源。</p>
+<h5 id="释放锁">释放锁</h5>
+<p>释放同步状态则是通过<code>release(int arg)</code>方法来完成的：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">release</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> arg<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>tryRelease<span style="color:#f92672">(</span>arg<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+        Node h <span style="color:#f92672">=</span> head<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>h <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">&amp;&amp;</span> h<span style="color:#f92672">.</span><span style="color:#a6e22e">waitStatus</span> <span style="color:#f92672">!=</span> 0<span style="color:#f92672">)</span>
+            unparkSuccessor<span style="color:#f92672">(</span>h<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>这段代码执行时，会释放同步状态并唤醒后继节点（后继节点成为<code>head</code>节点，继而重新尝试获取同步状态）中的线程，具体唤醒等待线程时通过<code>unparkSuccessor(Node node)</code>方法来完成的，它调用了<code>LockSupport</code>的<code>unpark(Thread thread)</code>方法。</p>
+<h4 id="共享式同步状态获取与释放">共享式同步状态获取与释放</h4>
+<h5 id="获取锁-1">获取锁</h5>
+<p>共享式获取同步状态与独占式获取最主要的区别在于<!-- raw HTML omitted -->同一时刻是否能有多个线程同时获取到同步状态<!-- raw HTML omitted -->。通过调用<code>AQS</code>的<code>acquireShared(int arg)</code>方法可以以共享的方式获取同步状态，该方法的代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">acquireShared</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> arg<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>tryAcquireShared<span style="color:#f92672">(</span>arg<span style="color:#f92672">)</span> <span style="color:#f92672">&lt;</span> 0<span style="color:#f92672">)</span>
+        doAcquireShared<span style="color:#f92672">(</span>arg<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doAcquireShared</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> arg<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">final</span> Node node <span style="color:#f92672">=</span> addWaiter<span style="color:#f92672">(</span>Node<span style="color:#f92672">.</span><span style="color:#a6e22e">SHARED</span><span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">boolean</span> interrupted <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(;;)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">final</span> Node p <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span><span style="color:#a6e22e">predecessor</span><span style="color:#f92672">();</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>p <span style="color:#f92672">==</span> head<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">int</span> r <span style="color:#f92672">=</span> tryAcquireShared<span style="color:#f92672">(</span>arg<span style="color:#f92672">);</span>
+                <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>r <span style="color:#f92672">&gt;=</span> 0<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                    setHeadAndPropagate<span style="color:#f92672">(</span>node<span style="color:#f92672">,</span> r<span style="color:#f92672">);</span>
+                    p<span style="color:#f92672">.</span><span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span> <span style="color:#75715e">// help GC
+</span><span style="color:#75715e"></span>                    <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>shouldParkAfterFailedAcquire<span style="color:#f92672">(</span>p<span style="color:#f92672">,</span> node<span style="color:#f92672">))</span>
+                interrupted <span style="color:#f92672">|=</span> parkAndCheckInterrupt<span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Throwable t<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        cancelAcquire<span style="color:#f92672">(</span>node<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">throw</span> t<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>interrupted<span style="color:#f92672">)</span>
+            selfInterrupt<span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>在<code>acquireShared(int arg)</code>方法中，调用的<code>tryAcquireShared(int arg)</code>返回值若不小于0，则表示获取同步状态成功。若获取失败，就进入<code>doAcquireShared(int arg)</code>方法自旋，如果当前节点的前驱为<code>head</code>节点，再次尝试获取同步状态，获取成功便退出自旋，否则继续尝试。</p>
+<h5 id="释放锁-1">释放锁</h5>
+<p>同步状态的释放是通过<code>releaseShared(int arg)</code>方法来完成的：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">releaseShared</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> arg<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>tryReleaseShared<span style="color:#f92672">(</span>arg<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+        doReleaseShared<span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doReleaseShared</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(;;)</span> <span style="color:#f92672">{</span>
+        Node h <span style="color:#f92672">=</span> head<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>h <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">&amp;&amp;</span> h <span style="color:#f92672">!=</span> tail<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">int</span> ws <span style="color:#f92672">=</span> h<span style="color:#f92672">.</span><span style="color:#a6e22e">waitStatus</span><span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>ws <span style="color:#f92672">==</span> Node<span style="color:#f92672">.</span><span style="color:#a6e22e">SIGNAL</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">compareAndSetWaitStatus</span><span style="color:#f92672">(</span>Node<span style="color:#f92672">.</span><span style="color:#a6e22e">SIGNAL</span><span style="color:#f92672">,</span> 0<span style="color:#f92672">))</span>
+                    <span style="color:#66d9ef">continue</span><span style="color:#f92672">;</span>            <span style="color:#75715e">// loop to recheck cases
+</span><span style="color:#75715e"></span>                unparkSuccessor<span style="color:#f92672">(</span>h<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>ws <span style="color:#f92672">==</span> 0 <span style="color:#f92672">&amp;&amp;</span>
+                     <span style="color:#f92672">!</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">compareAndSetWaitStatus</span><span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> Node<span style="color:#f92672">.</span><span style="color:#a6e22e">PROPAGATE</span><span style="color:#f92672">))</span>
+                <span style="color:#66d9ef">continue</span><span style="color:#f92672">;</span>                <span style="color:#75715e">// loop on failed CAS
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>h <span style="color:#f92672">==</span> head<span style="color:#f92672">)</span>                   <span style="color:#75715e">// loop if head changed
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>不同于<code>release(int arg)</code>方法，<code>releaseShared(int arg)</code>方法会唤醒后继节点并确保释放操作向后传播。</p>
+<h2 id="reentrantlock">ReentrantLock</h2>
+<p><code>ReentrantLock</code>允许一个线程对资源重复加锁，还支持设置锁的公平性。</p>
+<p><code>synchronized</code>关键字本是是支持重入的（隐式的），而<code>ReentrantLock</code>的重入需要显式进行，即调用<code>lock()</code>方法。</p>
+<h3 id="重入">重入</h3>
+<p><strong>重入</strong>是指任意线程在获取锁之后能够再次获取该锁而不会被锁阻塞。这一特性的实现需要解决以下两个问题：</p>
+<ol>
+<li>线程再次获取同一个锁。这个时候需要锁去识别线程是否为当前拥有锁的线程，如果是，则再次获取成功，完成重入。</li>
+<li>锁的最终释放。需要保证线程重复获取n次锁并释放n次锁之后，其它线程能够获取到该锁。</li>
+</ol>
+<p>重入的一种实现方法是：为每个锁关联一个计数值和一个所有者线程，当计数值为0时，这个锁就被认为不被任何线程持有。当线程请求一个未被持有的锁时，JVM会记下锁的持有者并将计数值设置为1，如果同一个线程再次获取这个锁，计数值就加1，当线程退出同步代码块时，计数值减1。当计数值为0时，这个锁将被释放。</p>
+<h3 id="锁的公平性">锁的公平性</h3>
+<p>在<code>ReentrantLock</code>的构造函数中提供了一个<code>fair</code>参数，用来指定所创建的锁是否公平，默认创建一个非公平的锁。在公平的锁上，线程将按照它们发出请求的顺序来获得锁，但在非公平的锁上，是允许“插队”的：当一个线程请求非公平的锁时，如果在发出请求的同时该锁的状态变为可用，那么这个线程将跳过队列中的所有等待线程并获得这个锁。</p>
+<p>在激烈竞争的情况下，非公平锁的性能高于公平锁的一个原因是：<!-- raw HTML omitted -->在恢复一个被挂起的线程与该线程真正开始运行之间存在着严重的延迟，而使用非公平锁减少了线程上下文切换的次数<!-- raw HTML omitted -->。因此，<code>ReentrantLock</code>默认采用非公平锁：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">ReentrantLock</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    sync <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> NonfairSync<span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>如果使用者希望使用基于公平锁的<code>ReentrantLock</code>，可以使用带参数的构造函数：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">ReentrantLock</span><span style="color:#f92672">(</span><span style="color:#66d9ef">boolean</span> fair<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    sync <span style="color:#f92672">=</span> fair <span style="color:#f92672">?</span> <span style="color:#66d9ef">new</span> FairSync<span style="color:#f92672">()</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">new</span> NonfairSync<span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><code>ReentrantLock</code> 中的 <code>lock()</code> 实现为 <code>sync.acquire(1)</code>。<code>acquire()</code> 方法是 <code>Sync</code> 类从 <code>AbstractQueuedSynchronizer</code> 继承来的，上文中已经提到过其具体实现。<code>tryAcquire()</code> 方法尝试以独占的方式获取锁，如果获取锁失败，则把线程加入到阻塞队列中，下面来看 <code>tryAcquire()</code> 在 <code>FariSync</code> 和 <code>NonfairSync</code> 中的具体实现。<code>FairSync</code> 中的 <code>tryAcquire()</code> 方式实现为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">tryAcquire</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> acquires<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">final</span> Thread current <span style="color:#f92672">=</span> Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">int</span> c <span style="color:#f92672">=</span> getState<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>c <span style="color:#f92672">==</span> 0<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>hasQueuedPredecessors<span style="color:#f92672">()</span> <span style="color:#f92672">&amp;&amp;</span>
+            compareAndSetState<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> acquires<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+            setExclusiveOwnerThread<span style="color:#f92672">(</span>current<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>current <span style="color:#f92672">==</span> getExclusiveOwnerThread<span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> nextc <span style="color:#f92672">=</span> c <span style="color:#f92672">+</span> acquires<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>nextc <span style="color:#f92672">&lt;</span> 0<span style="color:#f92672">)</span>
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Maximum lock count exceeded&#34;</span><span style="color:#f92672">);</span>
+        setState<span style="color:#f92672">(</span>nextc<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>而 <code>NonfairSync</code> 中的实现则及其简单：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">tryAcquire</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> acquires<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> nonfairTryAcquire<span style="color:#f92672">(</span>acquires<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><code>nonfairTryAcquire()</code> 方法的实现位于抽象类 <code>Sync</code> 中，其具体内容为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">nonfairTryAcquire</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> acquires<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">final</span> Thread current <span style="color:#f92672">=</span> Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">int</span> c <span style="color:#f92672">=</span> getState<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>c <span style="color:#f92672">==</span> 0<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>compareAndSetState<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> acquires<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+            setExclusiveOwnerThread<span style="color:#f92672">(</span>current<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>current <span style="color:#f92672">==</span> getExclusiveOwnerThread<span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> nextc <span style="color:#f92672">=</span> c <span style="color:#f92672">+</span> acquires<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>nextc <span style="color:#f92672">&lt;</span> 0<span style="color:#f92672">)</span> <span style="color:#75715e">// overflow
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Maximum lock count exceeded&#34;</span><span style="color:#f92672">);</span>
+        setState<span style="color:#f92672">(</span>nextc<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>对比 <code>FairSync</code> 可以发现，<code>FairSync</code> 中的 <code>tryAcquire()</code> 方法仅多了一行：<code>!hasQueuedPredecessors()</code>。<code>hasQueuedPredecessor()</code> 方法用来查看队列中是否有比当前线程等待时间更久的线程，如果没有，就尝试一下是否能获取到锁，如果获取成功，则标记锁为已占用。</p>
+<h2 id="readwritelock">ReadWriteLock</h2>
+<p>ReadWriteLock的接口定义如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">ReadWriteLock</span> <span style="color:#f92672">{</span>
+	Lock <span style="color:#a6e22e">readLock</span><span style="color:#f92672">();</span>
+	Lock <span style="color:#a6e22e">writeLock</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><code>ReadWriteLock</code>暴露了两个<code>Lock</code>对象，其中一个用于读操作，另一个用于写操作。要读取由<code>ReadWriteLock</code>保护的数据，必须首先获得读锁，当需要修改<code>ReadWriteLock</code>保护的数据时，必须首先获得写锁。</p>
+<p>在<code>ReadWriteLock</code>实现的加锁策略中，允许多个读操作同时进行，但每次只允许一个写操作。对于频繁读取的场景，<code>ReadWriteLock</code>能够提高性能。</p>
+<h3 id="reentrantreadwritelock">ReentrantReadWriteLock</h3>
+<p><code>ReentrantReadWriteLock</code>是<code>ReadWriteLock</code>的一个实现类，除接口方法外，它还加入了一些监控锁内部工作状态的方法。</p>
+<p><code>ReentrantReadWriteLock</code>的实现依赖于<code>AQS</code>，由于<code>AQS</code>内使用的是一个<code>int</code>类型的<code>state</code>变量来保存的同步状态，所以<code>ReentrantReadWriteLock</code>对<code>state</code>变量按位切割成了两部分使用：高16位表示读状态，低16位表示写状态。</p>
+<h2 id="locksupport">LockSupport</h2>
+<p><code>LockSupport</code>是一个工具类，由<code>UnSafe</code>类实现，主要用来挂起和唤醒线程，它是创建锁和其它同步类的基础。<code>LockSupport</code>会为每个使用它的线程关联一个许可证（permit），在默认情况下调用<code>LockSupport</code>类的方法的线程是不持有许可证的。</p>
+<p>如果调用<code>park()</code>方法的线程已经拿到了与<code>LockSupport</code>关联的许可证，则调用<code>LockSupport.park()</code>时会马上返回，否则调用线程会被禁止参与线程调度，也就是会被阻塞挂起。</p>
+<p>在其它线程调用<code>unpark(Thread thread)</code>方法并将被阻塞线程作为参数时，因调用<code>park()</code>方法而被阻塞的线程会返回。如果其它线程调用了被阻塞线程的<code>interrupt()</code>方法，被阻塞线程也会返回，但不会抛出<code>InterruptedException</code>异常。</p>
+<h2 id="contidion接口"><code>Contidion</code>接口</h2>
+<p>在某些情况下，当内置锁过于死板时，可以使用显式锁。正如<code>Lock</code>是一种广义的内置锁一样，<code>Condiiton</code>也是一种广义的内置条件队列。<code>Condition</code>接口的定义如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Condition</span> <span style="color:#f92672">{</span>
+	<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">await</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> InterruptedException<span style="color:#f92672">;</span>
+	<span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">await</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> time<span style="color:#f92672">,</span> TimeUnit unit<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> InterruptedException<span style="color:#f92672">;</span>
+	<span style="color:#66d9ef">long</span> <span style="color:#a6e22e">awaitNanos</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> nanosTimeout<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> InterruptedException<span style="color:#f92672">;</span>
+	<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">awaitUninterruptibly</span><span style="color:#f92672">();</span>
+	<span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">awaitUntil</span><span style="color:#f92672">(</span>Date deadlines<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> InterruptedException<span style="color:#f92672">;</span>
+	<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">signal</span><span style="color:#f92672">();</span>
+	<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">signalAll</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>一个<code>Condition</code>和一个<code>Lock</code>关联在一起，就像一个条件队列和一个内置锁相关联一样。可以通过<code>Lock.newCondition()</code>方法来创建一个<code>Condition</code>。</p>
+<p>特别注意：在<code>Condition</code>对象中，与<code>wait()</code>、<code>notify()</code>、<code>notifyAll()</code>方法对应的分别是<code>await()</code>、<code>signal()</code>和<code>signalAll()</code>。<code>Condition</code>对<code>Object</code>进行了扩展，因为它也包含<code>wait()</code>和<code>notify()</code>等方法。一定要确保使用正确的版本——<code>await()</code>和<code>signal()</code>。</p>
+<h2 id="参考资料">参考资料</h2>
+<ol>
+<li>Brian Goetz, Tim Peierls, Joshua Bloch, Joseph Bowbeer, David Holmes, and Doug Lea. <em>Java Concurrency in Practice</em>. Addison-Wesley Professional, 2006.</li>
+<li>方腾飞, 魏鹏, 程晓明. Java并发编程的艺术. 机械工业出版社, 2015.</li>
+<li>Martin Fowler. <em>Patterns of Enterprise Application Architecture</em>. Addison-Wesley Professional, 2002.</li>
+</ol>
+
+</div>
+
+  
+<footer class='entry-footer'>
+  <div class='container sep-before'><div class='categories'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+    <path d="M22,19a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V5A2,2,0,0,1,4,3H9l2,3h9a2,2,0,0,1,2,2Z"/>
+
+</svg>
+<span class='screen-reader-text'>Categories: </span><a class='category' href='/categories/java/'>Java</a></div>
+<div class='tags'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <path d="M20.59,13.41l-7.17,7.17a2,2,0,0,1-2.83,0L2,12V2H12l8.59,8.59A2,2,0,0,1,20.59,13.41Z"/>
+  <line x1="7" y1="7" x2="7" y2="7"/>
+
+</svg>
+<span class='screen-reader-text'>Tags: </span><a class='tag' href='/tags/java/'>Java</a></div>
+
+  </div>
+</footer>
+
+
+</article>
+
+<nav class='entry-nav'>
+  <div class='container'><div class='next-entry sep-before'>
+      <a href='/posts/java/concurrency/synchronization/'>
+        <span class='screen-reader-text'>Next post: </span>同步<span aria-hidden='true'>Next <svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="4" y1="12" x2="20" y2="12"/>
+  <polyline points="14 6 20 12 14 18"/>
+
+</svg>
+</span>
+      </a>
+    </div></div>
+</nav>
+
+
+
+
+      </main>
+
+      <footer id='footer' class='footer'>
+        <div class='container sep-before'><section class='widget widget-social_menu sep-after'><nav aria-label='Social Menu'>
+    <ul><li>
+        <a href='https://github.com/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Github account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+
+</svg>
+</a>
+      </li><li>
+        <a href='https://facebook.com/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Facebook account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg>
+</a>
+      </li><li>
+        <a href='https://twitter.com/nicholas132817' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Twitter account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <title>Twitter icon</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+
+</svg>
+</a>
+      </li><li>
+        <a href='https://instagram.com/zhanicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Instagram account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+</svg>
+</a>
+      </li><li>
+        <a href='mailto:zhan_nicholas@outlook.com' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Contact via Email</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>
+</svg>
+</a>
+      </li><li>
+        <a href='https://codepen.io/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Codepen account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon><line x1="12" y1="22" x2="12" y2="15.5"></line><polyline points="22 8.5 12 15.5 2 8.5"></polyline><polyline points="2 15.5 12 8.5 22 15.5"></polyline><line x1="12" y1="2" x2="12" y2="8.5"></line>
+</svg>
+</a>
+      </li><li>
+        <a href='https://gitlab.com/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Gitlab account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <title>GitLab icon</title>  <path d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 4.82 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.49h8.1l2.44-7.51A.42.42 0 0 1 18.6 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.51L23 13.45a.84.84 0 0 1-.35.94z"/>
+</svg>
+</a>
+      </li><li>
+        <a href='https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Linkedin account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+</a>
+      </li><li>
+        <a href='https://t.me/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Telegram account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <title>Telegram icon</title><path d="M23.91 3.79L20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72 0-.6-.27-.84-.95L6.3 13.7l-5.45-1.7c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/>
+</svg>
+</a>
+      </li><li>
+        <a href='https://scholar.google.com/citations?user=qc6CJjYAAAAhfohgoJ' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Google_scholar account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <title>Google Scholar icon</title><path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 9a8 8 0 0 1 7.162 4.44L24 9.5z"/>
+</svg>
+</a>
+      </li></ul>
+  </nav>
+</section><div class='copyright'>
+  <p> &copy; 2018-2020 Nicholas Zhan </p>
+</div>
+
+        </div>
+      </footer>
+
+    </div>
+  </div><script>window.__assets_js_src="/assets/js/"</script>
+
+<script src='/assets/js/main.c3bcf2df.js'></script><script src='/js/custom.js'></script>
+
+</body>
+
+</html>
+

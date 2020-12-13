@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang='en' dir='auto'><head>
+  <meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta name='description' content='在多道程序设计环境中，多个线程可能会争夺有限的资源。线程先请求资源，若请求不能被立即满足，线程就会进入等待状态。有时候，两个线程各自持有不同'>
+<meta name='theme-color' content='#ffcd00'>
+
+<meta property='og:title' content='死锁 • Nicholas Zhan'>
+<meta property='og:description' content='在多道程序设计环境中，多个线程可能会争夺有限的资源。线程先请求资源，若请求不能被立即满足，线程就会进入等待状态。有时候，两个线程各自持有不同'>
+<meta property='og:url' content='https://zhannicholas.github.io/posts/operating_systems/processes_management/deadlocks/'>
+<meta property='og:site_name' content='Nicholas Zhan'>
+<meta property='og:type' content='article'><meta property='og:image' content='https://www.gravatar.com/avatar/3e86aee6ced3c468bfb237be2853ad75?s=256'><meta property='article:author' content='https://facebook.com/zhannicholas'><meta property='article:section' content='posts'><meta property='article:tag' content='OS'><meta property='article:published_time' content='2020-12-13T19:18:38&#43;08:00'/><meta property='article:modified_time' content='2020-12-13T19:18:38&#43;08:00'/><meta name='twitter:card' content='summary'><meta name='twitter:creator' content='@zhannicholas'>
+
+<meta name="generator" content="Hugo 0.74.3" />
+
+  <title>死锁 • Nicholas Zhan</title>
+  <link rel='canonical' href='https://zhannicholas.github.io/posts/operating_systems/processes_management/deadlocks/'>
+  
+  
+  <link rel='icon' href='/favicon.ico'>
+<link rel='stylesheet' href='/assets/css/main.ab98e12b.css'><link rel='stylesheet' href='/css/custom.css'><style>
+:root{--color-accent:#ffcd00;}
+</style>
+
+  
+
+</head>
+<body class='page type-posts has-sidebar'>
+
+  <div class='site'><div id='sidebar' class='sidebar'>
+  <a class='screen-reader-text' href='#main-menu'>Skip to Main Menu</a>
+
+  <div class='container'><section class='widget widget-about sep-after'>
+  <header>
+    
+    <div class='logo'>
+      <a href='/'>
+        <img src='/images/logo.png'>
+      </a>
+    </div>
+    
+    <h2 class='title site-title '>
+      <a href='/'>
+      Nicholas Zhan
+      </a>
+    </h2>
+    <div class='desc'>
+    Java Developer, Long-distance Runner, Cyclist
+    </div>
+  </header>
+
+</section>
+<section class='widget widget-sidebar_menu sep-after'><nav id='sidebar-menu' class='menu sidebar-menu' aria-label='Sidebar Menu'>
+    <div class='container'>
+      <ul><li class='item has-children'>
+  <a href='/posts/databases/'>Database</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/databases/redis/'>Redis</a></li><li class='item'>
+  <a href='/posts/databases/fundamentals/'>基础理论</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/java/'>Java</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/java/jakartaee/'>Jakarta EE</a></li><li class='item'>
+  <a href='/posts/java/concurrency/'>Java并发</a></li><li class='item'>
+  <a href='/posts/java/java_lang/'>Java语言</a></li><li class='item'>
+  <a href='/posts/java/jvm/'>JVM</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/operating_systems/'>操作系统</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/operating_systems/memory_management/'>内存管理</a></li><li class='item'>
+  <a href='/posts/operating_systems/virtualization/'>虚拟化</a></li><li class='item'>
+  <a href='/posts/operating_systems/processes_management/'>进程管理</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/computer_networks/'>计算机网络</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/computer_networks/http/'>HTTP</a></li><li class='item'>
+  <a href='/posts/computer_networks/fundamentals/'>基础知识</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/reading_notes/'>阅读笔记</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/reading_notes/algorithms_in_c/'>C算法</a></li><li class='item'>
+  <a href='/posts/reading_notes/sicp_in_python/'>SICP in Python</a></li><li class='item'>
+  <a href='/posts/reading_notes/the_art_of_multiprocessor_programming/'>多处理器编程的艺术</a></li><li class='item'>
+  <a href='/posts/reading_notes/modern_operating_systems/'>现代操作系统</a></li><li class='item'>
+  <a href='/posts/reading_notes/introduction_to_algorithms/'>算法导论</a></li><li class='item'>
+  <a href='/posts/reading_notes/%E7%AE%97%E6%B3%95%E8%B6%A3%E9%A2%98/'>算法趣题</a></li><li class='item'>
+  <a href='/posts/reading_notes/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/'>设计模式的艺术</a></li></ul></li></ul>
+    </div>
+  </nav>
+
+</section><section class='widget widget-taxonomy_cloud sep-after'>
+  <header>
+    <h4 class='title widget-title'>Tags</h4>
+  </header>
+
+  <div class='container list-container'>
+  <ul class='list taxonomy-cloud'><li>
+        <a href='/tags/git/' style='font-size:1em'>Git</a>
+      </li><li>
+        <a href='/tags/http/' style='font-size:1.7777777777777777em'>HTTP</a>
+      </li><li>
+        <a href='/tags/hugo/' style='font-size:1em'>Hugo</a>
+      </li><li>
+        <a href='/tags/jakartaee/' style='font-size:1.2222222222222223em'>JakartaEE</a>
+      </li><li>
+        <a href='/tags/java/' style='font-size:1.8888888888888888em'>Java</a>
+      </li><li>
+        <a href='/tags/jvm/' style='font-size:1.2222222222222223em'>JVM</a>
+      </li><li>
+        <a href='/tags/leetcode/' style='font-size:1.2222222222222223em'>Leetcode</a>
+      </li><li>
+        <a href='/tags/linux/' style='font-size:1em'>Linux</a>
+      </li><li>
+        <a href='/tags/os/' style='font-size:1.6666666666666665em'>OS</a>
+      </li><li>
+        <a href='/tags/python/' style='font-size:1em'>Python</a>
+      </li><li>
+        <a href='/tags/redis/' style='font-size:1.6666666666666665em'>Redis</a>
+      </li><li>
+        <a href='/tags/zookeeper/' style='font-size:1em'>ZooKeeper</a>
+      </li><li>
+        <a href='/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/' style='font-size:1em'>数据库</a>
+      </li><li>
+        <a href='/tags/%E7%AE%97%E6%B3%95/' style='font-size:2em'>算法</a>
+      </li><li>
+        <a href='/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/' style='font-size:1.2222222222222223em'>计算机网络</a>
+      </li><li>
+        <a href='/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/' style='font-size:1.5555555555555556em'>读书笔记</a>
+      </li></ul>
+</div>
+
+
+</section>
+</div>
+
+  <div class='sidebar-overlay'></div>
+</div><div class='main'><nav id='main-menu' class='menu main-menu' aria-label='Main Menu'>
+  <div class='container'>
+    <a class='screen-reader-text' href='#content'>Skip to Content</a>
+
+<button id='sidebar-toggler' class='sidebar-toggler' aria-controls='sidebar'>
+  <span class='screen-reader-text'>Toggle Sidebar</span>
+  <span class='open'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="3" y1="12" x2="21" y2="12" />
+  <line x1="3" y1="6" x2="21" y2="6" />
+  <line x1="3" y1="18" x2="21" y2="18" />
+
+</svg>
+</span>
+  <span class='close'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="18" y1="6" x2="6" y2="18" />
+  <line x1="6" y1="6" x2="18" y2="18" />
+
+</svg>
+</span>
+</button>
+    <ul><li class='item'>
+        <a href='/'>Home</a>
+      </li><li class='item'>
+        <a href='/posts/'>Posts</a>
+      </li><li class='item'>
+        <a href='/about/'>About</a>
+      </li><li class='item'>
+        <a href='https://github.com/zhannicholas/blog'>Repo</a>
+      </li></ul>
+  </div>
+</nav><div class='header-widgets'>
+        <div class='container'>
+    
+    
+    
+    <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+  <section class='widget widget-breadcrumbs sep-after'>
+    <nav id='breadcrumbs'>
+      <ol><li><a href='/'>Home</a></li><li><a href='/posts/'>Posts</a></li><li><a href='/posts/operating_systems/'>操作系统</a></li><li><a href='/posts/operating_systems/processes_management/'>进程管理</a></li><li><span>死锁</span></li></ol>
+    </nav>
+  </section></div>
+      </div>
+
+      <header id='header' class='header site-header'>
+        <div class='container sep-after'>
+          <div class='header-info'><p class='site-title title'>Nicholas Zhan</p><p class='desc site-desc'>Java Developer, Long-distance Runner, Cyclist</p>
+          </div>
+        </div>
+      </header>
+
+      <main id='content'>
+
+
+<article lang='en' class='entry'>
+  <header class='header entry-header'>
+  <div class='container sep-after'>
+    <div class='header-info'>
+      <h1 class='title'>死锁</h1>
+      
+
+    </div>
+    <div class='entry-meta'>
+  <span class='posted-on'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+  <line x1="16" y1="2" x2="16" y2="6"/>
+  <line x1="8" y1="2" x2="8" y2="6"/>
+  <line x1="3" y1="10" x2="21" y2="10"/>
+
+</svg>
+<span class='screen-reader-text'>Posted on </span>
+  <time class='entry-date' datetime='2020-12-13T19:18:38&#43;08:00'>2020, Dec 13</time>
+</span>
+
+  <span class='byline'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <path d="M21,21V20c0-2.76-4-5-9-5s-9,2.24-9,5v1"/>
+  <path d="M16,6.37A4,4,0,1,1,12.63,3,4,4,0,0,1,16,6.37Z"/>
+
+</svg>
+<span class='screen-reader-text'> by </span><a href='/authors/zhannicholas'>Nicholas Zhan</a></span>
+  
+<span class='reading-time'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <circle cx="12" cy="12" r="10"/>
+  <polyline points="12 6 12 12 15 15"/>
+
+</svg>
+13 mins read
+</span>
+
+
+</div>
+
+
+  </div>
+</header>
+
+  
+  
+<details class='container entry-toc'>
+  <summary class='title'>
+    <span>Table of Contents</span>
+  </summary>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#资源">资源</a></li>
+    <li><a href="#死锁的特征">死锁的特征</a>
+      <ul>
+        <li><a href="#死锁的必要条件">死锁的必要条件</a></li>
+        <li><a href="#资源分配图">资源分配图</a></li>
+      </ul>
+    </li>
+    <li><a href="#死锁的处理">死锁的处理</a>
+      <ul>
+        <li><a href="#鸵鸟算法">鸵鸟算法</a></li>
+        <li><a href="#死锁预防">死锁预防</a></li>
+        <li><a href="#死锁避免">死锁避免</a></li>
+        <li><a href="#死锁检测与恢复">死锁检测与恢复</a></li>
+      </ul>
+    </li>
+    <li><a href="#和死锁相关的其它问题">和死锁相关的其它问题</a>
+      <ul>
+        <li><a href="#活锁">活锁</a></li>
+        <li><a href="#饥饿">饥饿</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav>
+</details>
+
+
+  <div class='container entry-content'>
+  <p>在多道程序设计环境中，多个线程可能会争夺有限的资源。线程先请求资源，若请求不能被立即满足，线程就会进入等待状态。有时候，两个线程各自持有不同的资源并等待对方所持有的资源，这种情况可能导致 <strong>死锁(deadlock)</strong>。死锁的定义为：<em>every process in a set of processes is waiting for an event that can be caused only by another process in the set</em>。虽然定义中使用了进程，但这也适用于线程。</p>
+<h2 id="资源">资源</h2>
+<p>大部分死锁是由线程无法获得互斥资源引起的，这些资源可以是各种硬件设备(如打印机)、也可以是一段信息(如数据库内的记录)。资源种类繁多，一类资源可以具有若干实例，任何一个实例都可以满足对该类资源的请求。简而言之，<strong>资源(resource)</strong> 就是任何能够被获取、使用并最终释放的东西。线程在使用某个资源前必须先请求该资源，并且必须在使用完之后释放它。很明显，线程所请求的资源数量不得超过系统内资源的总量。</p>
+<p>资源可以分为两种：<strong>可抢占的(preemptable)</strong> 和 <strong>不可抢占的(nonpreepmptable)</strong>。通常情况下，死锁和不可抢占资源有关。可抢占资源中潜在的死锁可以通过资源的重分配来化解。</p>
+<p>一般情况下，和使用资源有关的事件如下：</p>
+<ul>
+<li><strong>请求</strong>。线程请求资源，若请求不能被立即满足，线程必须等待。</li>
+<li><strong>使用</strong>。线程在资源上执行某些操作。</li>
+<li><strong>释放</strong>。线程释放资源。</li>
+</ul>
+<p>资源的请求和释放可能是通过系统调用来完成的。例如，某些系统可能提供了诸如<code>request()/release()</code>、<code>open()/close()</code>或<code>wait()/signal()</code>一类的系统调用。对于被内核管理的资源，操作系统会维护一张系统表，表中记录了每个资源是空闲的还是已分配的(还会记录资源被分配给了哪个线程)。如果线程请求的资源已将被分配给其它线程，就将它加入到对应资源的等待队列中。</p>
+<h2 id="死锁的特征">死锁的特征</h2>
+<h3 id="死锁的必要条件">死锁的必要条件</h3>
+<p>当以下四个条件同时满足时，就会出现死锁：</p>
+<ol>
+<li><strong>互斥(Mutual exclusion)</strong>。资源要么因其已被分配给某个线程而不可用，要么就是可用的。</li>
+<li><strong>占有并等待(Hold and wait)</strong>。线程持有至少一个资源并等待其它线程正持有的资源。</li>
+<li><strong>非抢占(No preemption)</strong>。在持有资源的线程完成前，该资源不可被其它线程抢占。</li>
+<li><strong>循环等待(Circular wait)</strong>。一组线程形成等待环路，环路中的每一个线程都在等待下一个线程持有的资源。</li>
+</ol>
+<p>虽然死锁只有在以上四个条件同时满足时才会出现，但这四个条件并不是完全独立的。例如，<em>循环等待</em>条件暗示了<em>占有并等待</em>条件。</p>
+<h3 id="资源分配图">资源分配图</h3>
+<p><strong>系统资源分配图(system resource-allocation graph, RAG)</strong> 是一个有向图，它可以精确的描述死锁。它由一组顶点<code>V</code>和一组边<code>E</code>构成，其中，<code>V</code>又由两部分组成：系统中的所有活动线程<code>T</code>和系统中所有的资源类型<code>R</code>(注意是资源类型而不是资源数量)；<code>E</code>有两种类型：<code>request edge</code>和<code>assignment edge</code>，<code>request edge</code> $T_i \to R_i$ 表示线程 $T_i$ 请求并等待资源 $R_j$ 的实例，而<code>assignment edge</code> $R_j \to T_i$ 表示线程 $T_i$ 已经持有一个资源 $R_j$ 的实例。为了便于识别，我们用圆形表示线程，用矩形表示资源，在矩形内部用点表示资源的实例。</p>
+<p><img src="/images/operating_systems/processes_management/resource-allocation-graph.png" alt="Resource-allocation Graph"></p>
+<p>上图展示了这样一个资源分配情况。
+集合<code>T</code>、<code>R</code>、<code>E</code>：</p>
+<ul>
+<li>$$T = {T_1, T_2, T_3}$$</li>
+<li>$$R = {R_1, R_2, R_3, R_4}$$</li>
+<li>$$E = {T_1 \to R_1, T_2 \to R_2, R_1 \to T_2, R_2 \to T_1, R_2 \to T2, R_3 \to T_3}$$</li>
+</ul>
+<p>资源实例：</p>
+<ul>
+<li>1个 $R_1$ 实例。</li>
+<li>2个 $R_2$ 实例。</li>
+<li>1个 $R_3$ 实例。</li>
+<li>3个 $R_4$ 实例。</li>
+</ul>
+<p>线程状态：</p>
+<ul>
+<li>线程 $T_1$ 持有1个 $R_2$ 实例并等待一个 $R_1$ 实例。</li>
+<li>线程 $T_2$ 持有1个 $R_1$ 实例和1个 $R_2$ 实例并等待1个 $R_3$ 实例。</li>
+<li>线程 $T_3$ 持有1个 $R_3$ 实例。</li>
+</ul>
+<p>如果资源分配图中没有环，就说明线程之间没有死锁，否则说明<strong>可能</strong>存在死锁。现在来看有环的情况：</p>
+<ul>
+<li>如果每种资源都只有一个实例，那么存在死锁。</li>
+<li>如果环中只包含了资源类型的一个子集，若子集内的每种资源只有一个实例，那么存在死锁。</li>
+<li>如果每种资源有多个实例，那么可能存在死锁。</li>
+</ul>
+<p>下面是一个具有两个环( $T_1 \to R_1 \to T_2 \to R_3 \to T_3 \to R_2 \to T_1 $、 $T_2 \to R_3 \to T_3 \to R_2 \to T_2$ )的资源分配图。线程 $T_1$ 、 $T_2$ 和 $T_3$ 死锁了，线程 $T_2$ 在等 $T_3$ 释放 $R_3$ ，而 $T_3$ 在等 $T_1$ 或 $T_2$ 释放 $R_2$ ，$T1$ 也在等 $T_2$ 释放$R_1$ 。</p>
+<p><img src="/images/operating_systems/processes_management/resource-allocation-graph-with-a-deadlock.png" alt="Resource-allocation Graph with a deadlock"></p>
+<p>在看下面这张资源分配图，虽然其中有一个环( $T_1 \to R_1 \to T_2 \to R_2 \to T_1$ )，但不存在死锁。因为线程 $T_4$ 可以释放一个资源 $R_2$ 的实例， $T_3$ 获得这个实例之后图中就不存在环了。</p>
+<p><img src="/images/operating_systems/processes_management/resource-allocation-graph-without-deadlocks.png" alt="Resource-allocation Graph without deadlocks"></p>
+<h2 id="死锁的处理">死锁的处理</h2>
+<p>一般而言，我们有四种处理死锁的策略：</p>
+<ol>
+<li>忽略死锁。</li>
+<li>破坏死锁的四个必要条件之一，预防死锁的产生。</li>
+<li>谨慎分配资源，避免死锁的出现。</li>
+<li>检测死锁的发生并设法恢复。</li>
+</ol>
+<h3 id="鸵鸟算法">鸵鸟算法</h3>
+<p>鸵鸟在遇到危险时，会将头埋在沙子里，假装看不见。这是最简单的解决方案，即忽略死锁。</p>
+<h3 id="死锁预防">死锁预防</h3>
+<p>死锁若发生，其四个必要条件必须同时满足。因此，只要能破坏死锁发生的四个必要条件之一，我们就能预防死锁。</p>
+<p>破坏<strong>互斥</strong>条件。因为死锁是在访问共享资源时发生的，若资源不是共享的，那就不可能发生死锁。如果访问共享资源时不需要互斥(例如只读文件)，也不会发生死锁。</p>
+<p>破坏<strong>占有并等待</strong>条件，有两种方法可以破坏它。一种方法是在线程运行之前就为它分配好需要的所有资源，这不太实用，因为大多数程序都是动态申请资源的。另一种方法是只允许线程不持有资源的情况下请求资源。以上两种方法都有缺陷：资源的利用率低，还可能产生饥饿现象。</p>
+<p>破坏<strong>非抢占</strong>条件，我们可以这么干：如果线程在持有一些资源的情况下请求其它<!-- raw HTML omitted -->不能立即得到<!-- raw HTML omitted -->的资源，那么让该线程当前持有的资源都可以被抢占。换句话说，线程当前持有的资源是隐式释放了的。原线程可以在被抢占的资源归还后重启，就像这些资源刚被分配给它一样。</p>
+<p>前面三种解决方案在大多数情形下都不太实用，有多种方法可以破坏<strong>循环等待</strong>条件，即避免环路的出现。一种方法时保证每个线程在任何时刻只能占用一个资源，若要请求另一个资源，就必须释放当前持有的资源。另一种方法就是对<!-- raw HTML omitted -->所有<!-- raw HTML omitted -->资源进行统一编号，线程可以在任何时刻请求资源，但所有的请求必须按照资源编号的顺序提出，这样不会出现环路。在任何时候，总有一个线程持有已分配资源中编号最大的那个资源(如果有资源被分配的话)，这个线程不能请求其它已分配的各种资源(编号肯定都小于它持有的那个最大编号)，它要么执行完毕，要么去请求编号更高的资源(总是可用的)。最终，它会执行完并释放占有的资源，这是其它的线程也可以以同样的方式执行完。</p>
+<h3 id="死锁避免">死锁避免</h3>
+<p>死锁避免算法通过动态检查资源的分配状态来确保不会发生循环等待。资源分配状态包括资源的可用数量、已分配数量及线程请求的数量。</p>
+<h4 id="安全状态">安全状态</h4>
+<p>如果系统按照某种顺序为每线程分配资源，可以使得每个线程都能拿到资源并执行完成，那么这样的资源分配顺序就是<strong>安全序列(safe sequence)</strong>。只要系统中存在至少一个安全序列，系统就处于<strong>安全状态(safe state)</strong>。反之，系统处于不安全状态，可能出现死锁。若线程序列 $&lt;T_1, T_2, &hellip;, T_n&gt;$ 是一个安全序列，那么对于线程 $T_i$ 而言， $T_i$ 请求的资源数量不大于当前可用资源加上所有 $T_j(j &lt; i)$ 线程所占用的资源之和(当 $T_j$ 执行完成后，会释放其占用的资源)。</p>
+<h4 id="资源分配图算法">资源分配图算法</h4>
+<p>在每种类型的资源都只有一个实例的前提下，我们可以利用RAG来避免死锁的出现。具体做法是：引入一种新的边——<code>claim edge</code>。<code>claim edge</code> $T_i \to R_j$ 表示线程 $T_i$ 在将来可能会请求资源 $R_j$ (<code>claim edge</code>在RAG中用虚线表示)。当线程 $T_i$ 请求资源 $R_j$ 时，就将<code>claim edge</code> $T_i \to R_j$ 转化为<code>request edge</code> $T_i \to R_j$ ；当资源 $R_j$ 被线程 $T_i$ 释放时，就将<code>assignment edge</code> $R_j \to T_i$ 转化为<code>claim edge</code> $T_i \to R_j$ 。</p>
+<p>为了使RAG算法正确工作，只有在线程的所有<code>claim edge</code>被添加到RAG中之后，该线程才能被允许请求资源。或者，线程可以请求已经设置好的<code>claim edge</code>边关联的资源，并且不允许在线程持有资源的情况下添加<code>claim edge</code>到RAG。<code>claim edge</code>实际上起到了延迟RAG中环路出现作用。</p>
+<p>为了更好的说明RAG算法，考虑下图，假设线程 $T_1$ 请求资源 $R_2$ ，尽管 $R_2$ 当前未被占用，但我们也不能把它分配给 $T_1$ 。因为这个举动将导致RAG中出现环路，系统将进入不安全状态。如果 $T_2$ 请求 $R_2$ ，并且 $T_1$ 请求 $R_1$ ，就会出现死锁。</p>
+<p><img src="/images/operating_systems/processes_management/resource-allocation-graph-for-deadlock-avoidance.png" alt="Resource-allocation Graph for Deadlock Avoidance"></p>
+<h4 id="银行家算法">银行家算法</h4>
+<p>当资源有多个实例时，RAG算法就无法使用了，这个时候可以使用<strong>银行家算法(banker&rsquo;s algorithm)</strong>。算法要做的就是判断满足线程的资源请求是否会导致系统进入不安全状态，若是，则拒绝请求，否则予以分配，系统继续处于安全状态。</p>
+<p>为了实现银行家算法，我们需要维护几个和资源分配状态有关的数据结构，其中<code>n</code>代表线程数，<code>m</code>代表资源种类数：</p>
+<ul>
+<li><strong>Available</strong>。<code>m</code>维向量，其中<code>Available[i]</code>表示资源 $R_i$ 的可用实例数。</li>
+<li><strong>Max</strong>。<code>n x m</code>维矩阵，其中<code>Max[i][j]</code>表示线程 $T_i$ 对资源 $R_j$ 的最大需求数。</li>
+<li><strong>Allocation</strong>。<code>n x m</code>维矩阵，其中<code>Allocation[i][j]</code>表示线程 $T_i$ 当前持有资源 $R_j$ 的实例数。</li>
+<li><strong>Need</strong>。<code>n x m</code>维矩阵，其中<code>Need[i][j]</code>表示线程 $T_i$ 要完成工作还需要的资源 $R_j$的实例数。注意：<code>Need[i][j] = Max[i][j] - Allocation[i][j]</code>。</li>
+</ul>
+<p>为了简化算法的表示，我们定义，对于长度为<code>n</code>的向量<code>A</code>和向量<code>B</code>，<code>A ≤ B if and only if A[i] ≤ B[i] for all i = 1,2,...,n</code>。</p>
+<h5 id="安全性算法">安全性算法</h5>
+<p>为了使用银行家算法，我们需要判断系统是否处于安全状态。检测系统是否处于安全状态的算法如下：</p>
+<ol>
+<li>设<code>Work</code>和<code>Finish</code>分别是长度为<code>m</code>和<code>n</code>的向量。<code>Work</code>为可用资源的一个工作副本，它可以在分析过程中被修改，初始值为<code>Available</code>。<code>Finish</code>是一个布尔类型的向量，用来表示某个线程是否能够执行完成，其所有元素均初始化为<code>false</code>。</li>
+<li>找到一个满足<code>Finish[i] == false &amp;&amp; Need[i] ≤ Work</code>的<code>i</code>。满足条件的线程还未完成，但可以为其分配资源。如果不存在这样的<code>i</code>，跳转到步骤4。</li>
+<li><code>Work = Work + Allocation[i]</code>，<code>Finish[i] = true</code>。这表示线程<code>i</code>执行完成并将其占用的资源归还到工作池。跳转到步骤2。</li>
+<li>如果所有的<code>i</code>都满足<code>Finish[i] == true</code>，那么系统当前处于安全状态，因为我们找到了一个安全序列。</li>
+</ol>
+<p>为了判断系统是否处于安全状态，算法可能需要执行 $m \times n^2$ 次。</p>
+<h5 id="资源请求算法银行家算法">资源请求算法(银行家算法)</h5>
+<p><strong>资源请求算法(Resource-Request Algorithm)</strong> 用来判断某个请求的安全性，只有一个请求是安全的，才为其分配资源。若满足某个请求后系统仍处于安全状态，那么这个请求就是安全的。用<code>Request[i][j]</code>表示线程 $T_i$ 请求资源 $R_j$ 的实例数，当线程 $T_i$ 发出一个资源请求时，将按照以下步骤处理：</p>
+<ol>
+<li>若<code>Request[i] ≤ Need[i]</code>，跳转步骤2。否则抛出错误，因为线程请求的资源数超过了它需要的最大值。</li>
+<li>若<code>Request[i] ≤ Available</code>，跳转步骤3。否则，由于资源不够，线程 $T_i$ 必须等待。</li>
+<li>检查是否可以安全地满足<code>Request[i]</code>。先假装请求的资源已被授予，然后运行安全性算法检查系统是否仍然处于安全状态。若是，满足<code>Request[i]</code>，否则线程 $T_i$ 必须等待直到<code>Request[i]</code>变成安全的。假装分配资源的伪代码为：
+<ul>
+<li>可用资源减少：<code>Available = Available - Request[i];</code></li>
+<li>已分配资源增加：<code>Allocation[i] = Allocaion[i] + Request[i];</code></li>
+<li>资源需求量减少：<code>Need[i] = Need[i] - Request[i]</code>。</li>
+</ul>
+</li>
+</ol>
+<h5 id="一个例子">一个例子</h5>
+<p>假设系统中有5个线程，10个资源A实例、5个资源B实例和7个资源C实例，系统当前的快照状态如下：</p>
+<table>
+<thead>
+<tr>
+<th>线程</th>
+<th>Allocation(A, B, C)</th>
+<th>Max(A, B, C)</th>
+<th>Available(A, B, C)</th>
+<th>Need(A, B, C)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$$T_0$$</td>
+<td>(0, 1, 0)</td>
+<td>(7, 5, 3)</td>
+<td>(3, 3, 2)</td>
+<td>(7, 4, 3)</td>
+</tr>
+<tr>
+<td>$$T_1$$</td>
+<td>(2, 0, 0)</td>
+<td>(3, 2, 2)</td>
+<td></td>
+<td>(1, 2, 2)</td>
+</tr>
+<tr>
+<td>$$T_2$$</td>
+<td>(3, 0, 2)</td>
+<td>(9, 0, 2)</td>
+<td></td>
+<td>(6, 0, 0)</td>
+</tr>
+<tr>
+<td>$$T_3$$</td>
+<td>(2, 1, 1)</td>
+<td>(2, 2, 2)</td>
+<td></td>
+<td>(0, 1, 1)</td>
+</tr>
+<tr>
+<td>$$T_4$$</td>
+<td>(0, 0, 2)</td>
+<td>(4, 3, 3)</td>
+<td></td>
+<td>(4, 3, 1)</td>
+</tr>
+</tbody>
+</table>
+<p>运行银行家算法可以发现当前系统处于安全状态，因为存在一个安全序列 $&lt;T_1, T_3, T_4, T_2, T_0&gt;$ 。</p>
+<p>假设现在线程 $T_1$ 需要请求1个资源A和2个资源C，即<code>Request[1] = (1, 0, 2)</code>。为了判断<code>Request[1]</code>是否是安全的，我们先检查<code>Request[i] ≤ Available</code>，条件成立，现在假装<code>Request[1]</code>已被满足，系统将进入一个新的状态：</p>
+<table>
+<thead>
+<tr>
+<th>线程</th>
+<th>Allocation(A, B, C)</th>
+<th>Max(A, B, C)</th>
+<th>Available(A, B, C)</th>
+<th>Need(A, B, C)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$$T_0$$</td>
+<td>(0, 1, 0)</td>
+<td>(7, 5, 3)</td>
+<td>(2, 3, 0)</td>
+<td>(7, 4, 3)</td>
+</tr>
+<tr>
+<td>$$T_1$$</td>
+<td>(3, 0, 2)</td>
+<td>(3, 2, 2)</td>
+<td></td>
+<td>(0, 2, 0)</td>
+</tr>
+<tr>
+<td>$$T_2$$</td>
+<td>(3, 0, 2)</td>
+<td>(9, 0, 2)</td>
+<td></td>
+<td>(6, 0, 0)</td>
+</tr>
+<tr>
+<td>$$T_3$$</td>
+<td>(2, 1, 1)</td>
+<td>(2, 2, 2)</td>
+<td></td>
+<td>(0, 1, 1)</td>
+</tr>
+<tr>
+<td>$$T_4$$</td>
+<td>(0, 0, 2)</td>
+<td>(4, 3, 3)</td>
+<td></td>
+<td>(4, 3, 1)</td>
+</tr>
+</tbody>
+</table>
+<p>现在检查系统是否处于安全状态，运行安全性算法，我们可以找到安全序列 $&lt;T_1, T_3, T_4, T_0, T_2&gt;$ 。因此我们可以立即满足线程 $T_1$ 的请求。满足线程 $T_1$ 的请求之后，假设线程 $T_0$ 又来请求资源，<code>Request[0] = (0, 2, 0)</code>，因为<code>(0, 2, 0) ≤ （2, 3, 0)</code>，所以我们假装资源已分配，系统的状态如下：</p>
+<table>
+<thead>
+<tr>
+<th>线程</th>
+<th>Allocation(A, B, C)</th>
+<th>Max(A, B, C)</th>
+<th>Available(A, B, C)</th>
+<th>Need(A, B, C)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$$T_0$$</td>
+<td>(0, 3, 0)</td>
+<td>(7, 5, 3)</td>
+<td>(2, 1, 0)</td>
+<td>(7, 2, 3)</td>
+</tr>
+<tr>
+<td>$$T_1$$</td>
+<td>(3, 0, 2)</td>
+<td>(3, 2, 2)</td>
+<td></td>
+<td>(0, 2, 0)</td>
+</tr>
+<tr>
+<td>$$T_2$$</td>
+<td>(3, 0, 2)</td>
+<td>(9, 0, 2)</td>
+<td></td>
+<td>(6, 0, 0)</td>
+</tr>
+<tr>
+<td>$$T_3$$</td>
+<td>(2, 1, 1)</td>
+<td>(2, 2, 2)</td>
+<td></td>
+<td>(0, 1, 1)</td>
+</tr>
+<tr>
+<td>$$T_4$$</td>
+<td>(0, 0, 2)</td>
+<td>(4, 3, 3)</td>
+<td></td>
+<td>(4, 3, 1)</td>
+</tr>
+</tbody>
+</table>
+<p>运行安全性算法会发现，我们找不到任何安全序列，所以不能满足线程 $T_0$ 的这个请求。</p>
+<h3 id="死锁检测与恢复">死锁检测与恢复</h3>
+<p>当系统既不能预防也不能避免死锁，那死锁就有可能出现。这个时候，系统可能就需要具备检测死锁的存在并从死锁恢复的能力了。</p>
+<h4 id="死锁检测">死锁检测</h4>
+<h5 id="每类资源只有一个实例的死锁检测">每类资源只有一个实例的死锁检测</h5>
+<p>当RAG中存在环路时，可能存在死锁。因此，我们检测RAG中是否存在环路即可。</p>
+<h5 id="每类资源有多个实例的死锁检测">每类资源有多个实例的死锁检测</h5>
+<p>当每类资源有多个实例时，我们可以利用银行家算法中的数据结构并稍微修改安全性算法来检测死锁的存在。算法如下：</p>
+<ol>
+<li>设<code>Work</code>和<code>Finish</code>分别是长度为<code>m</code>和<code>n</code>的向量。<code>Work</code>为可用资源的一个工作副本，它可以在分析过程中被修改，初始值为<code>Available</code>。<code>Finish</code>是一个布尔类型的向量，用来表示某个线程是否已经完成。若<code>Available[i] = 0</code>，则<code>Finish[i] = true</code>，否则<code>Finish[i] = false</code>。</li>
+<li>找到一个满足<code>Finish[i] == false &amp;&amp; Request[i] ≤ Work</code>的<code>i</code>。满足条件的线程还未完成，但可以为其分配资源。如果不存在这样的<code>i</code>，跳转到步骤4。</li>
+<li><code>Work = Work + Allocation[i]</code>，<code>Finish[i] = true</code>。这表示线程<code>i</code>执行完成并将其占用的资源归还到工作池。跳转到步骤2。</li>
+<li>若存在<code>i</code>，使<code>Finish[i] == false</code>，那么系统中存在死锁。<code>Finish[i] == false</code>的线程就是已经发生死锁的线程。</li>
+</ol>
+<p>假设系统中有5个线程，7个资源A实例、2个资源B实例和6个资源C实例，系统当前的快照状态如下：</p>
+<table>
+<thead>
+<tr>
+<th>线程</th>
+<th>Allocation(A, B, C)</th>
+<th>Request(A, B, C)</th>
+<th>Available(A, B, C)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$$T_0$$</td>
+<td>(0, 1, 0)</td>
+<td>(0, 0, 0)</td>
+<td>(0, 0, 0)</td>
+</tr>
+<tr>
+<td>$$T_1$$</td>
+<td>(2, 0, 0)</td>
+<td>(2, 0, 2)</td>
+<td></td>
+</tr>
+<tr>
+<td>$$T_2$$</td>
+<td>(3, 0, 3)</td>
+<td>(0, 0, 0)</td>
+<td></td>
+</tr>
+<tr>
+<td>$$T_3$$</td>
+<td>(2, 1, 1)</td>
+<td>(1, 0, 0)</td>
+<td></td>
+</tr>
+<tr>
+<td>$$T_4$$</td>
+<td>(0, 0, 2)</td>
+<td>(0, 0, 2)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>运行死锁检测算法，我们可以找到安全序列 $&lt;T_0, T_2, T_3, T_1, T_4&gt;$ 使得<code>Finish</code>中所有元素均为<code>true</code>，因此当前系统中没有死锁。若当前系统的状态为(线程 $T_2$ 多请求了一个资源C)：</p>
+<table>
+<thead>
+<tr>
+<th>线程</th>
+<th>Allocation(A, B, C)</th>
+<th>Request(A, B, C)</th>
+<th>Available(A, B, C)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$$T_0$$</td>
+<td>(0, 1, 0)</td>
+<td>(0, 0, 0)</td>
+<td>(0, 0, 0)</td>
+</tr>
+<tr>
+<td>$$T_1$$</td>
+<td>(2, 0, 0)</td>
+<td>(2, 0, 2)</td>
+<td></td>
+</tr>
+<tr>
+<td>$$T_2$$</td>
+<td>(3, 0, 3)</td>
+<td>(0, 0, 1)</td>
+<td></td>
+</tr>
+<tr>
+<td>$$T_3$$</td>
+<td>(2, 1, 1)</td>
+<td>(1, 0, 0)</td>
+<td></td>
+</tr>
+<tr>
+<td>$$T_4$$</td>
+<td>(0, 0, 2)</td>
+<td>(0, 0, 2)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>这个时候系统就存在死锁了。尽管我们可以回收线程 $T_0$ 占用的资源，但也无济于事，线程 $T_1$ 、 $T_2$ 、 $T_3$ 和 $T_4$ 死锁了。</p>
+<h5 id="死锁检测算法的使用">死锁检测算法的使用</h5>
+<p>现在我们已经有死锁检测算法了，接下来的问题是何时去检测它们。一种方法是每当有资源请求时就去检测，虽然越早发现死锁越好，但这可能占用大量的CPU时间。另一种方法是每隔一段时间就检查一次，或者当CPU使用率降到一定阈值以下时去检查。考虑到CPU的使用效率，如果死锁线程达到了一定数量，就没多少线程可以运行了，所以CPU会经常空闲。</p>
+<h4 id="从死锁恢复">从死锁恢复</h4>
+<p>当我们成功检测到了死锁，下一步就是采取一些方法使系统重新正常工作：</p>
+<ol>
+<li><strong>利用抢占恢复</strong>。临时将资源从一个线程抢占到另一个线程，另一个线程使用完就送回原线程。</li>
+<li><strong>回滚</strong>。周期性的创建检查点，当检测到死锁时，回退到某个之前的检查点继续。</li>
+<li><strong>杀死进程</strong>。杀死一个或多个进程，使之释放资源，便于其它线程正常运行。</li>
+</ol>
+<h2 id="和死锁相关的其它问题">和死锁相关的其它问题</h2>
+<h3 id="活锁">活锁</h3>
+<p><strong>活锁(livelock)</strong> 不会阻塞线程，但线程也不能继续执行，因为线程将不断重复执行相同的操作，而且总会失败。这就像两个过于礼貌的人在半路上面对面地相遇：他们彼此都给对方让路，然后又在另一条路上相遇了，并且他们就这样反复地避让下去。可以在重试机制中引入 <strong>随机性</strong> 来解决问题，这样能减少冲突。</p>
+<h3 id="饥饿">饥饿</h3>
+<p>当线程由于无法访问它所需要的资源而不能继续执行时，就发生了<strong>饥饿(Starvation)</strong>。例如：Java应用程序对线程的优先级设置不当，导致部分线程无法获取CPU时钟周期。可以通过FIFO策略来避免饥饿，也可以在引入老化机制，动态的调整线程优先级，使每个线程的优先级都有机会变成最高的。</p>
+<h2 id="参考资料">参考资料</h2>
+<ol>
+<li>ANDREW S. TANENBAUM, HERBERT BOS. <em>Modern Operating Systems, 4th Edition</em>. Pearson, 2015.</li>
+<li>Abraham Silberschatz, Greg Gagne, Peter B. Galvin. <em>Operating System Concepts, 10th Edition</em>. Wiley, 2018.</li>
+</ol>
+
+</div>
+
+  
+<footer class='entry-footer'>
+  <div class='container sep-before'><div class='categories'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+    <path d="M22,19a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V5A2,2,0,0,1,4,3H9l2,3h9a2,2,0,0,1,2,2Z"/>
+
+</svg>
+<span class='screen-reader-text'>Categories: </span><a class='category' href='/categories/os/'>OS</a></div>
+<div class='tags'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <path d="M20.59,13.41l-7.17,7.17a2,2,0,0,1-2.83,0L2,12V2H12l8.59,8.59A2,2,0,0,1,20.59,13.41Z"/>
+  <line x1="7" y1="7" x2="7" y2="7"/>
+
+</svg>
+<span class='screen-reader-text'>Tags: </span><a class='tag' href='/tags/os/'>OS</a></div>
+
+  </div>
+</footer>
+
+
+</article>
+
+<nav class='entry-nav'>
+  <div class='container'><div class='next-entry sep-before'>
+      <a href='/posts/operating_systems/processes_management/processes_and_threads/'>
+        <span class='screen-reader-text'>Next post: </span>进程与线程<span aria-hidden='true'>Next <svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="4" y1="12" x2="20" y2="12"/>
+  <polyline points="14 6 20 12 14 18"/>
+
+</svg>
+</span>
+      </a>
+    </div></div>
+</nav>
+
+
+
+
+      </main>
+
+      <footer id='footer' class='footer'>
+        <div class='container sep-before'><section class='widget widget-social_menu sep-after'><nav aria-label='Social Menu'>
+    <ul><li>
+        <a href='https://github.com/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Github account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+
+</svg>
+</a>
+      </li><li>
+        <a href='https://facebook.com/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Facebook account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg>
+</a>
+      </li><li>
+        <a href='https://twitter.com/nicholas132817' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Twitter account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <title>Twitter icon</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+
+</svg>
+</a>
+      </li><li>
+        <a href='https://instagram.com/zhanicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Instagram account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+</svg>
+</a>
+      </li><li>
+        <a href='mailto:zhan_nicholas@outlook.com' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Contact via Email</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>
+</svg>
+</a>
+      </li><li>
+        <a href='https://codepen.io/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Codepen account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon><line x1="12" y1="22" x2="12" y2="15.5"></line><polyline points="22 8.5 12 15.5 2 8.5"></polyline><polyline points="2 15.5 12 8.5 22 15.5"></polyline><line x1="12" y1="2" x2="12" y2="8.5"></line>
+</svg>
+</a>
+      </li><li>
+        <a href='https://gitlab.com/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Gitlab account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <title>GitLab icon</title>  <path d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 4.82 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.49h8.1l2.44-7.51A.42.42 0 0 1 18.6 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.51L23 13.45a.84.84 0 0 1-.35.94z"/>
+</svg>
+</a>
+      </li><li>
+        <a href='https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Linkedin account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+</a>
+      </li><li>
+        <a href='https://t.me/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Telegram account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <title>Telegram icon</title><path d="M23.91 3.79L20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72 0-.6-.27-.84-.95L6.3 13.7l-5.45-1.7c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/>
+</svg>
+</a>
+      </li><li>
+        <a href='https://scholar.google.com/citations?user=qc6CJjYAAAAhfohgoJ' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Google_scholar account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <title>Google Scholar icon</title><path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 9a8 8 0 0 1 7.162 4.44L24 9.5z"/>
+</svg>
+</a>
+      </li></ul>
+  </nav>
+</section><div class='copyright'>
+  <p> &copy; 2018-2020 Nicholas Zhan </p>
+</div>
+
+        </div>
+      </footer>
+
+    </div>
+  </div><script>window.__assets_js_src="/assets/js/"</script>
+
+<script src='/assets/js/main.c3bcf2df.js'></script><script src='/js/custom.js'></script><script type='text/x-mathjax-config'>
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"processEscapes":true}})
+</script>
+
+<script type='text/javascript' async src='//unpkg.com/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+
+</body>
+
+</html>
+

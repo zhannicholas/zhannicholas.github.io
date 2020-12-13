@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>操作系统 on Nicholas Zhan</title>
+    <link>https://zhannicholas.github.io/posts/operating_systems/</link>
+    <description>Recent content in 操作系统 on Nicholas Zhan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 13 Dec 2020 19:45:38 +0800</lastBuildDate>
+    
+	<atom:link href="https://zhannicholas.github.io/posts/operating_systems/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Operating_systems</title>
+      <link>https://zhannicholas.github.io/posts/operating_systems/operating_systems/</link>
+      <pubDate>Sun, 13 Dec 2020 18:57:36 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/operating_systems/operating_systems/</guid>
+      <description>计算机系统由硬件系统和软件系统两大部分组成。硬件包括处理器、主存、磁盘、打印机、键盘、鼠标、显示器、网络接口以及各种输入/输出设备等。操作系</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java语言 on Nicholas Zhan</title>
+    <link>https://zhannicholas.github.io/posts/java/java_lang/</link>
+    <description>Recent content in Java语言 on Nicholas Zhan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 13 Dec 2020 18:25:38 +0800</lastBuildDate>
+    
+	<atom:link href="https://zhannicholas.github.io/posts/java/java_lang/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java 代理</title>
+      <link>https://zhannicholas.github.io/posts/java/java_lang/proxy/</link>
+      <pubDate>Sun, 13 Dec 2020 18:25:38 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/java_lang/proxy/</guid>
+      <description>Wikipedia 中是这样描述 Proxy 的： A proxy, in its most general form, is a class functioning as an interface to something else. The proxy could interface to anything: a network connection, a large object in memory, a file, or some other resource that is expensive or impossible to duplicate. In short, a proxy is a wrapper or agent object that is being called by the</description>
+    </item>
+    
+    <item>
+      <title>反射</title>
+      <link>https://zhannicholas.github.io/posts/java/java_lang/reflection/</link>
+      <pubDate>Sun, 13 Dec 2020 18:22:56 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/java_lang/reflection/</guid>
+      <description>反射(Reflection) 是Java语言的一大特性，它允许Java程序在运行过程中获取自身的相关信息，还能改变程序的内部属性。我们可以使用</description>
+    </item>
+    
+    <item>
+      <title>Cloning Objects</title>
+      <link>https://zhannicholas.github.io/posts/java/java_lang/cloning_objects/</link>
+      <pubDate>Sun, 13 Dec 2020 18:19:11 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/java_lang/cloning_objects/</guid>
+      <description>通过克隆（Clone），我们可以快速构建出一个已有对象的副本。 浅克隆 VS 深克隆 浅克隆（Shadow Clone） 或 浅复制（Shallow Copy</description>
+    </item>
+    
+    <item>
+      <title>Nested Classes</title>
+      <link>https://zhannicholas.github.io/posts/java/java_lang/nested_classes/</link>
+      <pubDate>Sun, 13 Dec 2020 18:18:04 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/java_lang/nested_classes/</guid>
+      <description>Java允许我们在一个类中定义另一个类，后者被称为嵌套类（nested class）。嵌套类可以分为两种： 静态内部类（static nested class</description>
+    </item>
+    
+  </channel>
+</rss>

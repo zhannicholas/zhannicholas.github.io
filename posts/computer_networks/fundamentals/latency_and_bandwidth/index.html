@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang='en' dir='auto'><head>
+  <meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta name='description' content='延迟（Latency） 和**带宽（Bandwidth）**是衡量网络性能的两个关键指标。 延迟 延迟是指一个数据包(或一条消息)从发送到被接收这'>
+<meta name='theme-color' content='#ffcd00'>
+
+<meta property='og:title' content='延迟与带宽 • Nicholas Zhan'>
+<meta property='og:description' content='延迟（Latency） 和**带宽（Bandwidth）**是衡量网络性能的两个关键指标。 延迟 延迟是指一个数据包(或一条消息)从发送到被接收这'>
+<meta property='og:url' content='https://zhannicholas.github.io/posts/computer_networks/fundamentals/latency_and_bandwidth/'>
+<meta property='og:site_name' content='Nicholas Zhan'>
+<meta property='og:type' content='article'><meta property='og:image' content='https://www.gravatar.com/avatar/3e86aee6ced3c468bfb237be2853ad75?s=256'><meta property='article:author' content='https://facebook.com/zhannicholas'><meta property='article:section' content='posts'><meta property='article:tag' content='计算机网络'><meta property='article:published_time' content='2020-12-13T16:06:22&#43;08:00'/><meta property='article:modified_time' content='2020-12-13T16:06:22&#43;08:00'/><meta name='twitter:card' content='summary'><meta name='twitter:creator' content='@zhannicholas'>
+
+<meta name="generator" content="Hugo 0.74.3" />
+
+  <title>延迟与带宽 • Nicholas Zhan</title>
+  <link rel='canonical' href='https://zhannicholas.github.io/posts/computer_networks/fundamentals/latency_and_bandwidth/'>
+  
+  
+  <link rel='icon' href='/favicon.ico'>
+<link rel='stylesheet' href='/assets/css/main.ab98e12b.css'><link rel='stylesheet' href='/css/custom.css'><style>
+:root{--color-accent:#ffcd00;}
+</style>
+
+  
+
+</head>
+<body class='page type-posts has-sidebar'>
+
+  <div class='site'><div id='sidebar' class='sidebar'>
+  <a class='screen-reader-text' href='#main-menu'>Skip to Main Menu</a>
+
+  <div class='container'><section class='widget widget-about sep-after'>
+  <header>
+    
+    <div class='logo'>
+      <a href='/'>
+        <img src='/images/logo.png'>
+      </a>
+    </div>
+    
+    <h2 class='title site-title '>
+      <a href='/'>
+      Nicholas Zhan
+      </a>
+    </h2>
+    <div class='desc'>
+    Java Developer, Long-distance Runner, Cyclist
+    </div>
+  </header>
+
+</section>
+<section class='widget widget-sidebar_menu sep-after'><nav id='sidebar-menu' class='menu sidebar-menu' aria-label='Sidebar Menu'>
+    <div class='container'>
+      <ul><li class='item has-children'>
+  <a href='/posts/databases/'>Database</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/databases/redis/'>Redis</a></li><li class='item'>
+  <a href='/posts/databases/fundamentals/'>基础理论</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/java/'>Java</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/java/jakartaee/'>Jakarta EE</a></li><li class='item'>
+  <a href='/posts/java/concurrency/'>Java并发</a></li><li class='item'>
+  <a href='/posts/java/java_lang/'>Java语言</a></li><li class='item'>
+  <a href='/posts/java/jvm/'>JVM</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/operating_systems/'>操作系统</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/operating_systems/memory_management/'>内存管理</a></li><li class='item'>
+  <a href='/posts/operating_systems/virtualization/'>虚拟化</a></li><li class='item'>
+  <a href='/posts/operating_systems/processes_management/'>进程管理</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/computer_networks/'>计算机网络</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/computer_networks/http/'>HTTP</a></li><li class='item'>
+  <a href='/posts/computer_networks/fundamentals/'>基础知识</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/reading_notes/'>阅读笔记</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/reading_notes/algorithms_in_c/'>C算法</a></li><li class='item'>
+  <a href='/posts/reading_notes/sicp_in_python/'>SICP in Python</a></li><li class='item'>
+  <a href='/posts/reading_notes/the_art_of_multiprocessor_programming/'>多处理器编程的艺术</a></li><li class='item'>
+  <a href='/posts/reading_notes/modern_operating_systems/'>现代操作系统</a></li><li class='item'>
+  <a href='/posts/reading_notes/introduction_to_algorithms/'>算法导论</a></li><li class='item'>
+  <a href='/posts/reading_notes/%E7%AE%97%E6%B3%95%E8%B6%A3%E9%A2%98/'>算法趣题</a></li><li class='item'>
+  <a href='/posts/reading_notes/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/'>设计模式的艺术</a></li></ul></li></ul>
+    </div>
+  </nav>
+
+</section><section class='widget widget-taxonomy_cloud sep-after'>
+  <header>
+    <h4 class='title widget-title'>Tags</h4>
+  </header>
+
+  <div class='container list-container'>
+  <ul class='list taxonomy-cloud'><li>
+        <a href='/tags/git/' style='font-size:1em'>Git</a>
+      </li><li>
+        <a href='/tags/http/' style='font-size:1.7777777777777777em'>HTTP</a>
+      </li><li>
+        <a href='/tags/hugo/' style='font-size:1em'>Hugo</a>
+      </li><li>
+        <a href='/tags/jakartaee/' style='font-size:1.2222222222222223em'>JakartaEE</a>
+      </li><li>
+        <a href='/tags/java/' style='font-size:1.8888888888888888em'>Java</a>
+      </li><li>
+        <a href='/tags/jvm/' style='font-size:1.2222222222222223em'>JVM</a>
+      </li><li>
+        <a href='/tags/leetcode/' style='font-size:1.2222222222222223em'>Leetcode</a>
+      </li><li>
+        <a href='/tags/linux/' style='font-size:1em'>Linux</a>
+      </li><li>
+        <a href='/tags/os/' style='font-size:1.6666666666666665em'>OS</a>
+      </li><li>
+        <a href='/tags/python/' style='font-size:1em'>Python</a>
+      </li><li>
+        <a href='/tags/redis/' style='font-size:1.6666666666666665em'>Redis</a>
+      </li><li>
+        <a href='/tags/zookeeper/' style='font-size:1em'>ZooKeeper</a>
+      </li><li>
+        <a href='/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/' style='font-size:1em'>数据库</a>
+      </li><li>
+        <a href='/tags/%E7%AE%97%E6%B3%95/' style='font-size:2em'>算法</a>
+      </li><li>
+        <a href='/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/' style='font-size:1.2222222222222223em'>计算机网络</a>
+      </li><li>
+        <a href='/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/' style='font-size:1.5555555555555556em'>读书笔记</a>
+      </li></ul>
+</div>
+
+
+</section>
+</div>
+
+  <div class='sidebar-overlay'></div>
+</div><div class='main'><nav id='main-menu' class='menu main-menu' aria-label='Main Menu'>
+  <div class='container'>
+    <a class='screen-reader-text' href='#content'>Skip to Content</a>
+
+<button id='sidebar-toggler' class='sidebar-toggler' aria-controls='sidebar'>
+  <span class='screen-reader-text'>Toggle Sidebar</span>
+  <span class='open'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="3" y1="12" x2="21" y2="12" />
+  <line x1="3" y1="6" x2="21" y2="6" />
+  <line x1="3" y1="18" x2="21" y2="18" />
+
+</svg>
+</span>
+  <span class='close'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="18" y1="6" x2="6" y2="18" />
+  <line x1="6" y1="6" x2="18" y2="18" />
+
+</svg>
+</span>
+</button>
+    <ul><li class='item'>
+        <a href='/'>Home</a>
+      </li><li class='item'>
+        <a href='/posts/'>Posts</a>
+      </li><li class='item'>
+        <a href='/about/'>About</a>
+      </li><li class='item'>
+        <a href='https://github.com/zhannicholas/blog'>Repo</a>
+      </li></ul>
+  </div>
+</nav><div class='header-widgets'>
+        <div class='container'>
+    
+    
+    
+    <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+  <section class='widget widget-breadcrumbs sep-after'>
+    <nav id='breadcrumbs'>
+      <ol><li><a href='/'>Home</a></li><li><a href='/posts/'>Posts</a></li><li><a href='/posts/computer_networks/'>计算机网络</a></li><li><a href='/posts/computer_networks/fundamentals/'>基础知识</a></li><li><span>延迟与带宽</span></li></ol>
+    </nav>
+  </section></div>
+      </div>
+
+      <header id='header' class='header site-header'>
+        <div class='container sep-after'>
+          <div class='header-info'><p class='site-title title'>Nicholas Zhan</p><p class='desc site-desc'>Java Developer, Long-distance Runner, Cyclist</p>
+          </div>
+        </div>
+      </header>
+
+      <main id='content'>
+
+
+<article lang='en' class='entry'>
+  <header class='header entry-header'>
+  <div class='container sep-after'>
+    <div class='header-info'>
+      <h1 class='title'>延迟与带宽</h1>
+      
+
+    </div>
+    <div class='entry-meta'>
+  <span class='posted-on'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+  <line x1="16" y1="2" x2="16" y2="6"/>
+  <line x1="8" y1="2" x2="8" y2="6"/>
+  <line x1="3" y1="10" x2="21" y2="10"/>
+
+</svg>
+<span class='screen-reader-text'>Posted on </span>
+  <time class='entry-date' datetime='2020-12-13T16:06:22&#43;08:00'>2020, Dec 13</time>
+</span>
+
+  <span class='byline'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <path d="M21,21V20c0-2.76-4-5-9-5s-9,2.24-9,5v1"/>
+  <path d="M16,6.37A4,4,0,1,1,12.63,3,4,4,0,0,1,16,6.37Z"/>
+
+</svg>
+<span class='screen-reader-text'> by </span><a href='/authors/zhannicholas'>Nicholas Zhan</a></span>
+  
+<span class='reading-time'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <circle cx="12" cy="12" r="10"/>
+  <polyline points="12 6 12 12 15 15"/>
+
+</svg>
+3 mins read
+</span>
+
+
+</div>
+
+
+  </div>
+</header>
+
+  
+  
+<details class='container entry-toc'>
+  <summary class='title'>
+    <span>Table of Contents</span>
+  </summary>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#延迟">延迟</a>
+      <ul>
+        <li><a href="#延迟的构成">延迟的构成</a></li>
+        <li><a href="#最后一英里延迟">最后一英里延迟</a></li>
+      </ul>
+    </li>
+    <li><a href="#带宽">带宽</a>
+      <ul>
+        <li><a href="#采样定理nyquistshannon-sampling-theorem">采样定理(Nyquist–Shannon sampling theorem)</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav>
+</details>
+
+
+  <div class='container entry-content'>
+  <p><strong>延迟（Latency）</strong> 和**带宽（Bandwidth）**是衡量网络性能的两个关键指标。</p>
+<p><img src="/images/computer_networks/fundamentals/latency-and-bandwidth.png" alt="Latency and bandwidth"></p>
+<h2 id="延迟">延迟</h2>
+<p><strong>延迟</strong>是指一个数据包(或一条消息)从发送到被接收这个过程中所花费的时间。</p>
+<h3 id="延迟的构成">延迟的构成</h3>
+<p>对于通过因特网连接的一对客户端-服务器而言，延迟包含以下四部分：</p>
+<ul>
+<li><strong>传播延迟(Propagation delay)</strong>：数据包从发送方到接收方所经过的时间，取决于发送方与接收方之间的距离与信号的传播速率</li>
+<li><strong>发送延迟(Transmission delay)</strong>：将整个数据包传送到链路上所需时间，取决于包的长度和链路的传输速率</li>
+<li><strong>处理延迟(Processing delay)</strong>：路由器处理包头，检测错误，以及决定包的目的地所花费的时间</li>
+<li><strong>排队延迟(Queuing delay)</strong>：当包到达的速度超过了路由器的处理速度时，新抵达的数据包会在一个缓冲区中排队。数据包在队列中排队直到可以被处理所经过的时间就是排队延迟</li>
+</ul>
+<p>一般而言，源到目标的距离越长，传播延迟就越长；源到目标之间的路由器越多，发送延迟和处理延迟就越长；路径上的负载越重，出现排队的可能性就越大；</p>
+<p>数据包在传输介质中传播。一旦选定传输介质，包的传播速度其实也就定下来了。虽然难以使数据包传送得更快，但却可以把服务器放到离用户更近的地方，从而减少用户的等待时间，这其实就是CDN的工作原理。</p>
+<h3 id="最后一英里延迟">最后一英里延迟</h3>
+<p>有趣的是，大量的传播延迟并不是出现在当数据包跨越大洋从一个大陆到另一个大陆的时候，而通常是出现在最后的几英里中。要能够连上Internet，ISP需要路由线缆、聚合信号并转发至路由节点。受连接类型、路由策略、发布技术等影响，数据包从用户到ISP的主路由器会耗费大量的时间。因此，选择一个合适的ISP有时候可以显著降低延迟。</p>
+<h2 id="带宽">带宽</h2>
+<p><strong>带宽</strong>是指一个逻辑或物理信道上的最大吞吐率，通常用单位时间内传输的比特数(<code>bit/s</code>)来表示。</p>
+<h3 id="采样定理nyquistshannon-sampling-theorem">采样定理(Nyquist–Shannon sampling theorem)</h3>
+<p>采样是将一个信号转换为数字序列的过程。Nyquist曾经推导出一个公式，用来表示一个有限带宽的<!-- raw HTML omitted -->无噪声<!-- raw HTML omitted -->信道的最大数据传输速率。后来，Shannon进一步把Nyquist的工作扩展到了有<!-- raw HTML omitted -->随机噪声(热动力引起)<!-- raw HTML omitted -->的信道的情形。</p>
+<p>Nyquist证明，对于一个任意一个信号，如果这个信号通过了一个带宽为 <strong><code>B</code></strong> 的低通滤波器，那么只要进行每秒 <strong><code>2B</code></strong>次确切采样，就可以完全重构出被过滤的信号。如果信号包含了 <strong><code>V</code></strong> 个离散等级，那么Nyquist推导出的公式可以表示为：</p>
+<p>$$
+maximum \ data \ rate = 2Blog_2V \ bits/sec
+$$</p>
+<p>通过Nyquist定理，我们可以知道：在无噪声的1kHz信道上不可能以超过2000bit/s的速率传输二进制(离散等级为2)信号。</p>
+<p>对于任何一个信道，由于系统中分子的运动，随机(热)噪声总是存在的。信号功率与噪声功率的比值被称为 <strong>信噪比(SNR, Signal-to-Noise Ratio)</strong>。如果将信号功率和噪声功率分别记作 <strong><code>S</code></strong>和 <strong><code>N</code></strong>，那么信噪比为：<strong><code>S/N</code></strong>。通常情况下，为了表示更大范围，信噪比会被写成对数形式</p>
+<p>$$ 10log_{10}S/N $$</p>
+<p>对数的取值单位称为<strong>分贝(dB, decibel)</strong>。例如，10 的信噪比为 10 分贝，而 100 的信噪比为 20 分贝。</p>
+<p>Shannon的成果为：对于一个带宽为 <strong><code>B</code></strong>Hz，信噪比为 <strong><code>S/N</code></strong> 的有噪声信道，其最大速率为：</p>
+<p>$$
+maximum \ number \ of \ bits/sec = Blog_2(1 + S/N)
+$$</p>
+<p>这告诉了我们实际信道能够获得的最大容量。</p>
+<h2 id="参考资料">参考资料</h2>
+<ol>
+<li>Ilya Grigorik. <em>High Performance Browser Networking</em>. O&rsquo;Reilly Media, 2013.</li>
+<li>ANDREW S. TANENBAUM, DAVID J. WETHERALL. <em>Computer Networks, Fifth Edition</em>. Pearson, 2011.</li>
+</ol>
+
+</div>
+
+  
+<footer class='entry-footer'>
+  <div class='container sep-before'><div class='categories'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+    <path d="M22,19a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V5A2,2,0,0,1,4,3H9l2,3h9a2,2,0,0,1,2,2Z"/>
+
+</svg>
+<span class='screen-reader-text'>Categories: </span><a class='category' href='/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/'>计算机网络</a></div>
+<div class='tags'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <path d="M20.59,13.41l-7.17,7.17a2,2,0,0,1-2.83,0L2,12V2H12l8.59,8.59A2,2,0,0,1,20.59,13.41Z"/>
+  <line x1="7" y1="7" x2="7" y2="7"/>
+
+</svg>
+<span class='screen-reader-text'>Tags: </span><a class='tag' href='/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/'>计算机网络</a></div>
+
+  </div>
+</footer>
+
+
+</article>
+
+<nav class='entry-nav'>
+  <div class='container'><div class='prev-entry sep-before'>
+      <a href='/posts/computer_networks/fundamentals/ip_address/'>
+        <span aria-hidden='true'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="20" y1="12" x2="4" y2="12"/>
+  <polyline points="10 18 4 12 10 6"/>
+
+</svg>
+ Previous</span>
+        <span class='screen-reader-text'>Previous post: </span>Ip寻址</a>
+    </div><div class='next-entry sep-before'>
+      <a href='/posts/computer_networks/fundamentals/routing_algorithms/'>
+        <span class='screen-reader-text'>Next post: </span>路由算法<span aria-hidden='true'>Next <svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="4" y1="12" x2="20" y2="12"/>
+  <polyline points="14 6 20 12 14 18"/>
+
+</svg>
+</span>
+      </a>
+    </div></div>
+</nav>
+
+
+
+
+      </main>
+
+      <footer id='footer' class='footer'>
+        <div class='container sep-before'><section class='widget widget-social_menu sep-after'><nav aria-label='Social Menu'>
+    <ul><li>
+        <a href='https://github.com/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Github account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+
+</svg>
+</a>
+      </li><li>
+        <a href='https://facebook.com/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Facebook account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg>
+</a>
+      </li><li>
+        <a href='https://twitter.com/nicholas132817' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Twitter account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <title>Twitter icon</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+
+</svg>
+</a>
+      </li><li>
+        <a href='https://instagram.com/zhanicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Instagram account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+</svg>
+</a>
+      </li><li>
+        <a href='mailto:zhan_nicholas@outlook.com' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Contact via Email</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>
+</svg>
+</a>
+      </li><li>
+        <a href='https://codepen.io/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Codepen account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon><line x1="12" y1="22" x2="12" y2="15.5"></line><polyline points="22 8.5 12 15.5 2 8.5"></polyline><polyline points="2 15.5 12 8.5 22 15.5"></polyline><line x1="12" y1="2" x2="12" y2="8.5"></line>
+</svg>
+</a>
+      </li><li>
+        <a href='https://gitlab.com/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Gitlab account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <title>GitLab icon</title>  <path d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 4.82 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.49h8.1l2.44-7.51A.42.42 0 0 1 18.6 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.51L23 13.45a.84.84 0 0 1-.35.94z"/>
+</svg>
+</a>
+      </li><li>
+        <a href='https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Linkedin account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+</a>
+      </li><li>
+        <a href='https://t.me/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Telegram account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <title>Telegram icon</title><path d="M23.91 3.79L20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72 0-.6-.27-.84-.95L6.3 13.7l-5.45-1.7c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/>
+</svg>
+</a>
+      </li><li>
+        <a href='https://scholar.google.com/citations?user=qc6CJjYAAAAhfohgoJ' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Google_scholar account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <title>Google Scholar icon</title><path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 9a8 8 0 0 1 7.162 4.44L24 9.5z"/>
+</svg>
+</a>
+      </li></ul>
+  </nav>
+</section><div class='copyright'>
+  <p> &copy; 2018-2020 Nicholas Zhan </p>
+</div>
+
+        </div>
+      </footer>
+
+    </div>
+  </div><script>window.__assets_js_src="/assets/js/"</script>
+
+<script src='/assets/js/main.c3bcf2df.js'></script><script src='/js/custom.js'></script><script type='text/x-mathjax-config'>
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"processEscapes":true}})
+</script>
+
+<script type='text/javascript' async src='//unpkg.com/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+
+</body>
+
+</html>
+

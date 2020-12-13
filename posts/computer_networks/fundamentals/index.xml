@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>基础知识 on Nicholas Zhan</title>
+    <link>https://zhannicholas.github.io/posts/computer_networks/fundamentals/</link>
+    <description>Recent content in 基础知识 on Nicholas Zhan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 13 Dec 2020 16:34:55 +0800</lastBuildDate>
+    
+	<atom:link href="https://zhannicholas.github.io/posts/computer_networks/fundamentals/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>路由算法</title>
+      <link>https://zhannicholas.github.io/posts/computer_networks/fundamentals/routing_algorithms/</link>
+      <pubDate>Sun, 13 Dec 2020 16:34:55 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/computer_networks/fundamentals/routing_algorithms/</guid>
+      <description>网络层的主要功能就是将数据包从源主机路由到目标主机。在大多数网络中，数据包需要经过多跳才能到达目的地。路由算法负责为入境数据包选择一条输出线</description>
+    </item>
+    
+    <item>
+      <title>延迟与带宽</title>
+      <link>https://zhannicholas.github.io/posts/computer_networks/fundamentals/latency_and_bandwidth/</link>
+      <pubDate>Sun, 13 Dec 2020 16:06:22 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/computer_networks/fundamentals/latency_and_bandwidth/</guid>
+      <description>延迟（Latency） 和**带宽（Bandwidth）**是衡量网络性能的两个关键指标。 延迟 延迟是指一个数据包(或一条消息)从发送到被接收这</description>
+    </item>
+    
+    <item>
+      <title>Ip寻址</title>
+      <link>https://zhannicholas.github.io/posts/computer_networks/fundamentals/ip_address/</link>
+      <pubDate>Sun, 13 Dec 2020 15:44:47 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/computer_networks/fundamentals/ip_address/</guid>
+      <description>IP地址 IPv4采用的是32位地址，而Ipv6采用的是128位地址。Internet上的每台主机和路由器都有IP地址，但一个IP地址并不真正</description>
+    </item>
+    
+  </channel>
+</rss>

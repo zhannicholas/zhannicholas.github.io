@@ -5,10 +5,91 @@
     <link>https://zhannicholas.github.io/tags/</link>
     <description>Recent content in Tags on Nicholas Zhan</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 30 Sep 2019 13:38:40 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 13 Dec 2020 20:16:09 +0800</lastBuildDate>
     
 	<atom:link href="https://zhannicholas.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>读书笔记</title>
+      <link>https://zhannicholas.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 13 Dec 2020 20:16:09 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>OS</title>
+      <link>https://zhannicholas.github.io/tags/os/</link>
+      <pubDate>Sun, 13 Dec 2020 19:56:36 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/tags/os/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>JVM</title>
+      <link>https://zhannicholas.github.io/tags/jvm/</link>
+      <pubDate>Sun, 13 Dec 2020 18:44:54 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/tags/jvm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java</title>
+      <link>https://zhannicholas.github.io/tags/java/</link>
+      <pubDate>Sun, 13 Dec 2020 18:35:11 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/tags/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>JakartaEE</title>
+      <link>https://zhannicholas.github.io/tags/jakartaee/</link>
+      <pubDate>Sun, 13 Dec 2020 18:07:45 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/tags/jakartaee/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Redis</title>
+      <link>https://zhannicholas.github.io/tags/redis/</link>
+      <pubDate>Sun, 13 Dec 2020 17:52:50 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/tags/redis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>数据库</title>
+      <link>https://zhannicholas.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</link>
+      <pubDate>Sun, 13 Dec 2020 17:35:30 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>HTTP</title>
+      <link>https://zhannicholas.github.io/tags/http/</link>
+      <pubDate>Sun, 13 Dec 2020 17:25:35 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/tags/http/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>计算机网络</title>
+      <link>https://zhannicholas.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</link>
+      <pubDate>Sun, 13 Dec 2020 16:34:55 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>ZooKeeper</title>
@@ -20,29 +101,11 @@
     </item>
     
     <item>
-      <title>Redis</title>
-      <link>https://zhannicholas.github.io/tags/redis/</link>
-      <pubDate>Wed, 25 Sep 2019 19:24:06 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/tags/redis/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Linux</title>
       <link>https://zhannicholas.github.io/tags/linux/</link>
       <pubDate>Wed, 13 Feb 2019 16:29:45 +0800</pubDate>
       
       <guid>https://zhannicholas.github.io/tags/linux/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Java</title>
-      <link>https://zhannicholas.github.io/tags/java/</link>
-      <pubDate>Sun, 19 Aug 2018 23:02:41 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/tags/java/</guid>
       <description></description>
     </item>
     

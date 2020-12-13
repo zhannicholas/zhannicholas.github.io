@@ -5,28 +5,10 @@
     <link>https://zhannicholas.github.io/posts/java/</link>
     <description>Recent content in Java on Nicholas Zhan</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 19 Aug 2018 23:02:41 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 13 Dec 2020 18:44:54 +0800</lastBuildDate>
     
 	<atom:link href="https://zhannicholas.github.io/posts/java/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Java Web复习笔记</title>
-      <link>https://zhannicholas.github.io/posts/java/java-web%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Sun, 19 Aug 2018 23:02:41 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/posts/java/java-web%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      <description>Java WEB复习笔记 这是为了准备秋招面试而对Java Web开发进行的复习。 首先，对于一个Java Web应用，它由一组Servlet、HTML页、</description>
-    </item>
-    
-    <item>
-      <title>Java中反转字符串的几种方法</title>
-      <link>https://zhannicholas.github.io/posts/java/java%E4%B8%AD%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/</link>
-      <pubDate>Fri, 20 Jul 2018 13:51:14 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/posts/java/java%E4%B8%AD%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/</guid>
-      <description>这是Leetcode上的第344题，虽然很简单，但是涉及到一些技巧，于是我决定把我试过的方法记录下来。 题目描述 请编写一个函数，其功能是将输入</description>
-    </item>
     
   </channel>
 </rss>

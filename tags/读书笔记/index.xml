@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>读书笔记 on Nicholas Zhan</title>
+    <link>https://zhannicholas.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+    <description>Recent content in 读书笔记 on Nicholas Zhan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 13 Dec 2020 20:16:09 +0800</lastBuildDate>
+    
+	<atom:link href="https://zhannicholas.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Building Abstractions with Functions</title>
+      <link>https://zhannicholas.github.io/posts/reading_notes/sicp_in_python/building_abstractions_with_functions/</link>
+      <pubDate>Sun, 13 Dec 2020 20:16:09 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/reading_notes/sicp_in_python/building_abstractions_with_functions/</guid>
+      <description>1.1 Introduction The nature of computers is described in Stanford’s introductory course as: The fundamental equation of computers is: computer = powerful + stupid. Computers are very powerful, looking at volumes of data very quickly. Computers can perform billions of operations per second, where each operation is pretty simple. Computers are also shockingly stupid and fragile. The operations that they can</description>
+    </item>
+    
+    <item>
+      <title>自旋锁</title>
+      <link>https://zhannicholas.github.io/posts/reading_notes/the_art_of_multiprocessor_programming/spinlock/</link>
+      <pubDate>Sun, 13 Dec 2020 20:13:13 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/reading_notes/the_art_of_multiprocessor_programming/spinlock/</guid>
+      <description>任何互斥协议都会面临一个问题：当无法获得锁时，该怎么做？有两种方案：一种是继续进行尝试，这种锁称为 自旋锁（spin lock），反复检测锁的这</description>
+    </item>
+    
+    <item>
+      <title>Amdahl定律</title>
+      <link>https://zhannicholas.github.io/posts/reading_notes/the_art_of_multiprocessor_programming/amdahls_law/</link>
+      <pubDate>Sun, 13 Dec 2020 20:11:57 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/reading_notes/the_art_of_multiprocessor_programming/amdahls_law/</guid>
+      <description>加速比 : 对于某一项工作，加速比指的是一个处理器完成该工作所用的时间与采用n个处理器并行完成该工作所用时间的比值。 Amdahl定律给出了n个处</description>
+    </item>
+    
+    <item>
+      <title>Security</title>
+      <link>https://zhannicholas.github.io/posts/reading_notes/modern_operating_systems/security/</link>
+      <pubDate>Sun, 13 Dec 2020 19:59:39 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/reading_notes/modern_operating_systems/security/</guid>
+      <description>安全环境 威胁 信息系统的安全性目标通常可以分解为三个部分: 机密性(confidentiality)：是机密的数据处于保密状态。系统应该保证数据</description>
+    </item>
+    
+    <item>
+      <title>多处理机系统</title>
+      <link>https://zhannicholas.github.io/posts/reading_notes/modern_operating_systems/multiple_processor_systems/</link>
+      <pubDate>Sun, 13 Dec 2020 19:56:36 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/reading_notes/modern_operating_systems/multiple_processor_systems/</guid>
+      <description>从计算机诞生之日起，人们就无休止地追求着更强大地计算能力。过去地解决方案是使时钟走得更快，但是现在时钟速度已经很难再进一步提升了。计算机虽然</description>
+    </item>
+    
+    <item>
+      <title>Design_concepts_for_engineers</title>
+      <link>https://zhannicholas.github.io/posts/reading_notes/design_concepts_for_engineers/</link>
+      <pubDate>Sun, 13 Dec 2020 19:52:15 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/reading_notes/design_concepts_for_engineers/</guid>
+      <description>Taken from Design Concepts for Engineers (Fifth Edition) 2020.11.22 第1章 工程是什么 作为一名有抱负的工程师，你有很多需要学习的东西。你必须掌握工程的基础知识：数学、物理、化学和生物。你必须学</description>
+    </item>
+    
+  </channel>
+</rss>
