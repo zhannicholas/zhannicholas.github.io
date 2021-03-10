@@ -4,7 +4,7 @@
   
   <url>
     <loc>https://zhannicholas.github.io/</loc>
-    <lastmod>2020-12-13T20:16:09+08:00</lastmod>
+    <lastmod>2021-03-08T23:09:31+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
@@ -19,16 +19,16 @@
   
   <url>
     <loc>https://zhannicholas.github.io/posts/</loc>
-    <lastmod>2020-12-13T20:16:09+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zhannicholas.github.io/posts/reading_notes/sicp_in_python/</loc>
-    <lastmod>2020-12-13T20:16:09+08:00</lastmod>
+    <lastmod>2021-03-08T23:09:31+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://zhannicholas.github.io/posts/reading_notes/</loc>
+    <lastmod>2021-03-08T23:09:31+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhannicholas.github.io/posts/reading_notes/sicp_in_python/</loc>
     <lastmod>2020-12-13T20:16:09+08:00</lastmod>
   </url>
   
@@ -151,7 +151,7 @@
   
   <url>
     <loc>https://zhannicholas.github.io/authors/</loc>
-    <lastmod>2020-12-13T20:16:09+08:00</lastmod>
+    <lastmod>2021-03-08T23:09:31+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
@@ -165,13 +165,8 @@
   </url>
   
   <url>
-    <loc>https://zhannicholas.github.io/posts/reading_notes/sicp_in_python/building_abstractions_with_functions/</loc>
-    <lastmod>2020-12-13T20:16:09+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://zhannicholas.github.io/categories/</loc>
-    <lastmod>2020-12-13T20:16:09+08:00</lastmod>
+    <lastmod>2021-03-08T23:09:31+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
@@ -186,7 +181,7 @@
   
   <url>
     <loc>https://zhannicholas.github.io/tags/</loc>
-    <lastmod>2020-12-13T20:16:09+08:00</lastmod>
+    <lastmod>2021-03-08T23:09:31+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
@@ -201,16 +196,31 @@
   
   <url>
     <loc>https://zhannicholas.github.io/authors/zhannicholas/</loc>
+    <lastmod>2021-03-08T23:09:31+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhannicholas.github.io/tags/%E6%90%9C%E7%B4%A2/</loc>
+    <lastmod>2021-03-08T23:09:31+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhannicholas.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2021-03-08T23:09:31+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhannicholas.github.io/posts/reading_notes/%E8%B6%85%E7%BA%A7%E6%90%9C%E7%B4%A2%E6%9C%AF/</loc>
+    <lastmod>2021-03-08T23:09:31+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zhannicholas.github.io/posts/reading_notes/sicp_in_python/building_abstractions_with_functions/</loc>
     <lastmod>2020-12-13T20:16:09+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://zhannicholas.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
-    <lastmod>2020-12-13T20:16:09+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zhannicholas.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2020-12-13T20:16:09+08:00</lastmod>
   </url>
   
