@@ -1,31 +1,313 @@
-<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="操作系统中最核心的概念是进程：这是对正在运行的程序的一个抽象。线程和进程类似，不过它更轻量。 进程 **进程(process)**是对正在运行的"><meta name=theme-color content="#ffcd00"><meta property="og:title" content="进程与线程 • Nicholas Zhan"><meta property="og:description" content="操作系统中最核心的概念是进程：这是对正在运行的程序的一个抽象。线程和进程类似，不过它更轻量。 进程 **进程(process)**是对正在运行的"><meta property="og:url" content="https://zhannicholas.github.io/posts/operating_systems/processes_management/processes_and_threads/"><meta property="og:site_name" content="Nicholas Zhan"><meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="OS"><meta property="article:published_time" content="2020-12-13T19:36:01+08:00"><meta property="article:modified_time" content="2020-12-13T19:36:01+08:00"><meta name=twitter:card content="summary"><meta name=generator content="Hugo 0.85.0"><title>进程与线程 • Nicholas Zhan</title><link rel=canonical href=https://zhannicholas.github.io/posts/operating_systems/processes_management/processes_and_threads/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style></head><body class="page type-posts has-sidebar"><div class=site><div id=sidebar class=sidebar><a class=screen-reader-text href=#main-menu>跳到主菜单</a><div class=container><section class="widget widget-about sep-after"><header><div class=logo><a href=/><img src=/images/logo.png></a></div><h2 class="title site-title"><a href=/>Nicholas Zhan</a></h2><div class=desc>Java Developer, Runner, Cyclist</div></header></section><section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单><div class=container><ul><li class="item has-children"><a href=/posts/databases/>Database</a><button class=sub-menu-toggler>
+<!doctype html><html lang=zh-cn dir=auto><head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="操作系统中最核心的概念是进程：这是对正在运行的程序的一个抽象。线程和进程类似，不过它更轻量。 进程 **进程(process)**是对正在运行的">
+<meta name=theme-color content="#ffcd00">
+<meta property="og:title" content="进程与线程 • Nicholas Zhan">
+<meta property="og:description" content="操作系统中最核心的概念是进程：这是对正在运行的程序的一个抽象。线程和进程类似，不过它更轻量。 进程 **进程(process)**是对正在运行的">
+<meta property="og:url" content="https://zhannicholas.github.io/posts/operating_systems/processes_management/processes_and_threads/">
+<meta property="og:site_name" content="Nicholas Zhan">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="OS"><meta property="article:published_time" content="2020-12-13T19:36:01+08:00"><meta property="article:modified_time" content="2020-12-13T19:36:01+08:00"><meta name=twitter:card content="summary">
+<meta name=generator content="Hugo 0.86.0">
+<title>进程与线程 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/posts/operating_systems/processes_management/processes_and_threads/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
+</head>
+<body class="page type-posts has-sidebar">
+<div class=site><div id=sidebar class=sidebar>
+<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
+<div class=container><section class="widget widget-about sep-after">
+<header>
+<div class=logo>
+<a href=/>
+<img src=/images/logo.png>
+</a>
+</div>
+<h2 class="title site-title">
+<a href=/>
+Nicholas Zhan
+</a>
+</h2>
+<div class=desc>
+Java Developer, Runner, Cyclist
+</div>
+</header>
+</section>
+<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
+<div class=container>
+<ul><li class="item has-children">
+<a href=/posts/databases/>Database</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/posts/databases/redis/>Redis</a></li><li class=item><a href=/posts/databases/fundamentals/>基础理论</a></li></ul></li><li class="item has-children"><a href=/posts/java/>Java</a><button class=sub-menu-toggler>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/posts/databases/redis/>Redis</a></li><li class=item>
+<a href=/posts/databases/fundamentals/>基础理论</a></li></ul></li><li class="item has-children">
+<a href=/posts/java/>Java</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/posts/java/jakartaee/>Jakarta EE</a></li><li class=item><a href=/posts/java/jvm/>JVM</a></li><li class=item><a href=/posts/java/concurrency/>并发</a></li></ul></li><li class="item has-children"><a href=/posts/operating_systems/>操作系统</a><button class=sub-menu-toggler>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/posts/java/jakartaee/>Jakarta EE</a></li><li class=item>
+<a href=/posts/java/jvm/>JVM</a></li><li class=item>
+<a href=/posts/java/concurrency/>并发</a></li></ul></li><li class="item has-children has-current">
+<a href=/posts/operating_systems/>操作系统</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/posts/operating_systems/memory_management/>内存管理</a></li><li class=item><a href=/posts/operating_systems/virtualization/>虚拟化</a></li><li class=item><a href=/posts/operating_systems/processes_management/>进程管理</a></li></ul></li><li class="item has-children"><a href=/posts/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/posts/operating_systems/memory_management/>内存管理</a></li><li class=item>
+<a href=/posts/operating_systems/virtualization/>虚拟化</a></li><li class="item has-current">
+<a href=/posts/operating_systems/processes_management/>进程管理</a></li></ul></li><li class="item has-children">
+<a href=/posts/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/posts/computer_networks/http/>HTTP</a></li><li class=item><a href=/posts/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul></div></nav></section><section class="widget widget-taxonomy_cloud sep-after"><header><h4 class="title widget-title">标签</h4></header><div class="container list-container"><ul class="list taxonomy-cloud"><li><a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.3846153846153846em>C算法</a></li><li><a href=/tags/gc/ style=font-size:1em>GC</a></li><li><a href=/tags/git/ style=font-size:1em>Git</a></li><li><a href=/tags/http/ style=font-size:1.5384615384615385em>HTTP</a></li><li><a href=/tags/hugo/ style=font-size:1em>Hugo</a></li><li><a href=/tags/jakartaee/ style=font-size:1.1538461538461537em>JakartaEE</a></li><li><a href=/tags/java/ style=font-size:1.7692307692307692em>Java</a></li><li><a href=/tags/jdbc/ style=font-size:1em>JDBC</a></li><li><a href=/tags/jvm/ style=font-size:1.2307692307692308em>JVM</a></li><li><a href=/tags/leetcode/ style=font-size:1.1538461538461537em>Leetcode</a></li><li><a href=/tags/life/ style=font-size:1em>Life</a></li><li><a href=/tags/linux/ style=font-size:1em>Linux</a></li><li><a href=/tags/mybatis/ style=font-size:1em>MyBatis</a></li><li><a href=/tags/networks/ style=font-size:1.1538461538461537em>Networks</a></li><li><a href=/tags/os/ style=font-size:1.4615384615384617em>OS</a></li><li><a href=/tags/ostep/ style=font-size:1.1538461538461537em>OSTEP</a></li><li><a href=/tags/python/ style=font-size:1em>Python</a></li><li><a href=/tags/redis/ style=font-size:1.4615384615384617em>Redis</a></li><li><a href=/tags/sicp/ style=font-size:1em>SICP</a></li><li><a href=/tags/tomcat/ style=font-size:1em>Tomcat</a></li><li><a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a></li><li><a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0769230769230769em>多处理器编程的艺术</a></li><li><a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a></li><li><a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3076923076923077em>并发</a></li><li><a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a></li><li><a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1em>数据库</a></li><li><a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0769230769230769em>现代操作系统</a></li><li><a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a></li><li><a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.2307692307692308em>算法导论</a></li><li><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:2em>设计模式</a></li></ul></div></section></div><div class=sidebar-overlay></div></div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单><div class=container><a class=screen-reader-text href=#content>跳到内容</a>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/posts/computer_networks/http/>HTTP</a></li><li class=item>
+<a href=/posts/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
+</div>
+</nav>
+</section><section class="widget widget-taxonomy_cloud sep-after">
+<header>
+<h4 class="title widget-title">标签</h4>
+</header>
+<div class="container list-container">
+<ul class="list taxonomy-cloud"><li>
+<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.3846153846153846em>C算法</a>
+</li><li>
+<a href=/tags/gc/ style=font-size:1em>GC</a>
+</li><li>
+<a href=/tags/git/ style=font-size:1em>Git</a>
+</li><li>
+<a href=/tags/http/ style=font-size:1.5384615384615385em>HTTP</a>
+</li><li>
+<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
+</li><li>
+<a href=/tags/jakartaee/ style=font-size:1.1538461538461537em>JakartaEE</a>
+</li><li>
+<a href=/tags/java/ style=font-size:1.7692307692307692em>Java</a>
+</li><li>
+<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
+</li><li>
+<a href=/tags/jvm/ style=font-size:1.2307692307692308em>JVM</a>
+</li><li>
+<a href=/tags/leetcode/ style=font-size:1.1538461538461537em>Leetcode</a>
+</li><li>
+<a href=/tags/life/ style=font-size:1em>Life</a>
+</li><li>
+<a href=/tags/linux/ style=font-size:1em>Linux</a>
+</li><li>
+<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
+</li><li>
+<a href=/tags/networks/ style=font-size:1.1538461538461537em>Networks</a>
+</li><li>
+<a href=/tags/os/ style=font-size:1.4615384615384617em>OS</a>
+</li><li>
+<a href=/tags/ostep/ style=font-size:1.1538461538461537em>OSTEP</a>
+</li><li>
+<a href=/tags/python/ style=font-size:1em>Python</a>
+</li><li>
+<a href=/tags/redis/ style=font-size:1.4615384615384617em>Redis</a>
+</li><li>
+<a href=/tags/sicp/ style=font-size:1em>SICP</a>
+</li><li>
+<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
+</li><li>
+<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
+</li><li>
+<a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0769230769230769em>多处理器编程的艺术</a>
+</li><li>
+<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
+</li><li>
+<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3076923076923077em>并发</a>
+</li><li>
+<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
+</li><li>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1em>数据库</a>
+</li><li>
+<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0769230769230769em>现代操作系统</a>
+</li><li>
+<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
+</li><li>
+<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.2307692307692308em>算法导论</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:2em>设计模式</a>
+</li></ul>
+</div>
+</section>
+</div>
+<div class=sidebar-overlay></div>
+</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
+<div class=container>
+<a class=screen-reader-text href=#content>跳到内容</a>
 <button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
 <span class=screen-reader-text>Toggle Sidebar</span>
-<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span><span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button><ul><li class=item><a href=/>主页</a></li><li class=item><a href=/posts/>博客</a></li><li class=item><a href=/itinerary/>游山玩水</a></li><li class=item><a href=/notebook/>笔记本</a></li></ul></div></nav><div class=header-widgets><div class=container><style>.widget-breadcrumbs li:after{content:'\2f '}</style><section class="widget widget-breadcrumbs sep-after"><nav id=breadcrumbs><ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><a href=/posts/operating_systems/>操作系统</a></li><li><a href=/posts/operating_systems/processes_management/>进程管理</a></li><li><span>进程与线程</span></li></ol></nav></section></div></div><header id=header class="header site-header"><div class="container sep-after"><div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p></div></div></header><main id=content><article lang=zh-cn class=entry><header class="header entry-header"><div class="container sep-after"><div class=header-info><h1 class=title>进程与线程</h1></div><div class=entry-meta><span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class=screen-reader-text>Posted on</span>
-<time class=entry-date datetime=2020-12-13T19:36:01+08:00>2020, Dec 13</time></span>
-<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg><span class=screen-reader-text>by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
-<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>20 mins read</span></div></div></header><details class="container entry-toc"><summary class=title><span>目录</span></summary><nav id=TableOfContents><ul><li><a href=#进程>进程</a><ul><li><a href=#进程的创建>进程的创建</a></li><li><a href=#进程的终止>进程的终止</a></li><li><a href=#进程的状态>进程的状态</a></li><li><a href=#进程的实现>进程的实现</a></li></ul></li><li><a href=#线程>线程</a></li><li><a href=#进程间通信>进程间通信</a><ul><li><a href=#临界区>临界区</a></li><li><a href=#基于忙等待的互斥>基于忙等待的互斥</a></li><li><a href=#睡眠与唤醒>睡眠与唤醒</a></li><li><a href=#消息传递>消息传递</a></li><li><a href=#屏障>屏障</a></li><li><a href=#避免锁读-复制-更新>避免锁：读-复制-更新</a></li></ul></li><li><a href=#进程调度>进程调度</a><ul><li><a href=#调度算法>调度算法</a></li></ul></li><li><a href=#参考资料>参考资料</a></li></ul></nav></details><div class="container entry-content"><p>操作系统中最核心的概念是进程：这是对正在运行的程序的一个抽象。线程和进程类似，不过它更轻量。</p><h2 id=进程>进程</h2><p>**进程(process)**是对正在运行的程序的一个抽象，代表一个正在执行程序的实例，包括程序计数器、寄存器和变量的当前值。</p><h3 id=进程的创建>进程的创建</h3><p>通常有4种主要事件回导致进程的创建：</p><ol><li>系统初始化。</li><li>正在运行的程序执行了创建进程的系统调用。</li><li>用户请求创建一个新进程。</li><li>一个批处理作业的初始化。</li></ol><p>从技术上看，在所有这些情形中，新进程都是由于一个已经存在的进程执行了一个用于创建进程的系统调用而创建的。</p><p>在UNIX系统中，创建新进程使用的是系统调用<code>fork</code>，而Windows种使用的是<code>CreateProcess</code>函数。在UNIX和Windows中，进程创建之后，父进程和子进程有各自不同的地址空间。如果其中某个进程修改了其地址空间内的一个字，其它线程是察觉不到的。在UNIX中，子进程的初始地址空间是父进程地址空间的一个副本，但这里是涉及到两个不同的地址空间的。不可写的内存是共享的。一些UNIX系统在父子进程之间共享程序正文，因为程序正文是不可修改的。子进程也可能会共享父进程所有的内存，但这种情况下采用的是<code>copy-on-write</code>的共享方式，这意味着一旦有进程想要修改部分内存，这块地址首先被复制，以确保修改发生在私有区域。可写的内存是不可共享的。在Windows中，从一开始父进程的地址空间和子进程的地址空间就是不同的。</p><h3 id=进程的终止>进程的终止</h3><p>进程在创建之后，就开始运行，完成其工作。进程会在某些条件下终止：</p><ol><li>正常退出（自愿的）。多数进程是由于完成了它们工作而终止，这个时候它们会执行一个系统调用而退出。在UNIX中该调用是<code>exit</code>，而Windows中是<code>ExitProcess</code>。</li><li>出错退出（自愿的）。例如需要的文件不存在。</li><li>严重错误（非自愿）。例如执行了非法指令、引用了不可访问的内存等。</li><li>被其它进程杀死（非自愿）。某个进程执行一个系统调用通知草走系统杀死某个其它进程。在UNIX中，这个调用是<code>kill</code>，在Windows中，对应的函数是<code>TerminateProcess</code>。</li></ol><h3 id=进程的状态>进程的状态</h3><p>每个进程都是一个独立的实体，有自己的程序计数器和内部状态。进程之间经常相互作用，从而导致进程状态的迁移。</p><p><img src=/images/operating_systems/processes_management/process-state-translations.png alt=进程状态迁移></p><h3 id=进程的实现>进程的实现</h3><p>为了实现进程，操作系统维护着一张<strong>进程表(process table)</strong>，又称<strong>进程控制块(process control block)</strong>。每个进程占用一个进程表项。进程表项包含了进程状态的重要信息，包括程序计数器、堆栈指针、内存分配情况、所打开文件的状态、账号和调度信息，以及其它在进程由运行态转为就绪或阻塞态时必须保存的信息，从而保证该进程随后能再次启动，就像从未被中断过一样。一个进程在执行过程中可能被中断数千次，但关键是每次中断后，被中断的进程多返回到与中断发生前完全相同的状态。</p><h2 id=线程>线程</h2><p><strong>线程(thread)</strong> 具有很多进程的特质，又被称为 <strong>轻量级进程(lightweight process)</strong>。进程把资源集中在一起（资源管理的单位是进程），而线程则是在CPU上被调度执行的实体。一个进程内的多个线程共享同一个地址空间和其它资源。每个进程都有自己独立的地址空间，而一个进程内的多个线程都有完全一样的地址空间，这意味着它们也共享同样的全局变量。由于各个线程都可以访问进程地址空间中的每一个内存地址，所以一个线程可以读、写、甚至清除另一个线程的堆栈，线程之间是没有保护的。</p><p>每个进程的中内容有：地址空间、全局变量、打开的文件、子进程、时钟信息、信号与信号处理程序、账户信息。而每个线程中的内容有：程序计数器、寄存器、堆栈、状态。每个线程都有自己的堆栈，堆栈中的栈帧供各个被调用但是还没有从中返回的过程使用，栈帧保存了相应过程的局部变量以及过程调用完之后使用的返回地址。</p><h2 id=进程间通信>进程间通信</h2><p>有时候，进程之间需要相互通信。进程间通信需要解决的三个问题：</p><ol><li>一个进程如何把信息传递给另一个。</li><li>如何确保两个或更多的进程在关键活动中不会出现交叉。</li><li>当进程间出现依赖时，如何保证正确的顺序。</li></ol><h3 id=临界区>临界区</h3><p>两个或多个进程读写某些共享数据，而最后的结果取决于进程运行的精确顺序，称为**竞争条件(race condition)。</p><p>避免竞争条件的关键在于找到某种途径来阻止多个进程同时读写共享数据。换言之，我们需要的是<strong>互斥(mutual exclusion)</strong>，即以某种手段确保当一个进程在使用一个共享变量或文件时，其它的进程不能做同样的操作。我们把程序中访问共享内存的那一部分称为 <strong>临界区域(critical region)</strong> 或 <strong>临界区(critical section)</strong>。</p><p>如果我们能通过恰当的安排，使两个进程不可能同时处于临界区中，就能避免竞争条件。对于一个好的解决方案，需要满足以下4个条件：</p><ol><li>不可能有两个进程同时在临界区内。</li><li>不能对CPU的速度和数量做任何假设。</li><li>在临界区外运行的进程不应该阻塞任何进程。</li><li>在进程进入临界区前不会无限等待。</li></ol><p>我们希望进程的行为是这样的：</p><p><img src=/images/operating_systems/processes_management/mutex-exclusion-using-critical-regions.png alt=使用临界区的互斥></p><h3 id=基于忙等待的互斥>基于忙等待的互斥</h3><p>接下来会介绍几种基于忙等待实现的互斥方案。在这些方案中，当一个进程在临界区中更新共享内存时，其它进程不会进入临界区，也不会带来麻烦。</p><h4 id=屏蔽中断>屏蔽中断</h4><p>在单处理器系统中，最简单的方法是使每个进程在进入临界区后就立即屏蔽所有中断，并在将要离开临界区之前再次打开中断。因为CPU只有在发生时钟中断或其它中断时才会进行进程切换，屏蔽中断后CPU就不会再进行进程切换了。于是，一旦某个进程屏蔽中断后，它就可以检查和修改共享内存，而不必担心其它进程介入。</p><p>这并不是一个好方案，如果某个进程屏蔽中断后不再打开中断，那么整个系统可能因此而终止。对于多处理器系统，屏蔽中断仅仅对于执行<code>disable</code>指令的那个CPU有效，其它CPU仍继续运行，并可以访问共享内存。</p><p>另一方面，对内核来说，当它在更新变量或列表的几条指令期间将中断屏蔽是很方便的。屏蔽中断对操作系统本身而言是一项很有用的技术，但对于用户进程则不是一种合适的通用互斥机制。</p><h4 id=锁变量>锁变量</h4><p>假设有一个共享（锁）变量，其初始值为0。当一个进程想进入其临界区时，它首先查看这把锁，如果锁的值为0，就将其设置为1并进入临界区。若锁的值为1，则一直等待直到锁的值变为0。于是，0表示临界区内无进程，而1表示临界区内有进程。</p><p>但是，这种想法也会出现竞争条件。假设一个进程读出锁变量的值并发现它为0，而恰好在它将锁的值设置为1之前，另一个进程被调度运行，将锁变量的值设置为1。当第一个进程再次运行时，它同样也将锁的值设置为1，则此时有两个进程同时在临界区内。另一方面，我们获取可以在改变锁变量的值之前再次检查锁变量的值，但如果第二个进程恰好在第一个进程检查完之后修改了锁变量的值，同样会出现竞争条件。</p><h4 id=严格轮转法>严格轮转法</h4><p>以下展示了一种用于两个进程互斥的算法。
-进程0：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=color:#66d9ef>while</span> (TRUE) {
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</span>
+<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</span>
+</button>
+<ul><li class=item>
+<a href=/>主页</a>
+</li><li class="item current">
+<a aria-current=page href=/posts/>博客</a>
+</li><li class=item>
+<a href=/itinerary/>游山玩水</a>
+</li><li class=item>
+<a href=/notebook/>笔记本</a>
+</li></ul>
+</div>
+</nav><div class=header-widgets>
+<div class=container>
+<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+<section class="widget widget-breadcrumbs sep-after">
+<nav id=breadcrumbs>
+<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><a href=/posts/operating_systems/>操作系统</a></li><li><a href=/posts/operating_systems/processes_management/>进程管理</a></li><li><span>进程与线程</span></li></ol>
+</nav>
+</section></div>
+</div>
+<header id=header class="header site-header">
+<div class="container sep-after">
+<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
+</div>
+</div>
+</header>
+<main id=content>
+<article lang=zh-cn class=entry>
+<header class="header entry-header">
+<div class="container sep-after">
+<div class=header-info>
+<h1 class=title>进程与线程</h1>
+</div>
+<div class=entry-meta>
+<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+<span class=screen-reader-text>Posted on </span>
+<time class=entry-date datetime=2020-12-13T19:36:01+08:00>2020, Dec 13</time>
+</span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
+<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
+20 mins read
+</span>
+</div>
+</div>
+</header>
+<details class="container entry-toc">
+<summary class=title>
+<span>目录</span>
+</summary>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#进程>进程</a>
+<ul>
+<li><a href=#进程的创建>进程的创建</a></li>
+<li><a href=#进程的终止>进程的终止</a></li>
+<li><a href=#进程的状态>进程的状态</a></li>
+<li><a href=#进程的实现>进程的实现</a></li>
+</ul>
+</li>
+<li><a href=#线程>线程</a></li>
+<li><a href=#进程间通信>进程间通信</a>
+<ul>
+<li><a href=#临界区>临界区</a></li>
+<li><a href=#基于忙等待的互斥>基于忙等待的互斥</a></li>
+<li><a href=#睡眠与唤醒>睡眠与唤醒</a></li>
+<li><a href=#消息传递>消息传递</a></li>
+<li><a href=#屏障>屏障</a></li>
+<li><a href=#避免锁读-复制-更新>避免锁：读-复制-更新</a></li>
+</ul>
+</li>
+<li><a href=#进程调度>进程调度</a>
+<ul>
+<li><a href=#调度算法>调度算法</a></li>
+</ul>
+</li>
+<li><a href=#参考资料>参考资料</a></li>
+</ul>
+</nav>
+</details>
+<div class="container entry-content">
+<p>操作系统中最核心的概念是进程：这是对正在运行的程序的一个抽象。线程和进程类似，不过它更轻量。</p>
+<h2 id=进程>进程</h2>
+<p>**进程(process)**是对正在运行的程序的一个抽象，代表一个正在执行程序的实例，包括程序计数器、寄存器和变量的当前值。</p>
+<h3 id=进程的创建>进程的创建</h3>
+<p>通常有4种主要事件回导致进程的创建：</p>
+<ol>
+<li>系统初始化。</li>
+<li>正在运行的程序执行了创建进程的系统调用。</li>
+<li>用户请求创建一个新进程。</li>
+<li>一个批处理作业的初始化。</li>
+</ol>
+<p>从技术上看，在所有这些情形中，新进程都是由于一个已经存在的进程执行了一个用于创建进程的系统调用而创建的。</p>
+<p>在UNIX系统中，创建新进程使用的是系统调用<code>fork</code>，而Windows种使用的是<code>CreateProcess</code>函数。在UNIX和Windows中，进程创建之后，父进程和子进程有各自不同的地址空间。如果其中某个进程修改了其地址空间内的一个字，其它线程是察觉不到的。在UNIX中，子进程的初始地址空间是父进程地址空间的一个副本，但这里是涉及到两个不同的地址空间的。不可写的内存是共享的。一些UNIX系统在父子进程之间共享程序正文，因为程序正文是不可修改的。子进程也可能会共享父进程所有的内存，但这种情况下采用的是<code>copy-on-write</code>的共享方式，这意味着一旦有进程想要修改部分内存，这块地址首先被复制，以确保修改发生在私有区域。可写的内存是不可共享的。在Windows中，从一开始父进程的地址空间和子进程的地址空间就是不同的。</p>
+<h3 id=进程的终止>进程的终止</h3>
+<p>进程在创建之后，就开始运行，完成其工作。进程会在某些条件下终止：</p>
+<ol>
+<li>正常退出（自愿的）。多数进程是由于完成了它们工作而终止，这个时候它们会执行一个系统调用而退出。在UNIX中该调用是<code>exit</code>，而Windows中是<code>ExitProcess</code>。</li>
+<li>出错退出（自愿的）。例如需要的文件不存在。</li>
+<li>严重错误（非自愿）。例如执行了非法指令、引用了不可访问的内存等。</li>
+<li>被其它进程杀死（非自愿）。某个进程执行一个系统调用通知草走系统杀死某个其它进程。在UNIX中，这个调用是<code>kill</code>，在Windows中，对应的函数是<code>TerminateProcess</code>。</li>
+</ol>
+<h3 id=进程的状态>进程的状态</h3>
+<p>每个进程都是一个独立的实体，有自己的程序计数器和内部状态。进程之间经常相互作用，从而导致进程状态的迁移。</p>
+<p><img src=/images/operating_systems/processes_management/process-state-translations.png alt=进程状态迁移></p>
+<h3 id=进程的实现>进程的实现</h3>
+<p>为了实现进程，操作系统维护着一张<strong>进程表(process table)</strong>，又称<strong>进程控制块(process control block)</strong>。每个进程占用一个进程表项。进程表项包含了进程状态的重要信息，包括程序计数器、堆栈指针、内存分配情况、所打开文件的状态、账号和调度信息，以及其它在进程由运行态转为就绪或阻塞态时必须保存的信息，从而保证该进程随后能再次启动，就像从未被中断过一样。一个进程在执行过程中可能被中断数千次，但关键是每次中断后，被中断的进程多返回到与中断发生前完全相同的状态。</p>
+<h2 id=线程>线程</h2>
+<p><strong>线程(thread)</strong> 具有很多进程的特质，又被称为 <strong>轻量级进程(lightweight process)</strong>。进程把资源集中在一起（资源管理的单位是进程），而线程则是在CPU上被调度执行的实体。一个进程内的多个线程共享同一个地址空间和其它资源。每个进程都有自己独立的地址空间，而一个进程内的多个线程都有完全一样的地址空间，这意味着它们也共享同样的全局变量。由于各个线程都可以访问进程地址空间中的每一个内存地址，所以一个线程可以读、写、甚至清除另一个线程的堆栈，线程之间是没有保护的。</p>
+<p>每个进程的中内容有：地址空间、全局变量、打开的文件、子进程、时钟信息、信号与信号处理程序、账户信息。而每个线程中的内容有：程序计数器、寄存器、堆栈、状态。每个线程都有自己的堆栈，堆栈中的栈帧供各个被调用但是还没有从中返回的过程使用，栈帧保存了相应过程的局部变量以及过程调用完之后使用的返回地址。</p>
+<h2 id=进程间通信>进程间通信</h2>
+<p>有时候，进程之间需要相互通信。进程间通信需要解决的三个问题：</p>
+<ol>
+<li>一个进程如何把信息传递给另一个。</li>
+<li>如何确保两个或更多的进程在关键活动中不会出现交叉。</li>
+<li>当进程间出现依赖时，如何保证正确的顺序。</li>
+</ol>
+<h3 id=临界区>临界区</h3>
+<p>两个或多个进程读写某些共享数据，而最后的结果取决于进程运行的精确顺序，称为**竞争条件(race condition)。</p>
+<p>避免竞争条件的关键在于找到某种途径来阻止多个进程同时读写共享数据。换言之，我们需要的是<strong>互斥(mutual exclusion)</strong>，即以某种手段确保当一个进程在使用一个共享变量或文件时，其它的进程不能做同样的操作。我们把程序中访问共享内存的那一部分称为 <strong>临界区域(critical region)</strong> 或 <strong>临界区(critical section)</strong>。</p>
+<p>如果我们能通过恰当的安排，使两个进程不可能同时处于临界区中，就能避免竞争条件。对于一个好的解决方案，需要满足以下4个条件：</p>
+<ol>
+<li>不可能有两个进程同时在临界区内。</li>
+<li>不能对CPU的速度和数量做任何假设。</li>
+<li>在临界区外运行的进程不应该阻塞任何进程。</li>
+<li>在进程进入临界区前不会无限等待。</li>
+</ol>
+<p>我们希望进程的行为是这样的：</p>
+<p><img src=/images/operating_systems/processes_management/mutex-exclusion-using-critical-regions.png alt=使用临界区的互斥></p>
+<h3 id=基于忙等待的互斥>基于忙等待的互斥</h3>
+<p>接下来会介绍几种基于忙等待实现的互斥方案。在这些方案中，当一个进程在临界区中更新共享内存时，其它进程不会进入临界区，也不会带来麻烦。</p>
+<h4 id=屏蔽中断>屏蔽中断</h4>
+<p>在单处理器系统中，最简单的方法是使每个进程在进入临界区后就立即屏蔽所有中断，并在将要离开临界区之前再次打开中断。因为CPU只有在发生时钟中断或其它中断时才会进行进程切换，屏蔽中断后CPU就不会再进行进程切换了。于是，一旦某个进程屏蔽中断后，它就可以检查和修改共享内存，而不必担心其它进程介入。</p>
+<p>这并不是一个好方案，如果某个进程屏蔽中断后不再打开中断，那么整个系统可能因此而终止。对于多处理器系统，屏蔽中断仅仅对于执行<code>disable</code>指令的那个CPU有效，其它CPU仍继续运行，并可以访问共享内存。</p>
+<p>另一方面，对内核来说，当它在更新变量或列表的几条指令期间将中断屏蔽是很方便的。屏蔽中断对操作系统本身而言是一项很有用的技术，但对于用户进程则不是一种合适的通用互斥机制。</p>
+<h4 id=锁变量>锁变量</h4>
+<p>假设有一个共享（锁）变量，其初始值为0。当一个进程想进入其临界区时，它首先查看这把锁，如果锁的值为0，就将其设置为1并进入临界区。若锁的值为1，则一直等待直到锁的值变为0。于是，0表示临界区内无进程，而1表示临界区内有进程。</p>
+<p>但是，这种想法也会出现竞争条件。假设一个进程读出锁变量的值并发现它为0，而恰好在它将锁的值设置为1之前，另一个进程被调度运行，将锁变量的值设置为1。当第一个进程再次运行时，它同样也将锁的值设置为1，则此时有两个进程同时在临界区内。另一方面，我们获取可以在改变锁变量的值之前再次检查锁变量的值，但如果第二个进程恰好在第一个进程检查完之后修改了锁变量的值，同样会出现竞争条件。</p>
+<h4 id=严格轮转法>严格轮转法</h4>
+<p>以下展示了一种用于两个进程互斥的算法。
+进程0：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=color:#66d9ef>while</span> (TRUE) {
     <span style=color:#66d9ef>while</span> (turn <span style=color:#f92672>!=</span> <span style=color:#ae81ff>0</span>);  <span style=color:#75715e>// 循环等待
 </span><span style=color:#75715e></span>    critical_region();
     turn <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
     noncritical_region();
 }
-</code></pre></div><p>进程1：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=color:#66d9ef>while</span> (TRUE) {
+</code></pre></div><p>进程1：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=color:#66d9ef>while</span> (TRUE) {
     <span style=color:#66d9ef>while</span> (turn <span style=color:#f92672>!=</span> <span style=color:#ae81ff>1</span>);  <span style=color:#75715e>// 循环等待
 </span><span style=color:#75715e></span>    critical_region();
     turn <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
     noncritical_region();
 }
-</code></pre></div><p>线程0和线程1通过检查共享变量<code>turn</code>的取值来决定是否进入临界区。变量<code>turn</code>的初始值为<code>0</code>，表示进程0可以进入临界区。开始时，进程0检查<code>turn</code>，发现为0，于是进入临界区。进程1也发现<code>turn</code>为0，所以在一个循环中不停的测试<code>turn</code>，直到其值变为<code>1</code>。连续测试一个变量直到某个值出现为止，称为<strong>忙等待(busy waiting)</strong>。由于这种方式会浪费CPU的时间，所以通常应该避免。只有在有理由认为等待时间非常短的情形下，才使用忙等待。用于忙等待的锁，称为<strong>自旋锁(spin lock)</strong>。</p><p>进程0离开临界区时，将<code>turn</code>设置为1，以便允许进程1进入临界区。假设进程1很快便离开了临界区，它将<code>turn</code>设置为0，这个时候两个进程都处于临界区外。现在进程0再次进入外层循环，它进入临界区又退出，<code>turn</code>的值变为1。此时，两个线程都在临界区外执行。突然，进程0再次完成非临界区的操作而回到循环的开始位置，但这个时候它并不能进入临界区，因为<code>turn</code>当前的值为1，因为此时进程1还在忙于非临界区的操作，进程0只有自旋等待，直到进程1把<code>turn</code>变为0为止。这说明：在一个进程比另一个进程慢了很多的情况下，轮流进入临界区并不是一个好办法。</p><p>该方案要求两个进程严格地轮流进入临界区，避免了所有的竞争条件。由于方案中出现了临界区外的进程阻塞其它进程的情况，违反了条件3，所以不能作为一个很好的备选方案。</p><h4 id=peterson算法>Peterson算法</h4><p>Peterson于1981年提出了一种新的互斥算法，克服了严格轮转法的缺点：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=color:#75715e>#define FALSE 0
+</code></pre></div><p>线程0和线程1通过检查共享变量<code>turn</code>的取值来决定是否进入临界区。变量<code>turn</code>的初始值为<code>0</code>，表示进程0可以进入临界区。开始时，进程0检查<code>turn</code>，发现为0，于是进入临界区。进程1也发现<code>turn</code>为0，所以在一个循环中不停的测试<code>turn</code>，直到其值变为<code>1</code>。连续测试一个变量直到某个值出现为止，称为<strong>忙等待(busy waiting)</strong>。由于这种方式会浪费CPU的时间，所以通常应该避免。只有在有理由认为等待时间非常短的情形下，才使用忙等待。用于忙等待的锁，称为<strong>自旋锁(spin lock)</strong>。</p>
+<p>进程0离开临界区时，将<code>turn</code>设置为1，以便允许进程1进入临界区。假设进程1很快便离开了临界区，它将<code>turn</code>设置为0，这个时候两个进程都处于临界区外。现在进程0再次进入外层循环，它进入临界区又退出，<code>turn</code>的值变为1。此时，两个线程都在临界区外执行。突然，进程0再次完成非临界区的操作而回到循环的开始位置，但这个时候它并不能进入临界区，因为<code>turn</code>当前的值为1，因为此时进程1还在忙于非临界区的操作，进程0只有自旋等待，直到进程1把<code>turn</code>变为0为止。这说明：在一个进程比另一个进程慢了很多的情况下，轮流进入临界区并不是一个好办法。</p>
+<p>该方案要求两个进程严格地轮流进入临界区，避免了所有的竞争条件。由于方案中出现了临界区外的进程阻塞其它进程的情况，违反了条件3，所以不能作为一个很好的备选方案。</p>
+<h4 id=peterson算法>Peterson算法</h4>
+<p>Peterson于1981年提出了一种新的互斥算法，克服了严格轮转法的缺点：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=color:#75715e>#define FALSE 0
 </span><span style=color:#75715e>#define TRUE 1
 </span><span style=color:#75715e>#define N 2     </span><span style=color:#75715e>// 进程数量 
 </span><span style=color:#75715e></span>
@@ -42,8 +324,15 @@
 <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>leave_region</span>(<span style=color:#66d9ef>int</span> process) {
     interested[process] <span style=color:#f92672>=</span> FALSE;    <span style=color:#75715e>// 表示离开临界区
 </span><span style=color:#75715e></span>}
-</code></pre></div><p>在进入其临界区之前，各个进程使用自己进程号0或1作为<code>enter_region</code>的参数。该调用在需要时将使进程等待，直到能安全地进入临界区。在完成对共享变量的操作之后，进程将调用<code>leave_region</code>离开临界区。若其它进程希望进入临界区，现在就能进入。</p><p>一开始，没有任何进程处于临界区中，现在进程0调用<code>enter_region</code>，它通过设置其数组元素和将<code>turn</code>置为0来标识它希望进入临界区。由于进程1并在临界区内，所以<code>enter_region</code>很快返回，如果进程1现在调用<code>enter_region</code>，进程1将在此处循环等待直到<code>interested[0]</code>变成<code>FASLE</code>，而这只有在进程0调用<code>leave_region</code>退出临界区时才会发生。</p><p>现在考虑两个进程几乎同时调用<code>enter_region</code>的情况，它们将自己的进程号存入<code>turn</code>，但时只有后设置的进程号才会生效，前一个因为被重写而丢失。假设进程1是后存入的，则<code>turn</code>为1。当两个进程都运行到<code>while</code>语句时，进程0将循环0次并进入临界区，而进程1由于<code>while</code>条件不满足而不能进入临界区，它需要一直循环直到进程0退出临界区为止。<code>turn</code>变量可以理解为：现在轮到谁，即谁正在等待进入临界区。</p><h4 id=基于硬件的解决方案>基于硬件的解决方案</h4><p>在某些计算机中，特别是那些设计为多处理器的计算机，都有下面一条指令：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#a6e22e>TSL</span> <span style=color:#66d9ef>RX</span>,  <span style=color:#66d9ef>LOCK</span>
-</code></pre></div><p>称为测试并加锁(test and set lock)。它将一个内存字<code>lock</code>读取到寄存器<code>RX</code>中，然后在该内存地址上存一个非零值。读字和写字操作保证是不可分割的，即该指令结束之前其他处理器均不允许访问该内存字。执行<code>TSL</code>指令的CPU将<strong>锁住内存总线</strong>，以禁止其它CPU在该指令结束之前访问内存。</p><p>为了使用<code>TSL</code>指令，需要使用一个共享变量<code>lock</code>来协调对共享内存的访问。当<code>lock</code>为0时，任何进程都可以使用<code>TSL</code>指令将其设置为1并读写共享内存。当操作结束时，进程调用一条普通的<code>MOVE</code>指令将<code>lock</code>的值重新设置为0。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm>enter_region:
+</code></pre></div><p>在进入其临界区之前，各个进程使用自己进程号0或1作为<code>enter_region</code>的参数。该调用在需要时将使进程等待，直到能安全地进入临界区。在完成对共享变量的操作之后，进程将调用<code>leave_region</code>离开临界区。若其它进程希望进入临界区，现在就能进入。</p>
+<p>一开始，没有任何进程处于临界区中，现在进程0调用<code>enter_region</code>，它通过设置其数组元素和将<code>turn</code>置为0来标识它希望进入临界区。由于进程1并在临界区内，所以<code>enter_region</code>很快返回，如果进程1现在调用<code>enter_region</code>，进程1将在此处循环等待直到<code>interested[0]</code>变成<code>FASLE</code>，而这只有在进程0调用<code>leave_region</code>退出临界区时才会发生。</p>
+<p>现在考虑两个进程几乎同时调用<code>enter_region</code>的情况，它们将自己的进程号存入<code>turn</code>，但时只有后设置的进程号才会生效，前一个因为被重写而丢失。假设进程1是后存入的，则<code>turn</code>为1。当两个进程都运行到<code>while</code>语句时，进程0将循环0次并进入临界区，而进程1由于<code>while</code>条件不满足而不能进入临界区，它需要一直循环直到进程0退出临界区为止。<code>turn</code>变量可以理解为：现在轮到谁，即谁正在等待进入临界区。</p>
+<h4 id=基于硬件的解决方案>基于硬件的解决方案</h4>
+<p>在某些计算机中，特别是那些设计为多处理器的计算机，都有下面一条指令：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#a6e22e>TSL</span> <span style=color:#66d9ef>RX</span>,  <span style=color:#66d9ef>LOCK</span>
+</code></pre></div><p>称为测试并加锁(test and set lock)。它将一个内存字<code>lock</code>读取到寄存器<code>RX</code>中，然后在该内存地址上存一个非零值。读字和写字操作保证是不可分割的，即该指令结束之前其他处理器均不允许访问该内存字。执行<code>TSL</code>指令的CPU将<strong>锁住内存总线</strong>，以禁止其它CPU在该指令结束之前访问内存。</p>
+<p>为了使用<code>TSL</code>指令，需要使用一个共享变量<code>lock</code>来协调对共享内存的访问。当<code>lock</code>为0时，任何进程都可以使用<code>TSL</code>指令将其设置为1并读写共享内存。当操作结束时，进程调用一条普通的<code>MOVE</code>指令将<code>lock</code>的值重新设置为0。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm>enter_region:
     <span style=color:#a6e22e>TSL</span> <span style=color:#66d9ef>REGISTER</span>,<span style=color:#66d9ef>LOCK</span>       <span style=color:#960050;background-color:#1e0010>|</span> <span style=color:#960050;background-color:#1e0010>将</span><span style=color:#66d9ef>LOCK中的值复制到REGISTER并将LOCK的值置为1</span>
     <span style=color:#a6e22e>CMP</span> <span style=color:#66d9ef>REGISTER</span>,<span style=color:#75715e>#0         | REGISTER中的值为0吗？
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>JNE</span> <span style=color:#66d9ef>enter_region</span>        <span style=color:#960050;background-color:#1e0010>|</span> <span style=color:#960050;background-color:#1e0010>若非零，说明锁不可用，循环</span>
@@ -52,7 +341,9 @@
 leave_region:
     <span style=color:#a6e22e>MOVE</span> <span style=color:#66d9ef>LOCK</span>,<span style=color:#75715e>#0            | 将LOCK的值置为0
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>RET</span>                     <span style=color:#960050;background-color:#1e0010>|</span> <span style=color:#960050;background-color:#1e0010>返回</span>
-</code></pre></div><p><code>enter_region</code>的第一条指令将<code>lock</code>的旧值复制到寄存器并将<code>lock</code>的新值设置为1，随后将<code>lock</code>的旧值与0相比较，若非0，则说明锁已被使用，则程序回到开始并再次测试。重复这个过程直到<code>lock</code>的值为0，于是过程返回，加锁成功。要清除锁非常简单，程序只需要将0存入<code>lock</code>即可。</p><p>一个可以替代<code>TSL</code>的指令是<code>XCHG</code>，它原子的交换两个位置的内容。以下解法和<code>TSL</code>解法本质上是一样的：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm>enter_region:
+</code></pre></div><p><code>enter_region</code>的第一条指令将<code>lock</code>的旧值复制到寄存器并将<code>lock</code>的新值设置为1，随后将<code>lock</code>的旧值与0相比较，若非0，则说明锁已被使用，则程序回到开始并再次测试。重复这个过程直到<code>lock</code>的值为0，于是过程返回，加锁成功。要清除锁非常简单，程序只需要将0存入<code>lock</code>即可。</p>
+<p>一个可以替代<code>TSL</code>的指令是<code>XCHG</code>，它原子的交换两个位置的内容。以下解法和<code>TSL</code>解法本质上是一样的：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm>enter_region:
     <span style=color:#a6e22e>MOVE</span> <span style=color:#66d9ef>REGISTER</span>,<span style=color:#75715e>#1        | 将1存入REGISTER
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>XCHG</span> <span style=color:#66d9ef>REGISTER</span>,<span style=color:#66d9ef>LOCK</span>      <span style=color:#960050;background-color:#1e0010>|</span> <span style=color:#960050;background-color:#1e0010>交换</span><span style=color:#66d9ef>REGISTER与LOCK的值</span>
     <span style=color:#a6e22e>CMP</span> <span style=color:#66d9ef>REGISTER</span>,<span style=color:#75715e>#0         | REGISTER中的值为0吗？
@@ -62,7 +353,14 @@ leave_region:
 leave_region:
     <span style=color:#a6e22e>MOVE</span> <span style=color:#66d9ef>LOCK</span>,<span style=color:#75715e>#0            | 将LOCK的值置为0
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>RET</span>                     <span style=color:#960050;background-color:#1e0010>|</span> <span style=color:#960050;background-color:#1e0010>返回</span>
-</code></pre></div><p>进程在进入临界区之前先调用<code>enter_region</code>，这将导致忙等待，直到锁空闲为止，随后进程获得锁并返回。进程从临界区返回时调用<code>leave_region</code>，将<code>lock</code>设置为0。与其它基于临界区问题的解法一样，进程必须在正确的时间调用<code>enter_region</code>和<code>leave_region</code>，解法才能奏效。也就是说：临界区能否工作取决于进程是否遵守协定。</p><h3 id=睡眠与唤醒>睡眠与唤醒</h3><p>Peterson算法和基于<code>TSL</code>或<code>XCHG</code>的解决方案都是正确的，但它们都有忙等待的缺点。这些解法的本质是：当一个进程想要进入临界区时，先检查是否允许进入，若不允许，则原地自旋等待，直到允许为止。这种方法不仅浪费CPU时间，而且还可能引发预想不到的问题，例如优先级反转问题。</p><p>现在来考察另一组进程间通信原语，它们在无法进入临界区时将阻塞，而不是忙等待。最简单的就是<code>sleep</code>和<code>wakeup</code>。<code>sleep</code>是一个将引起调用进程阻塞的系统调用，即进程被挂起，直到另一个进程将其唤醒。<code>wakeup</code>只有一个参数，即要被唤醒的进程。</p><h4 id=生产者消费者问题>生产者消费者问题</h4><p>生产者消费者问题也称叫有限缓冲区问题。两个进程共享一个公共的固定大小的缓冲区，其中一个是生产者，它将消息放入缓冲区；另一个是消费者，它从缓冲区内取出消息。当缓冲区已满，生产者将被阻塞，直到消费者从缓存区中取走数据并将其唤醒。同样的，当消费者试图从缓冲区中取消息而发现缓冲区为空时，消费者就睡眠，直到生产者向缓冲区中放入消息并将其唤醒。</p><p>我们需要一个变量<code>count</code>来追踪缓冲区中消息的数量。如果缓冲区的容量为<code>N</code>，则生产者将首先检查<code>count</code>是否达到了<code>N</code>，若是，则生产者睡眠；否则生产者向缓冲区中放入一条消息并将<code>count</code>值加1。消费者首先测试<code>count</code>是否为0，若是，则睡眠；否则取走一条消息并将<code>count</code>减1。每个进程同时也会检测是否需要唤醒另一个进程。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=color:#75715e># define N 100;     </span><span style=color:#75715e>// 缓冲区容量
+</code></pre></div><p>进程在进入临界区之前先调用<code>enter_region</code>，这将导致忙等待，直到锁空闲为止，随后进程获得锁并返回。进程从临界区返回时调用<code>leave_region</code>，将<code>lock</code>设置为0。与其它基于临界区问题的解法一样，进程必须在正确的时间调用<code>enter_region</code>和<code>leave_region</code>，解法才能奏效。也就是说：临界区能否工作取决于进程是否遵守协定。</p>
+<h3 id=睡眠与唤醒>睡眠与唤醒</h3>
+<p>Peterson算法和基于<code>TSL</code>或<code>XCHG</code>的解决方案都是正确的，但它们都有忙等待的缺点。这些解法的本质是：当一个进程想要进入临界区时，先检查是否允许进入，若不允许，则原地自旋等待，直到允许为止。这种方法不仅浪费CPU时间，而且还可能引发预想不到的问题，例如优先级反转问题。</p>
+<p>现在来考察另一组进程间通信原语，它们在无法进入临界区时将阻塞，而不是忙等待。最简单的就是<code>sleep</code>和<code>wakeup</code>。<code>sleep</code>是一个将引起调用进程阻塞的系统调用，即进程被挂起，直到另一个进程将其唤醒。<code>wakeup</code>只有一个参数，即要被唤醒的进程。</p>
+<h4 id=生产者消费者问题>生产者消费者问题</h4>
+<p>生产者消费者问题也称叫有限缓冲区问题。两个进程共享一个公共的固定大小的缓冲区，其中一个是生产者，它将消息放入缓冲区；另一个是消费者，它从缓冲区内取出消息。当缓冲区已满，生产者将被阻塞，直到消费者从缓存区中取走数据并将其唤醒。同样的，当消费者试图从缓冲区中取消息而发现缓冲区为空时，消费者就睡眠，直到生产者向缓冲区中放入消息并将其唤醒。</p>
+<p>我们需要一个变量<code>count</code>来追踪缓冲区中消息的数量。如果缓冲区的容量为<code>N</code>，则生产者将首先检查<code>count</code>是否达到了<code>N</code>，若是，则生产者睡眠；否则生产者向缓冲区中放入一条消息并将<code>count</code>值加1。消费者首先测试<code>count</code>是否为0，若是，则睡眠；否则取走一条消息并将<code>count</code>减1。每个进程同时也会检测是否需要唤醒另一个进程。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=color:#75715e># define N 100;     </span><span style=color:#75715e>// 缓冲区容量
 </span><span style=color:#75715e></span><span style=color:#66d9ef>int</span> count <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;      <span style=color:#75715e>// 缓冲区中消息的数量
 </span><span style=color:#75715e></span>
 <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>producer</span>(<span style=color:#66d9ef>void</span>) {
@@ -84,7 +382,15 @@ leave_region:
 </span><span style=color:#75715e></span>        consume(item);              <span style=color:#75715e>// 消费
 </span><span style=color:#75715e></span>    }
 }
-</code></pre></div><p>这里可能出现竞争条件，原因是对<code>count</code>的访问未加限制。有可能出现以下情况：缓冲区为空，消费者读取到的<code>count</code>值为0。此时调度程序决定挂起消费者并启动生产者，生产者放入一个数据项到缓冲区，<code>count</code>变为1。生产者推断认为由于刚才<code>count</code>为0，所以消费者一定在睡眠，所以调用<code>wakeup</code>唤醒消费者。但是，消费者此时并没有睡眠，所以<code>wakeup</code>信号丢失。当消费者下次运行时，它继续测试之前读到的<code>count</code>值，依旧为挂起之前的值0，于是睡眠。这样下去，生产者迟早会填满整个缓冲区，然后睡眠，最终两个进程都将永远睡眠下去。</p><p>问题的实质在于发给一个未睡眠进程的<code>wakeup</code>信号丢失了。一种快速的弥补方法就是修改规则，加上一个<strong>唤醒等待位</strong>。当一个<code>wakeup</code>信号发给一个清醒的进程时，将该位置1，随后当进程尝试睡眠时，若唤醒等待位为1，则将其清零，就不睡眠而是保持清醒。</p><h4 id=信号量>信号量</h4><p><strong>信号量(semaphore)</strong> 是Dijkstra在1965年提出的一种方法，它使用一个整型变量记录唤醒次数，供以后使用。一个信号量的取值可以是0(表示当前没有睡眠的进程)或者为正值(表示当前有一个或多个进程处于睡眠状态，等待被唤醒)。以下的检查信号量的值、修改信号量的值和睡眠操作均需要保证是原子操作。</p><p>信号量支持两种操作：<code>down</code>和<code>up</code>（分别对应于广义的<code>sleep</code>和<code>wakeup</code>）。对一个信号量执行<code>down</code>操作时，会先检查其值是否大于0，若大于0，则将其减一（用掉一个唤醒信号，即睡眠进程的数量减一）并继续；若信号量的值为0，则进程将睡眠，而且此时<code>down</code>操作未结束。<code>up</code>操作对信号量的值加1，如果有一个或者多个进程在该信号量上睡眠(即先前的<code>down</code>操作还未完成)，系统会选取一个进程并允许它完成之前的<code>down1=</code>操作。于是，对一个有进程在其上睡眠的信号量来说，执行一次<code>up</code>操作之后，信号量的值依旧为0，只是在其上睡眠的进程少了一个。</p><h5 id=用信号量解决生产者-消费者问题>用信号量解决生产者-消费者问题</h5><p>为确保信号量能正确工作，需要采用一种原子的方式来实现它。通常将<code>up</code>和<code>down</code>作为系统调用来实现，而且操作系统只需要在执行以下操作时暂时屏蔽中断：测试信号量、更新信号量以及在需要时使某个进程睡眠。</p><p>生产者-消费者问题的解决方案使用了三个信号量：<code>full</code>记录满缓冲槽数量，<code>empty</code>记录空缓冲槽数量，<code>mutex</code>控制对临界区的访问，确保生产者和消费者不会同时进入缓冲区。<code>mutex</code>的初值为1，保证同时只有一个进程可以进入临界区，称作<strong>二元信号量(binary semaphore)</strong>。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=color:#75715e>#define N 100
+</code></pre></div><p>这里可能出现竞争条件，原因是对<code>count</code>的访问未加限制。有可能出现以下情况：缓冲区为空，消费者读取到的<code>count</code>值为0。此时调度程序决定挂起消费者并启动生产者，生产者放入一个数据项到缓冲区，<code>count</code>变为1。生产者推断认为由于刚才<code>count</code>为0，所以消费者一定在睡眠，所以调用<code>wakeup</code>唤醒消费者。但是，消费者此时并没有睡眠，所以<code>wakeup</code>信号丢失。当消费者下次运行时，它继续测试之前读到的<code>count</code>值，依旧为挂起之前的值0，于是睡眠。这样下去，生产者迟早会填满整个缓冲区，然后睡眠，最终两个进程都将永远睡眠下去。</p>
+<p>问题的实质在于发给一个未睡眠进程的<code>wakeup</code>信号丢失了。一种快速的弥补方法就是修改规则，加上一个<strong>唤醒等待位</strong>。当一个<code>wakeup</code>信号发给一个清醒的进程时，将该位置1，随后当进程尝试睡眠时，若唤醒等待位为1，则将其清零，就不睡眠而是保持清醒。</p>
+<h4 id=信号量>信号量</h4>
+<p><strong>信号量(semaphore)</strong> 是Dijkstra在1965年提出的一种方法，它使用一个整型变量记录唤醒次数，供以后使用。一个信号量的取值可以是0(表示当前没有睡眠的进程)或者为正值(表示当前有一个或多个进程处于睡眠状态，等待被唤醒)。以下的检查信号量的值、修改信号量的值和睡眠操作均需要保证是原子操作。</p>
+<p>信号量支持两种操作：<code>down</code>和<code>up</code>（分别对应于广义的<code>sleep</code>和<code>wakeup</code>）。对一个信号量执行<code>down</code>操作时，会先检查其值是否大于0，若大于0，则将其减一（用掉一个唤醒信号，即睡眠进程的数量减一）并继续；若信号量的值为0，则进程将睡眠，而且此时<code>down</code>操作未结束。<code>up</code>操作对信号量的值加1，如果有一个或者多个进程在该信号量上睡眠(即先前的<code>down</code>操作还未完成)，系统会选取一个进程并允许它完成之前的<code>down1=</code>操作。于是，对一个有进程在其上睡眠的信号量来说，执行一次<code>up</code>操作之后，信号量的值依旧为0，只是在其上睡眠的进程少了一个。</p>
+<h5 id=用信号量解决生产者-消费者问题>用信号量解决生产者-消费者问题</h5>
+<p>为确保信号量能正确工作，需要采用一种原子的方式来实现它。通常将<code>up</code>和<code>down</code>作为系统调用来实现，而且操作系统只需要在执行以下操作时暂时屏蔽中断：测试信号量、更新信号量以及在需要时使某个进程睡眠。</p>
+<p>生产者-消费者问题的解决方案使用了三个信号量：<code>full</code>记录满缓冲槽数量，<code>empty</code>记录空缓冲槽数量，<code>mutex</code>控制对临界区的访问，确保生产者和消费者不会同时进入缓冲区。<code>mutex</code>的初值为1，保证同时只有一个进程可以进入临界区，称作<strong>二元信号量(binary semaphore)</strong>。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=color:#75715e>#define N 100
 </span><span style=color:#75715e></span><span style=color:#66d9ef>typedef</span> <span style=color:#66d9ef>int</span> semaphore
 semaphore full <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;         <span style=color:#75715e>// 慢缓冲槽数量
 </span><span style=color:#75715e></span>semaphore empty <span style=color:#f92672>=</span> N;        <span style=color:#75715e>// 空缓冲槽数量
@@ -111,7 +417,11 @@ semaphore full <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</s
 </span><span style=color:#75715e></span>        consume(item);              <span style=color:#75715e>// 消费
 </span><span style=color:#75715e></span>    }
 }
-</code></pre></div><p>以上展示了信号量的两种用法：<code>mutex</code>用于互斥，保证任一时刻只有一个进程读写缓冲区中的变量，而<code>empty</code>和<code>full</code>用于同步，保证某些事件的顺序发生或不发生。</p><h4 id=互斥量>互斥量</h4><p>如果不需要信号量的计数能力，有时候可以使用信号量的一个简化版本，称为<strong>互斥量(mutex)</strong>。互斥量仅适用于管理一些共享资源或一小段代码。它是一个只有可能处于两种状态中的一种的变量：解锁和加锁。</p><p>当一个进程需要访问临界区时，它调用<code>mutex_lock</code>。若<code>mutex</code>为0，表示临界区内无进程，则进入临界区；若<code>mutex</code>为1，表示当前临界区内有进程，调用线程将被阻塞，直到临界区中的进程完成并调用<code>mutex_unlock</code>释放锁。如果多个进程在该互斥量上阻塞，将随机选择一个进程并允许它获得锁。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm>mutex_lock:
+</code></pre></div><p>以上展示了信号量的两种用法：<code>mutex</code>用于互斥，保证任一时刻只有一个进程读写缓冲区中的变量，而<code>empty</code>和<code>full</code>用于同步，保证某些事件的顺序发生或不发生。</p>
+<h4 id=互斥量>互斥量</h4>
+<p>如果不需要信号量的计数能力，有时候可以使用信号量的一个简化版本，称为<strong>互斥量(mutex)</strong>。互斥量仅适用于管理一些共享资源或一小段代码。它是一个只有可能处于两种状态中的一种的变量：解锁和加锁。</p>
+<p>当一个进程需要访问临界区时，它调用<code>mutex_lock</code>。若<code>mutex</code>为0，表示临界区内无进程，则进入临界区；若<code>mutex</code>为1，表示当前临界区内有进程，调用线程将被阻塞，直到临界区中的进程完成并调用<code>mutex_unlock</code>释放锁。如果多个进程在该互斥量上阻塞，将随机选择一个进程并允许它获得锁。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm>mutex_lock:
     <span style=color:#a6e22e>TSL</span> <span style=color:#66d9ef>REGISTER</span>,<span style=color:#66d9ef>MUTEX</span>          <span style=color:#960050;background-color:#1e0010>|</span> <span style=color:#960050;background-color:#1e0010>先将</span><span style=color:#66d9ef>mutex的值复制到GEGISTER</span><span style=color:#960050;background-color:#1e0010>，然后将</span><span style=color:#66d9ef>mutex置为1</span>
     <span style=color:#a6e22e>CMP</span> <span style=color:#66d9ef>REGISTER</span>,<span style=color:#75715e>#0             | 检查REGISTER中的值是否为0
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>JZE</span> <span style=color:#66d9ef>ok</span>                      <span style=color:#960050;background-color:#1e0010>|</span> <span style=color:#960050;background-color:#1e0010>若为</span><span style=color:#ae81ff>0</span><span style=color:#960050;background-color:#1e0010>，表示未上锁，成功获得锁，返回</span>
@@ -122,5 +432,94 @@ ok: <span style=color:#a6e22e>RET</span>                         <span style=col
 mutex_unlock:
     <span style=color:#a6e22e>MOVE</span> <span style=color:#66d9ef>REGISTER</span>,<span style=color:#75715e>#0            | 将mutex置为0
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>RET</span>                         <span style=color:#960050;background-color:#1e0010>|</span> <span style=color:#960050;background-color:#1e0010>释放锁，返回</span>
-</code></pre></div><p>这段代码与之前采用基于<code>TSL</code>的硬件解决方案中的<code>enter_region</code>的代码很相似，但有一个关键区别：当<code>enter_region</code>进入临界区失败时，它始终自旋等待；而<code>mutex_lock</code>在获取锁失败时，它调用<code>thread_yield</code>让出CPU的使用权，这样就没有忙等待。当该进程再次获得CPU时，它将再次尝试获取锁。</p><h4 id=管程>管程</h4><p><strong>管程(monitor)</strong> 是一种高级同步原语。一个管程是一个由过程、变量、数据结构等组成的一个集合，他们组成一个特殊的模块或软件包。进程可以在任何需要的时候调用管程中的过程，但他们不能在管程之外声明的过程中直接访问管程内的数据结构。</p><p>管程有一个很重要的特性，即任一时刻管程中只能有一个活跃进程，这一特性使管程能够有效地完成互斥。管程是编程语言的组成部分，进入管程时的互斥由编译器完成，C语言并不支持管程，而Java支持管程。</p><h3 id=消息传递>消息传递</h3><p><strong>消息传递(message passing)</strong> 是一种进程间通信的方法，它使用了两条原语：<code>send</code>和<code>receive</code>。<code>send</code>给接收方发送一条消息，而<code>receive</code>从发送方接收一条消息。如果没有消息可用，接收方可能会阻塞直到消息到达，也可能带一个错误码立即返回。</p><p>为了防止消息丢失，发送方和接收方可以达成以下协议：一旦收到消息，接收方马上会送一条确认消息。如果发送方在一定时间内未收到确认，则重传该消息。</p><h3 id=屏障>屏障</h3><p>在有些应用中划分了若干阶段，并且规定，除非所有的进程都准备好进入下一阶段，否则任何进程都不能进入下一阶段。可以通过在每个阶段的结尾放置**屏障(barrier)**来实现这种行为。当一个进程到达屏障，它会被屏障阻拦，直到所有进程都到达该屏障才一并放行。屏障可用于一组线程的同步。</p><h3 id=避免锁读-复制-更新>避免锁：读-复制-更新</h3><p>最快的锁就是根本没有锁。在某些情况下，我们可以允许写操作更新数据结构，即便还有进程正在使用它。关键在于确保每个读操作要么读取数据的旧版本，要么读取数据的新版本，绝不能是新旧版本数据的组合。</p><h2 id=进程调度>进程调度</h2><p>当两个进程同时竞争一个CPU时，必须选择出一个进程让其获得CPU。在操作系统中，完成选择工作的组件被称为<strong>调度程序(scheduler)</strong>，调度程序可能根据实际情况采用不同的调度算法。</p><p>有些进程会将绝大多数时间花在计算上，而有些进程会被大多数时间花在I/O上。前者称为<strong>计算密集型(computed-bound)</strong>，后者称为<strong>I/O密集型(I/O-bound)</strong>：</p><p><img src=/images/operating_systems/processes_management/computed-bound-vs-io-bound.png alt="Computed-bound vs I/O-bound"></p><p>调度的一个关键问题就是合适进行调度，有多种情形需要调度。例如：</p><ul><li>在创建一个新进程之后，是运行父进程还是子进程。</li><li>当一个进程退出时，必须从就绪进程中选取一个运行。如果没有就绪进程，通常会运行一个系统提供的空闲进程。</li><li>当一个进程由于I/O或其它原因阻塞时，需要选择另一个进程运行。</li><li>当一个I/O中断发生时，必须做出调度决策。</li></ul><h3 id=调度算法>调度算法</h3><p>根据时钟中断时做出的调度决策，可以将调度算法分为两类：<strong>非抢占式</strong>调度算法挑选一个进程，然后让该进程运行至阻塞，或者直到该进程自动释放CPU，该进程不会被强迫挂起。<strong>抢占式</strong>调度算法挑选一个进程，让该进程运行一段时间，如果时间到了且该进程仍在运行，则将它挂起并运行其它就绪进程。抢占式调度算法依赖时钟中断，以便调度程序能够获得CPU的控制权。</p><h4 id=调度算法的目标>调度算法的目标</h4><p>对于不同的操作系统环境，采取的调度算法也是不同的，常见的环境有：<strong>批处理系统</strong>、<strong>交互式系统</strong>、<strong>实时系统</strong>。为了设计调度算法，我们有必要考虑什么是一个好的调度算法。某些目标取决于操作环境，而某些目标又是通用的。</p><p>在所有的情形中，公平是很重要的。相似的进程应该得到相近的对待，给其中一个进程更多的CPU份额是不公平的。操作系统可能需要强制施行某些策略以保证公平性。另一个共同目标是保持系统的所有部分尽可能地忙碌，完成尽可能多的工作。</p><p>对于批处理系统，通常使用以下3个指标来衡量系统的工作状态：</p><ul><li>吞吐量。吞吐量指系统每小时完成的作业数量。</li><li>周转时间。周转时间指从一个批处理作业提交到完成的平均时间。</li><li>CPU利用率。CPU利用率用来衡量CPU的繁忙程度。</li></ul><p>对于交互式系统，最重要的就是最小响应时间，即从发出命令到得到响应之间的时间。</p><p>实时系统有着与交互式系统不同的特性，所以有着不同的调度目标。一般来说，实时系统或多或少都必须满足截止时间。作为一种以时间为主导的系统，实时系统可以分为**硬实时(hard real time)<strong>和</strong>软实时(soft real time)。前者表示任务必须满足绝对的截止时间，而后者能够容忍任务偶尔超过截止时间。</p><h4 id=常见的调度算法>常见的调度算法</h4><p>批处理系统中常用的调度算法有：先来先服务(first-come first-served)、最短作业优先(shortest job first)和最短剩余时间优先(shortest remaining time next)。</p><p><strong>轮转调度(round robin)</strong>：每个进程被分配一个时间段，称为<strong>时间片(quantum)</strong>，即允许该进程在该时间片内运行。如果在时间片结束时进程还在运行，将剥夺CPU并分配给另外一个进程。如果该进程在时间片结束前阻塞或结束，CPU也会立即切换。时间片轮转调度中的时间片大小很重要。从一个进程切换到另一个进程是需要一定时间的——保存和载入寄存器值及内存映像、更新各种表格和列表、清除和重新调入缓存等。<strong>进程切换(process switch)</strong> 有时候也称 <strong>上下文切换(context switch)</strong>。时间片太短容易导致过多的进程切换，降低CPU效率；而时间片太长可能导致短交互请求的响应时间变长。将时间片设为20~50ms通常是一个合理的折中选择。轮转调度一般用于交互式系统。</p><p><strong>优先级调度</strong>：优先级调度的基本思想是：给每个进程指定一个优先级，优先级越高的进程越先运行。而轮转调度中的每个进程的优先级是一样的。</p><h2 id=参考资料>参考资料</h2><ol><li>ANDREW S. TANENBAUM, HERBERT BOS. <em>Modern Operating Systems, 4th Edition</em>. Pearson, 2015.</li></ol></div><footer class=entry-footer><div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg><span class=screen-reader-text>分类: </span><a class=category href=/categories/os/>OS</a></div><div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg><span class=screen-reader-text>标签: </span><a class=tag href=/tags/os/>OS</a></div></div></footer></article><nav class=entry-nav><div class=container><div class="prev-entry sep-before"><a href=/posts/operating_systems/processes_management/deadlocks/><span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>Previous</span>
-<span class=screen-reader-text>上一篇: </span>死锁</a></div></div></nav></main><footer id=footer class=footer><div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单><ul><li><a href=https://github.com/zhannicholas target=_blank rel="noopener me"><span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg></a></li><li><a href=https://t.me/zhannicholas target=_blank rel="noopener me"><span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><title>Telegram icon</title><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg></a></li><li><a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me"><span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a></li><li><a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me"><span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a></li></ul></nav></section><div class=copyright><p>&copy; 2018-2021 Nicholas Zhan</p></div></div></footer></div></div><script>window.__assets_js_src="/assets/js/"</script><script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script></body></html>
+</code></pre></div><p>这段代码与之前采用基于<code>TSL</code>的硬件解决方案中的<code>enter_region</code>的代码很相似，但有一个关键区别：当<code>enter_region</code>进入临界区失败时，它始终自旋等待；而<code>mutex_lock</code>在获取锁失败时，它调用<code>thread_yield</code>让出CPU的使用权，这样就没有忙等待。当该进程再次获得CPU时，它将再次尝试获取锁。</p>
+<h4 id=管程>管程</h4>
+<p><strong>管程(monitor)</strong> 是一种高级同步原语。一个管程是一个由过程、变量、数据结构等组成的一个集合，他们组成一个特殊的模块或软件包。进程可以在任何需要的时候调用管程中的过程，但他们不能在管程之外声明的过程中直接访问管程内的数据结构。</p>
+<p>管程有一个很重要的特性，即任一时刻管程中只能有一个活跃进程，这一特性使管程能够有效地完成互斥。管程是编程语言的组成部分，进入管程时的互斥由编译器完成，C语言并不支持管程，而Java支持管程。</p>
+<h3 id=消息传递>消息传递</h3>
+<p><strong>消息传递(message passing)</strong> 是一种进程间通信的方法，它使用了两条原语：<code>send</code>和<code>receive</code>。<code>send</code>给接收方发送一条消息，而<code>receive</code>从发送方接收一条消息。如果没有消息可用，接收方可能会阻塞直到消息到达，也可能带一个错误码立即返回。</p>
+<p>为了防止消息丢失，发送方和接收方可以达成以下协议：一旦收到消息，接收方马上会送一条确认消息。如果发送方在一定时间内未收到确认，则重传该消息。</p>
+<h3 id=屏障>屏障</h3>
+<p>在有些应用中划分了若干阶段，并且规定，除非所有的进程都准备好进入下一阶段，否则任何进程都不能进入下一阶段。可以通过在每个阶段的结尾放置**屏障(barrier)**来实现这种行为。当一个进程到达屏障，它会被屏障阻拦，直到所有进程都到达该屏障才一并放行。屏障可用于一组线程的同步。</p>
+<h3 id=避免锁读-复制-更新>避免锁：读-复制-更新</h3>
+<p>最快的锁就是根本没有锁。在某些情况下，我们可以允许写操作更新数据结构，即便还有进程正在使用它。关键在于确保每个读操作要么读取数据的旧版本，要么读取数据的新版本，绝不能是新旧版本数据的组合。</p>
+<h2 id=进程调度>进程调度</h2>
+<p>当两个进程同时竞争一个CPU时，必须选择出一个进程让其获得CPU。在操作系统中，完成选择工作的组件被称为<strong>调度程序(scheduler)</strong>，调度程序可能根据实际情况采用不同的调度算法。</p>
+<p>有些进程会将绝大多数时间花在计算上，而有些进程会被大多数时间花在I/O上。前者称为<strong>计算密集型(computed-bound)</strong>，后者称为<strong>I/O密集型(I/O-bound)</strong>：</p>
+<p><img src=/images/operating_systems/processes_management/computed-bound-vs-io-bound.png alt="Computed-bound vs I/O-bound"></p>
+<p>调度的一个关键问题就是合适进行调度，有多种情形需要调度。例如：</p>
+<ul>
+<li>在创建一个新进程之后，是运行父进程还是子进程。</li>
+<li>当一个进程退出时，必须从就绪进程中选取一个运行。如果没有就绪进程，通常会运行一个系统提供的空闲进程。</li>
+<li>当一个进程由于I/O或其它原因阻塞时，需要选择另一个进程运行。</li>
+<li>当一个I/O中断发生时，必须做出调度决策。</li>
+</ul>
+<h3 id=调度算法>调度算法</h3>
+<p>根据时钟中断时做出的调度决策，可以将调度算法分为两类：<strong>非抢占式</strong>调度算法挑选一个进程，然后让该进程运行至阻塞，或者直到该进程自动释放CPU，该进程不会被强迫挂起。<strong>抢占式</strong>调度算法挑选一个进程，让该进程运行一段时间，如果时间到了且该进程仍在运行，则将它挂起并运行其它就绪进程。抢占式调度算法依赖时钟中断，以便调度程序能够获得CPU的控制权。</p>
+<h4 id=调度算法的目标>调度算法的目标</h4>
+<p>对于不同的操作系统环境，采取的调度算法也是不同的，常见的环境有：<strong>批处理系统</strong>、<strong>交互式系统</strong>、<strong>实时系统</strong>。为了设计调度算法，我们有必要考虑什么是一个好的调度算法。某些目标取决于操作环境，而某些目标又是通用的。</p>
+<p>在所有的情形中，公平是很重要的。相似的进程应该得到相近的对待，给其中一个进程更多的CPU份额是不公平的。操作系统可能需要强制施行某些策略以保证公平性。另一个共同目标是保持系统的所有部分尽可能地忙碌，完成尽可能多的工作。</p>
+<p>对于批处理系统，通常使用以下3个指标来衡量系统的工作状态：</p>
+<ul>
+<li>吞吐量。吞吐量指系统每小时完成的作业数量。</li>
+<li>周转时间。周转时间指从一个批处理作业提交到完成的平均时间。</li>
+<li>CPU利用率。CPU利用率用来衡量CPU的繁忙程度。</li>
+</ul>
+<p>对于交互式系统，最重要的就是最小响应时间，即从发出命令到得到响应之间的时间。</p>
+<p>实时系统有着与交互式系统不同的特性，所以有着不同的调度目标。一般来说，实时系统或多或少都必须满足截止时间。作为一种以时间为主导的系统，实时系统可以分为**硬实时(hard real time)<strong>和</strong>软实时(soft real time)。前者表示任务必须满足绝对的截止时间，而后者能够容忍任务偶尔超过截止时间。</p>
+<h4 id=常见的调度算法>常见的调度算法</h4>
+<p>批处理系统中常用的调度算法有：先来先服务(first-come first-served)、最短作业优先(shortest job first)和最短剩余时间优先(shortest remaining time next)。</p>
+<p><strong>轮转调度(round robin)</strong>：每个进程被分配一个时间段，称为<strong>时间片(quantum)</strong>，即允许该进程在该时间片内运行。如果在时间片结束时进程还在运行，将剥夺CPU并分配给另外一个进程。如果该进程在时间片结束前阻塞或结束，CPU也会立即切换。时间片轮转调度中的时间片大小很重要。从一个进程切换到另一个进程是需要一定时间的——保存和载入寄存器值及内存映像、更新各种表格和列表、清除和重新调入缓存等。<strong>进程切换(process switch)</strong> 有时候也称 <strong>上下文切换(context switch)</strong>。时间片太短容易导致过多的进程切换，降低CPU效率；而时间片太长可能导致短交互请求的响应时间变长。将时间片设为20~50ms通常是一个合理的折中选择。轮转调度一般用于交互式系统。</p>
+<p><strong>优先级调度</strong>：优先级调度的基本思想是：给每个进程指定一个优先级，优先级越高的进程越先运行。而轮转调度中的每个进程的优先级是一样的。</p>
+<h2 id=参考资料>参考资料</h2>
+<ol>
+<li>ANDREW S. TANENBAUM, HERBERT BOS. <em>Modern Operating Systems, 4th Edition</em>. Pearson, 2015.</li>
+</ol>
+</div>
+<footer class=entry-footer>
+<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/os/>OS</a></div>
+<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/os/>OS</a></div>
+</div>
+</footer>
+</article>
+<nav class=entry-nav>
+<div class=container><div class="prev-entry sep-before">
+<a href=/posts/operating_systems/processes_management/deadlocks/>
+<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
+Previous</span>
+<span class=screen-reader-text>上一篇: </span>死锁</a>
+</div></div>
+</nav>
+</main>
+<footer id=footer class=footer>
+<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
+<ul><li>
+<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a>
+</li><li>
+<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><title>Telegram icon</title><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
+</a>
+</li><li>
+<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
+<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+</a>
+</li><li>
+<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+</a>
+</li></ul>
+</nav>
+</section><div class=copyright>
+<p> &copy; 2018-2021 Nicholas Zhan </p>
+</div>
+</div>
+</footer>
+</div>
+</div><script>window.__assets_js_src="/assets/js/"</script>
+<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script>
+</body>
+</html>

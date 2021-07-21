@@ -1,20 +1,242 @@
-<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="线程池是管理一组同构工作线程的资源池，内部主要分为四部分： 线程池管理器：负责线程池的创建、销毁、添加任务等管理工作。 工作队列（Work Que"><meta name=theme-color content="#ffcd00"><meta property="og:title" content="Java线程池 • Nicholas Zhan"><meta property="og:description" content="线程池是管理一组同构工作线程的资源池，内部主要分为四部分： 线程池管理器：负责线程池的创建、销毁、添加任务等管理工作。 工作队列（Work Que"><meta property="og:url" content="https://zhannicholas.github.io/posts/java/concurrency/thread_pool/"><meta property="og:site_name" content="Nicholas Zhan"><meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Java"><meta property="article:tag" content="并发"><meta property="article:published_time" content="2020-12-13T18:35:11+08:00"><meta property="article:modified_time" content="2020-12-13T18:35:11+08:00"><meta name=twitter:card content="summary"><meta name=generator content="Hugo 0.85.0"><title>Java线程池 • Nicholas Zhan</title><link rel=canonical href=https://zhannicholas.github.io/posts/java/concurrency/thread_pool/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style></head><body class="page type-posts has-sidebar"><div class=site><div id=sidebar class=sidebar><a class=screen-reader-text href=#main-menu>跳到主菜单</a><div class=container><section class="widget widget-about sep-after"><header><div class=logo><a href=/><img src=/images/logo.png></a></div><h2 class="title site-title"><a href=/>Nicholas Zhan</a></h2><div class=desc>Java Developer, Runner, Cyclist</div></header></section><section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单><div class=container><ul><li class="item has-children"><a href=/posts/databases/>Database</a><button class=sub-menu-toggler>
+<!doctype html><html lang=zh-cn dir=auto><head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="线程池是管理一组同构工作线程的资源池，内部主要分为四部分： 线程池管理器：负责线程池的创建、销毁、添加任务等管理工作。 工作队列（Work Que">
+<meta name=theme-color content="#ffcd00">
+<meta property="og:title" content="Java线程池 • Nicholas Zhan">
+<meta property="og:description" content="线程池是管理一组同构工作线程的资源池，内部主要分为四部分： 线程池管理器：负责线程池的创建、销毁、添加任务等管理工作。 工作队列（Work Que">
+<meta property="og:url" content="https://zhannicholas.github.io/posts/java/concurrency/thread_pool/">
+<meta property="og:site_name" content="Nicholas Zhan">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Java"><meta property="article:tag" content="并发"><meta property="article:published_time" content="2020-12-13T18:35:11+08:00"><meta property="article:modified_time" content="2020-12-13T18:35:11+08:00"><meta name=twitter:card content="summary">
+<meta name=generator content="Hugo 0.86.0">
+<title>Java线程池 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/posts/java/concurrency/thread_pool/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
+</head>
+<body class="page type-posts has-sidebar">
+<div class=site><div id=sidebar class=sidebar>
+<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
+<div class=container><section class="widget widget-about sep-after">
+<header>
+<div class=logo>
+<a href=/>
+<img src=/images/logo.png>
+</a>
+</div>
+<h2 class="title site-title">
+<a href=/>
+Nicholas Zhan
+</a>
+</h2>
+<div class=desc>
+Java Developer, Runner, Cyclist
+</div>
+</header>
+</section>
+<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
+<div class=container>
+<ul><li class="item has-children">
+<a href=/posts/databases/>Database</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/posts/databases/redis/>Redis</a></li><li class=item><a href=/posts/databases/fundamentals/>基础理论</a></li></ul></li><li class="item has-children"><a href=/posts/java/>Java</a><button class=sub-menu-toggler>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/posts/databases/redis/>Redis</a></li><li class=item>
+<a href=/posts/databases/fundamentals/>基础理论</a></li></ul></li><li class="item has-children has-current">
+<a href=/posts/java/>Java</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/posts/java/jakartaee/>Jakarta EE</a></li><li class=item><a href=/posts/java/jvm/>JVM</a></li><li class=item><a href=/posts/java/concurrency/>并发</a></li></ul></li><li class="item has-children"><a href=/posts/operating_systems/>操作系统</a><button class=sub-menu-toggler>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/posts/java/jakartaee/>Jakarta EE</a></li><li class=item>
+<a href=/posts/java/jvm/>JVM</a></li><li class="item has-current">
+<a href=/posts/java/concurrency/>并发</a></li></ul></li><li class="item has-children">
+<a href=/posts/operating_systems/>操作系统</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/posts/operating_systems/memory_management/>内存管理</a></li><li class=item><a href=/posts/operating_systems/virtualization/>虚拟化</a></li><li class=item><a href=/posts/operating_systems/processes_management/>进程管理</a></li></ul></li><li class="item has-children"><a href=/posts/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/posts/operating_systems/memory_management/>内存管理</a></li><li class=item>
+<a href=/posts/operating_systems/virtualization/>虚拟化</a></li><li class=item>
+<a href=/posts/operating_systems/processes_management/>进程管理</a></li></ul></li><li class="item has-children">
+<a href=/posts/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/posts/computer_networks/http/>HTTP</a></li><li class=item><a href=/posts/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul></div></nav></section><section class="widget widget-taxonomy_cloud sep-after"><header><h4 class="title widget-title">标签</h4></header><div class="container list-container"><ul class="list taxonomy-cloud"><li><a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.3846153846153846em>C算法</a></li><li><a href=/tags/gc/ style=font-size:1em>GC</a></li><li><a href=/tags/git/ style=font-size:1em>Git</a></li><li><a href=/tags/http/ style=font-size:1.5384615384615385em>HTTP</a></li><li><a href=/tags/hugo/ style=font-size:1em>Hugo</a></li><li><a href=/tags/jakartaee/ style=font-size:1.1538461538461537em>JakartaEE</a></li><li><a href=/tags/java/ style=font-size:1.7692307692307692em>Java</a></li><li><a href=/tags/jdbc/ style=font-size:1em>JDBC</a></li><li><a href=/tags/jvm/ style=font-size:1.2307692307692308em>JVM</a></li><li><a href=/tags/leetcode/ style=font-size:1.1538461538461537em>Leetcode</a></li><li><a href=/tags/life/ style=font-size:1em>Life</a></li><li><a href=/tags/linux/ style=font-size:1em>Linux</a></li><li><a href=/tags/mybatis/ style=font-size:1em>MyBatis</a></li><li><a href=/tags/networks/ style=font-size:1.1538461538461537em>Networks</a></li><li><a href=/tags/os/ style=font-size:1.4615384615384617em>OS</a></li><li><a href=/tags/ostep/ style=font-size:1.1538461538461537em>OSTEP</a></li><li><a href=/tags/python/ style=font-size:1em>Python</a></li><li><a href=/tags/redis/ style=font-size:1.4615384615384617em>Redis</a></li><li><a href=/tags/sicp/ style=font-size:1em>SICP</a></li><li><a href=/tags/tomcat/ style=font-size:1em>Tomcat</a></li><li><a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a></li><li><a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0769230769230769em>多处理器编程的艺术</a></li><li><a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a></li><li><a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3076923076923077em>并发</a></li><li><a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a></li><li><a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1em>数据库</a></li><li><a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0769230769230769em>现代操作系统</a></li><li><a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a></li><li><a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.2307692307692308em>算法导论</a></li><li><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:2em>设计模式</a></li></ul></div></section></div><div class=sidebar-overlay></div></div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单><div class=container><a class=screen-reader-text href=#content>跳到内容</a>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/posts/computer_networks/http/>HTTP</a></li><li class=item>
+<a href=/posts/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
+</div>
+</nav>
+</section><section class="widget widget-taxonomy_cloud sep-after">
+<header>
+<h4 class="title widget-title">标签</h4>
+</header>
+<div class="container list-container">
+<ul class="list taxonomy-cloud"><li>
+<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.3846153846153846em>C算法</a>
+</li><li>
+<a href=/tags/gc/ style=font-size:1em>GC</a>
+</li><li>
+<a href=/tags/git/ style=font-size:1em>Git</a>
+</li><li>
+<a href=/tags/http/ style=font-size:1.5384615384615385em>HTTP</a>
+</li><li>
+<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
+</li><li>
+<a href=/tags/jakartaee/ style=font-size:1.1538461538461537em>JakartaEE</a>
+</li><li>
+<a href=/tags/java/ style=font-size:1.7692307692307692em>Java</a>
+</li><li>
+<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
+</li><li>
+<a href=/tags/jvm/ style=font-size:1.2307692307692308em>JVM</a>
+</li><li>
+<a href=/tags/leetcode/ style=font-size:1.1538461538461537em>Leetcode</a>
+</li><li>
+<a href=/tags/life/ style=font-size:1em>Life</a>
+</li><li>
+<a href=/tags/linux/ style=font-size:1em>Linux</a>
+</li><li>
+<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
+</li><li>
+<a href=/tags/networks/ style=font-size:1.1538461538461537em>Networks</a>
+</li><li>
+<a href=/tags/os/ style=font-size:1.4615384615384617em>OS</a>
+</li><li>
+<a href=/tags/ostep/ style=font-size:1.1538461538461537em>OSTEP</a>
+</li><li>
+<a href=/tags/python/ style=font-size:1em>Python</a>
+</li><li>
+<a href=/tags/redis/ style=font-size:1.4615384615384617em>Redis</a>
+</li><li>
+<a href=/tags/sicp/ style=font-size:1em>SICP</a>
+</li><li>
+<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
+</li><li>
+<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
+</li><li>
+<a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0769230769230769em>多处理器编程的艺术</a>
+</li><li>
+<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
+</li><li>
+<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3076923076923077em>并发</a>
+</li><li>
+<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
+</li><li>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1em>数据库</a>
+</li><li>
+<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0769230769230769em>现代操作系统</a>
+</li><li>
+<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
+</li><li>
+<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.2307692307692308em>算法导论</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:2em>设计模式</a>
+</li></ul>
+</div>
+</section>
+</div>
+<div class=sidebar-overlay></div>
+</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
+<div class=container>
+<a class=screen-reader-text href=#content>跳到内容</a>
 <button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
 <span class=screen-reader-text>Toggle Sidebar</span>
-<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span><span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button><ul><li class=item><a href=/>主页</a></li><li class=item><a href=/posts/>博客</a></li><li class=item><a href=/itinerary/>游山玩水</a></li><li class=item><a href=/notebook/>笔记本</a></li></ul></div></nav><div class=header-widgets><div class=container><style>.widget-breadcrumbs li:after{content:'\2f '}</style><section class="widget widget-breadcrumbs sep-after"><nav id=breadcrumbs><ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><a href=/posts/java/>Java</a></li><li><a href=/posts/java/concurrency/>并发</a></li><li><span>Java线程池</span></li></ol></nav></section></div></div><header id=header class="header site-header"><div class="container sep-after"><div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p></div></div></header><main id=content><article lang=zh-cn class=entry><header class="header entry-header"><div class="container sep-after"><div class=header-info><h1 class=title>Java线程池</h1></div><div class=entry-meta><span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class=screen-reader-text>Posted on</span>
-<time class=entry-date datetime=2020-12-13T18:35:11+08:00>2020, Dec 13</time></span>
-<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg><span class=screen-reader-text>by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
-<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>9 mins read</span></div></div></header><details class="container entry-toc"><summary class=title><span>目录</span></summary><nav id=TableOfContents><ul><li><a href=#设置线程池的大小>设置线程池的大小</a></li><li><a href=#线程池的创建和销毁>线程池的创建和销毁</a><ul><li><a href=#线程池的创建>线程池的创建</a></li><li><a href=#线程池的销毁>线程池的销毁</a></li></ul></li><li><a href=#线程的创建和销毁>线程的创建和销毁</a></li><li><a href=#java线程池的实现原理>Java线程池的实现原理</a></li><li><a href=#饱和策略>饱和策略</a></li><li><a href=#参考资料>参考资料</a></li></ul></nav></details><div class="container entry-content"><p>线程池是管理一组同构工作线程的资源池，内部主要分为四部分：</p><ul><li>线程池管理器：负责线程池的创建、销毁、添加任务等管理工作。</li><li>工作队列（Work Queue）：保存所有等待执行的任务。</li><li>工作者线程（Worker Thread）：从工作队列中取出一个任务并执行，然后返回线程池并等待下一个任务。</li><li>任务（Task）：实现了统一的接口，被工作者线程处理和执行。</li></ul><p>与“为每个任务都创建一个线程”相比，使用线程池不仅可以平摊线程在创建和销毁过程中产生的巨大开销，还能提高程序的响应性（当请求到达时，工作线程通常已经存在，可以节省创建线程的时间）。通过调整线程池的大小，不仅可以创建足够多的线程以使 CPU 保持忙碌状态，还可以防止多线程相互竞争资源而使应用程序耗尽内存或失败。最后，线程池可以统一管理资源，方便我们对任务进行管理等。</p><h2 id=设置线程池的大小>设置线程池的大小</h2><p>我们调整线程池大小的主要目的是为了充分利用 CPU 和内存等资源，从而最大限度地提高程序的性能。线程池的理想大小取决于被提交的任务的类型以及所部署系统的特性。通常不应该在代码中固定线程池的大小，而应该通过某种配置机制来提供，或者根据 <code>Runtime.getRuntime().availableProcessors()</code> 来获取可用处理器的数量之后动态计算。</p><p>如果线程池过大，那么大量的线程将在相对很少的 CPU 和内存资源上发生竞争，这不仅会导致更高的内存使用量，而且还可能耗尽资源。如果线程池过小，那么将导致许多空闲的处理器无法执行工作，从而降低吞吐率。</p><p>Java Concurrency in Practice 一书建议我们：对于计算密集型任务，在拥有 <code>N</code> 个处理器的系统上，当线程池的大小为 <strong><code>N+1</code></strong> 时，通常能实现最优的利用率（即使当计算密集型的线程偶尔由于缺页故障或者其他原因而暂停时，这个“额外”的线程也能确保 CPU 的时钟周期不被浪费）。对于包含I/O操作或其它阻塞操作的任务，由于线程并不会一直执行，因此线程池的规模应该更大。要正确的设置线程池的大小，必须估算出任务的等待时间与计算时间的比值。书中还给了我们另一个计算线程数的公式。</p><p>假设：</p><p>$$N_{cpu} = number\ of\ CPUs$$
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</span>
+<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</span>
+</button>
+<ul><li class=item>
+<a href=/>主页</a>
+</li><li class="item current">
+<a aria-current=page href=/posts/>博客</a>
+</li><li class=item>
+<a href=/itinerary/>游山玩水</a>
+</li><li class=item>
+<a href=/notebook/>笔记本</a>
+</li></ul>
+</div>
+</nav><div class=header-widgets>
+<div class=container>
+<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+<section class="widget widget-breadcrumbs sep-after">
+<nav id=breadcrumbs>
+<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><a href=/posts/java/>Java</a></li><li><a href=/posts/java/concurrency/>并发</a></li><li><span>Java线程池</span></li></ol>
+</nav>
+</section></div>
+</div>
+<header id=header class="header site-header">
+<div class="container sep-after">
+<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
+</div>
+</div>
+</header>
+<main id=content>
+<article lang=zh-cn class=entry>
+<header class="header entry-header">
+<div class="container sep-after">
+<div class=header-info>
+<h1 class=title>Java线程池</h1>
+</div>
+<div class=entry-meta>
+<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+<span class=screen-reader-text>Posted on </span>
+<time class=entry-date datetime=2020-12-13T18:35:11+08:00>2020, Dec 13</time>
+</span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
+<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
+9 mins read
+</span>
+</div>
+</div>
+</header>
+<details class="container entry-toc">
+<summary class=title>
+<span>目录</span>
+</summary>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#设置线程池的大小>设置线程池的大小</a></li>
+<li><a href=#线程池的创建和销毁>线程池的创建和销毁</a>
+<ul>
+<li><a href=#线程池的创建>线程池的创建</a></li>
+<li><a href=#线程池的销毁>线程池的销毁</a></li>
+</ul>
+</li>
+<li><a href=#线程的创建和销毁>线程的创建和销毁</a></li>
+<li><a href=#java线程池的实现原理>Java线程池的实现原理</a></li>
+<li><a href=#饱和策略>饱和策略</a></li>
+<li><a href=#参考资料>参考资料</a></li>
+</ul>
+</nav>
+</details>
+<div class="container entry-content">
+<p>线程池是管理一组同构工作线程的资源池，内部主要分为四部分：</p>
+<ul>
+<li>线程池管理器：负责线程池的创建、销毁、添加任务等管理工作。</li>
+<li>工作队列（Work Queue）：保存所有等待执行的任务。</li>
+<li>工作者线程（Worker Thread）：从工作队列中取出一个任务并执行，然后返回线程池并等待下一个任务。</li>
+<li>任务（Task）：实现了统一的接口，被工作者线程处理和执行。</li>
+</ul>
+<p>与“为每个任务都创建一个线程”相比，使用线程池不仅可以平摊线程在创建和销毁过程中产生的巨大开销，还能提高程序的响应性（当请求到达时，工作线程通常已经存在，可以节省创建线程的时间）。通过调整线程池的大小，不仅可以创建足够多的线程以使 CPU 保持忙碌状态，还可以防止多线程相互竞争资源而使应用程序耗尽内存或失败。最后，线程池可以统一管理资源，方便我们对任务进行管理等。</p>
+<h2 id=设置线程池的大小>设置线程池的大小</h2>
+<p>我们调整线程池大小的主要目的是为了充分利用 CPU 和内存等资源，从而最大限度地提高程序的性能。线程池的理想大小取决于被提交的任务的类型以及所部署系统的特性。通常不应该在代码中固定线程池的大小，而应该通过某种配置机制来提供，或者根据 <code>Runtime.getRuntime().availableProcessors()</code> 来获取可用处理器的数量之后动态计算。</p>
+<p>如果线程池过大，那么大量的线程将在相对很少的 CPU 和内存资源上发生竞争，这不仅会导致更高的内存使用量，而且还可能耗尽资源。如果线程池过小，那么将导致许多空闲的处理器无法执行工作，从而降低吞吐率。</p>
+<p>Java Concurrency in Practice 一书建议我们：对于计算密集型任务，在拥有 <code>N</code> 个处理器的系统上，当线程池的大小为 <strong><code>N+1</code></strong> 时，通常能实现最优的利用率（即使当计算密集型的线程偶尔由于缺页故障或者其他原因而暂停时，这个“额外”的线程也能确保 CPU 的时钟周期不被浪费）。对于包含I/O操作或其它阻塞操作的任务，由于线程并不会一直执行，因此线程池的规模应该更大。要正确的设置线程池的大小，必须估算出任务的等待时间与计算时间的比值。书中还给了我们另一个计算线程数的公式。</p>
+<p>假设：</p>
+<p>$$N_{cpu} = number\ of\ CPUs$$
 $$U_{cpu} = target\ CPU\ utilization, 0\ \le \ U_{cpu} \le \ 1$$
-$$\frac{W}{C} = ratio\ of\ wait\ time\ to\ compute\ time$$</p><p>若要使处理器达到期望的使用率，线程池的最有大小等于：</p><p>$$N_{threads} = N_{cpu} * U_{cpu} * (1 + \frac{W})$$</p><h2 id=线程池的创建和销毁>线程池的创建和销毁</h2><h3 id=线程池的创建>线程池的创建</h3><p>我们可以使用 <code>ThreadPoolExecutor</code> 来创建一个线程池：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>ThreadPoolExecutor</span><span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> corePoolSize<span style=color:#f92672>,</span>
+$$\frac{W}{C} = ratio\ of\ wait\ time\ to\ compute\ time$$</p>
+<p>若要使处理器达到期望的使用率，线程池的最有大小等于：</p>
+<p>$$N_{threads} = N_{cpu} * U_{cpu} * (1 + \frac{W})$$</p>
+<h2 id=线程池的创建和销毁>线程池的创建和销毁</h2>
+<h3 id=线程池的创建>线程池的创建</h3>
+<p>我们可以使用 <code>ThreadPoolExecutor</code> 来创建一个线程池：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>ThreadPoolExecutor</span><span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> corePoolSize<span style=color:#f92672>,</span>
                           <span style=color:#66d9ef>int</span> maximumPoolSize<span style=color:#f92672>,</span>
                           <span style=color:#66d9ef>long</span> keepAliveTime<span style=color:#f92672>,</span>
                           TimeUnit unit<span style=color:#f92672>,</span>
@@ -35,12 +257,103 @@ $$\frac{W}{C} = ratio\ of\ wait\ time\ to\ compute\ time$$</p><p>若要使处理
     <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>threadFactory</span> <span style=color:#f92672>=</span> threadFactory<span style=color:#f92672>;</span>
     <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>handler</span> <span style=color:#f92672>=</span> handler<span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p><code>ThreadPoolExecutor</code> 的构造函数包含7个核心参数：</p><ul><li><code>corePoolSize</code>：线程池的常驻核心线程数量。如果设置过小，可能导致频繁的创建和销毁线程，如果设置过大，又会造成系统资源的浪费，开发者应该根据实际业务场景来调整此值。</li><li><code>maximumPoolSize</code>：池内所允许的最大线程数量。</li><li><code>keepAliveTime</code>：当池内线程数量大于 <code>corePoolSize</code> 或当<code>allowCoreThreadTimeOut</code> 设置为 <code>true</code> 时，空闲线程在被销毁前的最大存活时间。</li><li><code>unit</code>：指定 <code>keepAliveTime</code> 参数的单位。</li><li><code>workQueue</code>：线程池执行的任务队列。当线程池中所有的线程都在处理任务时，新到来的任务就会在 <code>workQueue</code> 中排队等待执行。常用的任务队列有：有界队列 <code>ArrayBlockingQueue</code>、无界队列 <code>LinkedBlockingQueue</code> 和同步队列 <code>SynchronousQueue</code>（内部没有缓冲区）。</li><li><code>threadFactory</code>：执行器创建新线程时所使用的工厂，池中所有的线程都由它创建（通过 <code>addWorker()</code> 方法）。默认的线程工厂是 <code>DefaultThreadFactory</code>，它为线程指定了名字和优先级。我们可以通过实现 <code>ThreadFactory</code> 接口来实现更多自定义操作。</li><li><code>handler</code>：用来执行线程池的拒绝（饱和）策略。当 <code>workQueue</code> 满了并且线程池不能再创建线程来执行新提交的任务时，就会对新任务执行拒绝策略。拒绝策略其实是一种限流保护机制。</li></ul><p>此外，Java类库提供了一些灵活的线程池创建方案，可以通过 <code>Executors</code> 中的静态工厂方法来创建一个线程池：</p><ul><li><p><code>newFixedThreadPool()</code>。创建一个固定容量的线程池，每提交一个任务就创建一个线程，直到达到线程池的容量，这时线程池的规模将不再变化（在线程池关闭之前，若有线程因故终止，线程池将补充新的线程）。这种线程池一般适用于任务数量不均匀、对内存压力不敏感但对系统负载比较敏感的场景。</p></li><li><p><code>newCachedThreadPool()</code>。创建一个可缓存的线程池，如果线程池的当前规模超过了处理需求时，就回收空闲线程，而当需求增加时，就添加新的线程。它的特点在于线程池的规模几乎可以无限增加（实际上最大可以达到 <code>2^32 - 1</code>），非常适合用来执行要求低延迟的短期任务。</p></li><li><p><code>newSingleTreadExecutor()</code>。创建单个工作线程来执行任务，如果这个线程异常结束，则会创建另一个线程来替代。它能确保任务按照某种顺序串行执行（例如 FIFO、LIFO、优先级）。</p></li><li><p><code>newScheduledTreadPool()</code>。创建固定容量的线程池，并且以延迟或者定时任务的方式来执行任务，具体的实现主要有 3 种：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>ScheduledExecutorService service <span style=color:#f92672>=</span> Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newScheduledThreadPool</span><span style=color:#f92672>(</span>10<span style=color:#f92672>);</span>
+</code></pre></div><p><code>ThreadPoolExecutor</code> 的构造函数包含7个核心参数：</p>
+<ul>
+<li><code>corePoolSize</code>：线程池的常驻核心线程数量。如果设置过小，可能导致频繁的创建和销毁线程，如果设置过大，又会造成系统资源的浪费，开发者应该根据实际业务场景来调整此值。</li>
+<li><code>maximumPoolSize</code>：池内所允许的最大线程数量。</li>
+<li><code>keepAliveTime</code>：当池内线程数量大于 <code>corePoolSize</code> 或当<code>allowCoreThreadTimeOut</code> 设置为 <code>true</code> 时，空闲线程在被销毁前的最大存活时间。</li>
+<li><code>unit</code>：指定 <code>keepAliveTime</code> 参数的单位。</li>
+<li><code>workQueue</code>：线程池执行的任务队列。当线程池中所有的线程都在处理任务时，新到来的任务就会在 <code>workQueue</code> 中排队等待执行。常用的任务队列有：有界队列 <code>ArrayBlockingQueue</code>、无界队列 <code>LinkedBlockingQueue</code> 和同步队列 <code>SynchronousQueue</code>（内部没有缓冲区）。</li>
+<li><code>threadFactory</code>：执行器创建新线程时所使用的工厂，池中所有的线程都由它创建（通过 <code>addWorker()</code> 方法）。默认的线程工厂是 <code>DefaultThreadFactory</code>，它为线程指定了名字和优先级。我们可以通过实现 <code>ThreadFactory</code> 接口来实现更多自定义操作。</li>
+<li><code>handler</code>：用来执行线程池的拒绝（饱和）策略。当 <code>workQueue</code> 满了并且线程池不能再创建线程来执行新提交的任务时，就会对新任务执行拒绝策略。拒绝策略其实是一种限流保护机制。</li>
+</ul>
+<p>此外，Java类库提供了一些灵活的线程池创建方案，可以通过 <code>Executors</code> 中的静态工厂方法来创建一个线程池：</p>
+<ul>
+<li>
+<p><code>newFixedThreadPool()</code>。创建一个固定容量的线程池，每提交一个任务就创建一个线程，直到达到线程池的容量，这时线程池的规模将不再变化（在线程池关闭之前，若有线程因故终止，线程池将补充新的线程）。这种线程池一般适用于任务数量不均匀、对内存压力不敏感但对系统负载比较敏感的场景。</p>
+</li>
+<li>
+<p><code>newCachedThreadPool()</code>。创建一个可缓存的线程池，如果线程池的当前规模超过了处理需求时，就回收空闲线程，而当需求增加时，就添加新的线程。它的特点在于线程池的规模几乎可以无限增加（实际上最大可以达到 <code>2^32 - 1</code>），非常适合用来执行要求低延迟的短期任务。</p>
+</li>
+<li>
+<p><code>newSingleTreadExecutor()</code>。创建单个工作线程来执行任务，如果这个线程异常结束，则会创建另一个线程来替代。它能确保任务按照某种顺序串行执行（例如 FIFO、LIFO、优先级）。</p>
+</li>
+<li>
+<p><code>newScheduledTreadPool()</code>。创建固定容量的线程池，并且以延迟或者定时任务的方式来执行任务，具体的实现主要有 3 种：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>ScheduledExecutorService service <span style=color:#f92672>=</span> Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newScheduledThreadPool</span><span style=color:#f92672>(</span>10<span style=color:#f92672>);</span>
 
 service<span style=color:#f92672>.</span><span style=color:#a6e22e>schedule</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> Task<span style=color:#f92672>(),</span> 10<span style=color:#f92672>,</span> TimeUnit<span style=color:#f92672>.</span><span style=color:#a6e22e>SECONDS</span><span style=color:#f92672>);</span>
 service<span style=color:#f92672>.</span><span style=color:#a6e22e>scheduleAtFixedRate</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> Task<span style=color:#f92672>(),</span> 10<span style=color:#f92672>,</span> 10<span style=color:#f92672>,</span> TimeUnit<span style=color:#f92672>.</span><span style=color:#a6e22e>SECONDS</span><span style=color:#f92672>);</span>
 service<span style=color:#f92672>.</span><span style=color:#a6e22e>scheduleWithFixedDelay</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> Task<span style=color:#f92672>(),</span> 10<span style=color:#f92672>,</span> 10<span style=color:#f92672>,</span> TimeUnit<span style=color:#f92672>.</span><span style=color:#a6e22e>SECONDS</span><span style=color:#f92672>);</span>
-</code></pre></div><ul><li><code>schedule</code> 比较简单，表示延迟指定时间后执行一次任务，以上即 10 秒后执行一次任务就结束。</li><li><code>scheduleAtFixedRate</code> 表示以固定频率执行任务，以上即表示第一次延迟 10 秒后每隔 10 秒执行一次任务。</li><li><code>scheduleWithFixedDelay</code> 和第二种类似，区别在于对周期的定义。<code>sheculeAtFixedRate</code> 以任务开始的时间为起点计时，时间到就执行下一次任务，而不管任务执行要多久。而 <code>scheduleWithFixedDelay</code> 以任务结束时间为下一次循环的时间七点开始计时。</li></ul></li><li><p><code>newSingleThreadScheduledExecutor()</code>。与 <code>newScheduledTreadPool()</code> 非常相似，它只是 <code>ScheduledThreadPool</code> 的一个特例，内部只有一个线程。</p></li><li><p><code>newWorkStealingPool</code> 用于创建 <code>ForkJoinPool</code>。<code>ForkJoinPool</code> 也是线程池，但它与 <code>ThreadPoolExecutor</code> 有着很大不同。它非常适合用来执行可以产生子任务的任务（尤其是任务执行时长不均匀的场景），整个过程主要涉及两个步骤：首先是拆分任务（Fork）为子任务，然后是汇总（Join）子任务的结果得到任务的结果。此外，<code>ForkJoinPool</code> 的内部结构也与 <code>ThreadPoolExecutor</code> 大不相同：在 <code>ForkJoinPool</code> 中，每个线程都有自己独立的任务队列（是一个 Deque，用于存储分裂出来的子任务），而 <code>ThreadPoolExecutor</code> 中所有线程共用一个队列。</p></li></ul><p>阿里巴巴的《Java开发手册》中为了规避资源耗尽的风险，禁止使用 <code>Executors</code> 类去创建线程池。这是因为 <code>Executors</code> 创建出来的线程池有以下弊端：</p><ul><li><code>newFixedThreadPool()</code> 和 <code>newSingleThreadPool()</code> 创建出来的线程池允许的请求队列（<code>workQueue</code>）长度为 <code>Integer.MAX_VALUE</code>。如果线程池中任务的处理比较慢，那么随着请求的增多，队列中可能堆积大量的任务，进而占用大量内存，导致OOM。</li><li><code>newCachedThreadPool()</code> 和 <code>newScheduledThreadPool()</code> 创建出来的线程池允许的线程的最大数量（<code>maximumPoolSize</code>）为 <code>Inteter.MAX_VALUE</code>，当任务数量特别多时，就可能导致大量的线程被创建，最终因超过操作系统的上限而无法再创建新线程，或者引发 OOM。</li></ul><p>除了 <code>ForkJoinPool</code> 另外五种创建线程池的方法都可以认为是利用 <code>ThreadPoolExecutor</code> 来实现的，区别就在于传入的参数不同而已。</p><table><thead><tr><th>线程池</th><th>corePoolSize</th><th>maximumPoolSize</th><th>keepAliveTime</th></tr></thead><tbody><tr><td>newFixedThreadPool</td><td>构造函数传入</td><td>同 corePoolSize</td><td>0</td></tr><tr><td>newCachedThreadPool</td><td>0</td><td>Integer.MAX_VALUE</td><td>60s</td></tr><tr><td>newSingleTreadExecutor</td><td>1</td><td>1</td><td>0</td></tr><tr><td>newScheduledTreadPool</td><td>构造函数传入</td><td>Integer.MAX_VALUE</td><td>0</td></tr><tr><td>newSingleThreadScheduledExecutor</td><td>1</td><td>Integer.MAX_VALUE</td><td>0</td></tr></tbody></table><h3 id=线程池的销毁>线程池的销毁</h3><p>我们可以通过调用线程池的 <code>shutdown()</code> 或 <code>shutdownNow()</code> 方法来关闭线程池。它们的原理一样：都是通过遍历线程池中的工作线程，然后调用线程的 <code>interrup()</code> 方法来中断线程，所以无法响应中断的任务可能永远无法终止。但它们之间存在一定的区别： <code>shutdown()</code> 方法将执行平缓的关闭过程：不再接受新任务，同时等待已经提交的任务执行完成（包括已提交但还未执行的任务）。<code>shutdownNow()</code> 方法将执行粗暴的关闭过程：尝试取消所有运行中的任务，并且不再启动队列中尚未开始执行的任务。等所有任务都完成后，线程池就转入 <code>Terminated(已终止)</code> 状态。</p><h2 id=线程的创建和销毁>线程的创建和销毁</h2><p>线程池的基本大小（corePoolSize）、最大大小（maximumPoolSize）以及存活时间（keepAliveTime）等因素共同负责线程的创建和销毁。基本大小也是线程池的目标大小，即在没有任务执行时线程池的大小，并且只有在工作队列满了的情况下才会创建超出这个数量的线程。线程池的最大大小表示可以同时活动的线程数量的上限。如果某个线程的空闲时间超过了存活时间，那么将被标记为可回收的，当线程池的当前大小超过了基本大小时，这个线程将被终止。</p><p>值得注意的是：在创建 <code>TreadPoolExecutor</code> 的初期，线程并不会立即启动，而是等到有任务提交时才会启动，除非调用 <code>prestartCoreThreads()</code>。</p><h2 id=java线程池的实现原理>Java线程池的实现原理</h2><p><code>ThreadPoolExecutor</code> 通过 <code>execute(Runnable command)</code> 方法来执行一个线程：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>execute</span><span style=color:#f92672>(</span>Runnable command<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</code></pre></div><ul>
+<li><code>schedule</code> 比较简单，表示延迟指定时间后执行一次任务，以上即 10 秒后执行一次任务就结束。</li>
+<li><code>scheduleAtFixedRate</code> 表示以固定频率执行任务，以上即表示第一次延迟 10 秒后每隔 10 秒执行一次任务。</li>
+<li><code>scheduleWithFixedDelay</code> 和第二种类似，区别在于对周期的定义。<code>sheculeAtFixedRate</code> 以任务开始的时间为起点计时，时间到就执行下一次任务，而不管任务执行要多久。而 <code>scheduleWithFixedDelay</code> 以任务结束时间为下一次循环的时间七点开始计时。</li>
+</ul>
+</li>
+<li>
+<p><code>newSingleThreadScheduledExecutor()</code>。与 <code>newScheduledTreadPool()</code> 非常相似，它只是 <code>ScheduledThreadPool</code> 的一个特例，内部只有一个线程。</p>
+</li>
+<li>
+<p><code>newWorkStealingPool</code> 用于创建 <code>ForkJoinPool</code>。<code>ForkJoinPool</code> 也是线程池，但它与 <code>ThreadPoolExecutor</code> 有着很大不同。它非常适合用来执行可以产生子任务的任务（尤其是任务执行时长不均匀的场景），整个过程主要涉及两个步骤：首先是拆分任务（Fork）为子任务，然后是汇总（Join）子任务的结果得到任务的结果。此外，<code>ForkJoinPool</code> 的内部结构也与 <code>ThreadPoolExecutor</code> 大不相同：在 <code>ForkJoinPool</code> 中，每个线程都有自己独立的任务队列（是一个 Deque，用于存储分裂出来的子任务），而 <code>ThreadPoolExecutor</code> 中所有线程共用一个队列。</p>
+</li>
+</ul>
+<p>阿里巴巴的《Java开发手册》中为了规避资源耗尽的风险，禁止使用 <code>Executors</code> 类去创建线程池。这是因为 <code>Executors</code> 创建出来的线程池有以下弊端：</p>
+<ul>
+<li><code>newFixedThreadPool()</code> 和 <code>newSingleThreadPool()</code> 创建出来的线程池允许的请求队列（<code>workQueue</code>）长度为 <code>Integer.MAX_VALUE</code>。如果线程池中任务的处理比较慢，那么随着请求的增多，队列中可能堆积大量的任务，进而占用大量内存，导致OOM。</li>
+<li><code>newCachedThreadPool()</code> 和 <code>newScheduledThreadPool()</code> 创建出来的线程池允许的线程的最大数量（<code>maximumPoolSize</code>）为 <code>Inteter.MAX_VALUE</code>，当任务数量特别多时，就可能导致大量的线程被创建，最终因超过操作系统的上限而无法再创建新线程，或者引发 OOM。</li>
+</ul>
+<p>除了 <code>ForkJoinPool</code> 另外五种创建线程池的方法都可以认为是利用 <code>ThreadPoolExecutor</code> 来实现的，区别就在于传入的参数不同而已。</p>
+<table>
+<thead>
+<tr>
+<th>线程池</th>
+<th>corePoolSize</th>
+<th>maximumPoolSize</th>
+<th>keepAliveTime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>newFixedThreadPool</td>
+<td>构造函数传入</td>
+<td>同 corePoolSize</td>
+<td>0</td>
+</tr>
+<tr>
+<td>newCachedThreadPool</td>
+<td>0</td>
+<td>Integer.MAX_VALUE</td>
+<td>60s</td>
+</tr>
+<tr>
+<td>newSingleTreadExecutor</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>newScheduledTreadPool</td>
+<td>构造函数传入</td>
+<td>Integer.MAX_VALUE</td>
+<td>0</td>
+</tr>
+<tr>
+<td>newSingleThreadScheduledExecutor</td>
+<td>1</td>
+<td>Integer.MAX_VALUE</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<h3 id=线程池的销毁>线程池的销毁</h3>
+<p>我们可以通过调用线程池的 <code>shutdown()</code> 或 <code>shutdownNow()</code> 方法来关闭线程池。它们的原理一样：都是通过遍历线程池中的工作线程，然后调用线程的 <code>interrup()</code> 方法来中断线程，所以无法响应中断的任务可能永远无法终止。但它们之间存在一定的区别： <code>shutdown()</code> 方法将执行平缓的关闭过程：不再接受新任务，同时等待已经提交的任务执行完成（包括已提交但还未执行的任务）。<code>shutdownNow()</code> 方法将执行粗暴的关闭过程：尝试取消所有运行中的任务，并且不再启动队列中尚未开始执行的任务。等所有任务都完成后，线程池就转入 <code>Terminated(已终止)</code> 状态。</p>
+<h2 id=线程的创建和销毁>线程的创建和销毁</h2>
+<p>线程池的基本大小（corePoolSize）、最大大小（maximumPoolSize）以及存活时间（keepAliveTime）等因素共同负责线程的创建和销毁。基本大小也是线程池的目标大小，即在没有任务执行时线程池的大小，并且只有在工作队列满了的情况下才会创建超出这个数量的线程。线程池的最大大小表示可以同时活动的线程数量的上限。如果某个线程的空闲时间超过了存活时间，那么将被标记为可回收的，当线程池的当前大小超过了基本大小时，这个线程将被终止。</p>
+<p>值得注意的是：在创建 <code>TreadPoolExecutor</code> 的初期，线程并不会立即启动，而是等到有任务提交时才会启动，除非调用 <code>prestartCoreThreads()</code>。</p>
+<h2 id=java线程池的实现原理>Java线程池的实现原理</h2>
+<p><code>ThreadPoolExecutor</code> 通过 <code>execute(Runnable command)</code> 方法来执行一个线程：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>execute</span><span style=color:#f92672>(</span>Runnable command<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>command <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span>
         <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> NullPointerException<span style=color:#f92672>();</span>
     <span style=color:#66d9ef>int</span> c <span style=color:#f92672>=</span> ctl<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>();</span>
@@ -59,7 +372,89 @@ service<span style=color:#f92672>.</span><span style=color:#a6e22e>scheduleWithF
     <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> <span style=color:#f92672>(!</span>addWorker<span style=color:#f92672>(</span>command<span style=color:#f92672>,</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>))</span>
         reject<span style=color:#f92672>(</span>command<span style=color:#f92672>);</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>当提交一个新任务到线程池时，线程池的处理流程如下：</p><ol><li>如果线程池中正在执行的线程数少于线程池的基本大小（<code>corePoolSize</code>），则创建一个新的线程来执行任务。否则，进入下一步。</li><li>尝试向往工作队列里加入一个线程，如果工作队列满了，进入下一步。</li><li>尝试创建一个新线程来执行任务。如果失败，则采用给定的饱和策略来处理这个任务。</li></ol><p><img src=/images/java/concurrency/core-and-maximum-pool-size.png alt title=线程创建的时机></p><p><code>execute()</code> 方法内部调用了 <code>addWorker(Runnable firstTask, boolean core)</code> 方法，它的参数说明如下：</p><ul><li><code>firstTask</code>：线程应首先运行的任务，如果没有则可以设置为 <code>null</code>；</li><li><code>core</code>：判断是否可以创建线程数量的最大值，如果等于 <code>true</code> 则表示使用 <code>corePoolSize</code> 作为上限值创建 worker，<code>false</code> 则表示使用 <code>maximumPoolSize</code> 作为上限创建 worker。</li></ul><h2 id=饱和策略>饱和策略</h2><p>当线程池无法接收新的任务时，它会按照我们提供的饱和策略来拒绝任务。通常有两种情况：</p><ul><li>线程池内的工作已经饱和（即任务队列满了，运行中的线程数也达到了 <code>maximumPoolSize</code>），线程池没有能力继续处理新提交的任务</li><li>线程池被关闭（比如调用 <code>shutdown()</code> 方法）。即便此时线程池内部依然没有执行完成的任务正在执行，但线程池也不会接收任何新的任务</li></ul><p>使用者可以通过调用 <code>ThreadPoolExecutor</code> 的 <code>setRejectedExecutionHandler(RejectedExecutionHandler handler)</code> 来修改其饱和策略。JDK 自带了几种不同的 <code>RejectedExecutionHandler</code> 实现，每种实现都对应着有不同的饱和策略：</p><ul><li><strong><code>AbortPolicy</code></strong>：终止策略。这是默认的策略，该策略直接会抛出未检查的<code>RejectedExecutionException</code>。调用者可以捕获这个异常，然后根据实际需求编写处理代码。</li><li><strong><code>DiscardPolicy</code></strong>：丢弃策略。新提交的任务被直接丢弃，调用者不会收到任何通知，这是有一定风险的，可能造成数据丢失。</li><li><strong><code>DiscardOldestPolicy</code></strong>：丢弃最老的任务。丢弃下一个将被执行的任务，然后尝试重新提交新的任务。这也存在数据丢失的风险。</li><li><strong><code>CallerRunsPolicy</code></strong>：由调用者执行。不丢弃任务，也不抛出异常，而是将任务退回给调用者。它不会在线程池中的某个线程中执行新提交的任务，而是在调用了<code>execute(Runnable command)</code>方法的线程（调用者线程）中继续执行该任务。这么做的好处是任务不会被丢弃，但是会减缓任务提交的速度，给了线程池一定的缓冲期。</li></ul><h2 id=参考资料>参考资料</h2><ol><li>Brian Goetz, Tim Peierls, Joshua Bloch, Joseph Bowbeer, David Holmes, and Doug Lea. <em>Java Concurrency in Practice</em>. Addison-Wesley Professional, 2006.</li><li>方腾飞, 魏鹏, 程晓明. Java并发编程的艺术. 机械工业出版社, 2015.</li></ol></div><footer class=entry-footer><div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg><span class=screen-reader-text>分类: </span><a class=category href=/categories/java/>Java</a></div><div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg><span class=screen-reader-text>标签: </span><a class=tag href=/tags/java/>Java</a>, <a class=tag href=/tags/%E5%B9%B6%E5%8F%91/>并发</a></div></div></footer></article><nav class=entry-nav><div class=container><div class="prev-entry sep-before"><a href=/posts/java/concurrency/thread/><span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>Previous</span>
-<span class=screen-reader-text>上一篇: </span>Thread</a></div><div class="next-entry sep-before"><a href=/posts/java/concurrency/producer_consumer_pattern/><span class=screen-reader-text>下一篇: </span>生产者消费者模式<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg></span></a></div></div></nav></main><footer id=footer class=footer><div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单><ul><li><a href=https://github.com/zhannicholas target=_blank rel="noopener me"><span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg></a></li><li><a href=https://t.me/zhannicholas target=_blank rel="noopener me"><span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><title>Telegram icon</title><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg></a></li><li><a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me"><span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a></li><li><a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me"><span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a></li></ul></nav></section><div class=copyright><p>&copy; 2018-2021 Nicholas Zhan</p></div></div></footer></div></div><script>window.__assets_js_src="/assets/js/"</script><script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script><script type=text/x-mathjax-config>
+</code></pre></div><p>当提交一个新任务到线程池时，线程池的处理流程如下：</p>
+<ol>
+<li>如果线程池中正在执行的线程数少于线程池的基本大小（<code>corePoolSize</code>），则创建一个新的线程来执行任务。否则，进入下一步。</li>
+<li>尝试向往工作队列里加入一个线程，如果工作队列满了，进入下一步。</li>
+<li>尝试创建一个新线程来执行任务。如果失败，则采用给定的饱和策略来处理这个任务。</li>
+</ol>
+<p><img src=/images/java/concurrency/core-and-maximum-pool-size.png alt title=线程创建的时机></p>
+<p><code>execute()</code> 方法内部调用了 <code>addWorker(Runnable firstTask, boolean core)</code> 方法，它的参数说明如下：</p>
+<ul>
+<li><code>firstTask</code>：线程应首先运行的任务，如果没有则可以设置为 <code>null</code>；</li>
+<li><code>core</code>：判断是否可以创建线程数量的最大值，如果等于 <code>true</code> 则表示使用 <code>corePoolSize</code> 作为上限值创建 worker，<code>false</code> 则表示使用 <code>maximumPoolSize</code> 作为上限创建 worker。</li>
+</ul>
+<h2 id=饱和策略>饱和策略</h2>
+<p>当线程池无法接收新的任务时，它会按照我们提供的饱和策略来拒绝任务。通常有两种情况：</p>
+<ul>
+<li>线程池内的工作已经饱和（即任务队列满了，运行中的线程数也达到了 <code>maximumPoolSize</code>），线程池没有能力继续处理新提交的任务</li>
+<li>线程池被关闭（比如调用 <code>shutdown()</code> 方法）。即便此时线程池内部依然没有执行完成的任务正在执行，但线程池也不会接收任何新的任务</li>
+</ul>
+<p>使用者可以通过调用 <code>ThreadPoolExecutor</code> 的 <code>setRejectedExecutionHandler(RejectedExecutionHandler handler)</code> 来修改其饱和策略。JDK 自带了几种不同的 <code>RejectedExecutionHandler</code> 实现，每种实现都对应着有不同的饱和策略：</p>
+<ul>
+<li><strong><code>AbortPolicy</code></strong>：终止策略。这是默认的策略，该策略直接会抛出未检查的<code>RejectedExecutionException</code>。调用者可以捕获这个异常，然后根据实际需求编写处理代码。</li>
+<li><strong><code>DiscardPolicy</code></strong>：丢弃策略。新提交的任务被直接丢弃，调用者不会收到任何通知，这是有一定风险的，可能造成数据丢失。</li>
+<li><strong><code>DiscardOldestPolicy</code></strong>：丢弃最老的任务。丢弃下一个将被执行的任务，然后尝试重新提交新的任务。这也存在数据丢失的风险。</li>
+<li><strong><code>CallerRunsPolicy</code></strong>：由调用者执行。不丢弃任务，也不抛出异常，而是将任务退回给调用者。它不会在线程池中的某个线程中执行新提交的任务，而是在调用了<code>execute(Runnable command)</code>方法的线程（调用者线程）中继续执行该任务。这么做的好处是任务不会被丢弃，但是会减缓任务提交的速度，给了线程池一定的缓冲期。</li>
+</ul>
+<h2 id=参考资料>参考资料</h2>
+<ol>
+<li>Brian Goetz, Tim Peierls, Joshua Bloch, Joseph Bowbeer, David Holmes, and Doug Lea. <em>Java Concurrency in Practice</em>. Addison-Wesley Professional, 2006.</li>
+<li>方腾飞, 魏鹏, 程晓明. Java并发编程的艺术. 机械工业出版社, 2015.</li>
+</ol>
+</div>
+<footer class=entry-footer>
+<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/java/>Java</a></div>
+<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/java/>Java</a>, <a class=tag href=/tags/%E5%B9%B6%E5%8F%91/>并发</a></div>
+</div>
+</footer>
+</article>
+<nav class=entry-nav>
+<div class=container><div class="prev-entry sep-before">
+<a href=/posts/java/concurrency/thread/>
+<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
+Previous</span>
+<span class=screen-reader-text>上一篇: </span>Thread</a>
+</div><div class="next-entry sep-before">
+<a href=/posts/java/concurrency/producer_consumer_pattern/>
+<span class=screen-reader-text>下一篇: </span>生产者消费者模式<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+</span>
+</a>
+</div></div>
+</nav>
+</main>
+<footer id=footer class=footer>
+<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
+<ul><li>
+<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a>
+</li><li>
+<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><title>Telegram icon</title><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
+</a>
+</li><li>
+<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
+<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+</a>
+</li><li>
+<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+</a>
+</li></ul>
+</nav>
+</section><div class=copyright>
+<p> &copy; 2018-2021 Nicholas Zhan </p>
+</div>
+</div>
+</footer>
+</div>
+</div><script>window.__assets_js_src="/assets/js/"</script>
+<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script><script type=text/x-mathjax-config>
   MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"processEscapes":true}})
-</script><script type=text/javascript async src="//unpkg.com/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script></body></html>
+</script>
+<script type=text/javascript async src="//unpkg.com/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
+</html>
