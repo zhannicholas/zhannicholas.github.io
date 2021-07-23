@@ -331,12 +331,12 @@ Java Developer, Runner, Cyclist
 <p>确定工作负载（workload）是构建调度策略的关键部分。工作负载了解得越多，你的调度策略就能越优化。此外，我们还需要一些调度指标，用来比较不同的调度策略。一个基本的调度指标是 <strong>周转时间（turnround time）</strong>。</p>
 <p>任务的周转时间即任务完成时间减去任务到达系统的时间：</p>
 <p>$$ T_{周转时间} = T_{完成时间} - T_{到达时间} $$</p>
-<p>周转时间是一个性能指标。还有一个有趣的指标，它就是 <strong>公平性（fairness）</strong>。性能和公平性在调度系统中往往是矛盾的。</p>
+<p>周转时间是一个性能指标。还有一个有趣的指标—— <strong>公平性（fairness）</strong>。性能和公平性在调度系统中往往是矛盾的。</p>
 <h3 id=先进先出>先进先出</h3>
 <p>先进先出（First In First Out，FIFO）调度是一种基本的算法，有时候又称为先来先服务（First Come First Service，FCFS）。FIFO 的调度思想是：先运行最先达到系统的任务，然后是第二到达的，以此类推。</p>
 <p><img src=/images/reading_notes/ostep/fifo.png alt></p>
 <p>假设 A、B、C 三个任务几乎同时到达系统（A 比 B 早一点点，B 比 C 早一点点），若采用 FIFO 调度策略，则调度器会先执行 A，然后执行 B，最后执行 C。从图 FIFO 1 可以看出：A 在 10s 完成，B 在 20 秒完成，C 在 30 秒完成。那么这三个任务的平均周转时间就是 $\frac {10 + 20 + 30}{30} = 20 $。但是，若三个任务的运行情况如图 FIFO 2 所示的话，三个任务的平均周转时间就是 $\frac {100 + 110 + 120}{3} = 110$。</p>
-<p>第二种情况通常被成为 <strong>护航效应（convoy effect）</strong>，即一些耗时短较少的潜在资源消耗者排在重量级的资源消费者之后。这对于耗时较短的任务来说，并不友好。</p>
+<p>第二种情况通常被称为 <strong>护航效应（convoy effect）</strong>，即一些耗时短较少的潜在资源消耗者排在重量级的资源消费者之后。这对于耗时较短的任务来说，并不友好。</p>
 <h3 id=最短任务优先>最短任务优先</h3>
 <p>最短任务优先（Shortest Job First， SJF）是另一种调度算法，解决了 FIFO 算法中耗时较短的任务等待时间可能过长的问题。SJF 的调度思想是：先运行最短的任务，然后是词短的任务，以此类推。</p>
 <p><img src=/images/reading_notes/ostep/sjf.png alt></p>
