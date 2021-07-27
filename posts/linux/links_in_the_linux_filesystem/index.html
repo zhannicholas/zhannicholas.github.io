@@ -1,16 +1,16 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="Anaconda 是一个 **python** 的发行版，可以用来管理 python** 的包和环境，同时它包含1000+的开源package。正如那句话一样：\ _The Most Trusted Distribution for Data Science_\ 还有一个没有包含那么">
+<meta name=description content="在 Linux 中，有一个东西叫链接文件，它有点像 Windows 中的快捷方式，可以很方便地实现文件的共享。链接主要分为两种：硬链接（hard link） 和 软连接（so">
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="配置Anaconda源 • Nicholas Zhan">
-<meta property="og:description" content="Anaconda 是一个 **python** 的发行版，可以用来管理 python** 的包和环境，同时它包含1000+的开源package。正如那句话一样：\ _The Most Trusted Distribution for Data Science_\ 还有一个没有包含那么">
-<meta property="og:url" content="https://zhannicholas.github.io/posts/python/anaconda-source-configuration/">
+<meta property="og:title" content="Linux 中的硬链接与软链接 • Nicholas Zhan">
+<meta property="og:description" content="在 Linux 中，有一个东西叫链接文件，它有点像 Windows 中的快捷方式，可以很方便地实现文件的共享。链接主要分为两种：硬链接（hard link） 和 软连接（so">
+<meta property="og:url" content="https://zhannicholas.github.io/posts/linux/links_in_the_linux_filesystem/">
 <meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Python"><meta property="article:published_time" content="2018-07-07T09:38:08+08:00"><meta property="article:modified_time" content="2018-07-07T09:38:08+08:00"><meta name=twitter:card content="summary">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Linux"><meta property="article:published_time" content="2021-07-27T10:46:48+08:00"><meta property="article:modified_time" content="2021-07-27T10:46:48+08:00"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.86.0">
-<title>配置Anaconda源 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/posts/python/anaconda-source-configuration/>
+<title>Linux 中的硬链接与软链接 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/posts/linux/links_in_the_linux_filesystem/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
 </head>
@@ -166,7 +166,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><span>配置Anaconda源</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><span>Linux 中的硬链接与软链接</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -181,17 +181,17 @@ Java Developer, Runner, Cyclist
 <header class="header entry-header">
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title>配置Anaconda源</h1>
+<h1 class=title>Linux 中的硬链接与软链接</h1>
 </div>
 <div class=entry-meta>
 <span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 <span class=screen-reader-text>Posted on </span>
-<time class=entry-date datetime=2018-07-07T09:38:08+08:00>2018, Jul 07</time>
+<time class=entry-date datetime=2021-07-27T10:46:48+08:00>2021, Jul 27</time>
 </span>
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-2 mins read
+4 mins read
 </span>
 </div>
 </div>
@@ -202,76 +202,88 @@ Java Developer, Runner, Cyclist
 </summary>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#配置源channels>配置源(channels)</a></li>
-<li><a href=#让conda自动更新auto_update_conda>让conda自动更新(auto_update_conda)</a></li>
-<li><a href=#alway-yesalways_yes>Alway yes(always_yes)</a></li>
+<li><a href=#inode>Inode</a></li>
+<li><a href=#硬链接>硬链接</a></li>
+<li><a href=#软连接>软连接</a></li>
+<li><a href=#实践>实践</a></li>
+<li><a href=#参考资料>参考资料</a></li>
 </ul>
 </nav>
 </details>
 <div class="container entry-content">
-<blockquote>
-<p><a href=https://www.anaconda.com/download/><strong><code>Anaconda</code></strong></a> 是一个 **<code>python</code>** 的发行版，可以用来管理 <strong><code>python</code>** 的包和环境，同时它包含1000+的开源package。正如那句话一样：\<br>
-_The Most Trusted Distribution for Data Science_\<br>
-还有一个没有包含那么多包的 <strong><code>python</code>** 发行版，叫做</strong><code>Miniconda</code></strong><a href=https://conda.io/miniconda.html></a>。</p>
-</blockquote>
-<h1 id=是用anaconda-navigator还是conda>是用Anaconda Navigator还是conda</h1>
-<p><strong><code>Navigator</code></strong> 和 <strong><code>conda</code></strong> 都是可以用来管理包和环境。在安装完 <strong><code>Anaconda</code></strong> 之后，它们就都已经存在于系统之中了。区别是：</p>
-<ul>
-<li><strong><code>Navigator</code></strong> 是图形界面</li>
-<li><strong><code>conda</code></strong> 是命令行界面</li>
-</ul>
-<p>可以同时使用它们来进行管理。</p>
-<h1 id=还是习惯使用conda>还是习惯使用conda</h1>
-<p>这里有一份<a href=http://conda.pydata.org/docs/_downloads/conda-cheatsheet.pdf>conda cheat sheet</a>。花点时间看看，就能开始使用 <strong><code>conda</code></strong> 了。</p>
-<p><strong><code>.condarc</code></strong> 是 <strong><code>conda</code></strong> 的配置文件，它是可选的。当我们第一次运行 <strong><code>conda config</code></strong> 命令的时候, 这个文件就会被创建，通常位于：<code>C:\user\username\.condarc</code>。可以通过直接修改它来配置 <strong><code>conda</code></strong> ，因为 <strong><code>conda config</code></strong> 命令的结果最终会写到 <strong><code>.condarc</code></strong> 中。</p>
-<h2 id=配置源channels>配置源(channels)</h2>
-<p><strong><code>Anaconda</code></strong> 默认的源位于国外，在国内访问的速度不够快。可以采用国内的镜像来加快访问速度。我一般使用的是清华的源，运行以下命令：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>conda config --add channels https<span style=color:#960050;background-color:#1e0010>:</span>//mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
-conda config --add channels https<span style=color:#960050;background-color:#1e0010>:</span>//mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
-conda config --set show_channel_urls yes
-</code></pre></div><p>通过命令：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>conda info
-</code></pre></div><p>可以查看当前的配置信息。如果添加成功，你会看到刚才所添加的链接。不过也可以直接查看 <strong><code>.condarc</code></strong> 这个文件，文件的内容目前大致是这个样子：</p>
-<pre><code class=language-file data-lang=file>channels:
-  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
-  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/menpo/
-  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/bioconda/
-  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/
-  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
-  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
-  - defaults
-ssl_verify: true
-show_channel_urls: true
-</code></pre><p>其中有一个字段是 <strong><code>defaults</code></strong>, 这使得所有默认的源都包含在当前的源里面，当然也可以删除它。\<br>
-我们也可以改变默认的源，修改**<code>defalut_channels</code>** 即可。</p>
-<h2 id=让conda自动更新auto_update_conda>让conda自动更新(auto_update_conda)</h2>
-<p><strong><code>conda</code></strong> 默认是自动更新的，每当用户在root环境更新或安装包的时候，就会触发。可以采用命令：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cmd data-lang=cmd>conda config --set auto_update_conda false
-</code></pre></div><p>来关闭自动更新。这时候 <strong><code>conda</code></strong> 就只会在用户运行手动更新的命令 <strong><code>conda update</code></strong> 的时候及进行更新了。</p>
-<h2 id=alway-yesalways_yes>Alway yes(always_yes)</h2>
-<p>每当我们执行安装包的命令的时候， <strong><code>conda</code></strong> 都会问我们<code>Proceed ([y]/n)?</code>。如果不想每次都回答这个问题，可以这么设置 <strong><code>always_yes</code></strong> :</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cmd data-lang=cmd>conda config --set always_yes true
-</code></pre></div><p>目前我用到的配置部分大致就是这些。<a href=https://conda.io/docs/user-guide/configuration/use-condarc.html>这里</a>有一份关于使用 <strong><code>.condarc</code></strong> 的完整说明。</p>
+<p>在 Linux 中，有一个东西叫链接文件，它有点像 Windows 中的快捷方式，可以很方便地实现文件的共享。链接主要分为两种：<strong>硬链接（hard link）</strong> 和 <strong>软连接（soft link）</strong>。链接在 Linux 非常有用，因为在 Linux 中，“every thing is a file”，链接可以带来极大的灵活性。</p>
+<h2 id=inode>Inode</h2>
+<p>在开始之前，让我们先简单了解一下磁盘分区与 <a href=https://en.wikipedia.org/wiki/Inode>索引节点（inode）</a>。</p>
+<p>为了方便管理和保证数据的安全，我们通常会对磁盘进行分区。每个分区都可以被单独挂载（mount）或取消挂载（umount）。每个分区都有自己的文件系统，不同分区的文件系统可以不同。在 Linux 文件系统中，文件就用 inode 表示，每个文件都有自己对应的 inode。每个分区都有一组自己的 inode ，不同分区的 inode 互不影响，因为它们位于不同的文件系统。在建立文件系统时，会建立一个 inode 表，表中包含一定数量的 inode 。每创建一个文件，系统就会分配一个 inode 号（inode number）给它，这个 inode 号就相当于文件的地址。</p>
+<p>Linux 的文件实际上由两部分组成：数据部分和文件名部分。文件名部分保存在目录中，它包含文件的名字以及对应的 inode 号，通过 inode 号我们就可以找到数据部分的相关信息。通过分开存储文件名和文件数据，Linux 系统就能做到多个文件名关联同一个 inode 号。文件的数据部分不仅包括文件所有者、创建时间等元数据，还包括实际文件内容所在的磁盘位置。硬链接和软连接其实就是两种将多个文件名关联到同一份文件数据的方法。</p>
+<h2 id=硬链接>硬链接</h2>
+<p>多个文件名可以指向同一个 inode 号，这些文件的关系就是硬链接的关系。简单来说，一个硬链接就是一个目录项，它关联的是文件名与 inode。由于文件本身就是一个目录项，因此一个文件至少有一个硬链接。删除硬链接时，对应 inode 的硬链接数量减一，只有当 inode 的硬链接数量为 0 时，文件才会被删除。硬链接是不能跨分区（或者跨文件系统）的，因为每个分区都有自己独立的 inode。</p>
+<h2 id=软连接>软连接</h2>
+<p>软链接也叫符号链接（symbolic link or symlink），它是一种特殊类型的文件。符号链接的文件内容实际上是另外一个文件（目标文件）的路径。操作系统会把对符号链接的读写操作重定向到目标文件上。由于符号链接指向的是文件路径而不是 inode，所以符号链接是可以跨分区的。删除符号链接并不会对目标文件造成任何影响。但是，如果目标文件被删除或者重命名了，符号链接就成为了死链接。</p>
+<p>用一张图来说明硬链接与符号链接的区别：</p>
+<p><img src=/images/linux/links.png alt=硬链接与软链接></p>
+<h2 id=实践>实践</h2>
+<p>创建链接的命令是 <code>ln targetfile linkname</code>，命令默认创建的是硬链接，若要创建符号链接，需要加上 <code>-s</code> 参数，即 <code>ln -s targetfile linkname</code>。此外，我们可以通过 <code>ls -l</code> 查看文件硬链接的个数，通过 <code>ls -i</code> 查看文件所对应的 inode 号。</p>
+<p>先用 <code>mkdir links</code> 创建一个测试目录，<code>cd links</code> 切换工作目录，再创建一个测试文件 <code>echo "hello" > hello.txt</code>。现在用 <code>ls -li</code> 检查一下：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>ubuntu@XPS9380:~/links$ ls -li
+total <span style=color:#ae81ff>4</span>
+<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>1</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hello.txt
+</code></pre></div><p>可以看到，<code>hello.txt</code> 的硬链接个数为 1。现在创建一个硬链接：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>ubuntu@XPS9380:~/links$ ln hello.txt hlink
+ubuntu@XPS9380:~/links$ ls -li
+total <span style=color:#ae81ff>8</span>
+<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>2</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hello.txt
+<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>2</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hlink
+</code></pre></div><p>可以看到，<code>hello.txt</code> 与 <code>hlink</code> 对应的 inode 号都是 <code>3095</code>。此外，<code>hlink</code> 的文件类型是 <code>-</code>，说明硬链接就是一个普通文件。</p>
+<p>再来检查一下文件内容：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>ubuntu@XPS9380:~/links$ cat hello.txt
+hello
+ubuntu@XPS9380:~/links$ cat hlink
+hello
+</code></pre></div><p>两个文件的内容是一样的。</p>
+<p>现在来创建一个符号链接：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>ubuntu@XPS9380:~/links$ ln -s hello.txt slink
+ubuntu@XPS9380:~/links$ ls -li
+total <span style=color:#ae81ff>8</span>
+<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>2</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hello.txt
+<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>2</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hlink
+<span style=color:#ae81ff>3633</span> lrwxrwxrwx <span style=color:#ae81ff>1</span> ubuntu ubuntu <span style=color:#ae81ff>9</span> Jul <span style=color:#ae81ff>27</span> 14:38 slink -&gt; hello.txt
+ubuntu@XPS9380:~/links$ cat slink
+hello
+</code></pre></div><p>从执行结果可以看出，<code>slink</code> 的文件类型是 <code>l</code>（符号链接）。虽然 <code>cat</code> 命令的输出内容与 <code>hello.txt</code> 相同，但 <code>slink</code> 有着不同的 inode 号，文件大小也不同。</p>
+<p>现在来试一下删除操作，我们先删除 <code>hello.txt</code>，然后分别查看 <code>slink</code> 与 <code>hlink</code> 的内容：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>ubuntu@XPS9380:~/links$ rm hello.txt ; ls -li
+total <span style=color:#ae81ff>4</span>
+<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>1</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hlink
+<span style=color:#ae81ff>3633</span> lrwxrwxrwx <span style=color:#ae81ff>1</span> ubuntu ubuntu <span style=color:#ae81ff>9</span> Jul <span style=color:#ae81ff>27</span> 14:38 slink -&gt; hello.txt
+ubuntu@XPS9380:~/links$ cat slink
+cat: slink: No such file or directory
+ubuntu@XPS9380:~/links$ cat hlink
+hello
+ubuntu@XPS9380:~/links$
+</code></pre></div><p>可以发现，通过 <code>slink</code> 不能再访问到文件内容了，而通过 <code>hlink</code> 就可以。</p>
+<h2 id=参考资料>参考资料</h2>
+<ol>
+<li><a href=https://en.wikipedia.org/wiki/Hard_link>Hard link</a>.</li>
+<li><a href=https://en.wikipedia.org/wiki/Symbolic_link>Symbolic link</a>.</li>
+<li><a href=https://tldp.org/LDP/intro-linux/html/sect_03_03.html>Manipulating files</a>.</li>
+<li><a href=https://linuxgazette.net/105/pitcher.html>The difference between hard and soft links</a>.</li>
+</ol>
 </div>
 <footer class=entry-footer>
 <div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
-<span class=screen-reader-text>分类: </span><a class=category href=/categories/%E6%96%B0%E6%89%8B%E4%B8%8A%E8%B7%AF/>新手上路</a></div>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/linux/>Linux</a></div>
 <div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-<span class=screen-reader-text>标签: </span><a class=tag href=/tags/python/>Python</a></div>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/linux/>Linux</a></div>
 </div>
 </footer>
 </article>
 <nav class=entry-nav>
 <div class=container><div class="prev-entry sep-before">
-<a href=/posts/git/about-git/>
+<a href=/posts/linux/linux_directory_structure/>
 <span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
 Previous</span>
-<span class=screen-reader-text>上一篇: </span>Git初探</a>
-</div><div class="next-entry sep-before">
-<a href=/posts/grocery/%E5%8C%97%E9%82%AE%E5%9B%9E%E5%BF%86/>
-<span class=screen-reader-text>下一篇: </span>北邮回忆<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
-</span>
-</a>
+<span class=screen-reader-text>上一篇: </span>Linux 目录结构</a>
 </div></div>
 </nav>
 </main>
