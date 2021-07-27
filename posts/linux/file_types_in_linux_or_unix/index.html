@@ -191,7 +191,7 @@ Java Developer, Runner, Cyclist
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-3 mins read
+4 mins read
 </span>
 </div>
 </div>
@@ -215,12 +215,12 @@ Java Developer, Runner, Cyclist
 </details>
 <div class="container entry-content">
 <p>在 Windows 中，文件类型是根据扩展名来确定的。例如：<code>a.pdf</code> 是一个 <code>pdf</code> 文件，而 <code>b.txt</code> 是一个 <code>txt</code> 文件。但在 Linux/Unix 中，文件类型与文件扩展名没有关系，它们是两个完全不同的概念。Linux/Unix 将一切都看作是文件，了解文件类型有助于我们对它们进行高效的管理。</p>
-<p><a href=https://en.wikipedia.org/wiki/POSIX>POSIX</a> 中定义了七种标准的文件类型：</p>
+<p><a href=https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_164>POSIX</a> 中定义了七种标准的文件类型：</p>
 <ol>
 <li>普通文件（regular file）</li>
 <li>目录（directory）</li>
 <li>符号链接（symbolic link）</li>
-<li>命名管道（FIFO or named pipe）</li>
+<li>命名管道（FIFO special file or named pipe）</li>
 <li>套接字（socket）</li>
 <li>字符设备（character special file）</li>
 <li>块设备（block special file）</li>
@@ -328,13 +328,13 @@ Java Developer, Runner, Cyclist
 </table>
 <p>没有在文件名末尾追加符号的就是普通文件。</p>
 <h2 id=普通文件>普通文件</h2>
-<p>普通文件也是 Linux/Unix 中最多的一类文件，包括文本文件、二进制文件、图片、视频、压缩文件等。</p>
+<p><a href=https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_323>普通文件</a> 是一个可随机访问的字节序列。它是 Linux/Unix 中最多的一类文件，包括文本文件、二进制文件、图片、视频、压缩文件等。</p>
 <h2 id=目录>目录</h2>
-<p>目录内可以包含普通文件、目录和各种特殊文件。</p>
+<p><a href=https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_129>目录</a>是一个包含<a href=https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_130>目录项</a>的文件。目录项将文件名与文件（比如普通文件、目录和各种特殊文件）进行关联。但一个目录中不能有两个同名的目录项。</p>
 <h2 id=符号链接>符号链接</h2>
-<p>符号链接指向计算机上的另一个普通文件或目录。链接文件分为硬链接（hard link）和软链接（soft link）两种，有点类似于 Windows 中的快捷方式。</p>
+<p>符号链接指向计算机上的另一个普通文件或目录，它会影响到<a href=https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap04.html#tag_04_13>路径名解析</a>的过程。</p>
 <h2 id=命名管道>命名管道</h2>
-<p>命名管道（named pipe）具备 FIFO 的特性，在 Linux/Unix 中常用于进程间通信。与传统的匿名管道（即我们常用的 <code>|</code> 命令）不同的是，命名管道使用到了文件系统，是一种文件类型。我们可以使用 <code>mkfifo</code> 命令创建命名管道，例如：</p>
+<p>命名管道（named pipe）即具备 FIFO 特性的文件，在 Linux/Unix 中常用于进程间通信。与传统的匿名管道（即我们常用的 <code>|</code> 命令）不同的是，命名管道使用到了文件系统，是一种文件类型。我们可以使用 <code>mkfifo</code> 命令创建命名管道，例如：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>mkfifo my_pipe
 </code></pre></div><p>使用 <code>ls -l</code> 命令可以发现输出结果的第一个字母是 <code>p</code>，同时文件大小是 0：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-txt data-lang=txt>prw-r--r-- 1 ubuntu ubuntu    0 Jul 22 16:51 my_pipe
@@ -342,11 +342,11 @@ Java Developer, Runner, Cyclist
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>echo <span style=color:#e6db74>&#34;test&#34;</span> &gt; my_pipe
 </code></pre></div><p>这时，刚才执行的 <code>cat my_pipe</code> 就会返回，并打印出 <code>test</code>。</p>
 <h2 id=套接字>套接字</h2>
-<p>套接字文件可用于进程间信息的传递。在进程间通信方面，他和管道有一些相似之处，但管道是单向的，而套接字是双向全双工的。</p>
+<p><a href=https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_356>套接字</a>作为通信端点用于进程间通信，是一种有着特定用途的文件。在进程间通信方面，它和管道有一些相似之处，但管道是单向的，而套接字是双向全双工的。</p>
 <h2 id=字符设备>字符设备</h2>
-<p>字符设备提供串行输入流或者接收串行输出流，不具备随机访问的能力。</p>
+<p><a href=https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_91>字符设备</a> 提供串行输入流或者接收串行输出流，不具备随机访问的能力。例如终端和 <code>/dev/null</code> 都是字符设备文件。</p>
 <h2 id=块设备>块设备</h2>
-<p>块设备具备随机访问的能力，<code>/dev/</code> 目录下的大多数文件都是块设备。</p>
+<p><a href=https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_79>块设备</a>具备随机访问的能力，<code>/dev/</code> 目录下的大多数文件都是块设备。</p>
 <h2 id=参考资料>参考资料</h2>
 <ol>
 <li><a href=https://en.wikipedia.org/wiki/Unix_file_types>Unix file types</a>.</li>
