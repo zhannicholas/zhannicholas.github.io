@@ -1,21 +1,20 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="Java Developer, Runner, Cyclist">
+<meta name=description content>
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="数据库 • Nicholas Zhan">
-<meta property="og:description" content="Java Developer, Runner, Cyclist">
-<meta property="og:url" content="https://zhannicholas.github.io/posts/databases/">
+<meta property="og:title" content="Search • Nicholas Zhan">
+<meta property="og:description" content>
+<meta property="og:url" content="https://zhannicholas.github.io/search/">
 <meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="website"><meta property="og:updated_time" content="2021-07-27T10:46:48+08:00"><meta name=twitter:card content="summary">
+<meta property="og:type" content="article"><meta property="article:section" content="page"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.86.0">
-<title>数据库 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/posts/databases/>
-<link href=https://zhannicholas.github.io/posts/databases/index.xml rel=alternate type=application/rss+xml title="Nicholas Zhan">
+<title>Search • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/search/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
 </head>
-<body class="section type-posts has-sidebar">
+<body class="page type-page layout-search has-sidebar">
 <div class=site><div id=sidebar class=sidebar>
 <a class=screen-reader-text href=#main-menu>跳到主菜单</a>
 <div class=container><section class="widget widget-about sep-after">
@@ -35,16 +34,6 @@ Java Developer, Runner, Cyclist
 </div>
 </header>
 </section>
-<section class="widget widget-search sep-after">
-<header>
-<h4 class="title widget-title">搜索</h4>
-</header>
-<form action=/search id=search-form class=search-form>
-<label>
-<span class=screen-reader-text>搜索</span>
-<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
-</label></form>
-</section>
 <section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
 <div class=container>
 <ul><li class="item has-children">
@@ -63,8 +52,8 @@ Java Developer, Runner, Cyclist
 <ul class=sub-menu><li class=item>
 <a href=/posts/operating_systems/memory_management/>内存管理</a></li><li class=item>
 <a href=/posts/operating_systems/virtualization/>虚拟化</a></li><li class=item>
-<a href=/posts/operating_systems/processes_management/>进程管理</a></li></ul></li><li class="item has-children has-current current">
-<a aria-current=page href=/posts/databases/>数据库</a><button class=sub-menu-toggler>
+<a href=/posts/operating_systems/processes_management/>进程管理</a></li></ul></li><li class="item has-children">
+<a href=/posts/databases/>数据库</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
 <span class=sign></span>
 </button>
@@ -164,8 +153,8 @@ Java Developer, Runner, Cyclist
 </button>
 <ul><li class=item>
 <a href=/>主页</a>
-</li><li class="item current">
-<a aria-current=page href=/posts/>博客</a>
+</li><li class=item>
+<a href=/posts/>博客</a>
 </li><li class=item>
 <a href=/notebook/>笔记本</a>
 </li><li class=item>
@@ -177,7 +166,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><span>数据库</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><span>Search</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -191,20 +180,26 @@ Java Developer, Runner, Cyclist
 <header class=header>
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title>数据库</h1>
+<h1 class=title>Search</h1>
 </div>
 </div>
 </header>
-<div class=entry>
-<div class="container entry-content">
-<p>数据库</p>
-</div>
-</div>
-<div class="container list-container">
-<ul class=list>
+<div class=container>
+<section class="widget widget-search sep-after">
+<header>
+<h4 class="title widget-title">搜索</h4>
+</header>
+<form action=/search id=search-form class=search-form>
+<label>
+<span class=screen-reader-text>搜索</span>
+<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
+</label><button type=submit class=search-submit>
+<span class=screen-reader-text>搜索</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+</button></form>
+</section>
+<ul id=search-results class="list search-results" data-results-empty="Nothing found!" data-searching=搜索中>
 </ul>
-</div>
-</main>
+</div><script src=/assets/js/fuse_search.1ada4bca.js></script> </main>
 <footer id=footer class=footer>
 <div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
 <ul><li>
