@@ -1,20 +1,20 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="面向对象设计的7个原则 面向对象设计存在7个原则。在设计中使用这些原则，有助于提高设计模型的灵活性和可维护性，提高类的內聚度，降低类之间的耦合">
+<meta name=description content="在学习软件开发的过程中，我们或多或少都听过一些经典的设计原则，比如单一原则（DRY）、简单原则（KISS）、面向对象原则（SOLID）……这">
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="面向对象设计的7个原则 • Nicholas Zhan">
-<meta property="og:description" content="面向对象设计的7个原则 面向对象设计存在7个原则。在设计中使用这些原则，有助于提高设计模型的灵活性和可维护性，提高类的內聚度，降低类之间的耦合">
-<meta property="og:url" content="https://zhannicholas.github.io/notebook/reading_notes/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E7%9A%847%E4%B8%AA%E5%8E%9F%E5%88%99/">
+<meta property="og:title" content="软件设计原则 • Nicholas Zhan">
+<meta property="og:description" content="在学习软件开发的过程中，我们或多或少都听过一些经典的设计原则，比如单一原则（DRY）、简单原则（KISS）、面向对象原则（SOLID）……这">
+<meta property="og:url" content="https://zhannicholas.github.io/posts/design_patterns/software_design_principles/">
 <meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="notebook"><meta property="article:tag" content="设计模式"><meta property="article:published_time" content="2018-09-29T20:51:23+08:00"><meta property="article:modified_time" content="2018-09-29T20:51:23+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.86.0">
-<title>面向对象设计的7个原则 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/notebook/reading_notes/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E7%9A%847%E4%B8%AA%E5%8E%9F%E5%88%99/>
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="设计原则"><meta property="article:published_time" content="2018-09-29T20:51:23+08:00"><meta property="article:modified_time" content="2018-09-29T20:51:23+08:00"><meta name=twitter:card content="summary">
+<meta name=generator content="Hugo 0.86.1">
+<title>软件设计原则 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/posts/design_patterns/software_design_principles/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
 </head>
-<body class="page type-notebook has-sidebar">
+<body class="page type-posts has-sidebar">
 <div class=site><div id=sidebar class=sidebar>
 <a class=screen-reader-text href=#main-menu>跳到主菜单</a>
 <div class=container><section class="widget widget-about sep-after">
@@ -85,41 +85,41 @@ Java Developer, Runner, Cyclist
 </header>
 <div class="container list-container">
 <ul class="list taxonomy-cloud"><li>
-<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.3846153846153846em>C算法</a>
+<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.4166666666666665em>C算法</a>
 </li><li>
 <a href=/tags/gc/ style=font-size:1em>GC</a>
 </li><li>
 <a href=/tags/git/ style=font-size:1em>Git</a>
 </li><li>
-<a href=/tags/http/ style=font-size:1.5384615384615385em>HTTP</a>
+<a href=/tags/http/ style=font-size:1.5833333333333333em>HTTP</a>
 </li><li>
 <a href=/tags/hugo/ style=font-size:1em>Hugo</a>
 </li><li>
-<a href=/tags/jakartaee/ style=font-size:1.1538461538461537em>JakartaEE</a>
+<a href=/tags/jakartaee/ style=font-size:1.1666666666666667em>JakartaEE</a>
 </li><li>
-<a href=/tags/java/ style=font-size:1.7692307692307692em>Java</a>
+<a href=/tags/java/ style=font-size:1.8333333333333333em>Java</a>
 </li><li>
 <a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
 </li><li>
-<a href=/tags/jvm/ style=font-size:1.2307692307692308em>JVM</a>
+<a href=/tags/jvm/ style=font-size:1.25em>JVM</a>
 </li><li>
-<a href=/tags/leetcode/ style=font-size:1.1538461538461537em>Leetcode</a>
+<a href=/tags/leetcode/ style=font-size:1.1666666666666667em>Leetcode</a>
 </li><li>
 <a href=/tags/life/ style=font-size:1em>Life</a>
 </li><li>
-<a href=/tags/linux/ style=font-size:1.2307692307692308em>Linux</a>
+<a href=/tags/linux/ style=font-size:1.25em>Linux</a>
 </li><li>
 <a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
 </li><li>
-<a href=/tags/networks/ style=font-size:1.1538461538461537em>Networks</a>
+<a href=/tags/networks/ style=font-size:1.1666666666666667em>Networks</a>
 </li><li>
-<a href=/tags/os/ style=font-size:1.4615384615384617em>OS</a>
+<a href=/tags/os/ style=font-size:1.5em>OS</a>
 </li><li>
-<a href=/tags/ostep/ style=font-size:1.1538461538461537em>OSTEP</a>
+<a href=/tags/ostep/ style=font-size:1.1666666666666667em>OSTEP</a>
 </li><li>
 <a href=/tags/python/ style=font-size:1em>Python</a>
 </li><li>
-<a href=/tags/redis/ style=font-size:1.4615384615384617em>Redis</a>
+<a href=/tags/redis/ style=font-size:1.5em>Redis</a>
 </li><li>
 <a href=/tags/sicp/ style=font-size:1em>SICP</a>
 </li><li>
@@ -127,23 +127,25 @@ Java Developer, Runner, Cyclist
 </li><li>
 <a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
 </li><li>
-<a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0769230769230769em>多处理器编程的艺术</a>
+<a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0833333333333333em>多处理器编程的艺术</a>
 </li><li>
 <a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
 </li><li>
-<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3076923076923077em>并发</a>
+<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3333333333333333em>并发</a>
 </li><li>
 <a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
 </li><li>
-<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0769230769230769em>数据库</a>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0833333333333333em>数据库</a>
 </li><li>
 <a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
 </li><li>
-<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0769230769230769em>现代操作系统</a>
+<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0833333333333333em>现代操作系统</a>
 </li><li>
 <a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
 </li><li>
-<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.2307692307692308em>算法导论</a>
+<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.25em>算法导论</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
 </li><li>
 <a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:2em>设计模式</a>
 </li></ul>
@@ -163,10 +165,10 @@ Java Developer, Runner, Cyclist
 </button>
 <ul><li class=item>
 <a href=/>主页</a>
-</li><li class=item>
-<a href=/posts/>博客</a>
 </li><li class="item current">
-<a aria-current=page href=/notebook/>笔记本</a>
+<a aria-current=page href=/posts/>博客</a>
+</li><li class=item>
+<a href=/notebook/>笔记本</a>
 </li><li class=item>
 <a href=/itinerary/>游山玩水</a>
 </li></ul>
@@ -176,7 +178,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/notebook/>笔记本</a></li><li><span>面向对象设计的7个原则</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><a href=/posts/design_patterns/>设计模式</a></li><li><span>软件设计原则</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -191,7 +193,7 @@ Java Developer, Runner, Cyclist
 <header class="header entry-header">
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title>面向对象设计的7个原则</h1>
+<h1 class=title>软件设计原则</h1>
 </div>
 <div class=entry-meta>
 <span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -201,7 +203,7 @@ Java Developer, Runner, Cyclist
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-4 mins read
+5 mins read
 </span>
 </div>
 </div>
@@ -212,58 +214,66 @@ Java Developer, Runner, Cyclist
 </summary>
 <nav id=TableOfContents>
 <ul>
+<li><a href=#dry-原则>DRY 原则</a></li>
+<li><a href=#kiss-原则>KISS 原则</a></li>
+<li><a href=#yagni-原则>YAGNI 原则</a></li>
+<li><a href=#迪米特法则law-of-demeter-lod>迪米特法则(Law of Demeter, LoD)</a></li>
+<li><a href=#solid-原则>SOLID 原则</a>
+<ul>
 <li><a href=#单一职责原则single-responsibility-principle-srp>单一职责原则(Single Responsibility Principle, SRP)</a></li>
 <li><a href=#开闭原则open-closed-principle-ocp>开闭原则(Open-Closed Principle, OCP)</a></li>
 <li><a href=#里氏替换原则liskov-substitution-principle-lsp>里氏替换原则(Liskov Substitution Principle, LSP)</a></li>
 <li><a href=#依赖倒置原则dependence-inversion-principle-dip>依赖倒置原则(Dependence Inversion Principle, DIP)</a></li>
 <li><a href=#接口隔离原则interface-segregation-principle-isp>接口隔离原则(Interface Segregation Principle, ISP)</a></li>
+</ul>
+</li>
 <li><a href=#组合聚合复用原则composite-reuse-principle-crp>组合/聚合复用原则(Composite Reuse Principle, CRP)</a></li>
-<li><a href=#迪米特法则law-of-demeter-lod>迪米特法则(Law of Demeter, LoD)</a></li>
+<li><a href=#参考资料>参考资料</a></li>
 </ul>
 </nav>
 </details>
 <div class="container entry-content">
-<h1 id=面向对象设计的7个原则>面向对象设计的7个原则</h1>
-<blockquote>
-<p>面向对象设计存在7个原则。在设计中使用这些原则，有助于提高设计模型的灵活性和可维护性，提高类的內聚度，降低类之间的耦合度。</p>
-</blockquote>
-<h2 id=单一职责原则single-responsibility-principle-srp>单一职责原则(Single Responsibility Principle, SRP)</h2>
-<p><strong>职责</strong> 可以理解为 <strong>引起类变化的原因</strong> 。 <strong>就一个类而言，应该只有一个引起它变化的原因</strong> 。如果一个类具有多个职责，那么就有多个引起它变化的原因。过多的职责耦合在一起，当其中一个职责变化时，可能影响到其它职责的正常运作。因此，在设计类的时候，要将这些职责分离，将不同的职责封装在不同的类中。确保引起该类变化的原因只有一个，从而提高类的內聚度。</p>
-<h2 id=开闭原则open-closed-principle-ocp>开闭原则(Open-Closed Principle, OCP)</h2>
+<p>在学习软件开发的过程中，我们或多或少都听过一些经典的设计原则，比如单一原则（DRY）、简单原则（KISS）、面向对象原则（SOLID）……这些设计原则都是前辈们在经验中总结出来的。在开发大型复杂软件的过程中，开发者面临软件的可维护性、可扩展性、灵活性、可重用性等诸多方面的挑战，灵活地使用设计原则能够帮助我们更好地面对这些挑战，设计出更加优秀的软件。</p>
+<p>设计原则有很多，有些原则是之间是相互冲突的，而有些原则之间又是相互重复的。大家可能都有这样一个感觉——道理都懂，但是在实际运用时又会出现选择困难，不知从何下手。其实，设计原则是用来指导编程的，每个原则都有自己适用的范围，错误地使用各大原则很容易导致问题。下面是对常用设计原则的一个概括，这些原则不仅需要多看多理解，更要多实践。</p>
+<h2 id=dry-原则>DRY 原则</h2>
+<p><strong>Don&rsquo;t Repeat Yourself</strong>。《程序员修炼之道》一书中是这么解释 DRY 的：系统的每一个功能都应该有唯一的实现，如果多次遇到同样的问题，就应该抽象出一个共同的解决方法，而不要重复开发同样的功能代码。这个原则很简单，大家在平常的编程中也经常使用。我们常听说的“不要重复造轮子”就是对 DRY 的一种认知。</p>
+<h2 id=kiss-原则>KISS 原则</h2>
+<p><strong>Keep It Simple and Stupid</strong>。保持代码的简单，快速迭代拥抱变化。编写可读性高的代码，能够减少他人阅读代码的时间投入。</p>
+<h2 id=yagni-原则>YAGNI 原则</h2>
+<p><strong>You Ain’t Gonna Need It</strong>。有时候，很多开发者都会写一些多余的代码，想着万一以后可能会用上。但实际上，这些多的代码可能永远都不会用上，反而会对原来的代码造成污染，增加别人阅读理解代码的难度。YAGNI 希望我们不要写将来可能需要，但现在却用不上的代码。YAGNI 原则与 KISS 原则联系紧密，能够帮助更好地实现 KISS　原则。</p>
+<h2 id=迪米特法则law-of-demeter-lod>迪米特法则(Law of Demeter, LoD)</h2>
+<p><strong>一个软件实体应当尽可能少的与其它实体发生作用</strong>。如果一个系统符合迪米特法则，那么当其中的某一个模块发生改变时，就会尽量少的影响其它模块。在设计系统的时候，尽量减少对象之间的交互，如果两个对象之间不必彼此直接通信，那么这两个对象之间就不应当发生任何直接的作用。如果一个对象需要调用另一个对象的方法，可以通过一个第三者来完成这个调用。这就降低了对象之间的耦合度。</p>
+<h2 id=solid-原则>SOLID 原则</h2>
+<p>在设计中使用这些原则，有助于提高设计模型的灵活性和可维护性，提高类的內聚度，降低类之间的耦合度。</p>
+<h3 id=单一职责原则single-responsibility-principle-srp>单一职责原则(Single Responsibility Principle, SRP)</h3>
+<p><strong>职责</strong> 可以理解为 <strong>引起类变化的原因</strong>。 <strong>就一个类而言，应该只有一个引起它变化的原因</strong> 。如果一个类具有多个职责，那么就有多个引起它变化的原因。过多的职责耦合在一起，当其中一个职责变化时，可能影响到其它职责的正常运作。因此，在设计类的时候，要将这些职责分离，将不同的职责封装在不同的类中。确保引起该类变化的原因只有一个，从而提高类的內聚度。</p>
+<h3 id=开闭原则open-closed-principle-ocp>开闭原则(Open-Closed Principle, OCP)</h3>
 <p><strong>一个软件实体应当对扩展开放，对修改关闭</strong> 。也就是说： 软件实体应该尽可能在不修改原有代码的情况下进行扩展 。为了满足开闭原则，需要对系统进行 <strong>抽象化</strong> 设计，抽象化是开闭原则的关键。可以先定义出 <strong>抽象层</strong> ，然后通过 <strong>具体类</strong> 来进行扩展。当需要修改系统的行为时，不需要改动抽象层，只需要添加新的具体类就能实现新的业务功能，这就在不修改原有代码的基础上完成了目标。</p>
-<h2 id=里氏替换原则liskov-substitution-principle-lsp>里氏替换原则(Liskov Substitution Principle, LSP)</h2>
+<h3 id=里氏替换原则liskov-substitution-principle-lsp>里氏替换原则(Liskov Substitution Principle, LSP)</h3>
 <p><strong>子类应当可以替换父类并出现在父类能够出现的任何地方</strong> 。也就是说：在软件中将一个父类对象替换成它的子类对象，程序不会出现任何的问题，反过来则不然。里氏替换原则是实现开闭原则的重要方式之一。由于使用父类的地方都可以使用子类，因此在程序中应该尽量使用父类来对对象进行定义，而在运行的时候再确定子类类型，用子类替换父类对象。因此，可以将父类声明设计为抽象类或者接口，让子类继承父类或者实现父类接口并实现父类声明的方法。在运行的时候，子类实例替换父类实例，可以很方便的扩展系统的功能，增加新的功能可以通过增加新的子类来实现。</p>
-<h2 id=依赖倒置原则dependence-inversion-principle-dip>依赖倒置原则(Dependence Inversion Principle, DIP)</h2>
+<h3 id=依赖倒置原则dependence-inversion-principle-dip>依赖倒置原则(Dependence Inversion Principle, DIP)</h3>
 <p><strong>抽象不应该依赖于细节，细节应当依赖于抽象</strong> 。高层模块不应该依赖于低层模块，两者都应当依赖于 <strong>抽象</strong> 。也就是说：要针对接口编程，而不是针对实现编程。在程序设计中，尽量使用高层的抽象类来完成功能，而不要使用具体的类来做这些。为此，一个具体类应当只实现接口或者抽象类中声明过的方法，而不要有多余的方法，否则高层的抽象类无法调用到在子类新增加的方法。</p>
 <p>引入抽象层之后，系统的灵活性变高。在程序中尽量使用抽象类进行编程，而将具体类写在配置文件中。如此一来，当系统需要扩展时，只需要对抽象层进行扩展并修改配置文件，无需改动原来的代码。</p>
 <p>依赖注入的三种方式： <strong>构造注入</strong> 、 <strong>设值注入</strong> 、 <strong>接口注入</strong> 。</p>
-<h2 id=接口隔离原则interface-segregation-principle-isp>接口隔离原则(Interface Segregation Principle, ISP)</h2>
+<h3 id=接口隔离原则interface-segregation-principle-isp>接口隔离原则(Interface Segregation Principle, ISP)</h3>
 <p><strong>使用多个专门的接口，而不使用一个总的接口</strong> 。也就是说：客户端不应该依赖它不需要的接口。当一个接口太大的时候，需要将其划分为一些更小的接口。如果把接口比喻成角色，那么一个接口应当只扮演一个或者一类角色。</p>
 <h2 id=组合聚合复用原则composite-reuse-principle-crp>组合/聚合复用原则(Composite Reuse Principle, CRP)</h2>
-<p><strong>应当尽量使用对象组合，而不是继承来达到复用的目的</strong> 。继承复用会破坏封装性，因为继承会将父类的实现细节暴露给子类。当父类改变的时候，子类也必须跟着改变。组合/聚合关系可以将已有的对象纳入新的对象中，新对象可以调用已有对象的功能，而已有对象的内部对新对象是不可见的。相对于继承来说，这种方式的耦合度较低，已有对象的改变不会给新对象带来太大的影响。一般来说，如果两个类之间是 <strong>Is-A</strong> 关系，应当使用继承；如果两个类之间是 <strong>Has-A</strong> 关系，应当使用组合或者聚合。</p>
-<h2 id=迪米特法则law-of-demeter-lod>迪米特法则(Law of Demeter, LoD)</h2>
-<p><strong>一个软件实体应当尽可能少的与其它实体发生作用</strong> 。如果一个系统符合迪米特法则，那么当其中的某一个模块发生改变时，就会尽量少的影响其它模块。在设计系统的时候，尽量减少对象之间的交互，如果两个对象之间不必彼此直接通信，那么这两个对象之间就不应当发生任何直接的作用。如果一个对象需要调用另一个对象的方法，可以通过一个第三者来完成这个调用。这就降低了对象之间的耦合度。</p>
+<p><strong>应当尽量使用对象组合，而不是继承来达到复用的目的</strong>。继承复用会破坏封装性，因为继承会将父类的实现细节暴露给子类。当父类改变的时候，子类也必须跟着改变。组合/聚合关系可以将已有的对象纳入新的对象中，新对象可以调用已有对象的功能，而已有对象的内部对新对象是不可见的。相对于继承来说，这种方式的耦合度较低，已有对象的改变不会给新对象带来太大的影响。一般来说，如果两个类之间是 <strong>Is-A</strong> 关系，应当使用继承；如果两个类之间是 <strong>Has-A</strong> 关系，应当使用组合或者聚合。</p>
+<h2 id=参考资料>参考资料</h2>
+<ol>
+<li>刘伟. 设计模式的艺术：软件开发人员内功修炼之道. 清华大学出版社, 2013.</li>
+</ol>
 </div>
 <footer class=entry-footer>
 <div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
-<span class=screen-reader-text>分类: </span><a class=category href=/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/>读书笔记</a></div>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1/>软件设计</a></div>
 <div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-<span class=screen-reader-text>标签: </span><a class=tag href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></div>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/>设计原则</a></div>
 </div>
 </footer>
 </article>
 <nav class=entry-nav>
-<div class=container><div class="prev-entry sep-before">
-<a href=/notebook/reading_notes/introduction_to_algorithms/two-ways-to-produce-a-uniform-random-permutation/>
-<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
-Previous</span>
-<span class=screen-reader-text>上一篇: </span>产生均匀随机排列的两种方法</a>
-</div><div class="next-entry sep-before">
-<a href=/notebook/reading_notes/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%B8%80%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/>
-<span class=screen-reader-text>下一篇: </span>《设计模式的艺术》读书笔记一：单例模式<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
-</span>
-</a>
-</div></div>
+<div class=container></div>
 </nav>
 </main>
 <footer id=footer class=footer>
