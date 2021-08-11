@@ -8,7 +8,7 @@
 <meta property="og:url" content="https://zhannicholas.github.io/posts/java/java_lang/references_and_reachability_in_java/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Java"><meta property="article:published_time" content="2021-04-20T21:40:00+08:00"><meta property="article:modified_time" content="2021-04-20T21:40:00+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.86.1">
+<meta name=generator content="Hugo 0.87.0">
 <title>Java 中的引用与对象可达性 • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/posts/java/java_lang/references_and_reachability_in_java/>
 <link rel=icon href=/favicon.ico>
@@ -238,11 +238,12 @@ Java Developer, Runner, Cyclist
 <p><img src=/images/java/java_lang/reference-class-hierarchy.png alt></p>
 <p><code>Reference</code> 对象用于维持对其它对象的引用，但 GC 仍然可以回收这些被引用的其它对象。当 GC 决定回收某个引用对象关联的对象时，它会将对应的引用对象放入与之关联的引用队列（<code>ReferenceQueue</code>）中，这样我们就可以得到对象被回收的通知了。</p>
 <h2 id=对象可达性>对象可达性</h2>
-<p>在进行垃圾回收之前，第一件事情就是找出垃圾。引用计数算法和可达性分析算法是两种常见的判断垃圾的方法，JVM 是通过分析对象的可达性来判断是否应该将其回收的。</p>
+<p>在进行垃圾回收之前，第一件事情就是找出垃圾。引用计数算法和可达性分析算法是两种常见的判断垃圾的方法，JVM 是通过分析对象的可达性来判断是否应该将其回收的。堆中的对象是可以相互引用的，根据对象类型的不同，引用的直接表现形式也不同。对于普通对象而言，引用就是对象的字段，而对于数组而言，引用就是数组的元素。此外，还有一些隐藏的引用，例如：每个对象实例都包含一个指向其类型（即实例对应的 Class）的引用，而每个 Class 又包含一个指向加载它的 ClassLoader 的引用。</p>
+<p>我们可以将对象之间的引用关系看作是一张有向图，图中的节点就是对象，而边就是对象间的引用。从源对象出发，若存在一条通往目标对象的路径，则目标对象对源对象来说是可达的，反之目标对象对源对象而言就是不可达的。</p>
 <h3 id=gc-roots>GC Roots</h3>
-<p>可达性分析算法的基本思路是通过一系列被称为“GC Roots”的根对象作为起始节点集，从这些结点开始，根据引用关系向下搜索，搜索路径即为引用链（Reference Chain），如果某个对象没有任何路径可以到达 GC Roots，则说明这个对象不再被使用，即为垃圾。</p>
+<p>可达性分析算法的基本思路是通过一系列被称为“GC Roots”的根对象作为起始节点集，从这些结点开始，根据引用关系向下搜索，搜索路径即为引用链（Reference Chain），如果没有任何路径可以到达 某个对象，则说明这个对象不再被使用，即为垃圾。</p>
 <p><img src=/images/java/java_lang/gc_roots_and_object_reachability.png alt></p>
-<p>在 Java 中，可以作为GC Roots的对象有以下几种：</p>
+<p>在 Java 中，GC Root 是一个可以 <strong>从堆外访问</strong> 的对象，通常包括以下对象：</p>
 <ul>
 <li>JVM 栈中引用的对象，比如线程方法的参数、局部变量、临时变量等；</li>
 <li>方法区中静态属性引用的对象，比如 Java 类的引用类型的静态变量；</li>
@@ -252,7 +253,7 @@ Java Developer, Runner, Cyclist
 <li>所有被同步锁（synchronized）持有的对象；</li>
 <li>反映 JVM 内部情况的 JMXBean、JVMTI 中注册的回调、Native 代码缓存等；</li>
 </ul>
-<p>Eclipse 的内存分析工具列举出了各种具体的 <a href="https://help.eclipse.org/2021-03/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Fconcepts%2Fgcroots.html">GC Root</a></p>
+<p>Eclipse 的内存分析工具列举出了各种具体的 <a href="https://help.eclipse.org/2021-03/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Fconcepts%2Fgcroots.html">GC Root</a>，感兴趣的同学可以进一步了解。</p>
 <h3 id=对象的五种可达性>对象的五种可达性</h3>
 <p>Java 中的对象可达性有五种不同的程度：强可达（strongly reachable）、软可达（softly reachable）、弱可达（weakly reachable）、虚可达（phantom reachable）和不可达（unreachable）。以下关于可达性的描述，取自 <a href=https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/ref/package-summary.html#reachability>java.lang.ref</a> 包的文档：</p>
 <blockquote>
