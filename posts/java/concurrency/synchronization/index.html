@@ -203,7 +203,7 @@ Java Developer, Runner, Cyclist
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-6 mins read
+7 mins read
 </span>
 </div>
 </div>
@@ -245,7 +245,7 @@ Java Developer, Runner, Cyclist
 </span><span style=color:#75715e></span><span style=color:#f92672>}</span>
 </code></pre></div><p>以下是以 <code>lock</code> 对象为锁：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>synchronized</span><span style=color:#960050;background-color:#1e0010>（</span>lock<span style=color:#960050;background-color:#1e0010>）</span><span style=color:#f92672>{</span>
-	<span style=color:#75715e>// 访问或修改由所保护的共享状态
+	<span style=color:#75715e>// access or modify the shared state that is protected by the lock
 </span><span style=color:#75715e></span><span style=color:#f92672>}</span>
 </code></pre></div><p>而以下是以调用同步方法的实例本身为锁：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>synchronized</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>instanceMethod</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
@@ -317,8 +317,49 @@ Java Developer, Runner, Cyclist
 <p>JVM中的同步操作是通过 <code>monitor</code> 的进入与退出来实现的。其实现方式又可分为显式（通过使用 <code>monitorenter</code> 和 <code>monitorexit</code> 指令）和隐式（通过方法的调用与返回指令）两种。根据被修饰的代码块的形式不同，<code>synchronized</code> 关键字的使用可以分为两种情况：同步方法（<code>synchronized</code> 修饰的是静态方法或实例方法）和同步语句（<code>synchronized</code> 修饰的是一个代码块）。</p>
 <h3 id=同步方法>同步方法</h3>
 <p>方法级别的同步操作是隐式实现的，不涉及 <code>monitorenter</code> 和 <code>monitorexit</code> 指令的使用，同步就是方法调用与返回的一部分。在运行时常量池中的 <code>method_info</code> 结构中，有一个叫做 <code>ACC_SYNCHRONIZED</code> 的标志位。方法调用指令会去检查这个标志位，当一个设置了 <code>ACC_SYNCHRONIZED</code> 的方法被调用时，执行线程会先进入 <code>monitor</code>，然后调用方法本身，最后不管方法是否正常执行完成都会退出 <code>monitor</code>。在执行线程拥有 <code>monitor</code> 的时间段内，其它线程是不可能再进入该 <code>monitor</code> 的。</p>
+<p>下面的 <code>SyncMethodDemo</code> 中包含两个同步方法，其中 <code>staticMethod</code> 是作用于类的静态同步方法，<code>instanceMethod</code> 是作用于对象实例的同步方法：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SyncMethodDemo</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>synchronized</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>staticMethod</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;static synchronized method&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>synchronized</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>instanceMethod</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;synchronized instance method&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>使用 <code>javap -v -c SyncMethodDemo.class</code> 得到两个方法的字节码如下：</p>
+<pre><code class=language-class data-lang=class>static synchronized void staticMethod();
+    descriptor: ()V
+    flags: (0x0028) ACC_STATIC, ACC_SYNCHRONIZED
+    Code:
+      stack=2, locals=0, args_size=0
+         0: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         3: ldc           #3                  // String static synchronized method
+         5: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+         8: return
+      LineNumberTable:
+        line 3: 0
+        line 4: 8
+
+synchronized void instanceMethod();
+  descriptor: ()V
+  flags: (0x0020) ACC_SYNCHRONIZED
+  Code:
+    stack=2, locals=1, args_size=1
+        0: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        3: ldc           #5                  // String synchronized instance method
+        5: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        8: return
+    LineNumberTable:
+      line 7: 0
+      line 8: 8
+    LocalVariableTable:
+      Start  Length  Slot  Name   Signature
+          0       9     0  this   LSyncMethodDemo;
+
+</code></pre><p>可以看到，在字节码中，方法加了一个 <code>ACC_SYNCHRONIZED</code> 标志。静态同步方法 <code>staticMethod</code> 和 <code>instanceMethod</code> 区别不大，只不过是多了一个 <code>ACC_STATIC</code> 标志。</p>
 <h3 id=同步代码块>同步代码块</h3>
-<p>下面是取自 JVM 11 规范中给出的一个例子。同步代码块</p>
+<p>下面是 <a href=https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-3.html#jvms-3.14>JVMS11</a> 中给出的一个例子。同步代码块</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>onlyMe</span><span style=color:#f92672>(</span>Foo f<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>synchronized</span><span style=color:#f92672>(</span>f<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
         doSomething<span style=color:#f92672>();</span>
@@ -368,10 +409,10 @@ From    To      Target      Type
 <a href=/posts/java/concurrency/locks/>
 <span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
 Previous</span>
-<span class=screen-reader-text>上一篇: </span>Locks</a>
+<span class=screen-reader-text>上一篇: </span>锁</a>
 </div><div class="next-entry sep-before">
 <a href=/posts/java/concurrency/thread/>
-<span class=screen-reader-text>下一篇: </span>Thread<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+<span class=screen-reader-text>下一篇: </span>线程<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
 </span>
 </a>
 </div></div>
