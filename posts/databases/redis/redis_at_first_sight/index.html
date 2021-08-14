@@ -1,16 +1,16 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="Redis是一个位于内存中的数据结构存储系统，可用作数据库、缓存和消息中间件。它支持的数据结构有：string、hash、list、set、">
+<meta name=description content="Redis是一个位于内存中的数据结构存储系统，由 ANSI C 语言编写。可用作数据库、缓存和消息中间件。它支持的数据结构有：string、hash、l">
 <meta name=theme-color content="#ffcd00">
 <meta property="og:title" content="初见Redis • Nicholas Zhan">
-<meta property="og:description" content="Redis是一个位于内存中的数据结构存储系统，可用作数据库、缓存和消息中间件。它支持的数据结构有：string、hash、list、set、">
-<meta property="og:url" content="https://zhannicholas.github.io/posts/databases/redis/%E5%88%9D%E8%A7%81redis/">
+<meta property="og:description" content="Redis是一个位于内存中的数据结构存储系统，由 ANSI C 语言编写。可用作数据库、缓存和消息中间件。它支持的数据结构有：string、hash、l">
+<meta property="og:url" content="https://zhannicholas.github.io/posts/databases/redis/redis_at_first_sight/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Redis"><meta property="article:published_time" content="2019-09-25T19:24:06+08:00"><meta property="article:modified_time" content="2019-09-25T19:24:06+08:00"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.87.0">
 <title>初见Redis • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/posts/databases/redis/%E5%88%9D%E8%A7%81redis/>
+<link rel=canonical href=https://zhannicholas.github.io/posts/databases/redis/redis_at_first_sight/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
 </head>
@@ -210,8 +210,9 @@ Java Developer, Runner, Cyclist
 </header>
 <div class="container entry-content">
 <blockquote>
-<p><a href=https://redis.io>Redis</a>是一个位于内存中的数据结构存储系统，可用作数据库、缓存和消息中间件。它支持的数据结构有：string、hash、list、set、sorted set with range quries、bitmap、hyperloglogs、geospatial indexes with radius queries以及stream。Redis支持复制、Lua脚本、基于LRU的键驱逐、事务和不同级别的磁盘持久化，并通过哨兵和Redis集群的自动分区机制来保证高可用。</p>
+<p><a href=https://redis.io>Redis</a>是一个位于内存中的数据结构存储系统，由 ANSI C 语言编写。可用作数据库、缓存和消息中间件。它支持的数据结构有：string、hash、list、set、sorted set with range quries、bitmap、hyperloglogs、geospatial indexes with radius queries以及stream。Redis支持复制、Lua脚本、基于LRU的键驱逐、事务和不同级别的磁盘持久化，并通过哨兵和Redis集群的自动分区机制来保证高可用。</p>
 </blockquote>
+<p>Redis 是 Remote dictionary server 的缩写，字母意思即远程字典服务。一个 Redis 可以有多个存储数据的字典，客户端可以通过 select 来选择字典（DB）进行存储。</p>
 <blockquote>
 <p>Redis的存储是基于key-value的，但这里的key-value不是简单的key-value，因为value的类型可以有很多种。在我们传统的key-value存储中，key和value都是字符串，而在Redis中，value不仅可以是字符串，还有可能是像列表、集合这样的复杂的数据结构。</p>
 </blockquote>
