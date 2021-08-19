@@ -208,7 +208,7 @@ Java Developer, Runner, Cyclist
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-3 mins read
+4 mins read
 </span>
 </div>
 </div>
@@ -222,9 +222,9 @@ Java Developer, Runner, Cyclist
 <li><a href=#代理模式>代理模式</a></li>
 <li><a href=#jdk-动态代理>JDK 动态代理</a>
 <ul>
-<li><a href=#invocationhandler-接口><strong><code>InvocationHandler</code></strong> 接口</a></li>
+<li><a href=#invocationhandler-接口><code>InvocationHandler</code> 接口</a></li>
 <li><a href=#创建代理>创建代理</a></li>
-<li><a href=#jdk-动态代理的局限性>JDK 动态代理的局限性</a></li>
+<li><a href=#再深入一点>再深入一点</a></li>
 </ul>
 </li>
 <li><a href=#cglib>cglib</a>
@@ -243,52 +243,56 @@ Java Developer, Runner, Cyclist
 </blockquote>
 <h2 id=代理模式>代理模式</h2>
 <p><a href=../../../../reading_notes/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8D%81%E4%B8%89%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/>设计模式读书笔记之代理模式</a></p>
-<p>在经典的设计模式种，对于每一个 <code>RealSubject</code> 类，都需要创建一个 <code>Proxy</code> 代理类，当 <code>RealSubject</code> 这种需要被代理的类变得很多时,就需要定义大量的 <code>Proxy</code> 类，局面很容易变得不可控。而 JDK 动态代理可以有效地解决这个问题。</p>
+<p>在经典的设计模式种，对于每一个 <code>RealSubject</code> 类，都需要创建一个 <code>Proxy</code> 代理类，当 <code>RealSubject</code> 这种需要被代理的类变得很多时，就需要定义大量的 <code>Proxy</code> 类，局面很容易一发不可收拾。JDK 动态代理可以有效地解决代理类数量过多这个问题。</p>
 <h2 id=jdk-动态代理>JDK 动态代理</h2>
-<p><strong><code>java.lang.reflect.Proxy</code></strong> 提供了在程序运行期间 <strong>动态</strong> 创建接口的实现类(即代理类 <code>proxy class</code> )的方法，因为代理类是在程序运行过程中动态创建的，所以又被称为动态代理类(<code>dynamic proxy class</code>)，被实现的接口被称为代理接口(<code>proxy interface</code>)，代理类的实例被称为代理实例(<code>proxy instance</code>)。</p>
-<h3 id=invocationhandler-接口><strong><code>InvocationHandler</code></strong> 接口</h3>
-<p>每个代理实例都有一个相关联的 <code>invocation handler</code> 对象，它实现了 <strong><code>InvocationHandler</code></strong> 接口。<strong><code>InvocationHandler</code></strong> 接口的定义如下：</p>
+<p><code>java.lang.reflect.Proxy</code> 提供了在程序运行期间 <strong>动态</strong> 创建接口实现类（即代理类）的方法，因为代理类是在程序运行过程中动态创建的，所以又被称为动态代理类（dynamic proxy class），被实现的接口被称为代理接口（proxy interface），代理类的实例被称为代理实例（proxy instance）。</p>
+<h3 id=invocationhandler-接口><code>InvocationHandler</code> 接口</h3>
+<p>每个代理实例都有一个相关联的实现了 <code>InvocationHandler</code> 接口的对象。<code>InvocationHandler</code> 接口的定义如下：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>InvocationHandler</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>invoke</span><span style=color:#f92672>(</span>Object proxy<span style=color:#f92672>,</span> Method method<span style=color:#f92672>,</span> Object<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span>
         <span style=color:#66d9ef>throws</span> Throwable<span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>代理实例上的方法调用会被转移到对应 <code>invocation handler</code> 的 <code>invoke()</code> 方法上。
-由于一个接口可能声明了多个方法，所以需要 <code>method</code> 参数给出将要在 <code>proxy</code> 上调用的方法，传递的参数列表为 <code>args</code>。</p>
+</code></pre></div><p>代理实例上的任何方法调用会被分派到到对应 <code>InvocationHandler</code> 的 <code>invoke()</code> 方法上。<code>invoke()</code> 方法有三个参数：</p>
+<ul>
+<li><code>proxy</code>：代理实例</li>
+<li><code>method</code>：将要在 <code>proxy</code> 上调用的方法所对应的 <code>Method</code> 对象</li>
+<li><code>args</code>：传递给 <code>method</code> 的参数列表。若 <code>method</code> 没有参数，则应传递 <code>null</code>。</li>
+</ul>
 <h3 id=创建代理>创建代理</h3>
-<p><strong><code>Proxy</code></strong> 类的静态方法 <code>newProxyInstance(ClassLoader loader, Class&lt;?>[] interfaces, InvocationHandler h)</code> 可以被用来来创建一个代理实例。在使用时，我们需要提供加载代理类的 <strong><code>ClassLoader</code></strong>、代理类实现的所有接口组成的数组和一个<code>invocation handler</code>。</p>
-<p>下面是一个例子：</p>
+<p><code>Proxy</code> 类的静态方法 <code>newProxyInstance(ClassLoader loader, Class&lt;?>[] interfaces, InvocationHandler h)</code> 就是用来创建代理实例的。它有三个参数：</p>
+<ul>
+<li><code>loader</code>：类加载器，用于加载代理类</li>
+<li><code>interfaces</code>：一个数组，包含代理类实现的所有接口</li>
+<li><code>h</code>：与代理类相关联的 <code>InvocationHandler</code></li>
+</ul>
+<p>我们可以通过下面的例子进一步理解。</p>
+<p>先定义一个接口：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#75715e>// 接口
 </span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Subject</span> <span style=color:#f92672>{</span>
     Object <span style=color:#a6e22e>execute</span><span style=color:#f92672>();</span>
 <span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// 接口实现类
-</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>RealSubject</span> <span style=color:#66d9ef>implements</span> Subject <span style=color:#f92672>{</span>
+</code></pre></div><p>创建一个接口实现类：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>RealSubject</span> <span style=color:#66d9ef>implements</span> Subject <span style=color:#f92672>{</span>
     <span style=color:#a6e22e>@Override</span>
     <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>execute</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
         System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Real subject is executing.&#34;</span><span style=color:#f92672>);</span>
         <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>;</span>
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SubjectProxy</span> <span style=color:#66d9ef>implements</span> InvocationHandler <span style=color:#f92672>{</span>
+</code></pre></div><p>创建代理类：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SubjectProxy</span> <span style=color:#66d9ef>implements</span> InvocationHandler <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Subject target<span style=color:#f92672>;</span>
 
     <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>SubjectProxy</span><span style=color:#f92672>(</span>Subject target<span style=color:#f92672>)</span> <span style=color:#f92672>{</span><span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>target</span> <span style=color:#f92672>=</span> target<span style=color:#f92672>;}</span>
 
     <span style=color:#a6e22e>@Override</span>
     <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>invoke</span><span style=color:#f92672>(</span>Object proxy<span style=color:#f92672>,</span> Method method<span style=color:#f92672>,</span> Object<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> Throwable <span style=color:#f92672>{</span>
-        <span style=color:#75715e>// 执行业务逻辑之前的预处理逻辑……
-</span><span style=color:#75715e></span>        <span style=color:#75715e>// preprocess();
-</span><span style=color:#75715e></span>        Object result <span style=color:#f92672>=</span> method<span style=color:#f92672>.</span><span style=color:#a6e22e>invoke</span><span style=color:#f92672>(</span>target<span style=color:#f92672>,</span> args<span style=color:#f92672>);</span>
-        <span style=color:#75715e>// 执行业务逻辑之后的后置处理逻辑……
-</span><span style=color:#75715e></span>        <span style=color:#75715e>// postprocess();
-</span><span style=color:#75715e></span>        <span style=color:#66d9ef>return</span> result<span style=color:#f92672>;</span>
+        Object result <span style=color:#f92672>=</span> method<span style=color:#f92672>.</span><span style=color:#a6e22e>invoke</span><span style=color:#f92672>(</span>target<span style=color:#f92672>,</span> args<span style=color:#f92672>);</span>
+        <span style=color:#66d9ef>return</span> result<span style=color:#f92672>;</span>
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// 测试程序
-</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SubjectProxyTest</span> <span style=color:#f92672>{</span>
+</code></pre></div><p>创建一个代理实例，然后调用代理实例的方法简单测试一下：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SubjectProxyTest</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span><span style=color:#f92672>(</span>String<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
         Subject subject <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>Subject<span style=color:#f92672>)</span> Proxy<span style=color:#f92672>.</span><span style=color:#a6e22e>newProxyInstance</span><span style=color:#f92672>(</span>
                 SubjectProxy<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>.</span><span style=color:#a6e22e>getClassLoader</span><span style=color:#f92672>(),</span>
@@ -299,20 +303,99 @@ Java Developer, Runner, Cyclist
 <span style=color:#f92672>}</span>
 </code></pre></div><p>程序的运行结果为：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-txt data-lang=txt>Real subject is executing.
-</code></pre></div><h3 id=jdk-动态代理的局限性>JDK 动态代理的局限性</h3>
-<p>被代理的类至少需要实现一个接口，若被代理的类没有实现任何接口，<a href=https://github.com/cglib/cglib>cglib</a>是一个不错的选择。</p>
+</code></pre></div><p>可以发现，虽然我们创建的是 <code>Subject</code> 对象，但实际被调用的方法却是 <code>RealSubject</code> 的方法。</p>
+<h3 id=再深入一点>再深入一点</h3>
+<p>有没有什么办法可以看到程序运行时动态生成的代理类呢？答案是肯定的，我们可以在运行测试程序的时候加一个参数 <code>-Djdk.proxy.ProxyGenerator.saveGeneratedFiles=true</code>，将生成的代理类保存到当前的工作目录。在 JDK9 之前，这个参数是 <code>-Dsun.misc.ProxyGenerator.saveGeneratedFiles=true</code>。在笔者的电脑上，生成的代理类是 <code>com.sun.proxy.$Proxy0</code>，反编译得到的类是这样的：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#75715e>//
+</span><span style=color:#75715e>// Source code recreated from a .class file by IntelliJ IDEA
+</span><span style=color:#75715e>// (powered by FernFlower decompiler)
+</span><span style=color:#75715e>//
+</span><span style=color:#75715e></span>
+<span style=color:#f92672>package</span> com.sun.proxy<span style=color:#f92672>;</span>
+
+<span style=color:#f92672>import</span> java.lang.reflect.InvocationHandler<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> java.lang.reflect.Method<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> java.lang.reflect.Proxy<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> java.lang.reflect.UndeclaredThrowableException<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> ml.zhannicholas.reflection.dynamicproxy.Subject<span style=color:#f92672>;</span>
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>$Proxy0</span> <span style=color:#66d9ef>extends</span> Proxy <span style=color:#66d9ef>implements</span> Subject <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> Method m1<span style=color:#f92672>;</span>
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> Method m2<span style=color:#f92672>;</span>
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> Method m3<span style=color:#f92672>;</span>
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> Method m0<span style=color:#f92672>;</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>$Proxy0</span><span style=color:#f92672>(</span>InvocationHandler var1<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span>  <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>super</span><span style=color:#f92672>(</span>var1<span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>equals</span><span style=color:#f92672>(</span>Object var1<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span>  <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>return</span> <span style=color:#f92672>(</span>Boolean<span style=color:#f92672>)</span><span style=color:#66d9ef>super</span><span style=color:#f92672>.</span><span style=color:#a6e22e>h</span><span style=color:#f92672>.</span><span style=color:#a6e22e>invoke</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>,</span> m1<span style=color:#f92672>,</span> <span style=color:#66d9ef>new</span> Object<span style=color:#f92672>[]{</span>var1<span style=color:#f92672>});</span>
+        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>RuntimeException <span style=color:#f92672>|</span> Error var3<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>throw</span> var3<span style=color:#f92672>;</span>
+        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable var4<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException<span style=color:#f92672>(</span>var4<span style=color:#f92672>);</span>
+        <span style=color:#f92672>}</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> String <span style=color:#a6e22e>toString</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span>  <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>return</span> <span style=color:#f92672>(</span>String<span style=color:#f92672>)</span><span style=color:#66d9ef>super</span><span style=color:#f92672>.</span><span style=color:#a6e22e>h</span><span style=color:#f92672>.</span><span style=color:#a6e22e>invoke</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>,</span> m2<span style=color:#f92672>,</span> <span style=color:#f92672>(</span>Object<span style=color:#f92672>[])</span><span style=color:#66d9ef>null</span><span style=color:#f92672>);</span>
+        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>RuntimeException <span style=color:#f92672>|</span> Error var2<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>throw</span> var2<span style=color:#f92672>;</span>
+        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable var3<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException<span style=color:#f92672>(</span>var3<span style=color:#f92672>);</span>
+        <span style=color:#f92672>}</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> Object <span style=color:#a6e22e>execute</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span>  <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>return</span> <span style=color:#f92672>(</span>Object<span style=color:#f92672>)</span><span style=color:#66d9ef>super</span><span style=color:#f92672>.</span><span style=color:#a6e22e>h</span><span style=color:#f92672>.</span><span style=color:#a6e22e>invoke</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>,</span> m3<span style=color:#f92672>,</span> <span style=color:#f92672>(</span>Object<span style=color:#f92672>[])</span><span style=color:#66d9ef>null</span><span style=color:#f92672>);</span>
+        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>RuntimeException <span style=color:#f92672>|</span> Error var2<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>throw</span> var2<span style=color:#f92672>;</span>
+        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable var3<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException<span style=color:#f92672>(</span>var3<span style=color:#f92672>);</span>
+        <span style=color:#f92672>}</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>hashCode</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span>  <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>return</span> <span style=color:#f92672>(</span>Integer<span style=color:#f92672>)</span><span style=color:#66d9ef>super</span><span style=color:#f92672>.</span><span style=color:#a6e22e>h</span><span style=color:#f92672>.</span><span style=color:#a6e22e>invoke</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>,</span> m0<span style=color:#f92672>,</span> <span style=color:#f92672>(</span>Object<span style=color:#f92672>[])</span><span style=color:#66d9ef>null</span><span style=color:#f92672>);</span>
+        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>RuntimeException <span style=color:#f92672>|</span> Error var2<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>throw</span> var2<span style=color:#f92672>;</span>
+        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable var3<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException<span style=color:#f92672>(</span>var3<span style=color:#f92672>);</span>
+        <span style=color:#f92672>}</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>static</span> <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+            m1 <span style=color:#f92672>=</span> Class<span style=color:#f92672>.</span><span style=color:#a6e22e>forName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;java.lang.Object&#34;</span><span style=color:#f92672>).</span><span style=color:#a6e22e>getMethod</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;equals&#34;</span><span style=color:#f92672>,</span> Class<span style=color:#f92672>.</span><span style=color:#a6e22e>forName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;java.lang.Object&#34;</span><span style=color:#f92672>));</span>
+            m2 <span style=color:#f92672>=</span> Class<span style=color:#f92672>.</span><span style=color:#a6e22e>forName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;java.lang.Object&#34;</span><span style=color:#f92672>).</span><span style=color:#a6e22e>getMethod</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;toString&#34;</span><span style=color:#f92672>);</span>
+            m3 <span style=color:#f92672>=</span> Class<span style=color:#f92672>.</span><span style=color:#a6e22e>forName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;ml.zhannicholas.reflection.dynamicproxy.Subject&#34;</span><span style=color:#f92672>).</span><span style=color:#a6e22e>getMethod</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;execute&#34;</span><span style=color:#f92672>);</span>
+            m0 <span style=color:#f92672>=</span> Class<span style=color:#f92672>.</span><span style=color:#a6e22e>forName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;java.lang.Object&#34;</span><span style=color:#f92672>).</span><span style=color:#a6e22e>getMethod</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;hashCode&#34;</span><span style=color:#f92672>);</span>
+        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>NoSuchMethodException var2<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> NoSuchMethodError<span style=color:#f92672>(</span>var2<span style=color:#f92672>.</span><span style=color:#a6e22e>getMessage</span><span style=color:#f92672>());</span>
+        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>ClassNotFoundException var3<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> NoClassDefFoundError<span style=color:#f92672>(</span>var3<span style=color:#f92672>.</span><span style=color:#a6e22e>getMessage</span><span style=color:#f92672>());</span>
+        <span style=color:#f92672>}</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>可以发现，代理类 <code>$Proxy0</code> 不仅实现了 <code>Subject</code> 接口，还继承自 <code>Proxy</code> 类。由于 Java 不支持多继承，所以只能通过接口来实现多态。这也是 JDK 动态代理的不足，即要求被代理的类至少需要实现一个接口。若被代理的类没有实现任何接口，<a href=https://github.com/cglib/cglib>cglib</a>是一个不错的选择。</p>
 <h2 id=cglib>cglib</h2>
 <p>JDK的动态代理基于 <strong>反射</strong> 机制，生成一个 <strong>实现</strong> 代理接口的代理类，然后重写接口，实现方法增强，只能代理实现了接口的类。因为是基于反射，动态代理在生成类的时候非常快，但后续操作会很慢。</p>
 <p>cglib采用了 <strong>字节码</strong> 技术，通过 <strong>继承</strong> 目标类（生成子类）并重写父类的方法来达到增强的目的。cglib 可以在重写的方法中进行拦截，实现代理对象的相关功能。由于这种代理方式是基于继承的，所以 cglib 不能代理被 <code>final</code> 修饰的类。因为是基于字节码技术，cglib在生成类的时候很慢，但后续操作很快。</p>
 <h3 id=简单示例>简单示例</h3>
+<p>先定义一个原始类：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Person</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>public</span> String <span style=color:#a6e22e>hello</span><span style=color:#f92672>(</span>String name<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
         System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello, &#34;</span> <span style=color:#f92672>+</span> name<span style=color:#f92672>);</span>
         <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;Hello, &#34;</span> <span style=color:#f92672>+</span> name<span style=color:#f92672>;</span>
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>PersonProxyTest</span> <span style=color:#f92672>{</span>
+</code></pre></div><p>然后使用 cglib 进行代理：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>PersonProxyTest</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span><span style=color:#f92672>(</span>String<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
         Enhancer enhancer <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Enhancer<span style=color:#f92672>();</span>
         enhancer<span style=color:#f92672>.</span><span style=color:#a6e22e>setSuperclass</span><span style=color:#f92672>(</span>Person<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
@@ -333,7 +416,7 @@ Java Developer, Runner, Cyclist
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-txt data-lang=txt>cglib method intercept start...
 Hello, Nicholas
 cglib method intercept end...
-</code></pre></div><p>这段代码里面用到了 <strong><code>Enhancer</code></strong> 类和 <strong><code>MethodInterceptor</code></strong> 接口。这两者的作用和JDK动态代理里面的 <strong><code>Proxy</code></strong> 和 <strong><code>InvocationHander</code></strong> 有些类似。<code>setSuperClass(Class superclass)</code> 告诉 <strong><code>Enhancer</code></strong> 去生成一个 <code>superclass</code> 的子类，而 <code>setCallback(Callback callback)</code> 告诉 <strong><code>Enhancer</code></strong> 该使用哪个 <code>callback</code> 来处理被代理类上的方法调用。<strong><code>MethodIntercepter</code></strong> 实现了 <strong><code>Callback</code></strong> 接口，允许我们对拦截的方法进行完全控制。</p>
+</code></pre></div><p>这段代码里面用到了 <code>Enhancer</code> 类和 <code>MethodInterceptor</code> 接口。这两者的作用和JDK动态代理里面的 <code>Proxy</code> 和 <code>InvocationHander</code> 有些类似。<code>setSuperClass(Class superclass)</code> 告诉 <code>Enhancer</code> 去生成一个 <code>superclass</code> 的子类，而 <code>setCallback(Callback callback)</code> 告诉 <code>Enhancer</code> 该使用哪个 <code>callback</code> 来处理被代理类上的方法调用。<code>MethodIntercepter</code> 实现了 <code>Callback</code> 接口，允许我们对拦截的方法进行完全控制。</p>
 <h2 id=参考资料>参考资料</h2>
 <ol>
 <li><a href=https://en.wikipedia.org/wiki/Proxy_pattern>Proxy pattern</a>.</li>
