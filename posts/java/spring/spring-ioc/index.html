@@ -210,7 +210,7 @@ Java Developer, Runner, Cyclist
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-10 mins read
+12 mins read
 </span>
 </div>
 </div>
@@ -532,6 +532,147 @@ Java Developer, Runner, Cyclist
 </ol>
 <p>到这里，Bean 的生命周期基本就介绍完了。用一张图总结下：</p>
 <p><img src=/images/java/spring/bean-lifecycle.png alt="Bean 的生命周期" title="Bean 的生命周期"></p>
+<h4 id=其它-aware-接口>其它 Aware 接口</h4>
+<p>除了之前提到过的 <code>Aware</code> 接口，Spring 还给我们提供了很多其它的 <code>Aware</code> 接口。这些接口告诉 IoC 容器 Bean 需要对应的依赖。例如 <code>ApplicationContextAware</code> 允许 Bean 获得一个 <code>ApplicationContext</code> 的引用，<code>ResourceLoaderAware</code> 允许 Bean 获得一个 <code>ResourceLoader</code> 的引用。</p>
+<h4 id=一个例子>一个例子</h4>
+<p>纸上得来终觉浅，绝知此事要躬行。下面，让我们通过一个例子加深对 Bean 生命周期的理解。</p>
+<p>先定义一个 Bean 类，它实现了众多的接口，包含自定义的初始化方法和自定义的销毁方法，以及一个普通方法 <code>hello()</code>：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MySpringBean</span> <span style=color:#66d9ef>implements</span> ApplicationContextAware<span style=color:#f92672>,</span> BeanNameAware<span style=color:#f92672>,</span>
+        BeanClassLoaderAware<span style=color:#f92672>,</span> BeanFactoryAware<span style=color:#f92672>,</span> InitializingBean<span style=color:#f92672>,</span> DisposableBean <span style=color:#f92672>{</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setBeanClassLoader</span><span style=color:#f92672>(</span>ClassLoader classLoader<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setBeanClassLoader...&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setBeanFactory</span><span style=color:#f92672>(</span>BeanFactory beanFactory<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setBeanFactory...&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setBeanName</span><span style=color:#f92672>(</span>String s<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setBeanName...&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>destroy</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing destroy...&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>afterPropertiesSet</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing afterPropertiesSet...&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setApplicationContext</span><span style=color:#f92672>(</span>ApplicationContext applicationContext<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setApplicationContext...&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@PostConstruct</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>postConstruct</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing @PostConstruct...&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@PreDestroy</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>preDestroy</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing @PreDestroy...&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>customInitMethod</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing custom init method...&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>customDestroyMethod</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing custom destroy method...&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>hello</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello, Spring!&#34;</span><span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>然后定义一个 <code>BeanPostProcessor</code> 的实现类：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyBeanPostProcessor</span> <span style=color:#66d9ef>implements</span> BeanPostProcessor <span style=color:#f92672>{</span>
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>postProcessBeforeInitialization</span><span style=color:#f92672>(</span>Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessBeforeInitialization of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
+        <span style=color:#66d9ef>return</span> bean<span style=color:#f92672>;</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>postProcessAfterInitialization</span><span style=color:#f92672>(</span>Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessAfterInitialization of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
+        <span style=color:#66d9ef>return</span> bean<span style=color:#f92672>;</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>再定义一个 <code>InstantiationAwareBeanPostProcessor</code> 的实现类：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyInstantiationAwareBeanPostProcessor</span> <span style=color:#66d9ef>implements</span> InstantiationAwareBeanPostProcessor <span style=color:#f92672>{</span>
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>postProcessBeforeInstantiation</span><span style=color:#f92672>(</span>Class<span style=color:#f92672>&lt;?&gt;</span> beanClass<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessBeforeInstantiation of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>;</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>postProcessAfterInstantiation</span><span style=color:#f92672>(</span>Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessAfterInstantiation of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>;</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> PropertyValues <span style=color:#a6e22e>postProcessProperties</span><span style=color:#f92672>(</span>PropertyValues pvs<span style=color:#f92672>,</span> Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessProperties of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
+        <span style=color:#66d9ef>return</span> pvs<span style=color:#f92672>;</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>以及一个配置类：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#a6e22e>@Configuration</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyLifeCycleConfiguration</span> <span style=color:#f92672>{</span>
+    <span style=color:#a6e22e>@Bean</span>
+    <span style=color:#66d9ef>public</span> MyBeanPostProcessor <span style=color:#a6e22e>myBeanPostProcessor</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MyBeanPostProcessor<span style=color:#f92672>();</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Bean</span>
+    <span style=color:#66d9ef>public</span> MyInstantiationAwareBeanPostProcessor <span style=color:#a6e22e>myInstantiationAwareBeanPostProcessor</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MyInstantiationAwareBeanPostProcessor<span style=color:#f92672>();</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Bean</span><span style=color:#f92672>(</span>initMethod <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;customInitMethod&#34;</span><span style=color:#f92672>,</span> destroyMethod <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;customDestroyMethod&#34;</span><span style=color:#f92672>)</span>
+    <span style=color:#66d9ef>public</span> MySpringBean <span style=color:#a6e22e>mySpringBean</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MySpringBean<span style=color:#f92672>();</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>最后写一个测试：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#a6e22e>@SpringBootTest</span>
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>BeanLifecycleApplicationTests</span> <span style=color:#f92672>{</span>
+    <span style=color:#a6e22e>@Autowired</span>
+    <span style=color:#66d9ef>private</span> MySpringBean mySpringBean<span style=color:#f92672>;</span>
+
+    <span style=color:#a6e22e>@Test</span>
+    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testMySpringBeanLifecycle</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        mySpringBean<span style=color:#f92672>.</span><span style=color:#a6e22e>hello</span><span style=color:#f92672>();</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>现在运行测试，各个生命周期回调的执行步骤就一览无余啦。由于容器默认还会创建其它 Bean，数量还不少，影响我们观察。所以下面执行结果中只列出了与 <code>MySpringBean</code> 相关的执行结果：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-txt data-lang=txt>Executing postProcessBeforeInstantiation of mySpringBean ...
+Executing postProcessAfterInstantiation of mySpringBean ...
+Executing postProcessProperties of mySpringBean ...
+Executing setBeanName...
+Executing setBeanClassLoader...
+Executing setBeanFactory...
+Executing setApplicationContext...
+Executing postProcessBeforeInitialization of mySpringBean ...
+Executing @PostConstruct...
+Executing afterPropertiesSet...
+Executing custom init method...
+Executing postProcessAfterInitialization of mySpringBean ...
+Hello, Spring!
+Executing @PreDestroy...
+Executing destroy...
+Executing custom destroy method...
+</code></pre></div><p>完整代码已经放到 <a href=https://github.com/zhannicholas/java-demos/tree/main/bean-lifecycle>Github</a>。</p>
 <h2 id=未完待续>未完待续</h2>
 <p>时间有限，先写到这里。写东西从来都不是一次性过程，要常看，常思考，常更新。</p>
 <h2 id=参考资料>参考资料</h2>
