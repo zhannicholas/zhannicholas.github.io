@@ -1,1 +1,50 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>并发 on Nicholas Zhan</title><link>https://zhannicholas.github.io/posts/java/concurrency/</link><description>Recent content in 并发 on Nicholas Zhan</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Tue, 27 Apr 2021 20:38:39 +0800</lastBuildDate><atom:link href="https://zhannicholas.github.io/posts/java/concurrency/index.xml" rel="self" type="application/rss+xml"/><item><title>线程安全性</title><link>https://zhannicholas.github.io/posts/java/concurrency/thread_safety/</link><pubDate>Tue, 27 Apr 2021 20:38:39 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/thread_safety/</guid><description>我们在工作中经常听人提起线程安全，但线程安全似乎没有一个明确的定义。Java Concurrency in Practice 这本 Java 并发宝典是这样解释线程安全的： 当多个线程访问某个类时</description></item><item><title>生产者消费者模式</title><link>https://zhannicholas.github.io/posts/java/concurrency/producer_consumer_pattern/</link><pubDate>Mon, 26 Apr 2021 22:44:40 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/producer_consumer_pattern/</guid><description>生产者/消费者模式（Producer/Consumer Pattern）是一种非常常见的程序设计模式，广泛用于消息队列、解耦等场景中。简单来说</description></item><item><title>线程池</title><link>https://zhannicholas.github.io/posts/java/concurrency/thread_pool/</link><pubDate>Sun, 13 Dec 2020 18:35:11 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/thread_pool/</guid><description>线程池是管理一组同构工作线程的资源池，内部主要分为四部分： 线程池管理器：负责线程池的创建、销毁、添加任务等管理工作。 工作队列（Work Que</description></item><item><title>线程</title><link>https://zhannicholas.github.io/posts/java/concurrency/thread/</link><pubDate>Sun, 13 Dec 2020 18:32:20 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/thread/</guid><description>进程（process）是资源分配的基本单元，而线程（thread）是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源</description></item><item><title>同步</title><link>https://zhannicholas.github.io/posts/java/concurrency/synchronization/</link><pubDate>Sun, 13 Dec 2020 18:31:16 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/synchronization/</guid><description>Java语言提供了多种线程间通信机制（同步、while轮询、等待/通知、管道等等），其中最基础的通信方式就是 同步（synchronizati</description></item><item><title>锁</title><link>https://zhannicholas.github.io/posts/java/concurrency/locks/</link><pubDate>Sun, 13 Dec 2020 18:29:44 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/locks/</guid><description>文章中涉及的源代码摘自 OpenJdk 11。 乐观锁与悲观锁 乐观锁与悲观锁是一种广义上的概念，体现了我们看待线程同步的不同角度。 乐观锁 乐观锁采用的思想是：冲</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java并发 on Nicholas Zhan</title>
+    <link>https://zhannicholas.github.io/posts/java/concurrency/</link>
+    <description>Recent content in Java并发 on Nicholas Zhan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 13 Dec 2020 18:35:11 +0800</lastBuildDate>
+    
+	<atom:link href="https://zhannicholas.github.io/posts/java/concurrency/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java线程池</title>
+      <link>https://zhannicholas.github.io/posts/java/concurrency/thread_pool/</link>
+      <pubDate>Sun, 13 Dec 2020 18:35:11 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/concurrency/thread_pool/</guid>
+      <description>线程池是管理一组同构工作线程的资源池。线程池与工作队列（Work Queue）密切相关，其中工作队列中保存了所有等待执行的任务。工作者线程（W</description>
+    </item>
+    
+    <item>
+      <title>Java线程</title>
+      <link>https://zhannicholas.github.io/posts/java/concurrency/thread/</link>
+      <pubDate>Sun, 13 Dec 2020 18:32:20 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/concurrency/thread/</guid>
+      <description>进程是资源分配的基本单元，而线程是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源。和进程相比，线程更加轻量化，所以</description>
+    </item>
+    
+    <item>
+      <title>同步</title>
+      <link>https://zhannicholas.github.io/posts/java/concurrency/synchronization/</link>
+      <pubDate>Sun, 13 Dec 2020 18:31:16 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/concurrency/synchronization/</guid>
+      <description>Java语言提供了多种线程间通信机制（同步、while轮询、等待/通知、管道等等），其中最基础的通信方式就是 同步（synchronizati</description>
+    </item>
+    
+    <item>
+      <title>Locks</title>
+      <link>https://zhannicholas.github.io/posts/java/concurrency/locks/</link>
+      <pubDate>Sun, 13 Dec 2020 18:29:44 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/concurrency/locks/</guid>
+      <description>文章中涉及的源代码摘自 OpenJdk 11。 乐观锁与悲观锁 乐观锁与悲观锁是一种广义上的概念，体现了我们看待线程同步的不同角度。 乐观锁 乐观锁采用的思想是：冲</description>
+    </item>
+    
+  </channel>
+</rss>

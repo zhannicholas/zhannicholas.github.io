@@ -1,324 +1,369 @@
-<!doctype html><html lang=zh-cn dir=auto><head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="这篇笔记地主要内容来自Java Platform, Standard Edition HotSpot Virtual Machine Garbage Collection Tuning Guide。文章中介绍了一些调优目标以及 JDK 8中 Hotspot VM 提供的一些垃圾收集器，并提出了很多调优建议">
-<meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="垃圾回收调优指南(Java SE 8) • Nicholas Zhan">
-<meta property="og:description" content="这篇笔记地主要内容来自Java Platform, Standard Edition HotSpot Virtual Machine Garbage Collection Tuning Guide。文章中介绍了一些调优目标以及 JDK 8中 Hotspot VM 提供的一些垃圾收集器，并提出了很多调优建议">
-<meta property="og:url" content="https://zhannicholas.github.io/posts/java/jvm/garbage_collection_tuning_guide_in_javase8/">
-<meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="JVM"><meta property="article:tag" content="GC"><meta property="article:published_time" content="2020-12-13T18:40:26+08:00"><meta property="article:modified_time" content="2020-12-13T18:40:26+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.87.0">
-<title>垃圾回收调优指南(Java SE 8) • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/posts/java/jvm/garbage_collection_tuning_guide_in_javase8/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
+<!DOCTYPE html>
+<html lang='en' dir='auto'><head>
+  <meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta name='description' content='这篇笔记地主要内容来自Java Platform, Standard Edition HotSpot Virtual Machine Garbage Collection Tuning Guide。文章中介绍了一些调优目标以及HotSpot VM在JDK 8中提供的一些垃圾收集器，'>
+<meta name='theme-color' content='#ffcd00'>
+
+<meta property='og:title' content='垃圾回收调优指南(Java SE 8) • Nicholas Zhan'>
+<meta property='og:description' content='这篇笔记地主要内容来自Java Platform, Standard Edition HotSpot Virtual Machine Garbage Collection Tuning Guide。文章中介绍了一些调优目标以及HotSpot VM在JDK 8中提供的一些垃圾收集器，'>
+<meta property='og:url' content='https://zhannicholas.github.io/posts/java/jvm/garbage_collection_tuning_guide_in_javase8/'>
+<meta property='og:site_name' content='Nicholas Zhan'>
+<meta property='og:type' content='article'><meta property='og:image' content='https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256'><meta property='article:section' content='posts'><meta property='article:tag' content='JVM'><meta property='article:published_time' content='2020-12-13T18:40:26&#43;08:00'/><meta property='article:modified_time' content='2020-12-13T18:40:26&#43;08:00'/><meta name='twitter:card' content='summary'>
+
+<meta name="generator" content="Hugo 0.74.3" />
+
+  <title>垃圾回收调优指南(Java SE 8) • Nicholas Zhan</title>
+  <link rel='canonical' href='https://zhannicholas.github.io/posts/java/jvm/garbage_collection_tuning_guide_in_javase8/'>
+  
+  
+  <link rel='icon' href='/favicon.ico'>
+<link rel='stylesheet' href='/assets/css/main.ab98e12b.css'><link rel='stylesheet' href='/css/custom.css'><style>
+:root{--color-accent:#ffcd00;}
+</style>
+
+  
+
 </head>
-<body class="page type-posts has-sidebar">
-<div class=site><div id=sidebar class=sidebar>
-<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
-<div class=container><section class="widget widget-about sep-after">
-<header>
-<div class=logo>
-<a href=/>
-<img src=/images/logo.png>
-</a>
-</div>
-<h2 class="title site-title">
-<a href=/>
-Nicholas Zhan
-</a>
-</h2>
-<div class=desc>
-Java Developer, Runner, Cyclist
-</div>
-</header>
+<body class='page type-posts has-sidebar'>
+
+  <div class='site'><div id='sidebar' class='sidebar'>
+  <a class='screen-reader-text' href='#main-menu'>Skip to Main Menu</a>
+
+  <div class='container'><section class='widget widget-about sep-after'>
+  <header>
+    
+    <div class='logo'>
+      <a href='/'>
+        <img src='/images/logo.png'>
+      </a>
+    </div>
+    
+    <h2 class='title site-title '>
+      <a href='/'>
+      Nicholas Zhan
+      </a>
+    </h2>
+    <div class='desc'>
+    Java Developer, Long-distance Runner, Cyclist
+    </div>
+  </header>
+
 </section>
-<section class="widget widget-search sep-after">
-<header>
-<h4 class="title widget-title">搜索</h4>
-</header>
-<form action=/search id=search-form class=search-form>
-<label>
-<span class=screen-reader-text>搜索</span>
-<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
-</label></form>
-</section>
-<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
-<div class=container>
-<ul><li class="item has-children has-current">
-<a href=/posts/java/>Java</a><button class=sub-menu-toggler>
-<span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/posts/java/jakartaee/>Jakarta EE</a></li><li class="item has-current">
-<a href=/posts/java/jvm/>JVM</a></li><li class=item>
-<a href=/posts/java/concurrency/>并发</a></li></ul></li><li class=item>
-<a href=/posts/distributed_computing/>分布式计算</a></li><li class="item has-children">
-<a href=/posts/operating_systems/>操作系统</a><button class=sub-menu-toggler>
-<span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/posts/operating_systems/memory_management/>内存管理</a></li><li class=item>
-<a href=/posts/operating_systems/virtualization/>虚拟化</a></li><li class=item>
-<a href=/posts/operating_systems/processes_management/>进程管理</a></li></ul></li><li class="item has-children">
-<a href=/posts/databases/>数据库</a><button class=sub-menu-toggler>
-<span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/posts/databases/redis/>Redis</a></li><li class=item>
-<a href=/posts/databases/fundamentals/>基础理论</a></li></ul></li><li class="item has-children">
-<a href=/posts/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
-<span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/posts/computer_networks/http/>HTTP</a></li><li class=item>
-<a href=/posts/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
+<section class='widget widget-sidebar_menu sep-after'><nav id='sidebar-menu' class='menu sidebar-menu' aria-label='Sidebar Menu'>
+    <div class='container'>
+      <ul><li class='item has-children'>
+  <a href='/posts/databases/'>Database</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/databases/redis/'>Redis</a></li><li class='item'>
+  <a href='/posts/databases/fundamentals/'>基础理论</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/java/'>Java</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/java/jakartaee/'>Jakarta EE</a></li><li class='item'>
+  <a href='/posts/java/concurrency/'>Java并发</a></li><li class='item'>
+  <a href='/posts/java/java_lang/'>Java语言</a></li><li class='item'>
+  <a href='/posts/java/jvm/'>JVM</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/operating_systems/'>操作系统</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/operating_systems/memory_management/'>内存管理</a></li><li class='item'>
+  <a href='/posts/operating_systems/virtualization/'>虚拟化</a></li><li class='item'>
+  <a href='/posts/operating_systems/processes_management/'>进程管理</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/computer_networks/'>计算机网络</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/computer_networks/http/'>HTTP</a></li><li class='item'>
+  <a href='/posts/computer_networks/fundamentals/'>基础知识</a></li></ul></li><li class='item has-children'>
+  <a href='/posts/reading_notes/'>读书笔记</a><button class='sub-menu-toggler'>
+    <span class='screen-reader-text'>expand sub menu</span>
+    <span class='sign'></span>
+  </button>
+
+  <ul class='sub-menu'><li class='item'>
+  <a href='/posts/reading_notes/algorithms_in_c/'>C算法</a></li><li class='item'>
+  <a href='/posts/reading_notes/ostep/'>OSTEP</a></li><li class='item'>
+  <a href='/posts/reading_notes/sicp_in_python/'>SICP in Python</a></li><li class='item'>
+  <a href='/posts/reading_notes/the_art_of_multiprocessor_programming/'>多处理器编程的艺术</a></li><li class='item'>
+  <a href='/posts/reading_notes/modern_operating_systems/'>现代操作系统</a></li><li class='item'>
+  <a href='/posts/reading_notes/introduction_to_algorithms/'>算法导论</a></li><li class='item'>
+  <a href='/posts/reading_notes/%E7%AE%97%E6%B3%95%E8%B6%A3%E9%A2%98/'>算法趣题</a></li><li class='item'>
+  <a href='/posts/reading_notes/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/'>设计模式的艺术</a></li></ul></li></ul>
+    </div>
+  </nav>
+
+</section><section class='widget widget-taxonomy_cloud sep-after'>
+  <header>
+    <h4 class='title widget-title'>Tags</h4>
+  </header>
+
+  <div class='container list-container'>
+  <ul class='list taxonomy-cloud'><li>
+        <a href='/tags/git/' style='font-size:1em'>Git</a>
+      </li><li>
+        <a href='/tags/http/' style='font-size:1.7777777777777777em'>HTTP</a>
+      </li><li>
+        <a href='/tags/hugo/' style='font-size:1em'>Hugo</a>
+      </li><li>
+        <a href='/tags/jakartaee/' style='font-size:1.2222222222222223em'>JakartaEE</a>
+      </li><li>
+        <a href='/tags/java/' style='font-size:1.8888888888888888em'>Java</a>
+      </li><li>
+        <a href='/tags/jvm/' style='font-size:1.2222222222222223em'>JVM</a>
+      </li><li>
+        <a href='/tags/leetcode/' style='font-size:1.2222222222222223em'>Leetcode</a>
+      </li><li>
+        <a href='/tags/linux/' style='font-size:1em'>Linux</a>
+      </li><li>
+        <a href='/tags/os/' style='font-size:1.6666666666666665em'>OS</a>
+      </li><li>
+        <a href='/tags/python/' style='font-size:1em'>Python</a>
+      </li><li>
+        <a href='/tags/redis/' style='font-size:1.6666666666666665em'>Redis</a>
+      </li><li>
+        <a href='/tags/zookeeper/' style='font-size:1em'>ZooKeeper</a>
+      </li><li>
+        <a href='/tags/%E6%90%9C%E7%B4%A2/' style='font-size:1em'>搜索</a>
+      </li><li>
+        <a href='/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/' style='font-size:1em'>数据库</a>
+      </li><li>
+        <a href='/tags/%E7%AE%97%E6%B3%95/' style='font-size:2em'>算法</a>
+      </li><li>
+        <a href='/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/' style='font-size:1.2222222222222223em'>计算机网络</a>
+      </li><li>
+        <a href='/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/' style='font-size:1.5555555555555556em'>读书笔记</a>
+      </li></ul>
 </div>
-</nav>
-</section><section class="widget widget-taxonomy_cloud sep-after">
-<header>
-<h4 class="title widget-title">标签</h4>
-</header>
-<div class="container list-container">
-<ul class="list taxonomy-cloud"><li>
-<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.4166666666666665em>C算法</a>
-</li><li>
-<a href=/tags/english/ style=font-size:1em>English</a>
-</li><li>
-<a href=/tags/gc/ style=font-size:1.1666666666666667em>GC</a>
-</li><li>
-<a href=/tags/git/ style=font-size:1em>Git</a>
-</li><li>
-<a href=/tags/http/ style=font-size:1.5833333333333333em>HTTP</a>
-</li><li>
-<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
-</li><li>
-<a href=/tags/jakartaee/ style=font-size:1.1666666666666667em>JakartaEE</a>
-</li><li>
-<a href=/tags/java/ style=font-size:2em>Java</a>
-</li><li>
-<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
-</li><li>
-<a href=/tags/jvm/ style=font-size:1.25em>JVM</a>
-</li><li>
-<a href=/tags/leetcode/ style=font-size:1.1666666666666667em>Leetcode</a>
-</li><li>
-<a href=/tags/life/ style=font-size:1em>Life</a>
-</li><li>
-<a href=/tags/linux/ style=font-size:1.25em>Linux</a>
-</li><li>
-<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
-</li><li>
-<a href=/tags/networks/ style=font-size:1.1666666666666667em>Networks</a>
-</li><li>
-<a href=/tags/os/ style=font-size:1.5em>OS</a>
-</li><li>
-<a href=/tags/ostep/ style=font-size:1.1666666666666667em>OSTEP</a>
-</li><li>
-<a href=/tags/python/ style=font-size:1em>Python</a>
-</li><li>
-<a href=/tags/redis/ style=font-size:1.5833333333333333em>Redis</a>
-</li><li>
-<a href=/tags/sicp/ style=font-size:1em>SICP</a>
-</li><li>
-<a href=/tags/spring/ style=font-size:1em>Spring</a>
-</li><li>
-<a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a>
-</li><li>
-<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
-</li><li>
-<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
-</li><li>
-<a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0833333333333333em>分布式计算</a>
-</li><li>
-<a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0833333333333333em>多处理器编程的艺术</a>
-</li><li>
-<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
-</li><li>
-<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3333333333333333em>并发</a>
-</li><li>
-<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
-</li><li>
-<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0833333333333333em>数据库</a>
-</li><li>
-<a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
-</li><li>
-<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0833333333333333em>现代操作系统</a>
-</li><li>
-<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
-</li><li>
-<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.25em>算法导论</a>
-</li><li>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
-</li><li>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:2em>设计模式</a>
-</li></ul>
-</div>
+
+
 </section>
 </div>
-<div class=sidebar-overlay></div>
-</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
-<div class=container>
-<a class=screen-reader-text href=#content>跳到内容</a>
-<button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
-<span class=screen-reader-text>Toggle Sidebar</span>
-<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+
+  <div class='sidebar-overlay'></div>
+</div><div class='main'><nav id='main-menu' class='menu main-menu' aria-label='Main Menu'>
+  <div class='container'>
+    <a class='screen-reader-text' href='#content'>Skip to Content</a>
+
+<button id='sidebar-toggler' class='sidebar-toggler' aria-controls='sidebar'>
+  <span class='screen-reader-text'>Toggle Sidebar</span>
+  <span class='open'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="3" y1="12" x2="21" y2="12" />
+  <line x1="3" y1="6" x2="21" y2="6" />
+  <line x1="3" y1="18" x2="21" y2="18" />
+
+</svg>
 </span>
-<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  <span class='close'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="18" y1="6" x2="6" y2="18" />
+  <line x1="6" y1="6" x2="18" y2="18" />
+
+</svg>
 </span>
 </button>
-<ul><li class=item>
-<a href=/>主页</a>
-</li><li class="item current">
-<a aria-current=page href=/posts/>博客</a>
-</li><li class=item>
-<a href=/notebook/>笔记本</a>
-</li><li class=item>
-<a href=/itinerary/>游山玩水</a>
-</li></ul>
-</div>
-</nav><div class=header-widgets>
-<div class=container>
-<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
-<section class="widget widget-breadcrumbs sep-after">
-<nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><a href=/posts/java/>Java</a></li><li><a href=/posts/java/jvm/>JVM</a></li><li><span>垃圾回收调优指南(Java SE 8)</span></li></ol>
-</nav>
-</section></div>
-</div>
-<header id=header class="header site-header">
-<div class="container sep-after">
-<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
-</div>
-</div>
-</header>
-<main id=content>
-<article lang=zh-cn class=entry>
-<header class="header entry-header">
-<div class="container sep-after">
-<div class=header-info>
-<h1 class=title>垃圾回收调优指南(Java SE 8)</h1>
-</div>
-<div class=entry-meta>
-<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-<span class=screen-reader-text>Posted on </span>
-<time class=entry-date datetime=2020-12-13T18:40:26+08:00>2020, Dec 13</time>
+    <ul><li class='item'>
+        <a href='/'>Home</a>
+      </li><li class='item'>
+        <a href='/posts/'>Posts</a>
+      </li><li class='item'>
+        <a href='/about/'>About</a>
+      </li><li class='item'>
+        <a href='https://github.com/zhannicholas/NZ-Site'>Repo</a>
+      </li></ul>
+  </div>
+</nav><div class='header-widgets'>
+        <div class='container'>
+    
+    
+    
+    <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+  <section class='widget widget-breadcrumbs sep-after'>
+    <nav id='breadcrumbs'>
+      <ol><li><a href='/'>Home</a></li><li><a href='/posts/'>Posts</a></li><li><a href='/posts/java/'>Java</a></li><li><a href='/posts/java/jvm/'>JVM</a></li><li><span>垃圾回收调优指南(Java SE 8)</span></li></ol>
+    </nav>
+  </section></div>
+      </div>
+
+      <header id='header' class='header site-header'>
+        <div class='container sep-after'>
+          <div class='header-info'><p class='site-title title'>Nicholas Zhan</p><p class='desc site-desc'>Java Developer, Long-distance Runner, Cyclist</p>
+          </div>
+        </div>
+      </header>
+
+      <main id='content'>
+
+
+<article lang='en' class='entry'>
+  <header class='header entry-header'>
+  <div class='container sep-after'>
+    <div class='header-info'>
+      <h1 class='title'>垃圾回收调优指南(Java SE 8)</h1>
+      
+
+    </div>
+    <div class='entry-meta'>
+  <span class='posted-on'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+  <line x1="16" y1="2" x2="16" y2="6"/>
+  <line x1="8" y1="2" x2="8" y2="6"/>
+  <line x1="3" y1="10" x2="21" y2="10"/>
+
+</svg>
+<span class='screen-reader-text'>Posted on </span>
+  <time class='entry-date' datetime='2020-12-13T18:40:26&#43;08:00'>2020, Dec 13</time>
 </span>
-<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
-<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
-<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-15 mins read
+
+  <span class='byline'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <path d="M21,21V20c0-2.76-4-5-9-5s-9,2.24-9,5v1"/>
+  <path d="M16,6.37A4,4,0,1,1,12.63,3,4,4,0,0,1,16,6.37Z"/>
+
+</svg>
+<span class='screen-reader-text'> by </span><a href='/authors/zhannicholas'>Nicholas Zhan</a></span>
+  
+<span class='reading-time'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <circle cx="12" cy="12" r="10"/>
+  <polyline points="12 6 12 12 15 15"/>
+
+</svg>
+16 mins read
 </span>
+
+
 </div>
-</div>
+
+
+  </div>
 </header>
-<details class="container entry-toc">
-<summary class=title>
-<span>目录</span>
-</summary>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#ergonomics>Ergonomics</a>
-<ul>
-<li><a href=#基于行为的调优>基于行为的调优</a></li>
-<li><a href=#调优策略>调优策略</a></li>
-</ul>
-</li>
-<li><a href=#分代>分代</a>
-<ul>
-<li><a href=#设置分代大小>设置分代大小</a></li>
-</ul>
-</li>
-<li><a href=#可用收集器>可用收集器</a>
-<ul>
-<li><a href=#如何选择-gc>如何选择 GC</a></li>
-</ul>
-</li>
-<li><a href=#并行收集器>并行收集器</a>
-<ul>
-<li><a href=#分代-1>分代</a></li>
-<li><a href=#parallel-collector-ergonomics>Parallel Collector Ergonomics</a></li>
-</ul>
-</li>
-<li><a href=#并发收集器>并发收集器</a>
-<ul>
-<li><a href=#cms-收集器>CMS 收集器</a></li>
-<li><a href=#g1-收集器>G1 收集器</a></li>
-</ul>
-</li>
-<li><a href=#参考资料>参考资料</a></li>
-</ul>
+
+  
+  
+<details class='container entry-toc'>
+  <summary class='title'>
+    <span>Table of Contents</span>
+  </summary>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#ergonomics">Ergonomics</a>
+      <ul>
+        <li><a href="#基于行为的调优">基于行为的调优</a></li>
+        <li><a href="#调优策略">调优策略</a></li>
+      </ul>
+    </li>
+    <li><a href="#分代">分代</a>
+      <ul>
+        <li><a href="#设置分代大小">设置分代大小</a></li>
+      </ul>
+    </li>
+    <li><a href="#可用收集器">可用收集器</a>
+      <ul>
+        <li><a href="#如何选择gc">如何选择GC</a></li>
+      </ul>
+    </li>
+    <li><a href="#并行收集器">并行收集器</a>
+      <ul>
+        <li><a href="#分代-1">分代</a></li>
+        <li><a href="#parallel-collector-ergonomics">Parallel Collector Ergonomics</a></li>
+      </ul>
+    </li>
+    <li><a href="#并发收集器">并发收集器</a>
+      <ul>
+        <li><a href="#cms收集器">CMS收集器</a></li>
+        <li><a href="#g1收集器">G1收集器</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
 </nav>
 </details>
-<div class="container entry-content">
-<blockquote>
-<p>这篇笔记地主要内容来自<a href=https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/introduction.html>Java Platform, Standard Edition HotSpot Virtual Machine Garbage Collection Tuning Guide</a>。文章中介绍了一些调优目标以及 JDK 8中 Hotspot VM 提供的一些垃圾收集器，并提出了很多调优建议。</p>
+
+
+  <div class='container entry-content'>
+  <blockquote>
+<p>这篇笔记地主要内容来自<a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/introduction.html">Java Platform, Standard Edition HotSpot Virtual Machine Garbage Collection Tuning Guide</a>。文章中介绍了一些调优目标以及HotSpot VM在JDK 8中提供的一些垃圾收集器，并提出了很多调优建议。</p>
 </blockquote>
-<p><strong>GC（Garbage Collector）</strong> 是一个内存管理工具，它通过以下操作实现了自动内存管理：</p>
+<p>**GC(Garbage Collector)**是一个内存管理工具，它通过以下操作实现了自动内存管理：</p>
 <ol>
-<li>将新生对象分配到 <strong>年轻代（Young Generation）</strong>，并将足够老的对象提升到 <strong>年老代（Old Generation）</strong>。</li>
-<li>通过并发（或并行）标记阶段找出年老代中的存活对象。当整个 Java 堆的空间使用率超过阈值时，HotSpot VM 就会触发标记阶段。</li>
+<li>将新生对象分配到<strong>年轻代(Young Generation)</strong>，并将足够老的对象提升到<strong>年老代(Old Generation)</strong>。</li>
+<li>通过并发(或并行)标记阶段找出年老代中的存活对象。当整个Java堆的空间使用率超过阈值时，HotSpot VM就会触发标记阶段。</li>
 <li>通过并行复制整理存活对象，以释放堆空间，恢复可用内存。</li>
 </ol>
-<h2 id=ergonomics>Ergonomics</h2>
+<h2 id="ergonomics">Ergonomics</h2>
 <blockquote>
 <p><em>Ergonomics</em> is the process by which the Java Virtual Machine (JVM) and garbage collection tuning, such as behavior-based tuning, improve application performance.</p>
 </blockquote>
-<p>JVM 会根据所运行平台选择默认的 GC、堆大小和运行时编译器等。此外，基于行为的调优会动态地调整堆大小以满足不同应用的要求。</p>
-<h3 id=基于行为的调优>基于行为的调优</h3>
-<p>Java SE 为 <em>并行收集器</em> 提供了两个参数以实现不同的应用行为：<strong>最大暂停时间（maximum pause time goal）</strong> 和 <strong>吞吐量（application throughput goal）</strong>。这两个参数在其它收集器中是不可用的。在某些时候，预期行为可能不会出现，因为应用需要一个至少能存放下所有存活对象的堆空间。对堆空间的最小要求可能会妨碍达成预期目标。</p>
-<h4 id=最大暂停时间>最大暂停时间</h4>
-<p>暂停时间指的是 GC 停止应用并回收内存所花费的时间。GC 会维护一个平均暂停时间以及这个平均暂停时间上的方差，平均暂停时间是加权的，越晚发生的停顿权重越大。当平均暂停时间与方差之和大于最大暂停时间时，HotSpot就认为GC没有满足最大暂停时间的要求。</p>
-<p>最大暂停时间目标是通过命令行参数 <code>-XX:MaxGCPauseMillis=&lt;nnn></code> 来指定，它告诉 GC 期望的暂停时间不应该超过 <code>&lt;nnn></code> 毫秒。为了达到这个目标，GC 会调整堆的大小以及其它相关参数，这些调整可能会让 GC 的执行更加频繁，从而有可能降低程序的吞吐量。GC 会优先满足最大暂停时间目标而不是吞吐量目标，但有时候可能连暂停时间目标也满足不了。</p>
-<h4 id=吞吐量>吞吐量</h4>
-<p>吞吐量是用 GC 时间和非 GC 时间(应用时间)来衡量的，相关的命令行参数是 <code>-XX:GCTimeRatio=&lt;nnn></code>。GC 时间与应用时间的比值为 <code>1/(1 + &lt;nnn>)</code>。例如，<code>-XX:GCTimeRatio=19</code> 表示 GC 时间占总时间的 5%。</p>
-<p>GC 时间为年轻代与年老代 GC 时间的总和。如果吞吐量目标没有满足，GC 会增大分代的大小，从而使应用能在两次垃圾收集之间的执行更久。</p>
-<h4 id=内存占用>内存占用</h4>
-<p>当最大暂停时间和吞吐量都达到要求后，GC 会缩小整个堆空间直到某个目标（当前版本 JVM 中总是指吞吐量）不再满足，然后再尝试满足那个目标。</p>
-<h3 id=调优策略>调优策略</h3>
+<p>JVM会根据所运行平台选择默认的GC、堆大小和运行时编译器等。此外，基于行为的调优会动态地调整堆大小以满足不同应用的要求。</p>
+<h3 id="基于行为的调优">基于行为的调优</h3>
+<p>Java SE为<em>并行收集器</em>提供了两个参数以实现不同的应用行为：<em>最大暂停时间(maximum pause time goal)<em>和</em>吞吐量(application throughput goal)</em>。这两个参数在其它收集器中是不可用的。在某些时候，预期行为可能不会出现，因为应用需要一个至少能存放下所有存活对象的堆空间。对堆空间的最小要求可能会妨碍达成预期目标。</p>
+<h4 id="最大暂停时间">最大暂停时间</h4>
+<p>暂停时间指的是GC停止应用并回收内存所花费的时间。GC会维护一个平均暂停时间以及这个平均暂停时间上的方差，平均暂停时间是加权的，越晚发生的停顿权重越大。当平均暂停时间与方差之和大于最大暂停时间时，HotSpot就认为GC没有满足最大暂停时间的要求。</p>
+<p>最大暂停时间目标是通过命令行参数<code>-XX:MaxGCPauseMillis=&lt;nnn&gt;</code>来指定，它告诉GC期望的暂停时间不应该超过<code>&lt;nnn&gt;</code>毫秒。为了达到这个目标，GC会调整堆的大小以及其它相关参数，这些调整可能会让GC的执行更加频繁，从而有可能降低程序的吞吐量。GC会优先满足最大暂停时间目标而不是吞吐量目标，但有时候可能连暂停时间目标也满足不了。</p>
+<h4 id="吞吐量">吞吐量</h4>
+<p>吞吐量是用GC时间和非GC时间(应用时间)来衡量的，相关的命令行参数是<code>-XX:GCTimeRatio=&lt;nnn&gt;</code>。GC时间与应用时间的比值为<code>1/(1 + &lt;nnn&gt;)</code>。例如，<code>-XX:GCTimeRatio=19</code>表示GC时间占总时间的5%。</p>
+<p>GC时间为年轻代与年老代GC时间的总和。如果吞吐量目标没有满足，GC会增大分代的大小，从而使应用能在两次垃圾收集之间的执行更久。</p>
+<h4 id="内存占用">内存占用</h4>
+<p>当最大暂停时间和吞吐量都达到要求后，GC会缩小整个堆空间直到某个目标(当前版本JVM中总是指吞吐量)不再满足，然后再尝试满足那个目标。</p>
+<h3 id="调优策略">调优策略</h3>
 <ul>
 <li>除非你知道你所需要的堆空间比默认最大堆大小还要大，否则不要设置最大堆内存，而是为你的应用设置一个足够大的吞吐量目标。</li>
 <li>为了使应用达到期望的吞吐量，堆的通常会自动扩容和缩容。应用行为的改变也可能导致堆容量的改变。</li>
-<li>如果堆已经达到了最大值，而吞吐量仍然低于期望值，那么你的最大堆内存就设置得太小了。这个时候，将最大堆内存设置为一个稍小于总物理内存的值，再次运行应用，如果吞吐量还是低于期望值，那么你的吞吐量目标就定得太高了（已经超过物理内存所能提供的最大吞吐量了）。</li>
+<li>如果堆已经达到了最大值，而吞吐量仍然低于期望值，那么你的最大堆内存就设置得太小了。这个时候，将最大堆内存设置为一个稍小于总物理内存的值，再次运行应用，如果吞吐量还是低于期望值，那么你的吞吐量目标就定得太高了(已经超过物理内存所能提供的最大吞吐量了)。</li>
 <li>如果吞吐量目标达到了，但应用的暂停时间太长了，就设置一个最大暂停时间目标。为了达到最大暂停时间目标，期望的吞吐量可能又无法达到了，这个时候，需要进行权衡，选择一个折中的目标。</li>
-<li>GC 为了达到设置的目标，通常会引起堆大小的振荡，即使应用已经处于一个稳定状态也一样。最大吞吐量目标与最大暂停时间目标和内存占用目标时相互竞争的，因为前者可能需要更大的堆，而后两者可能需要的是更小的堆。</li>
+<li>GC为了达到设置的目标，通常会引起堆大小的振荡，即使应用已经处于一个稳定状态也一样。最大吞吐量目标与最大暂停时间目标和内存占用目标时相互竞争的，因为前者可能需要更大的堆，而后两者可能需要的是更小的堆。</li>
 </ul>
-<h2 id=分代>分代</h2>
-<p>人们从经验中发现，绝大多数应用都具备一些共同的特点。为了使垃圾回收过程更加高效，分代收集利用了这些特点，其中最重要的一条就是 <strong>弱分代假说（weak generational hypothesis）</strong> ——大多数对象的存活时间都非常短。内存以代的形式进行管理，代实际上是一个存放有不同年龄对象的内存池。当某个代被填满时，该代上面的垃圾回收就会发生。</p>
-<p>下图展示了 GC 中（不包括并行收集器和 G1）默认的堆布局:</p>
-<p><img src=/images/java/jvm/default-arrangement-of-generations-except-for-parallel-collector-and-g1.png alt="Default Arrangement of Generations, Except for Parallel Collector and G1"></p>
-<h3 id=设置分代大小>设置分代大小</h3>
-<p>有很多参数可以影响堆的大小。下图展示了堆中 <em>已提交空间（committed space）</em> 与 <em>虚拟空间（virtual space）</em> 的区别：</p>
-<p><img src=/images/java/jvm/heap-parameters.png alt="Heap Parameters"></p>
-<p><code>-Xmx</code> 用来指定堆的保留空间，如果 <code>-Xms</code> 参数的值比它小，那么并不是所有的保留空间都会被立即提交给 JVM，其中未提交的部分就是上图中用Virtual 标出来的那一部分。堆的不同部分（年轻代和年老代）可以按需扩张，直到达到虚拟空间的上限。</p>
-<h4 id=整个堆>整个堆</h4>
+<h2 id="分代">分代</h2>
+<p>人们从经验中发现，绝大多数应用都具备一些共同的特点。为了使垃圾回收过程更加高效，分代收集利用了这些特点，其中最重要的一条就是<strong>弱分代假说(weak generational hypothesis)</strong>——大多数对象的存活时间都非常短。内存以代的形式进行管理，代实际上是一个存放有不同年龄对象的内存池。当某个代被填满时，该代上面的垃圾回收就会发生。</p>
+<p>下图展示了GC中(除了并行收集器和G1)默认的堆布局:</p>
+<p><img src="/images/java/jvm/default-arrangement-of-generations-except-for-parallel-collector-and-g1.png" alt="Default Arrangement of Generations, Except for Parallel Collector and G1"></p>
+<h3 id="设置分代大小">设置分代大小</h3>
+<p>有很多参数可以影响堆的大小。下图展示了堆中*已提交空间(committed space)<em>与</em>虚拟空间(virtual space)*的区别：</p>
+<p><img src="/images/java/jvm/heap-parameters.png" alt="Heap Parameters"></p>
+<p><code>-Xmx</code>用来指定堆的保留空间，如果<code>-Xms</code>参数的值比它小，那么并不是所有的保留空间都会被立即提交给JVM，其中未提交的部分就是上图中用Virtual标出来的那一部分。堆的不同部分(年轻代和年老代)可以按需扩张，直到达到虚拟空间的上限。</p>
+<h4 id="整个堆">整个堆</h4>
 <p>下面所讨论的堆容量的扩张与收缩和默认堆大小并不适用于并行收集器，然而控制堆大小和分代大小的参数却是适用于并行收集器的。最影响垃圾回收性能的因素就是可用内存的总大小，因为垃圾收集在堆被填满时才发生，所以垃圾回收的吞吐量与可用内存总大小成反比。</p>
-<p>默认情况下，JVM 会在每次进行垃圾回收时扩张或缩减堆的容量，以便将空闲空间与存活对象的比值限制在一个特定范围（百分比）内，这个范围是通过参数 <code>-XX:MinHeapFreeRatio=&lt;minimun></code> 和 <code>-XX:MaxHeapFreeRatio=&lt;maximum></code> 来设置的，而整个堆的大小边界是通过参数 <code>-Xms&lt;min></code> 和 <code>-Xmx&lt;max></code> 来确定的。如果某个分代中空闲空间的比例低于 <code>&lt;minimum></code>，该分代就会扩张，从而将空闲空间的比例保持在 <code>&lt;minimum></code>。类似地，如果空闲空间的比例高于 <code>&lt;maximum></code>，该分代就会被收缩，从而将空闲空间的比例保持在 <code>&lt;maximum></code>，不过这受限于分代的最小容量。</p>
+<p>默认情况下，JVM会在每次进行垃圾回收时扩张或缩减堆的容量，以便将空闲空间与存活对象的比值限制在一个特定范围(百分比)内，这个范围是通过参数<code>-XX:MinHeapFreeRatio=&lt;minimun&gt;</code>和<code>-XX:MaxHeapFreeRatio=&lt;maximum&gt;</code>来设置的，而整个堆的大小边界是通过参数<code>-Xms&lt;min&gt;</code>和<code>-Xmx&lt;max&gt;</code>来确定的。如果某个分代中空闲空间的比例低于<code>&lt;minimum&gt;</code>，该分代就会扩张，从而将空闲空间的比例保持在<code>&lt;minimum&gt;</code>。类似地，如果空闲空间的比例高于<code>&lt;maximum&gt;</code>，该分代就会被收缩，从而将空闲空间的比例保持在<code>&lt;maximum&gt;</code>，不过这受限于分代的最小容量。</p>
 <p>下面是一些服务端应用中有关堆大小的通用准则：</p>
 <ul>
-<li>除非暂停时间成为了你的最大问题，就尝试分配尽可能多的内存给 JVM。默认值通常都太小了。</li>
-<li>将 <code>-Xms</code> 和 <code>-Xmx</code> 设为相同值，从而避免 JVM 对堆进行扩容或缩容。但是，如果你的设置不当的话，JVM 是不会帮你救你的。</li>
+<li>除非暂停时间成为了你的最大问题，就尝试分配尽可能多的内存给JVM。默认值通常都太小了。</li>
+<li>将<code>-Xms</code>和<code>-Xmx</code>设为相同值，从而避免JVM对堆进行扩容或缩容。但是，如果你的设置不当的话，JVM是不会帮你救你的。</li>
 <li>通常情况下，当你增加处理器时，你也应该增加可用内存，因为内存分配可以是并行的。</li>
 </ul>
-<h4 id=年轻代>年轻代</h4>
-<p>除可用内存大小之外，第二个最影响垃圾回收性能的就是年轻代占堆空间的比例了。通常，年轻代越大，minor GC 发生的频率就越低。然而，在有限的堆空间下，年轻代越大就意味着年老代越小。而通常情况下，年老代越小，major GC 就越频繁。因此，最优的设置取决于应用中对象存活时间的分布情况。</p>
-<p>默认情况下，年轻代的大小由参数 <code>NewRatio</code> 控制。例如，<code>-XX:NewRatio=3</code> 表示年轻代与年老代的比例为 1:3，即年轻代占整个堆空间的 1/4。<code>NewSize</code> 和 <code>MaxNewSize</code> 参数用来指定年轻代容量的下限与上限，两者的值相同会使年轻代的大小保持不变。</p>
-<h5 id=调整-survivor-空间的大小>调整 Survivor 空间的大小</h5>
-<p>我们可以使用 <code>SurvivorRatio</code> 参数来调整 Survivor 空间的大小，但这通常不会给性能带来多大的影响。例如，<code>-XX:SurvivorRatio=6</code> 表示一个 Survivor 空间与 Eden 区大小之比为 1:6，即每个 Survivor 空间的大小为 Eden 区的 1/6，为年轻代的 1/8。</p>
-<p>若 Survivor 空间过小，复制回收时溢出的对象就会直接被提升到年老代；若 Survivor 空间过大，就会造成空间的浪费。在每次垃圾回收中，JVM都会选择一个阈值（对象在被提升到年老代之前可以被复制的次数），这个阈值的目的是将 Survivor 空间的占用率保持在 50%。</p>
+<h4 id="年轻代">年轻代</h4>
+<p>除可用内存大小之外，第二个最影响垃圾回收性能的就是年轻代占堆空间的比例了。通常，年轻代越大，minor GC发生的频率就越低。然而，在有限的堆空间下，年轻代越大就意味着年老代越小。而通常情况下，年老代越小，major GC就越频繁。因此，最优的设置取决于应用中对象存活时间的分布情况。</p>
+<p>默认情况下，年轻代的大小由参数<code>NewRatio</code>控制。例如，<code>-XX:NewRatio=3</code>表示年轻代与年老代的比例为1:3，即年轻代占整个堆空间的1/4。<code>NewSize</code>和<code>MaxNewSize</code>参数用来指定年轻代容量的下限与上限，两者的值相同会使年轻代的大小保持不变。</p>
+<h5 id="调整survivor空间的大小">调整Survivor空间的大小</h5>
+<p>我们可以使用<code>SurvivorRatio</code>参数来调整Survivor空间的大小，但这通常不会给性能带来多大的影响。例如，<code>-XX:SurvivorRatio=6</code>表示一个Survivor空间与Eden区大小之比为1:6，即每个Survivor空间的大小为Eden区的1/6，为年轻代的1/8。</p>
+<p>若Survivor空间过小，复制回收时溢出的对象就会直接被提升到年老代；若Survivor空间过大，就会造成空间的浪费。在每次垃圾回收中，JVM都会选择一个阈值(对象在被提升到年老代之前可以被复制的次数)，这个阈值的目的是将Survivor空间的占用率保持在50%。</p>
 <p>对服务端应用而言，下面是一些通用准则：</p>
 <ul>
-<li>先决定能够分配给 JVM 的最大堆内存，然后找出年轻代的最佳设置值。
+<li>先决定能够分配给JVM的最大堆内存，然后找出年轻代的最佳设置值。
 <ul>
 <li>注意：最大堆内存应该总是小于机器已安装内存，这样可以避免过多的页错误和颠簸。</li>
 </ul>
 </li>
-<li>如果堆大小是固定的，那么增大年轻代就会缩小年老代。将年老代的大小保持在一个足够大的值，以便它在任何时候都能容纳下应用中的存活对象，并且还有一些松弛空间（10% 到 20% 甚至更多）。</li>
+<li>如果堆大小是固定的，那么增大年轻代就会缩小年老代。将年老代的大小保持在一个足够大的值，以便它在任何时候都能容纳下应用中的存活对象，并且还有一些松弛空间(10%到20%甚至更多)。</li>
 <li>在之前所陈述的永久代的约束条件下：
 <ul>
 <li>为年轻代分配足够的内存。</li>
@@ -326,135 +371,184 @@ Java Developer, Runner, Cyclist
 </ul>
 </li>
 </ul>
-<h2 id=可用收集器>可用收集器</h2>
-<p>Java HotSpot VM 包含三种不同类型的 GC，每种 GC 都有不同的性能特征：</p>
+<h2 id="可用收集器">可用收集器</h2>
+<p>Java HotSpot VM包含三种不同类型的GC，每种GC都有不同的性能特征：</p>
 <ul>
-<li><strong>串行收集器（serial collector）</strong> 使用一个线程完成所有的回收工作，由于不存在线程间通信的开销，它还是相对高效的。串行收集器最适合用在单处理器机器上，因为它无法利用多处理器机器上的多个 CPU，尽管它对多处理器上运行的小型应用（内存最大约100MB）来说还是很有用的。串行收集器在某些硬件和操作系统配置下会默认启用，也可以通过 <code>-XX:+UseSerialGC</code> 选项显式使用它。</li>
-<li><strong>并行收集器（parallel collector）</strong> 又称 <strong>吞吐量收集器（throughput collector）</strong>，它并行的进行 minor GC，这能显著降低 GC 的开销。它是为运行在多处理器硬件上的中大型应用准备的。并行收集器也是某些硬件和操作系统配置下的默认 GC，我们也可以通过 <code>-XX:+UseParallelGC</code> 选项显式使用它。
+<li>**串行收集器(serial collector)**使用一个线程完成所有的回收工作，由于不存在线程间通信的开销，它还是相对高效的。串行收集器最适合用在单处理器机器上，因为它无法利用多处理器机器上的多个CPU，尽管它对多处理器上运行的小型应用(内存最大约100MB)来说还是很有用的。串行收集器在某些硬件和操作系统配置下会默认启用，也可以通过<code>-XX:+UseSerialGC</code>选项显式使用它。</li>
+<li><strong>并行收集器(parallel collector)<strong>又称</strong>吞吐量收集器(throughput collector)</strong>，它并行的进行minor GC，这能显著降低GC的开销。它是为运行在多处理器硬件上的中大型应用准备的。并行收集器也是某些硬件和操作系统配置下的默认GC，我们也可以通过<code>-XX:+UseParallelGC</code>选项显式使用它。
 <ul>
-<li><strong>并行整理（parallel compaction）</strong> 使并行收集器能够并行进行 major GC。如果没有并行整理，major GC 就会使用单线程以串行地方式进行，这极大的限制了应用地可伸缩性。当 <code>-XX:+UseParallelGC</code> 选项被使用时，并行整理会被默认启用。若要关闭它，可以使用 <code>-XX:-UseParallelOldGC</code> 选项。</li>
+<li>**并行整理(parallel compaction)**使并行收集器能够并行进行major GC。如果没有并行整理，major GC就会使用单线程以串行地方式进行，这极大的限制了应用地可伸缩性。当<code>-XX:+UseParallelGC</code>选项被使用时，并行整理会被默认启用。若要关闭它，可以使用<code>-XX:-UseParallelOldGC</code>选项。</li>
 </ul>
 </li>
-<li><strong>并发收集器（mostly concurrent collector）</strong> 的大部分工作都是并发进行的，从而使应用被暂停的时间保持在一个较短的范围内。并发收集器为那些响应时间优于吞吐量的中大型应用设计的，因为用来减小暂停时间的技术同时会降低吞吐量。HotSpot VM 提供了两个最大并发收集器：
+<li>**并发收集器(mostly concurrent collector)**的大部分工作都是并发进行的，从而使应用被暂停的时间保持在一个较短的范围内。并发收集器为那些响应时间优于吞吐量的中大型应用设计的，因为用来减小暂停时间的技术同时会降低吞吐量。HotSpot VM提供了两个最大并发收集器：
 <ul>
-<li>CMS：通过 <code>-XX:+UseConcMarkSweepGC</code> 启用。</li>
-<li>G1：通过 <code>-XX:+UseG1GC</code> 启用。</li>
+<li>CMS：通过<code>-XX:+UseConcMarkSweepGC</code>启用。</li>
+<li>G1：通过<code>-XX:+UseG1GC</code>启用。</li>
 </ul>
 </li>
 </ul>
-<h3 id=如何选择-gc>如何选择 GC</h3>
-<p>除非你的应用对暂停时间有非常严苛的要求，否则先运行应用并让 JVM 自己选择一个 GC。按需调整堆的大小以提高性能，如果期望的性能无法满足，就使用下面的准则选择 GC：</p>
+<h3 id="如何选择gc">如何选择GC</h3>
+<p>除非你的应用对暂停时间有非常严苛的要求，否则先运行应用并让JVM自己选择一个GC。按需调整堆的大小以提高性能，如果期望的性能无法满足，就使用下面的准则选择GC：</p>
 <ul>
-<li>如果应用很小（堆空间不超过 100MB），使用 <code>-XX:+UseSerialGC</code> 选择串行收集器。</li>
-<li>如果应用运行在单处理器上且对暂停时间无要求，就让 JVM 自己选择 GC，或者选择串行收集器（<code>-XX:+UseSerialGC</code>）。</li>
-<li>如果应用的峰值性能最为重要，且对暂停时间无要求或暂停 1 秒及以上时间是可接受的，就选择并行收集器（<code>-XX:+UseParallelGC</code> ）。</li>
-<li>如果响应时间比总吞吐量更重要，且暂停时间必须保持在约 1 秒内，就选择并发收集器（<code>-XX:+UseConcMarkSweepGC</code> 或 <code>-XX:+UseG1GC</code>）。</li>
+<li>如果应用很小(堆空间不超过100MB)，使用<code>-XX:+UseSerialGC</code>选择串行收集器。</li>
+<li>如果应用运行在单处理器上且对暂停时间无要求，就让JVM自己选择GC，或者通过<code>-XX:+UseSerialGC</code>选择串行收集器。</li>
+<li>如果应用的峰值性能最为重要，且对暂停时间无要求或暂停1秒及以上时间是可接受的，就用<code>-XX:+UseParallelGC</code>选择并行收集器。</li>
+<li>如果响应时间比总吞吐量更重要，且暂停时间必须保持在约1秒内，就用<code>-XX:+UseConcMarkSweepGC</code>或<code>-XX:+UseG1GC</code>选择并发收集器。</li>
 </ul>
-<p>如果采用了推荐的 GC，但应用还是达不到期望的性能，先尝试调整分代的大小。如果还是不行，就再尝试不同 GC：在多处理器上，用并发收集器减小暂停时间，用并行收集器提升吞吐量。</p>
-<h2 id=并行收集器>并行收集器</h2>
-<p>并行收集器和串行收集器类似，主要不同在于它采用了多个线程以加速回收垃圾。GC 线程的数量可以通过命令行参数 <code>-XX:ParallelGCThreads=&lt;N></code> 来指定。</p>
-<h3 id=分代-1>分代</h3>
+<p>如果采用了推荐的GC，但应用还是达不到期望的性能，先尝试调整分代的大小。如果还是不行，就再尝试不同GC：在多处理器上，用并发收集器减小暂停时间，用并行收集器提升吞吐量。</p>
+<h2 id="并行收集器">并行收集器</h2>
+<p>并行收集器和串行收集器类似，主要不同在于它采用了多个线程以加速回收垃圾。GC线程的数量可以通过命令行参数<code>-XX:ParallelGCThreads=&lt;N&gt;</code>来指定。</p>
+<h3 id="分代-1">分代</h3>
 <p>之前有提到，并行收集器中的堆布局和普通的串行收集器是不同的。下图展示了并行收集器中的分代布局：</p>
-<p><img src=/images/java/jvm/arrangemant-of-generations-in-the-parallel-collector.png alt="Arrangement of Generations in the Parallel Collector"></p>
-<h3 id=parallel-collector-ergonomics>Parallel Collector Ergonomics</h3>
-<h4 id=目标优先级>目标优先级</h4>
-<p>当使用并行收集器时，HotSpot VM 默认会按照以下顺序实现调优目标：</p>
+<p><img src="/images/java/jvm/arrangemant-of-generations-in-the-parallel-collector.png" alt="Arrangement of Generations in the Parallel Collector"></p>
+<h3 id="parallel-collector-ergonomics">Parallel Collector Ergonomics</h3>
+<h4 id="目标优先级">目标优先级</h4>
+<p>当使用并行收集器时，HotSpot VM默认会按照以下顺序实现调优目标：</p>
 <ol>
 <li>最大暂停时间目标。</li>
 <li>吞吐量目标。</li>
 <li>最小内存占用目标。</li>
 </ol>
 <p>首先满足暂停时间目标，然后才会考虑吞吐量。当前面两个都满足时，才会考虑内存占用。</p>
-<h4 id=调整分代大小>调整分代大小</h4>
-<p>收集器会记录并在每次垃圾收集之后更新一些统计数据(如平均暂停时间)，这些统计数据会帮助GC判断是否已经达到调优目标或做出一些调整。需要注意的是：收集器并不会使用显式地进行垃圾回收（例如 <code>System.gc()</code>）时形成的数据。</p>
-<p>分代容量的增长和缩减是以固定百分比进行的，并且增长率和缩减率不同。默认情况下，分代会以 20% 的增量扩容，而以 5% 的增量压缩。年轻代与年老代容量扩容的增量可以通过 <code>-XX:YoungGenerationSizeIncrement=&lt;Y></code> 与 <code>-XX:TenuredGenerationSizeIncrement=&lt;T></code> 来指定，而缩容的增量是通过 <code>-XX:AdaptiveSizeDecrementScaleFactor=&lt;D></code> 指定的。如果扩容的增量为X个百分比，则缩容的增量为 X/D 个百分比。</p>
-<h2 id=并发收集器>并发收集器</h2>
-<p>HotSpot VM 提供了两个 <strong>并发收集器（mostly concurrent collector）</strong>：</p>
+<h4 id="调整分代大小">调整分代大小</h4>
+<p>收集器会记录并在每次垃圾收集之后更新一些统计数据(如平均暂停时间)，这些统计数据会帮助GC判断是否已经达到调优目标或做出一些调整。需要注意的是：收集器并不会使用显式地进行垃圾回收(例如<code>System.gc()</code>)时形成的数据。</p>
+<p>分代容量的增长和缩减是以固定百分比进行的，并且增长率和缩减率不同。默认情况下，分代会以20%的增量扩容，而以5%的增量压缩。年轻代与年老代容量扩容的增量可以通过<code>-XX:YoungGenerationSizeIncrement=&lt;Y&gt;</code>与<code>-XX:TenuredGenerationSizeIncrement=&lt;T&gt;</code>来指定，而缩容的增量是通过<code>-XX:AdaptiveSizeDecrementScaleFactor=&lt;D&gt;</code>指定的。如果扩容的增量为X个百分比，则缩容的增量为X/D个百分比。</p>
+<h2 id="并发收集器">并发收集器</h2>
+<p>HotSpot VM在JDK中提供了两个<strong>并发收集器(mostly concurrent collector)</strong>：</p>
 <ul>
-<li>Concurrent Mark Sweep (CMS) Collector：适用于那些偏爱更短的暂停时间并且可以接受同 GC 分享 CPU 的应用。</li>
+<li>Concurrent Mark Sweep (CMS) Collector：适用于那些偏爱更短的暂停时间并且可以接受同GC分享CPU的应用。</li>
 <li>Garbage-First (G1) Collector：为拥有大内存的多处理机设计的面向服务端应用的收集器。它尝试在实现高吞吐量的同时大概率满足应用对暂停时间的要求。</li>
 </ul>
-<h3 id=cms-收集器>CMS 收集器</h3>
-<p>通常情况下，那些有着相对较大的年老代并且运行在拥有 2 个或更多处理器的机器上的应用往往会从 CMS 收集器中获益。对于那些要求暂停时间非常短的应用来说，CMS 也是非常适合的。启用 CMS 收集器的命令行参数为 <code>-XX:+UseConcMarkSweepGC</code>。</p>
-<p>和其它的 GC 类似，CMS 收集器也是基于分代的，因此 minor GC 和 major GC 都会发生。CMS 收集器试图通过使用独立的 GC 线程在应用线程执行期间并发地追踪可达对象来较少 major GC 引起的应用暂停时间。在每次 major GC 中，CMS 会在收集开始时（标记 GC Roots 直接可达的存活对象）短暂暂停所有应用线程，然后在收集过程中再次暂停（重新标记那些在并发标记中由于引用更新而漏标的对象）所有应用线程。第二次暂停通常比第一次暂停时间要长，在每次暂停期间，都会有多个线程同时进行垃圾收集相关工作。其余阶段（包括追踪存活对象和清除不可达对象）中，GC 线程都是在应用执行期间并发执行的。Minor GC 可以与正在进行的 major GC 重叠，工作方式也与并行收集器，但并行收集器在 minor GC 期间会暂停所有应用线程。</p>
-<h4 id=并发模式失败>并发模式失败</h4>
-<p>当 CMS 收集器无法在年老代空间耗尽之前完成回收不可达对象所占用的空间时，或者当 <em>赋值器（mutator）</em> 无法从年老代中为对象分配一个足够大的空闲块时，应用就会被暂停，GC会在所有应用暂停的情况下完成回收工作。<strong>并发模式失败（Concurrent Mode Failure）</strong> 指的就是 GC 无法 <em>并发地</em> 完成垃圾回收工作，这暗示我们该对 CMS 收集器进行调优了。</p>
-<h4 id=gc-时间过长与-outofmemoryerror>GC 时间过长与 OutOfMemoryError</h4>
-<p>CMS 收集器会在 GC 时间过长时抛出 OutOfMemoryError，即：当垃圾回收耗费的时间超过了总时间的 98%，并且回收的空间少于 2% 时，OutOfMemoryError 就会被抛出。这个特性是用来防止由于堆太小而导致应用运行时间太长，我们可以使用 <code>-XX:-UseGCOverheadLimit</code> 禁用它。</p>
-<h4 id=浮动垃圾>浮动垃圾</h4>
-<p>由于应用线程会在 major GC 之间并发地执行，GC 追踪到的存活对象可能在垃圾收集结束之前变得不再可达，这类对象在当前进行的这一次回收过程中并不会被回收，它们被称为 <strong>浮动垃圾（floating garbage）</strong>。浮动垃圾的数量取决于并发收集的持续时间以及对象引用更新的频率，不过这些浮动垃圾会在下一次垃圾回收过程中被回收掉。</p>
-<h4 id=并发回收何时开始>并发回收何时开始</h4>
-<p>串行收集器会在年老代被填满之后暂停应用并进行 major GC。与此相反，并发收集的开始时间必须提前确定，以便收集工作在年老代空间耗尽之前完成。否则，应用会由于并发模式失败而被长时间暂停。有几种开始并发收集的方式：</p>
+<h3 id="cms收集器">CMS收集器</h3>
+<p>通常情况下，那些有着相对较大的年老代并且运行在拥有2个或更多处理器的机器上的应用往往会从CMS收集器中获益。对于那些要求暂停时间非常短的应用来说，CMS也是非常适合的。启用CMS收集器的命令行参数为<code>-XX:+UseConcMarkSweepGC</code>。</p>
+<p>和其它的GC类似，CMS收集器也是基于分代的，因此minor GC和major GC都会发生。CMS收集器试图通过使用独立的GC线程在应用线程执行期间并发地追踪可达对象来较少major GC引起的应用暂停时间。在每次major GC中，CMS会在收集开始时(标记GC Roots直接可达的存活对象)短暂暂停所有应用线程，然后在收集过程中再次暂停(重新标记那些在并发标记中由于引用更新而漏标的对象)所有应用线程。第二次暂停通常比第一次暂停时间要长，在每次暂停期间，都会有多个线程同时进行垃圾收集相关工作。其余阶段(包括追踪存活对象和清除不可达对象)中，GC线程都是在应用执行期间并发执行的。Minor GC可以与正在进行的major GC重叠，工作方式也与并行收集器，但并行收集器在minor GC期间会暂停所有应用线程。</p>
+<h4 id="并发模式失败">并发模式失败</h4>
+<p>当CMS收集器无法在年老代空间耗尽之前完成回收不可达对象所占用的空间时，或者当<em>赋值器(mutator)<em>无法从年老代中为对象分配一个足够大的空闲块时，应用就会被暂停，GC会在所有应用暂停的情况下完成回收工作。**并发模式失败(Concurrent Mode Failure)**指的就是GC无法</em>并发地</em>完成垃圾回收工作，这暗示我们该对CMS收集器进行调优了。</p>
+<h4 id="gc时间过长与outofmemoryerror">GC时间过长与OutOfMemoryError</h4>
+<p>CMS收集器会在GC时间过长时抛出OutOfMemoryError，即：当垃圾回收耗费的时间超过了总时间的98%，并且回收的空间少于2%时，OutOfMemoryError就会被抛出。这个特性是用来防止由于堆太小而导致应用运行时间太长，我们可以使用<code>-XX:-UseGCOverheadLimit</code>禁用它。</p>
+<h4 id="浮动垃圾">浮动垃圾</h4>
+<p>由于应用线程会在major GC之间并发地执行，GC追踪到的存活对象可能在垃圾收集结束之前变得不再可达，这类对象在当前进行的这一次回收过程中并不会被回收，它们被称为<strong>浮动垃圾(floating garbage)</strong>。浮动垃圾的数量取决于并发收集的持续时间以及对象引用更新的频率，不过这些浮动垃圾会在下一次垃圾回收过程中被回收掉。</p>
+<h4 id="并发回收何时开始">并发回收何时开始</h4>
+<p>串行收集器会在年老代被填满之后暂停应用并进行major GC。与此相反，并发收集的开始时间必须提前确定，以便收集工作在年老代空间耗尽之前完成。否则，应用会由于并发模式失败而被长时间暂停。有几种开始并发收集的方式：</p>
 <ul>
-<li>基于历史数据，CMS 收集器会预估年老代还有多久被耗尽以及一次 major GC 会花多长时间。CMS 会以在年老代空间耗尽之前完成收集工作为目标开始进行垃圾回收，这些估算时间通常是保守的，因为并发模式失败的代价太高了。</li>
-<li>当年老代中被占用的容量超过一个阈值时，垃圾收集工作也会开始。这个阈值默认约为 92%（可能在不同发行版本中做调整），我们可以通过 <code>XX:CMSInitiatingOccupancyFraction=&lt;N></code> 来指定这个阈值，其中 <code>&lt;N></code> 为一个范围在 (1, 100) 间的整数。</li>
+<li>基于历史数据，CMS收集器会预估年老代还有多久被耗尽以及一次major GC会花多长时间。CMS会以在年老代空间耗尽之前完成收集工作为目标开始进行垃圾回收，这些估算时间通常是保守的，因为并发模式失败的代价太高了。</li>
+<li>当年老代中被占用的容量超过一个阈值时，垃圾收集工作也会开始。这个阈值默认约为92%(可能在不同发行版本中做调整)，我们可以通过<code>XX:CMSInitiatingOccupancyFraction=&lt;N&gt;</code>来指定这个阈值，其中<code>&lt;N&gt;</code>为一个范围在(1, 100)间的整数。</li>
 </ul>
-<h4 id=增量模式>增量模式</h4>
+<h4 id="增量模式">增量模式</h4>
 <blockquote>
-<p>注意：增量模式在 Java SE 8 中正被弃用，将来的版本中可能会移除。</p>
+<p>注意：增量模式在Java SE 8中正被弃用，将来的版本中可能会移除。</p>
 </blockquote>
-<h3 id=g1-收集器>G1 收集器</h3>
-<p><strong>Garbage-First（G1）</strong> 收集器是一款面向服务端应用的收集器，目标为拥有大内存的多处理机。它尝试在实现高吞吐量的同时大概率满足应用对暂停时间的要求，这说明 G1 并不是一个实时 GC。</p>
-<p>G1 将堆分成若干个大小相等的 <em>区域（region）</em>，每一个区域都是一个连续的虚拟地址空间。G1 通过并发标记阶段确定整个堆中对象的存活性，并发标记阶段完成后，G1 就知道哪些区域中的存活对象比较少了。它会先回收这些存活对象少的区域，而这通常可以为应用提供大量的空闲空间，这就是 G1（Garbage-First）名字的来源，即：G1 专注于收集和整理那些差不多被可回收对象（垃圾）占满的区域。</p>
-<p>G1 会将堆中一个或多个区域中的存活对象复制到堆中的单个区域，复制过程中也会完成整理和释放空闲内存的工作。为了降低暂停时间并提升吞吐量，清空区域的操作在多处理机上是并行进行的。G1 采用的是“化整为零”的策略，在整理上比其它 GC 技高一筹：CMS 收集器不会整理堆，因而会导致内存碎片；并行收集器中的并行压缩过程是在整个堆上进行的，那会使暂停时间很可观。</p>
-<p>值得注意的是：G1 并不是一款实时收集器，它大概率会满足暂停时间的要求，但并不是一定会满足。利用从已发生的垃圾回收中采集的数据，G1 会估计目标时间内能够回收区域的数量。G1 最关注的是如何为那些占用内存大且对 GC 延迟有要求的应用提供解决方案，这些应用的通常占用不低于 6GB 的堆空间，并且要求延迟时间低于 0.5 秒。</p>
-<p>HotSpot 开发团队希望用 G1 来代替 CMS 收集器，它与 CMS 的主要不同点在于：G1 是一款整理式收集器。和 CMS 一样，G1 也是为那些要求低 GC 延迟的应用设计的。</p>
-<p>下图展示了 G1 是如何划分堆的：</p>
-<p><img src=/images/java/jvm/heap-division-by-g1.png alt="Heap Division by G1"></p>
-<p>堆被划分为若干固定大小的区域（图中的灰色格子）。从逻辑上来讲，G1中依然有分代的概念。一组空闲区域被指定为逻辑年轻代（图中浅蓝色部分），分配操作就是从这个逻辑年轻代开始的。当年轻代满了之后，这组区域上的垃圾收集就会发生。有时候，这组区域以外的区域（年老区域，深蓝色）上的垃圾收集也会同时进行，这被称为 <strong>混合收集（mixed collection）</strong>。上图展示的正是混合收集，因为年轻区域和年老区域都正在被回收，被收集的区域在图中用红色格子标出。根据年龄，存活对象可能被复制到 Survivor 区域（标有"S"），也可能被复制到年老区域（图中未展示）。图中标有 &ldquo;H&rdquo; 的那些区域包含的是那些大小超过区域的一半或需要特殊对待的大对象。</p>
-<h4 id=浮动垃圾-1>浮动垃圾</h4>
-<p>对象可能在G1回收的过程中死亡并未被回收。为了保证找到所有的存活对象，G1使用了一项叫做 <strong>SATB（snapshot-at-the-beginning）</strong> 的技术。SATB规定：任何在并发标记开始的时候存活的对象在整个 GC 过程中也是被认为是存活的。因此，G1 中也会出现浮动垃圾。</p>
-<h4 id=卡表>卡表</h4>
-<p>如果 GC 不收集整个堆，GC 就必须知道哪里有从堆中未收集部分指向正被收集部分的指针。这在分代 GC 中很典型：未收集部分通常是年老代，正被收集部分是年轻代。<strong>记忆集（remembered set）</strong> 就是保存这些信息（年老代到年轻代的指针）的数据结构。<strong>卡表（card table）</strong> 是记忆集的一种具体实现，HotSpot VM 中用一个字节数组来表示卡表，每一个字节都被称为一张卡，每张卡都对应了堆中的一个地址空间。</p>
-<h2 id=参考资料>参考资料</h2>
+<h3 id="g1收集器">G1收集器</h3>
+<p><strong>Garbage-First(G1)</strong> 收集器是一款面向服务端应用的收集器，目标为拥有大内存的多处理机。它尝试在实现高吞吐量的同时大概率满足应用对暂停时间的要求，这说明G1并不是一个实时GC。</p>
+<p>G1将堆分成若干个大小相等的<em>区域(region)</em>，每一个区域都是一个连续的虚拟地址空间。G1通过并发标记阶段确定整个堆中对象的存活性，并发标记阶段完成后，G1就知道哪些区域中的存活对象比较少了。它会先回收这些存活对象少的区域，而这通常可以为应用提供大量的空闲空间，这就是G1(Garbage-First)名字的来源，即：G1专注于收集和整理那些差不多被可回收对象(垃圾)占满的区域。</p>
+<p>G1会将堆中一个或多个区域中的存活对象复制到堆中的单个区域，复制过程中也会完成整理和释放空闲内存的工作。为了降低暂停时间并提升吞吐量，清空区域的操作在多处理机上是并行进行的。G1采用的是“化整为零”的策略，在整理上比其它GC技高一筹：CMS收集器不会整理堆，因而会导致内存碎片；并行收集器中的并行压缩过程是在整个堆上进行的，那会使暂停时间很可观。</p>
+<p>值得注意的是：G1并不是一款实时收集器，它大概率会满足暂停时间的要求，但并不是一定会满足。利用从已发生的垃圾回收中采集的数据，G1会估计目标时间内能够回收区域的数量。G1最关注的是如何为那些占用内存大且对GC延迟有要求的应用提供解决方案，这些应用的通常占用不低于6GB的堆空间，并且要求延迟时间低于0.5秒。</p>
+<p>HotSpot开发团队期望用G1来代替CMS收集器，它与CMS的主要不同点在于G1是一款整理式收集器。和CMS一样，G1也是为那些要求低GC延迟的应用设计的。</p>
+<p>下图展示了G1是如何划分堆的：</p>
+<p><img src="/images/java/jvm/heap-division-by-g1.png" alt="Heap Division by G1"></p>
+<p>堆被划分为若干固定大小的区域(图中的灰色格子)。从逻辑上来讲，G1中依然有分代的概念。一组空闲区域被指定为逻辑年轻代(图中浅蓝色部分)，分配操作就是从这个逻辑年轻代开始的。当年轻代满了之后，这组区域上的垃圾收集就会发生。有时候，这组区域以外的区域(年老区域，深蓝色)上的垃圾收集也会同时进行，这被称为<strong>混合收集(mixed collection)</strong>。上图展示的正是混合收集，因为年轻区域和年老区域都正在被回收，被收集的区域在图中用红色格子标出。根据年龄，存活对象可能被复制到Survivor区域(标有&quot;S&rdquo;)，也可能被复制到年老区域(图中未展示)。图中标有&quot;H&quot;的那些区域包含的是那些大小超过区域的一半或需要特殊对待的大对象。</p>
+<h4 id="浮动垃圾-1">浮动垃圾</h4>
+<p>对象可能在G1回收的过程中死亡并未被回收。为了保证找到所有的存活对象，G1使用了一项叫做 <strong>SATB(snapshot-at-the-beginning)</strong> 的技术。SATB规定：任何在并发标记开始的时候存活的对象在整个GC过程中也是被认为是存活的。因此，G1中也会出现浮动垃圾。</p>
+<h4 id="卡表">卡表</h4>
+<p>如果GC不收集整个堆，GC就必须知道哪里有从堆中未收集部分指向正被收集部分的指针。这在分代GC中很典型：未收集部分通常是年老代，正被收集部分是年轻代。<strong>记忆集(remembered set)</strong> 就是保存这些信息(年老代到年轻代的指针)的数据结构。<strong>卡表(card table)</strong> 是记忆集的一种具体实现，HotSpot VM中用一个字节数组来表示卡表，每一个字节都被称为一张卡，每张卡都对应了堆中的一个地址空间。</p>
+<h2 id="参考资料">参考资料</h2>
 <ol>
-<li><a href=https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/introduction.html>Java Platform, Standard Edition HotSpot Virtual Machine Garbage Collection Tuning Guide</a>.</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/introduction.html">Java Platform, Standard Edition HotSpot Virtual Machine Garbage Collection Tuning Guide</a>.</li>
 </ol>
+
 </div>
-<footer class=entry-footer>
-<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
-<span class=screen-reader-text>分类: </span><a class=category href=/categories/java/>Java</a></div>
-<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-<span class=screen-reader-text>标签: </span><a class=tag href=/tags/jvm/>JVM</a>, <a class=tag href=/tags/gc/>GC</a></div>
-</div>
+
+  
+<footer class='entry-footer'>
+  <div class='container sep-before'><div class='categories'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+    <path d="M22,19a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V5A2,2,0,0,1,4,3H9l2,3h9a2,2,0,0,1,2,2Z"/>
+
+</svg>
+<span class='screen-reader-text'>Categories: </span><a class='category' href='/categories/java/'>Java</a></div>
+<div class='tags'><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <path d="M20.59,13.41l-7.17,7.17a2,2,0,0,1-2.83,0L2,12V2H12l8.59,8.59A2,2,0,0,1,20.59,13.41Z"/>
+  <line x1="7" y1="7" x2="7" y2="7"/>
+
+</svg>
+<span class='screen-reader-text'>Tags: </span><a class='tag' href='/tags/jvm/'>JVM</a></div>
+
+  </div>
 </footer>
+
+
 </article>
-<nav class=entry-nav>
-<div class=container><div class="next-entry sep-before">
-<a href=/posts/java/jvm/hotspot_engine_architecture/>
-<span class=screen-reader-text>下一篇: </span>HotSpot引擎架构<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+
+<nav class='entry-nav'>
+  <div class='container'><div class='next-entry sep-before'>
+      <a href='/posts/java/jvm/hotspot_engine_architecture/'>
+        <span class='screen-reader-text'>Next post: </span>HotSpot引擎架构<span aria-hidden='true'>Next <svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+  <line x1="4" y1="12" x2="20" y2="12"/>
+  <polyline points="14 6 20 12 14 18"/>
+
+</svg>
 </span>
-</a>
-</div></div>
+      </a>
+    </div></div>
 </nav>
-</main>
-<footer id=footer class=footer>
-<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
-<ul><li>
-<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+
+
+
+
+      </main>
+
+      <footer id='footer' class='footer'>
+        <div class='container sep-before'><section class='widget widget-social_menu sep-after'><nav aria-label='Social Menu'>
+    <ul><li>
+        <a href='https://github.com/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Github account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    
+      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+
+</svg>
 </a>
-</li><li>
-<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
+      </li><li>
+        <a href='https://t.me/zhannicholas' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Telegram account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <title>Telegram icon</title><path d="M23.91 3.79L20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72 0-.6-.27-.84-.95L6.3 13.7l-5.45-1.7c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/>
+</svg>
 </a>
-</li><li>
-<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
-<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </li><li>
+        <a href='mailto:zhan_nicholas@outlook.com' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Contact via Email</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>
+</svg>
 </a>
-</li><li>
-<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      </li><li>
+        <a href='https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104' target='_blank' rel='noopener me'>
+          <span class='screen-reader-text'>Open Linkedin account in new tab</span><svg class='icon' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+    
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
 </a>
-</li></ul>
-</nav>
-</section><div class=copyright>
-<p> &copy; 2018-2021 Nicholas Zhan </p>
+      </li></ul>
+  </nav>
+</section><div class='copyright'>
+  <p> &copy; 2018-2021 Nicholas Zhan </p>
 </div>
-</div>
-</footer>
-</div>
-</div><script>window.__assets_js_src="/assets/js/"</script>
-<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script>
+
+        </div>
+      </footer>
+
+    </div>
+  </div><script>window.__assets_js_src="/assets/js/"</script>
+
+<script src='/assets/js/main.c3bcf2df.js'></script><script src='/js/custom.js'></script>
+
 </body>
+
 </html>
+

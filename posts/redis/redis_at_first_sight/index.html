@@ -1,0 +1,594 @@
+<!doctype html><html lang=zh-cn dir=auto><head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Redis是一个位于内存中的数据结构存储系统，由 ANSI C 语言编写。可用作数据库、缓存和消息中间件。它支持的数据结构有：string、hash、l">
+<meta name=theme-color content="#ffcd00">
+<meta property="og:title" content="初见Redis • Nicholas Zhan">
+<meta property="og:description" content="Redis是一个位于内存中的数据结构存储系统，由 ANSI C 语言编写。可用作数据库、缓存和消息中间件。它支持的数据结构有：string、hash、l">
+<meta property="og:url" content="https://zhannicholas.github.io/posts/redis/redis_at_first_sight/">
+<meta property="og:site_name" content="Nicholas Zhan">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Redis"><meta property="article:published_time" content="2019-09-25T19:24:06+08:00"><meta property="article:modified_time" content="2019-09-25T19:24:06+08:00"><meta name=twitter:card content="summary">
+<meta name=generator content="Hugo 0.87.0">
+<title>初见Redis • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/posts/redis/redis_at_first_sight/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
+</head>
+<body class="page type-posts has-sidebar">
+<div class=site><div id=sidebar class=sidebar>
+<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
+<div class=container><section class="widget widget-about sep-after">
+<header>
+<div class=logo>
+<a href=/>
+<img src=/images/logo.png>
+</a>
+</div>
+<h2 class="title site-title">
+<a href=/>
+Nicholas Zhan
+</a>
+</h2>
+<div class=desc>
+Java Developer, Runner, Cyclist
+</div>
+</header>
+</section>
+<section class="widget widget-search sep-after">
+<header>
+<h4 class="title widget-title">搜索</h4>
+</header>
+<form action=/search id=search-form class=search-form>
+<label>
+<span class=screen-reader-text>搜索</span>
+<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
+</label></form>
+</section>
+<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
+<div class=container>
+<ul><li class="item has-children">
+<a href=/java/>Java</a><button class=sub-menu-toggler>
+<span class=screen-reader-text>expand sub menu</span>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/java/jakartaee/>Jakarta EE</a></li><li class=item>
+<a href=/java/jvm/>JVM</a></li><li class=item>
+<a href=/java/concurrency/>并发</a></li></ul></li><li class=item>
+<a href=/distributed_computing/>分布式计算</a></li><li class=item>
+<a href=/operating_systems/>操作系统</a></li><li class="item has-children">
+<a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=screen-reader-text>expand sub menu</span>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/computer_networks/http/>HTTP</a></li><li class=item>
+<a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
+</div>
+</nav>
+</section><section class="widget widget-taxonomy_cloud sep-after">
+<header>
+<h4 class="title widget-title">标签</h4>
+</header>
+<div class="container list-container">
+<ul class="list taxonomy-cloud"><li>
+<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.4166666666666665em>C算法</a>
+</li><li>
+<a href=/tags/english/ style=font-size:1em>English</a>
+</li><li>
+<a href=/tags/gc/ style=font-size:1.1666666666666667em>GC</a>
+</li><li>
+<a href=/tags/git/ style=font-size:1em>Git</a>
+</li><li>
+<a href=/tags/http/ style=font-size:1.5833333333333333em>HTTP</a>
+</li><li>
+<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
+</li><li>
+<a href=/tags/jakartaee/ style=font-size:1.1666666666666667em>JakartaEE</a>
+</li><li>
+<a href=/tags/java/ style=font-size:1.9166666666666665em>Java</a>
+</li><li>
+<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
+</li><li>
+<a href=/tags/jvm/ style=font-size:1.25em>JVM</a>
+</li><li>
+<a href=/tags/leetcode/ style=font-size:1.1666666666666667em>Leetcode</a>
+</li><li>
+<a href=/tags/life/ style=font-size:1em>Life</a>
+</li><li>
+<a href=/tags/linux/ style=font-size:1.25em>Linux</a>
+</li><li>
+<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
+</li><li>
+<a href=/tags/networks/ style=font-size:1.1666666666666667em>Networks</a>
+</li><li>
+<a href=/tags/os/ style=font-size:1.5em>OS</a>
+</li><li>
+<a href=/tags/ostep/ style=font-size:1.1666666666666667em>OSTEP</a>
+</li><li>
+<a href=/tags/python/ style=font-size:1em>Python</a>
+</li><li>
+<a href=/tags/redis/ style=font-size:1.5833333333333333em>Redis</a>
+</li><li>
+<a href=/tags/sicp/ style=font-size:1em>SICP</a>
+</li><li>
+<a href=/tags/spring/ style=font-size:1em>Spring</a>
+</li><li>
+<a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a>
+</li><li>
+<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
+</li><li>
+<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
+</li><li>
+<a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0833333333333333em>分布式计算</a>
+</li><li>
+<a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0833333333333333em>多处理器编程的艺术</a>
+</li><li>
+<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
+</li><li>
+<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3333333333333333em>并发</a>
+</li><li>
+<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
+</li><li>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0833333333333333em>数据库</a>
+</li><li>
+<a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
+</li><li>
+<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0833333333333333em>现代操作系统</a>
+</li><li>
+<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
+</li><li>
+<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.25em>算法导论</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:2em>设计模式</a>
+</li></ul>
+</div>
+</section>
+</div>
+<div class=sidebar-overlay></div>
+</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
+<div class=container>
+<a class=screen-reader-text href=#content>跳到内容</a>
+<button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
+<span class=screen-reader-text>Toggle Sidebar</span>
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</span>
+<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</span>
+</button>
+<ul><li class=item>
+<a href=/>主页</a>
+</li><li class="item current">
+<a aria-current=page href=/posts/>博客</a>
+</li><li class=item>
+<a href=/notebook/>笔记本</a>
+</li><li class=item>
+<a href=/itinerary/>游山玩水</a>
+</li></ul>
+</div>
+</nav><div class=header-widgets>
+<div class=container>
+<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+<section class="widget widget-breadcrumbs sep-after">
+<nav id=breadcrumbs>
+<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><span>初见Redis</span></li></ol>
+</nav>
+</section></div>
+</div>
+<header id=header class="header site-header">
+<div class="container sep-after">
+<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
+</div>
+</div>
+</header>
+<main id=content>
+<article lang=zh-cn class=entry>
+<header class="header entry-header">
+<div class="container sep-after">
+<div class=header-info>
+<h1 class=title>初见Redis</h1>
+</div>
+<div class=entry-meta>
+<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+<span class=screen-reader-text>Posted on </span>
+<time class=entry-date datetime=2019-09-25T19:24:06+08:00>2019, Sep 25</time>
+</span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
+<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
+11 mins read
+</span>
+</div>
+</div>
+</header>
+<div class="container entry-content">
+<blockquote>
+<p><a href=https://redis.io>Redis</a>是一个位于内存中的数据结构存储系统，由 ANSI C 语言编写。可用作数据库、缓存和消息中间件。它支持的数据结构有：string、hash、list、set、sorted set with range quries、bitmap、hyperloglogs、geospatial indexes with radius queries以及stream。Redis支持复制、Lua脚本、基于LRU的键驱逐、事务和不同级别的磁盘持久化，并通过哨兵和Redis集群的自动分区机制来保证高可用。</p>
+</blockquote>
+<p>Redis 是 Remote dictionary server 的缩写，字母意思即远程字典服务。一个 Redis 可以有多个存储数据的字典，客户端可以通过 select 来选择字典（DB）进行存储。</p>
+<blockquote>
+<p>Redis的存储是基于key-value的，但这里的key-value不是简单的key-value，因为value的类型可以有很多种。在我们传统的key-value存储中，key和value都是字符串，而在Redis中，value不仅可以是字符串，还有可能是像列表、集合这样的复杂的数据结构。</p>
+</blockquote>
+<p>本文主要内容包括：Redis的安装、键和几种常见的数据类型的使用，以及和数据生存期相关的一些操作。</p>
+<h1 id=安装redis>安装Redis</h1>
+<p>参见<a href=https://redis.io/topics/quickstart>Redis Quick Start</a>。</p>
+<h1 id=redis键>Redis键</h1>
+<p>Redis的键是一个字符串。在Redis中，字符串二进制安全的，也就是说：Redis中的字符串可以包含任何类型的数据(比如：一张图片、一个序列化后的Java对象……)，这些也可以成为Redis中的键。</p>
+<p>注意：空字符串(<strong><code>""</code></strong>)也是一个有效的键。</p>
+<h1 id=数据类型>数据类型</h1>
+<h2 id=strings>Strings</h2>
+<p>字符串(<code>string</code>)是Redis最基本的数据类型，最大不能超过512MB。</p>
+<p>Redis提供了20多个操作<code>string</code>类型的命令。下面是一些例子：</p>
+<pre><code>&gt;&gt; set s1 &quot;Hello, Redis&quot;    // 设置s1的值为&quot;Hello, Redis&quot;
+OK                          // 成功返回OK
+&gt;&gt; get s1                   // 获取值
+&quot;Hello, Redis&quot;
+&gt;&gt; setnx s1 &quot;Redis&quot;         // 尝试为s1设置新值
+0                           // s1已有值，不进行操作，返回0
+&gt;&gt; get s1
+&quot;Hello, Redis&quot;
+&gt;&gt; set s1 2                 // 设置值
+OK
+&gt;&gt; get s1                   
+&quot;2&quot;
+&gt;&gt; incr s1                  // 加1
+3
+&gt;&gt; incrby s1 10             // 加10
+13
+&gt;&gt; decr s1                  // 减1
+12
+&gt;&gt; decrby s1 5              // 减5
+7
+&gt;&gt; incrbyfloat s1 1.1       // 加1.1
+8.1
+&gt;&gt; incrbyfloat s1 -3.1      // 减3.1
+5
+</code></pre><p><strong><code>SET</code></strong> 和 <strong><code>GET</code></strong> 分别用来设置和检索key对应的值(这个值是一个<strong>字符串</strong>)。需要注意的是，如果某个key已经有对应的值，<strong><code>SET</code></strong> 命令会覆盖掉已有的值(不管之前的值是何种类型都会被覆盖)，和这个key关联的<code>TTL</code>也会被丢弃。如果不希望已有key的值被覆盖，可以使用 <strong><code>SETNX</code></strong> 命令，当key存在时，<strong><code>SETNX</code></strong> 不会进行任何操作。</p>
+<p>虽然值是<code>string</code>，但如果这个值是一个数字的字符串形式的话，可以对其进行加减操作。上面的例子中，<code>s1</code>的值被重新修改为了<code>"2"</code>，随后执行了 <strong><code>INCR</code></strong> 和 <strong><code>INCRBY</code></strong> 两个加法命令，值变成了<code>13</code>，之后的减法命令 <strong><code>DECR</code></strong> 和 <strong><code>DECRBY</code></strong> 将值减到了<code>7</code>。更加有趣的是，Redis还提供了 <strong><code>INCRBYFLOAT</code></strong> 以支持浮点加减运算。</p>
+<pre><code>&gt;&gt; mset s1 1 s2 2 s3 a
+OK
+&gt;&gt; mget s1 s2 s3
+[
+  &quot;1&quot;,
+  &quot;2&quot;,
+  &quot;a&quot;
+]
+</code></pre><p>有时候，一次性设置或获取多个值是很有意义的，这可以通过 <strong><code>MSET</code></strong> 和 <strong><code>MGET</code></strong> 命令实现。类似的还有 <strong><code>MSETNX</code></strong> 命令。</p>
+<h2 id=lists>Lists</h2>
+<p>在Redis中，列表(<code>list</code>)表示由一些元素组成的有序序列。通常情况下，List的实现有数组和链表两种方式，两者各有优劣。数组实现的List可以通过索引快速访问元素，但在插入或删除元素的时候较慢；链表实现的List在插入或删除元素时非常迅速，但访问元素时较慢。Redis中的<code>list</code>使用链表实现，因为对于一个数据库系统来说，快速向一个非常长的列表中添加元素至关重要。基于链表的实现还带来了一个重大优势，那就是可以快速的选取列表中的某一部分。</p>
+<p>Redis提供了10多个操作<code>list</code>的命令，下面时一些例子：</p>
+<pre><code>&gt;&gt; lpush list1 a 1 b    // 向列表list1的头部依次插入a、1、b这三个元素
+3                       // 成功插入，当前列表list1含有3个元素
+&gt;&gt; lrange list1 0 -1    // 查看list1
+1) &quot;b&quot;
+2) &quot;1&quot;
+3) &quot;a&quot;
+&gt;&gt; rpush list1 c d      // 向列表list1尾部依次插入c、d这两个元素
+5                       // 插入成功，当前列表list1含有5个元素
+&gt;&gt; lrange list1 0 -1
+1) &quot;b&quot;
+2) &quot;1&quot;
+3) &quot;a&quot;
+4) &quot;c&quot;
+5) &quot;d&quot;
+&gt;&gt; lpop list1           // 移除并返回列表list1中的第一个元素
+b
+&gt;&gt; rpop list1           // 移除并返回列表list2中的最后一个元素
+d
+&gt;&gt; lrange list2 0 -1    // 列表list2是空的
+&gt;&gt; lpop list2           // 从一个空的列表里面移除元素会返回NULL
+(nil)
+&gt;&gt; rpop list2
+(nil)
+&gt;&gt; lrange list1 0 -1
+1) &quot;1&quot;
+2) &quot;a&quot;
+3) &quot;c&quot;
+&gt;&gt; lindex list1 0      // 查看列表list1中处于位置0处的元素
+1
+&gt;&gt; lindex list1 -1     // 查看列表list1中最后一个元素
+c
+</code></pre><p>命令 <strong><code>LPUSH</code></strong> 和 <strong><code>RPUSH</code></strong> 分别用来向列表头部(左侧)和尾部(右侧)添加元素，<strong><code>LPOP</code></strong> 和 <strong><code>RPOP</code></strong> 分别用来从列表头部(左侧)和尾部(右侧)移除元素。在一个空的列表上执行 <strong><code>LPOP</code></strong> 或 <strong><code>RPOP</code></strong> 将返回 <strong>NULL</strong> 。有时候，我们希望只有当列表中有元素时，才执行POP操作，这时候可以使用 <strong><code>BLPOP</code></strong> 和 <strong><code>BRPOP</code></strong> 。两个命令的都是从列表中移除元素，只是方向不一样。以 <strong><code>BLPOP</code></strong> 为例，<strong><code>BLPOP</code></strong> 的完整命令如下：</p>
+<pre><code>BLPOP key [key ...] timeout
+</code></pre><p><strong><code>BLPOP</code></strong> 接收一个或多个key以及一个超时时间<code>timeout</code>(可阻塞时间，单位为秒，0代表一直阻塞)。在这些key中，如果有key对应的列表不为空，将会返回第一个非空列表的key及POP出的值。举个例子：</p>
+<pre><code>&gt;&gt; lrange list1 0 -1  // 列表list1包含两个元素
+1) &quot;a&quot;
+2) &quot;c&quot;
+&gt;&gt; lrange list2 0 -1  // 列表list2为空
+&gt;&gt; blpop list2 list1 0  // list1中的第一个元素被移除
+1) &quot;list1&quot;
+2) &quot;a&quot;
+</code></pre><p><strong><code>BLPOP</code></strong> 依次检查list2和list1，然后移除并返回list1的头部元素(list2是一个空列表)。</p>
+<p>如果 <strong><code>BLPOP</code></strong> 命令后面给出的的key对应的都是空列表，<strong><code>BLPOP</code></strong> 就会阻塞当前连接。一旦另外一个客户端向某一个key对应的列表插入元素，<strong><code>BLPOP</code></strong> 就会解除阻塞并返回。若阻塞的时间超过了<code>timeout</code>，将返回<code>NULL</code>。</p>
+<p>若要查看列表中的元素，可以使用 <strong><code>LRANGE</code></strong> 命令，<strong><code>LRANGE</code></strong> 命令需要两个索引作为参数。这两个索引形成一个区间，分别指向待返回的第一个和最后一个元素在列表中的位置。索引可以是负数，<code>0</code>、<code>-1</code>、<code>-2</code>分别代表链表中的第一个、最后一个和倒数第二个元素。除了区间查看外，还可以使用 <strong><code>LINDEX</code></strong> 命令查看指定位置的元素。</p>
+<pre><code>&gt;&gt; llen list1          // 查看列表list1的长度
+3
+&gt;&gt; ltrim list1 1 2     // 修剪列表list1，只保留位于区间[1,2]中的元素
+OK
+&gt;&gt; lrange list1 0 -1   // 查看list1中所有元素
+1) &quot;a&quot;
+2) &quot;c&quot;
+</code></pre><p><strong><code>LLEN</code></strong> 用于查看<code>list</code>的长度。很多时候，我们只需要保留列表中的某一部分，这个时候 <strong><code>LTRIM</code></strong> 就可以排上用场了，它和 <strong><code>LRANGE</code></strong> 类似，也接收两个索引作为参数，但它将列表的内容设置为区间内的元素并去除区间外的所有元素。上面的例子中，<strong><code>LTRIM</code></strong> 告诉Redis只保留列表list1处于区间[1,2]中的元素，然后丢弃其它的元素。</p>
+<h2 id=hashes>Hashes</h2>
+<p>Redis中的哈希表(<code>hash</code>)是一个字符串类型的field-value映射表，非常适合用来表示对象。</p>
+<p>下面是一些例子：</p>
+<pre><code>&gt;&gt; hset user:1 name Tome  // 将哈希表user:1的name字段的值设置为Tome
+1
+&gt;&gt; hget user:1 name       // 获取哈希表user:1中name字段对应的值
+Tome
+&gt;&gt; hmset user:2 name Bob age 20 education barchelor // 一次向哈希表user:2中插入多个filed-value
+OK
+&gt;&gt; hmget user:2 name age  // 获取哈希表user:2中name和age字段对应的值
+[
+  &quot;Bob&quot;,
+  &quot;20&quot;
+]
+&gt;&gt; hgetall user:2         // 获取哈希表user:2中所有字段和值
+{
+  &quot;name&quot;: &quot;Bob&quot;,
+  &quot;age&quot;: &quot;20&quot;,
+  &quot;education&quot;: &quot;barchelor&quot;
+}
+&gt;&gt; hget user:1 age        // 企图获取一个不存在的字段对应的值，会返回NULL
+(nil)
+&gt;&gt; hexists user:1 age     // 检查哈希表user:1中是否存在字段age
+0
+&gt;&gt; hvals user:2           // 返回哈希表user:2中所有的值
+[
+  &quot;Bob&quot;,
+  &quot;20&quot;,
+  &quot;barchelor&quot;
+]
+&gt;&gt; hincrby user:2 age 2  // 将哈希表user:2的age字段对应的值加2
+22
+&gt;&gt; hget user:2 age
+22
+</code></pre><h2 id=sets>Sets</h2>
+<p>Redis中的集合(<code>set</code>)是一个由字符串构成的无序集合。除了基本的插入、删除、存在性检测等操作，Redis还支持集合的交、并、差计算。</p>
+<p>下面是基本操作的一些例子：</p>
+<pre><code>&gt;&gt; sadd set1 red blue white black // 向集合set1中插入4个元素
+4
+&gt;&gt; smembers set1                  // 查看集合set1内容
+[
+  &quot;black&quot;,
+  &quot;white&quot;,
+  &quot;blue&quot;,
+  &quot;red&quot;
+]
+&gt;&gt; sismember set1 yellow          // 检查yellow是否在set1中
+0                                 // 集合set1不包含yellow
+&gt;&gt; scard set1                     // 查看集合set1的基数(元素个数)
+4
+&gt;&gt; spop set1                      // 随机从集合set1中移除一个元素
+white
+&gt;&gt; srem set1 white                // 从集合set1中删除一个不存在的元素
+0
+&gt;&gt; srem set1 black                // 从集合set1中删除一个存在的元素
+1
+&gt;&gt; smembers set1
+[
+  &quot;blue&quot;,
+  &quot;red&quot;
+]
+</code></pre><p>下面是集合运算：</p>
+<pre><code>&gt;&gt; sadd set2 a b c red blue gold
+6
+&gt;&gt; smembers set2
+[
+  &quot;red&quot;,
+  &quot;c&quot;,
+  &quot;b&quot;,
+  &quot;a&quot;,
+  &quot;blue&quot;,
+  &quot;gold&quot;
+]
+&gt;&gt; sunion set1 set2 // set1 + set2
+[
+  &quot;a&quot;,
+  &quot;blue&quot;,
+  &quot;gold&quot;,
+  &quot;red&quot;,
+  &quot;c&quot;,
+  &quot;b&quot;
+]
+&gt;&gt; sinter set1 set2 // set1 x set2
+[
+  &quot;blue&quot;,
+  &quot;red&quot;
+]
+&gt;&gt; sdiff set2 set1  // set2 - set1
+[
+  &quot;a&quot;,
+  &quot;gold&quot;,
+  &quot;c&quot;,
+  &quot;b&quot;
+]
+&gt;&gt; sadd set3 f
+1
+&gt;&gt; sdiff set2 set1 set3 // set2 - set1 - set3
+[
+  &quot;a&quot;,
+  &quot;gold&quot;,
+  &quot;c&quot;,
+  &quot;b&quot;
+]
+</code></pre><h2 id=sorted-sets>Sorted sets</h2>
+<p>Redis中的有序集合(<code>sorted set</code>)和集合(<code>set</code>)类似，存放不重复的字符串。不过，有序集合中的每个元素都有一个对应的浮点分数(<code>score</code>)，这个分数用来维持集合的有序性。由于是有序的，有序集合又具有哈希表的快速访问的优势。</p>
+<p>考虑有序集合中的两个元素A和B，有序集合的有序性基于以下两点：</p>
+<ul>
+<li>如果A.score > B.score，那么：A > B。</li>
+<li>如果A.socre = B.score，A > B的前提是A的字典序大于B。因为集合的元素都是唯一的，A和B的内容不能相同。</li>
+</ul>
+<p>下面是一些例子：</p>
+<pre><code>&gt;&gt; zadd z1 2 a -1 b               // 向有序集合z1中添加a(score=2)和b(score=-1)， ZADD还可以用来更新元素对应的分数
+2
+&gt;&gt; zrange z1 0 -1                 // 查看z1内容(正序)，因为b.score &lt; a.score，所有b在前面
+[
+  &quot;b&quot;,
+  &quot;a&quot;
+]
+&gt;&gt; zrange z1 0 -1 withscores      // 查看z1内容及对应分数
+[
+  &quot;b&quot;,
+  &quot;-1&quot;,
+  &quot;a&quot;,
+  &quot;2&quot;
+]
+&gt;&gt; zrevrange z1 0 -1              // 查看z1内容(逆序)
+[
+  &quot;a&quot;,
+  &quot;b&quot;
+]
+&gt;&gt; zrangebyscore z1 0 inf         // 查看z1中分数在[0, inf)内的内容
+[
+  &quot;a&quot;
+]
+&gt;&gt; zrank z1 b                     // 查看z1中内容b的排名
+0
+&gt;&gt; zremrangebyscore z1 -inf -1    // 移除z1中分数位于(-inf,1]的所有元素
+1
+&gt;&gt; zrange z1 0 -1
+[
+  &quot;a&quot;
+]
+
+</code></pre><p>有序集合还支持很多的命令，比如：<strong><code>ZPOPMAX</code></strong>、<strong><code>ZRANGEBYLEX</code></strong>、**<code>ZUNIONSTORE</code>**等等。</p>
+<h2 id=bitmaps>Bitmaps</h2>
+<p>严格地说，<code>Bitmap</code>并不是一种新的数据类型，而是基于<code>string</code>的一种数据类型，它提供了一些基于比特位的操作。</p>
+<p>相关的命令分为两种：操作单个比特位的和操作一组比特位的。</p>
+<p>比特位的设置和检索使用的是 <strong><code>BITSET</code></strong> 和 <strong><code>BITGET</code></strong> 命令:</p>
+<pre><code>&gt;&gt; setbit bits 2 1
+0
+&gt;&gt; getbit bits 2
+1
+&gt;&gt; getbit bits 1
+0
+</code></pre><p><strong><code>BITSET</code><strong>给指定比特位设置值，然后返回该位置上</strong>原来的值</strong>，企图使用 <strong><code>BITSET</code></strong> 设置<code>0</code>和<code>1</code>以外的值会导致错误。 <strong><code>BITGET</code></strong> 获取指定位置的值， 如果给定的位置超出了存储用的字符串的长度，将会返回<code>0</code>。</p>
+<p>操作一组比特位的命令分为三种：</p>
+<ul>
+<li><strong><code>BITOP</code></strong> 进行字符串之间的按位与、按位或、按位异或以及按位取反操作。</li>
+<li><strong><code>BITCOUNT</code></strong> 进行计数操作，返回设置为<code>1</code>的比特位的个数。</li>
+<li><strong><code>BITPOS</code></strong> 寻找给定的<code>0</code>或<code>1</code>出现的第一个位置。</li>
+</ul>
+<h2 id=hyperloglogs>HyperLogLogs</h2>
+<p>Redis使用<code>HyperLogLog</code>进行计数，这个算法是基于统计的。Redis的实现中，标准误差只有1%，并且在最坏的情况下只需要消耗 <strong>12KB</strong> 的内存。<code>HyperLogLog</code>在技术上是一种不同的数据结构，但也是基于<code>string</code>实现的。</p>
+<p>我们使用 <strong><code>SADD</code></strong> 向集合中添加元素，类似的，我们也可以使用 <strong><code>PFADD</code></strong> 向<code>HyperLogLog</code>中添加元素。实际上，<code>HyperLogLog</code>并不存储我们添加的元素，只是更新内部状态。</p>
+<pre><code>&gt;&gt; pfadd hll a b c d    // 向hll中加入四个元素
+1
+&gt;&gt; type hll             // 查看hll类型
+string                  // HyperLogLog实际为string
+&gt;&gt; pfcount hll          // 对hll进行计数
+4
+&gt;&gt; pfadd hll1 a b c d
+1
+&gt;&gt; pfadd hll2 c d e f
+1
+&gt;&gt; pfmerge hll3 hll1 hll2 // 合并hll1和hll2到hll3
+OK
+&gt;&gt; pfcount hll3
+6
+</code></pre><h2 id=geospatial-indexes>Geospatial indexes</h2>
+<p>Redis在3.2.0版本中加入了地理空间(<code>geospatial</code>)这一数据类型，并支持索引半径查询功能。一个具体的位置信息由三元组(longtitude, latitude, name)确定，当向某一个key添加数据时，数据会被存储为有序集合，这么做为半径查询 <strong><code>GEORADIU</code></strong> 提供了支持。</p>
+<p>下面是一些例子：</p>
+<pre><code>&gt;&gt; geoadd municipalities 116.4551113869 39.6733986505 beijing 121.6406041505 30.8267595167 shanghai 106.6992091675 29.3055601981 chongqing  // 添加3个地理空间数据
+3
+&gt;&gt; geodist municipalities beijing chongqing             // 查看beijing和chongqing直接的距离(单位为米)
+1457336.8906
+&gt;&gt; georadius municipalities 116 40 1000 km              // 查看以经度116、纬度40为中心，1000km为半径内的所有位置
+[
+  &quot;beijing&quot;
+]
+&gt;&gt; geohash municipalities beijing shanghai              // 查看beijing和chongqing的Geohash表示
+[
+  &quot;wx4cdn242c0&quot;,
+  &quot;wtqrrgzfzs0&quot;
+]
+&gt;&gt; geopos municipalities chongqing                      // 查看chongqing的地理空间数据
+[
+  [
+    &quot;106.69921070337295532&quot;,
+    &quot;29.30556015923176716&quot;
+  ]
+]
+&gt;&gt; georadiusbymember municipalities chongqing 1500 km   // 查看以chongqing为中心、1500km为半径内的所有位置
+[
+  &quot;chongqing&quot;,
+  &quot;shanghai&quot;,
+  &quot;beijing&quot;
+]
+
+</code></pre><h2 id=streams>Streams</h2>
+<p><code>Stream</code>是Redis 5.0中新增加的数据类型，它以更加抽象的方式模拟了日志结构，通常实现为一个仅以追加模式打开的文件。<code>stream</code>涉及到的内容比较多，后面会详细了解。这里先跳过。</p>
+<h1 id=数据过期>数据过期</h1>
+<p>我们可以为某个key设置过期时间(<code>expires</code>)。当<code>expires</code>达到时，对应的key就会被自动删除，就像我们显式的执行 <strong><code>DEL</code></strong> 命令一样。过期时间的单位可以是秒，也可以是毫秒。关于<code>expires</code>的信息都存放在磁盘上，且有备份。这意味着，即使Redis服务器停止运行，过期时间仍然会有效。实际上，Redis保存的是key过期的确切时间，而不是剩余生存时间，虽然参数是秒或毫秒。</p>
+<p>下面是一些例子：</p>
+<pre><code>&gt;&gt; set s1 v1 
+OK
+&gt;&gt; expire s1 10      // 设置s1于10秒后过期
+1
+&gt;&gt; ttl s1           // 查看s1的剩余生存时间(单位为秒)
+7
+&gt;&gt; pttl s1          // 查看s1的剩余生存时间(单位为毫秒)
+3042
+&gt;&gt; get s1           // 查看s1的值，未经过10秒
+&quot;v1&quot;
+&gt;&gt; get s1           // 查看s1的值，超过10秒，s1已被删除
+(nil)
+&gt;&gt; set s2 v2 ex 10  // 在设置值的同时指定过期时间为10秒
+OK
+&gt;&gt; set s3 v3 px 10000 // 在设置值的同时指定过期时间为10000毫秒
+OK
+</code></pre>
+</div>
+<footer class=entry-footer>
+<div class="container sep-before"><div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/redis/>Redis</a></div>
+</div>
+</footer>
+</article>
+<nav class=entry-nav>
+<div class=container><div class="prev-entry sep-before">
+<a href=/posts/linux/linux%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7%E5%B9%B6%E6%8E%88%E4%BA%88root%E6%9D%83%E9%99%90%E7%9A%84%E7%AE%80%E5%8D%95%E6%96%B9%E6%B3%95/>
+<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
+Previous</span>
+<span class=screen-reader-text>上一篇: </span>Linux添加用户并授予root权限的简单方法</a>
+</div><div class="next-entry sep-before">
+<a href=/posts/databases/database_transactions/>
+<span class=screen-reader-text>下一篇: </span>事务<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+</span>
+</a>
+</div></div>
+</nav>
+</main>
+<footer id=footer class=footer>
+<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
+<ul><li>
+<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a>
+</li><li>
+<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
+</a>
+</li><li>
+<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
+<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+</a>
+</li><li>
+<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+</a>
+</li></ul>
+</nav>
+</section><div class=copyright>
+<p> &copy; 2018-2021 Nicholas Zhan </p>
+</div>
+</div>
+</footer>
+</div>
+</div><script>window.__assets_js_src="/assets/js/"</script>
+<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script>
+</body>
+</html>

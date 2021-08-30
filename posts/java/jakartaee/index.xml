@@ -1,1 +1,41 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jakarta EE on Nicholas Zhan</title><link>https://zhannicholas.github.io/posts/java/jakartaee/</link><description>Recent content in Jakarta EE on Nicholas Zhan</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Sun, 13 Dec 2020 18:07:45 +0800</lastBuildDate><atom:link href="https://zhannicholas.github.io/posts/java/jakartaee/index.xml" rel="self" type="application/rss+xml"/><item><title>What is Servlet</title><link>https://zhannicholas.github.io/posts/java/jakartaee/what_is_servlet/</link><pubDate>Sun, 13 Dec 2020 18:07:45 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/jakartaee/what_is_servlet/</guid><description>A servlet is a Java™ technology-based Web component, managed by a container, that generates dynamic content. 和其它基于Java的组件一样，Servlet也由Java类组成，这些Java类(.class文件)会</description></item><item><title>The Servlet Interface</title><link>https://zhannicholas.github.io/posts/java/jakartaee/the_servlet_interface/</link><pubDate>Sun, 13 Dec 2020 18:04:42 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/jakartaee/the_servlet_interface/</guid><description>**Servlet接口是Java Servlet API的核心抽象，所有的Servlet都直接或间接地实现它。GenericServlet**和 **Http</description></item><item><title>About Jakarta EE</title><link>https://zhannicholas.github.io/posts/java/jakartaee/about/</link><pubDate>Sun, 13 Dec 2020 18:03:23 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/jakartaee/about/</guid><description>Java EE(Java Platform, Enterprise Edition)是构建在Java SE之上的一套企业级标准，早期被称为J2EE(Java 2 Platform Enterprise Edition)，现在则被称为Jakar</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jakarta EE on Nicholas Zhan</title>
+    <link>https://zhannicholas.github.io/posts/java/jakartaee/</link>
+    <description>Recent content in Jakarta EE on Nicholas Zhan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 13 Dec 2020 18:07:45 +0800</lastBuildDate>
+    
+	<atom:link href="https://zhannicholas.github.io/posts/java/jakartaee/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>What is Servlet</title>
+      <link>https://zhannicholas.github.io/posts/java/jakartaee/what_is_servlet/</link>
+      <pubDate>Sun, 13 Dec 2020 18:07:45 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/jakartaee/what_is_servlet/</guid>
+      <description>A servlet is a Java™ technology-based Web component, managed by a container, that generates dynamic content. 和其它基于Java的组件一样，Servlet也由Java类组成，这些Java类(.class文件)会</description>
+    </item>
+    
+    <item>
+      <title>The Servlet Interface</title>
+      <link>https://zhannicholas.github.io/posts/java/jakartaee/the_servlet_interface/</link>
+      <pubDate>Sun, 13 Dec 2020 18:04:42 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/jakartaee/the_servlet_interface/</guid>
+      <description>Servlet接口是Java Servlet API的核心抽象，所有的Servlet都直接或间接地实现它。GenericServlet和 HttpServle</description>
+    </item>
+    
+    <item>
+      <title>About Jakarta EE</title>
+      <link>https://zhannicholas.github.io/posts/java/jakartaee/about/</link>
+      <pubDate>Sun, 13 Dec 2020 18:03:23 +0800</pubDate>
+      
+      <guid>https://zhannicholas.github.io/posts/java/jakartaee/about/</guid>
+      <description>Java EE(Java Platform, Enterprise Edition)是构建在Java SE之上的一套企业级标准，早期被称为J2EE(Java 2 Platform Enterprise Edition)，现在则被称为Jakar</description>
+    </item>
+    
+  </channel>
+</rss>
