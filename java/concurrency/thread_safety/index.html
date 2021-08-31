@@ -1,15 +1,15 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="我们在工作中经常听人提起线程安全，但线程安全似乎没有一个明确的定义。Java Concurrency in Practice 这本 Java 并发宝典是这样解释线程安全的： 当多个线程访问某个类时">
+<meta name=description content="我们在工作中经常听人提起线程安全，但要是被问到什么是线程安全，我们可能就会挠挠脑袋了。因为线程安全并没有一个明确的定义。Java Concurrency in Practice 这本 Java">
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="线程安全性 • Nicholas Zhan">
-<meta property="og:description" content="我们在工作中经常听人提起线程安全，但线程安全似乎没有一个明确的定义。Java Concurrency in Practice 这本 Java 并发宝典是这样解释线程安全的： 当多个线程访问某个类时">
+<meta property="og:title" content="线程安全 • Nicholas Zhan">
+<meta property="og:description" content="我们在工作中经常听人提起线程安全，但要是被问到什么是线程安全，我们可能就会挠挠脑袋了。因为线程安全并没有一个明确的定义。Java Concurrency in Practice 这本 Java">
 <meta property="og:url" content="https://zhannicholas.github.io/java/concurrency/thread_safety/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="java"><meta property="article:tag" content="并发"><meta property="article:published_time" content="2021-04-27T20:38:39+08:00"><meta property="article:modified_time" content="2021-04-27T20:38:39+08:00"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.87.0">
-<title>线程安全性 • Nicholas Zhan</title>
+<title>线程安全 • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/java/concurrency/thread_safety/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
@@ -173,7 +173,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><a href=/java/concurrency/>并发</a></li><li><span>线程安全性</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><a href=/java/concurrency/>并发</a></li><li><span>线程安全</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -188,7 +188,7 @@ Java Developer, Runner, Cyclist
 <header class="header entry-header">
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title>线程安全性</h1>
+<h1 class=title>线程安全</h1>
 </div>
 <div class=entry-meta>
 <span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -222,14 +222,14 @@ Java Developer, Runner, Cyclist
 </nav>
 </details>
 <div class="container entry-content">
-<p>我们在工作中经常听人提起线程安全，但线程安全似乎没有一个明确的定义。<em>Java Concurrency in Practice</em> 这本 Java 并发宝典是这样解释线程安全的：</p>
+<p>我们在工作中经常听人提起线程安全，但要是被问到什么是线程安全，我们可能就会挠挠脑袋了。因为线程安全并没有一个明确的定义。<em>Java Concurrency in Practice</em> 这本 Java 并发宝典是这样解释线程安全的：</p>
 <blockquote>
 <p>当多个线程访问某个类时，这个类始终都能表现出正确的行为，那么就称这个类是线程安全的。线程安全性对多个线程之间的操作提出了要求：多个线程之间的操作无论采用何种执行时序或交替方式，都要保证不变性条件不被破坏。</p>
 <p>若一个类既不包含任何域，也不包含任何对其它类中域的引用，则称这个类是无状态的。<strong>无状态的对象一定是线程安全的</strong>。</p>
 </blockquote>
-<p>同时，本文的绝大部分内容也来自这本书。</p>
+<p>本文的绝大部分内容也来自这本书。</p>
 <h2 id=线程安全问题>线程安全问题</h2>
-<p>如果线程不安全，会导致哪些问题呢？常见的问题有三类：</p>
+<p>如果线程不安全，会出现哪些问题呢？常见的问题有三类：</p>
 <ol>
 <li>运行结果错误</li>
 <li>对象逃逸</li>
@@ -257,19 +257,19 @@ Java Developer, Runner, Cyclist
         System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;count = &#34;</span> <span style=color:#f92672>+</span> count<span style=color:#f92672>);</span>
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>这段代码定义了一个静态变量 <code>count</code>，然后启动两个线程，每个线程都对这个变量执行 1000 次递增操作。理论上，我们最终应该得到的 count 值为 2000，但实际上结果可能是 1662，也可能是 1713，每次运行的结果都还不一样。出问题的原因在于：<code>count++</code> 不是一个原子操作，它的执行步骤主要分为三步：</p>
+</code></pre></div><p>这段代码定义了一个静态变量 <code>count</code>，然后启动两个线程，每个线程都对这个变量执行 1000 次递增操作。理论上，最终应该得到的 count 值为 2000，但实际上结果可能是 1662，也可能是 1713，每次运行的结果都还不一样。问题的原因在于：<code>count++</code> 不是一个原子操作，它的执行步骤主要分为三步：</p>
 <ol>
 <li>读取 count 的值</li>
 <li>将 count 的值加一</li>
 <li>保存 count 的值</li>
 </ol>
-<p>由于 CPU 是以时间片为单位进行线程调度的，每个线程都可以在给定时间片内使用 CPU，若时间片已经用完，操作系统就会暂停当前线程，然后把 CPU 分配给其它线程，当其它线程用完之后，被暂停的线程又会得到使用 CPU 的机会。在 <code>count++</code> 的三个步骤中，每一步操作都有可能被打断。这就是 <strong>原子性问题</strong>。虽然变量 <code>count</code> 被 <code>volatile</code> 修饰，但由于 <code>volatile</code> 只能保证可见性，并不能保证原子性，所以运行结果还是有问题的。</p>
+<p>由于 CPU 是以时间片为单位进行线程调度的，每个线程都可以在某个时间片内使用 CPU。当前时间片被用完后，操作系统就会暂停当前线程，然后把 CPU 分配给其它线程，当其它线程用完之后，被暂停的线程又会得到使用 CPU 的机会。在 <code>count++</code> 的三个步骤中，每一步操作都有可能被打断。这就是 <strong>原子性问题</strong>。虽然变量 <code>count</code> 被 <code>volatile</code> 修饰，但由于 <code>volatile</code> 只能保证可见性，并不能保证原子性，所以运行结果还是有问题的。</p>
 <h3 id=对象逃逸>对象逃逸</h3>
 <h4 id=对象发布>对象发布</h4>
-<p><strong>“发布”一个对象意味着使该对象能够被当前作用域以外的代码使用</strong>。例如：将一个指向某一对象的引用保存到其它代码可以访问的地方，或者某一个非私有的方法中返回该引用，或者将该引用传递到其它类的方法中。</p>
+<p><strong>“发布”一个对象意味着该对象能够被当前作用域以外的代码使用</strong>。例如：将一个指向对象的引用保存到其它代码可以访问的地方，或者在某一个非私有的方法中返回该引用，或者将该引用传递到其它类的方法中。</p>
 <p>发布对象的最简单方法就是将对象的引用保存到一个公有的静态变量中。当发布一个对象时，该对象的非私有域中引用的所有对象也会被发布。还有一种发布对象或其内部状态的方法就是：发布一个内部类的实例。</p>
 <h4 id=对象逃逸-1>对象逃逸</h4>
-<p>逃逸”是指某个不应该被发布的对象被发布出去了。下面是一个例子：</p>
+<p>“逃逸”是指某个不应该被发布的对象被发布出去了。下面是一个例子：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>WrongInit</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>private</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> colorMap<span style=color:#f92672>;</span>
 
@@ -293,9 +293,9 @@ Java Developer, Runner, Cyclist
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
 </code></pre></div><p>这段代码并不会输出 <code>红</code>，而是会抛出 <code>NullPointerException</code>。这是因为 <code>colorMap</code> 的初始化放在了构造函数内的新线程中，而线程的启动是需要一定的时间的，但是主函数并没有等待就直接获取数据，这个时候 <code>colorMap</code> 可能并没有初始化好。</p>
-<p>正常情况下，<code>colorMap</code> 应该在构造函数内被初始化好了才可让外界访问，以上代码就出现了 <code>colorMap</code> 的逃逸。对象逃逸会带来问题，因为：<strong>只有当对象的构造函数返回时，对象才处于可预测的（predictable）、一致的（consistent）状态</strong>。在错误的时间或地点发布或初始化可能导致线程安全问题。</p>
+<p>正常情况下，<code>colorMap</code> 应该在构造函数内被初始化好了才可让外界访问，以上代码就出现了 <code>colorMap</code> 的逃逸。对象逃逸会带来问题，因为：<strong>只有当对象的构造函数返回时，对象的状态才是可预测的（predictable）、一致的（consistent）</strong>。在错误的时间或地点发布或初始化可能导致线程安全问题。</p>
 <h3 id=活跃性问题>活跃性问题</h3>
-<p>在线程的安全性和活跃性之间通常存在着某种制衡。我们使用加锁机制来确保线程安全，但如果过度的使用加锁，则可能导致 <strong>顺序死锁（Lock-ordering Deadlock）</strong>。同样，我们使用线程池和信号量来限制对资源的使用，但这些限制行为可能导致 <strong>资源死锁（Resource Deadlock）</strong>。Java 应用程序无法从死锁中恢复过来（恢复应用程序的唯一方式就是终止并重启它，并希望它不要再发生），因此在设计时一定要排除那些可能导致死锁出现的条件。</p>
+<p>在线程的安全性和活跃性之间通常存在着某种平衡。我们使用加锁机制来确保线程安全，但如果过度的使用加锁，则可能导致 <strong>顺序死锁（Lock-ordering Deadlock）</strong>。同样，我们使用线程池和信号量来限制对资源的使用，但这些限制行为可能导致 <strong>资源死锁（Resource Deadlock）</strong>。Java 应用程序无法从死锁中恢复过来（恢复应用程序的唯一方式就是终止并重启它，并希望它不要再发生），因此在设计时一定要排除那些可能导致死锁出现的条件。</p>
 <p>活跃性问题与前面提到的运行结果错误有着很大不同，当出现活跃性问题时，程序可能始终都得不到结果。常见的活跃性问题有三种，分别是：死锁、饥饿和活锁。</p>
 <h4 id=死锁>死锁</h4>
 <p><strong>死锁（Deadlock）</strong> 是指两个线程之间相互等待对方占有的资源（锁），但同时又互不相让，都想自己先执行。</p>
