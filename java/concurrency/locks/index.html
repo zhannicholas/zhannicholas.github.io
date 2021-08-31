@@ -86,7 +86,7 @@ Java Developer, Runner, Cyclist
 </li><li>
 <a href=/tags/jakartaee/ style=font-size:1.1666666666666667em>JakartaEE</a>
 </li><li>
-<a href=/tags/java/ style=font-size:1.9166666666666665em>Java</a>
+<a href=/tags/java/ style=font-size:2em>Java</a>
 </li><li>
 <a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
 </li><li>
@@ -126,7 +126,7 @@ Java Developer, Runner, Cyclist
 </li><li>
 <a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
 </li><li>
-<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3333333333333333em>并发</a>
+<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.4166666666666665em>并发</a>
 </li><li>
 <a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
 </li><li>
@@ -198,7 +198,7 @@ Java Developer, Runner, Cyclist
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-14 mins read
+15 mins read
 </span>
 </div>
 </div>
@@ -271,13 +271,9 @@ Java Developer, Runner, Cyclist
         <span style=color:#f92672>}</span>
     <span style=color:#f92672>}</span>
 
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>compareAndSet</span><span style=color:#f92672>(</span>V   expectedReference<span style=color:#f92672>,</span>
-                                 V   newReference<span style=color:#f92672>,</span>
-                                 <span style=color:#66d9ef>int</span> expectedStamp<span style=color:#f92672>,</span>
-                                 <span style=color:#66d9ef>int</span> newStamp<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>compareAndSet</span><span style=color:#f92672>(</span>V   expectedReference<span style=color:#f92672>,</span> V   newReference<span style=color:#f92672>,</span> <span style=color:#66d9ef>int</span> expectedStamp<span style=color:#f92672>,</span> <span style=color:#66d9ef>int</span> newStamp<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
         Pair<span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> current <span style=color:#f92672>=</span> pair<span style=color:#f92672>;</span>
-        <span style=color:#66d9ef>return</span>
-            expectedReference <span style=color:#f92672>==</span> current<span style=color:#f92672>.</span><span style=color:#a6e22e>reference</span> <span style=color:#f92672>&amp;&amp;</span>
+        <span style=color:#66d9ef>return</span> expectedReference <span style=color:#f92672>==</span> current<span style=color:#f92672>.</span><span style=color:#a6e22e>reference</span> <span style=color:#f92672>&amp;&amp;</span>
             expectedStamp <span style=color:#f92672>==</span> current<span style=color:#f92672>.</span><span style=color:#a6e22e>stamp</span> <span style=color:#f92672>&amp;&amp;</span>
             <span style=color:#f92672>((</span>newReference <span style=color:#f92672>==</span> current<span style=color:#f92672>.</span><span style=color:#a6e22e>reference</span> <span style=color:#f92672>&amp;&amp;</span>
               newStamp <span style=color:#f92672>==</span> current<span style=color:#f92672>.</span><span style=color:#a6e22e>stamp</span><span style=color:#f92672>)</span> <span style=color:#f92672>||</span>
@@ -493,7 +489,7 @@ lock<span style=color:#f92672>.</span><span style=color:#a6e22e>lock</span><span
 <p>重入的一种实现方法是：为每个锁关联一个计数值和一个所有者线程，当计数值为0时，这个锁就被认为不被任何线程持有。当线程请求一个未被持有的锁时，JVM会记下锁的持有者并将计数值设置为1，如果同一个线程再次获取这个锁，计数值就加1，当线程退出同步代码块时，计数值减1。当计数值为0时，这个锁将被释放。</p>
 <h3 id=锁的公平性>锁的公平性</h3>
 <p>在 <code>ReentrantLock</code> 的构造函数中提供了一个 <code>fair</code> 参数，用来指定所创建的锁是否公平，默认创建一个非公平的锁。在公平的锁上，线程将按照它们发出请求的顺序来获得锁，但在非公平的锁上，是允许“插队”的：当一个线程请求非公平的锁时，如果在发出请求的同时该锁的状态变为可用，那么这个线程将跳过队列中的所有等待线程并获得这个锁。</p>
-<p>在激烈竞争的情况下，非公平锁的性能高于公平锁的一个原因是：<strong>在恢复一个被挂起的线程与该线程真正开始运行之间存在着严重的延迟，而使用非公平锁减少了线程上下文切换的次数</strong>。</p>
+<p>在激烈竞争的情况下，非公平锁的性能高于公平锁的一个原因是：<strong>在恢复一个被挂起的线程与该线程真正开始运行之间存在着严重的延迟，而使用非公平锁减少了线程上下文切换的次数</strong>。虽然非公平锁带来了更高的性能，但可能导致线程饥饿。</p>
 <p><code>ReentrantLock</code> 默认采用非公平锁：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>ReentrantLock</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
     sync <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> NonfairSync<span style=color:#f92672>();</span>
@@ -546,24 +542,29 @@ lock<span style=color:#f92672>.</span><span style=color:#a6e22e>lock</span><span
     <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
 </code></pre></div><p>对比 <code>FairSync</code> 可以发现，<code>FairSync</code> 中的 <code>tryAcquire()</code> 方法仅多了一行：<code>!hasQueuedPredecessors()</code>。<code>hasQueuedPredecessor()</code> 方法用来查看队列中是否有比当前线程等待时间更久的线程，如果没有，就尝试一下是否能获取到锁，如果获取成功，则标记锁为已占用。</p>
+<p>这里有一个特例需要注意，<code>tryLock()</code> 方法不遵守我们设定的公平原则。因为它的源码是这样的：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>tryLock</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>return</span> sync<span style=color:#f92672>.</span><span style=color:#a6e22e>nonfairTryAcquire</span><span style=color:#f92672>(</span>1<span style=color:#f92672>);</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>也就是说，即使我们设定锁为公平锁，如果在调用 <code>tryLock()</code> 时锁可用，就能立即获得锁，与前面是否有线程排队无关。</p>
 <h2 id=readwritelock>ReadWriteLock</h2>
-<p><code>ReadWriteLock</code> 的接口定义如下：</p>
+<p><code>ReadWriteLock</code> （读写锁）的接口定义如下：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>ReadWriteLock</span> <span style=color:#f92672>{</span>
 	Lock <span style=color:#a6e22e>readLock</span><span style=color:#f92672>();</span>
 	Lock <span style=color:#a6e22e>writeLock</span><span style=color:#f92672>();</span>
 <span style=color:#f92672>}</span>
 </code></pre></div><p><code>ReadWriteLock</code> 暴露了两个 <code>Lock</code> 对象，其中一个用于读操作，另一个用于写操作。要读取由 <code>ReadWriteLock</code> 保护的数据，必须先获得读锁，当需要修改 <code>ReadWriteLock</code> 保护的数据时，必须先获得写锁。</p>
-<p>在 <code>ReadWriteLock</code> 实现的加锁策略中，允许多个读操作同时进行（多个线程同时持有读锁），但每次只允许一个写操作（每次至多有一个线程持有写锁）。对于频繁读取的场景，<code>ReadWriteLock</code> 能够提高性能。</p>
+<p>在 <code>ReadWriteLock</code> 实现的加锁策略中，允许多个读操作同时进行（多个线程同时持有读锁），但每次只允许一个写操作（每次至多有一个线程持有写锁）。对于读多写少的场景，<code>ReadWriteLock</code> 能够提高性能。</p>
 <p>读写锁的获取规则如下：</p>
 <ul>
 <li>如果一个线程持有读锁，那么其它线程可以继续申请读锁。</li>
 <li>如果一个线程持有读锁，那么此时其它线程必须等待当前线程释放读锁之后才能申请写锁。</li>
 <li>如果一个线程持有写锁，那么此时其它线程必须等待当前线程释放掉写锁之后才能申请读锁或写锁。</li>
 </ul>
-<p>总而言之，就是读可以并发进行，读写不能同时进行，多个线程不能同时写。</p>
+<p>简而言之，读可以并发进行，读写不能同时进行，多个线程不能同时写。</p>
 <h3 id=reentrantreadwritelock>ReentrantReadWriteLock</h3>
-<p><code>ReentrantReadWriteLock</code> 实现了 <code>ReadWriteLock</code> 接口并加入了一些监控锁内部工作状态的方法。</p>
-<p><code>ReentrantReadWriteLock</code> 的实现依赖于 <code>AQS</code>，由于 <code>AQS</code> 内使用的是一个 <code>int</code> 类型的 <code>state</code> 变量来保存的同步状态，所以 <code>ReentrantReadWriteLock</code> 对 <code>state</code> 变量按位切割成了两部分使用：高16位表示读状态，低16位表示写状态。</p>
+<p><code>ReentrantReadWriteLock</code> 实现了 <code>ReadWriteLock</code> 接口，并加入了一些监控锁内部工作状态的方法。</p>
+<p><code>ReentrantReadWriteLock</code> 的实现依赖于 <code>AQS</code>，由于 <code>AQS</code> 内使用的是一个 <code>int</code> 类型的 <code>state</code> 变量来保存的同步状态，所以 <code>ReentrantReadWriteLock</code> 对 <code>state</code> 变量进行了按位切割，分两部分使用：高16位表示读状态，低16位表示写状态。</p>
 <p><code>ReentrantReadWriteLock</code> 支持锁的降级（写锁到读锁），但不支持锁的升级。</p>
 <h2 id=locksupport>LockSupport</h2>
 <p><code>LockSupport</code>是一个工具类，由<code>UnSafe</code>类实现，主要用来挂起和唤醒线程，它是创建锁和其它同步类的基础。<code>LockSupport</code>会为每个使用它的线程关联一个许可证（permit），在默认情况下调用<code>LockSupport</code>类的方法的线程是不持有许可证的。</p>
@@ -600,7 +601,7 @@ lock<span style=color:#f92672>.</span><span style=color:#a6e22e>lock</span><span
 <nav class=entry-nav>
 <div class=container><div class="next-entry sep-before">
 <a href=/java/concurrency/synchronization/>
-<span class=screen-reader-text>下一篇: </span>同步<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+<span class=screen-reader-text>下一篇: </span>Java 中的 synchronized<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
 </span>
 </a>
 </div></div>

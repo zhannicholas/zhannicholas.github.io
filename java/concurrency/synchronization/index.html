@@ -3,13 +3,13 @@
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="Java语言提供了多种线程间通信机制（同步、while轮询、等待/通知、管道等等），其中最基础的通信方式就是 同步（synchronizati">
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="同步 • Nicholas Zhan">
+<meta property="og:title" content="Java 中的 synchronized • Nicholas Zhan">
 <meta property="og:description" content="Java语言提供了多种线程间通信机制（同步、while轮询、等待/通知、管道等等），其中最基础的通信方式就是 同步（synchronizati">
 <meta property="og:url" content="https://zhannicholas.github.io/java/concurrency/synchronization/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="java"><meta property="article:tag" content="Java"><meta property="article:tag" content="并发"><meta property="article:published_time" content="2020-12-13T18:31:16+08:00"><meta property="article:modified_time" content="2020-12-13T18:31:16+08:00"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.87.0">
-<title>同步 • Nicholas Zhan</title>
+<title>Java 中的 synchronized • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/java/concurrency/synchronization/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
@@ -86,7 +86,7 @@ Java Developer, Runner, Cyclist
 </li><li>
 <a href=/tags/jakartaee/ style=font-size:1.1666666666666667em>JakartaEE</a>
 </li><li>
-<a href=/tags/java/ style=font-size:1.9166666666666665em>Java</a>
+<a href=/tags/java/ style=font-size:2em>Java</a>
 </li><li>
 <a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
 </li><li>
@@ -126,7 +126,7 @@ Java Developer, Runner, Cyclist
 </li><li>
 <a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
 </li><li>
-<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3333333333333333em>并发</a>
+<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.4166666666666665em>并发</a>
 </li><li>
 <a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
 </li><li>
@@ -173,7 +173,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><a href=/java/concurrency/>并发</a></li><li><span>同步</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><a href=/java/concurrency/>并发</a></li><li><span>Java 中的 synchronized</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -188,7 +188,7 @@ Java Developer, Runner, Cyclist
 <header class="header entry-header">
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title>同步</h1>
+<h1 class=title>Java 中的 synchronized</h1>
 </div>
 <div class=entry-meta>
 <span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -233,7 +233,7 @@ Java Developer, Runner, Cyclist
 <div class="container entry-content">
 <p>Java语言提供了多种线程间通信机制（同步、while轮询、等待/通知、管道等等），其中最基础的通信方式就是 <strong>同步（synchronization）</strong>。Java中的同步是通过<code>monitor</code>来实现的，每个Java对象都有一个与之相关联的<code>monitor</code>，线程可以在其上进行加锁和释放锁的操作。同一时刻只能有一个线程持有某个<code>monitor</code>的锁，任何其它尝试给该<code>monitor</code>加锁的线程在获得锁之前都会被阻塞。一个线程可以多次给某个<code>monitor</code>加锁，这就是锁的重入，多次加锁对应着多次解锁，因为每次<code>unlock</code>操作只会消除一次<code>lock</code>的效应。</p>
 <h2 id=synchronized-关键字><code>Synchronized</code> 关键字</h2>
-<p>Java提供了一种内置的锁机制来支持原子性：同步代码块(Synchronized Block)。同步代码块就是用 <code>synchronized</code> 关键字修饰的代码块，它包括两个部分：作为锁的对象引用和由这个锁保护的代码块。</p>
+<p>Java提供了一种内置的锁机制来支持原子性：同步代码块（Synchronized Block）。同步代码块就是用 <code>synchronized</code> 关键字修饰的代码块，它包括两个部分：作为锁的对象引用和由这个锁保护的代码块。</p>
 <p>用关键字 <code>synchronized</code> 修饰的方法是一种横跨整个方法体的同步代码块，其中该同步代码块的锁就是和该方法相关的对象（方法执行期间 <code>this</code> 关键字所代表的对象）。静态 <code>synchronized</code> 方法以 <code>Class</code> 对象为锁：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>static</span> <span style=color:#66d9ef>synchronized</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>staticMethod</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
 	<span style=color:#75715e>// do something
@@ -297,7 +297,7 @@ Java Developer, Runner, Cyclist
 继续循环尝试直到修改成功。</p>
 <h3 id=偏向锁>偏向锁</h3>
 <p>大多数情况下，锁不仅不存在竞争，而且总是被同一个线程多次获得。偏向锁就是指同一个同步代码块一直被一个线程访问，那么该线程就会自动能够获取锁，这能降低获取锁的代价。</p>
-<p>当一个线程访问同步代码块并获取锁时，会在对象头和栈帧的锁记录里面存储偏向的线程ID，以后该线程在进入和退出同步代码块时不需要进行CAS操作来加锁和解锁，只需要简单的检测一下对象头的Mark Word里是否存储着指向当前线程的偏向锁。如果测试成功，表示线程已经获得了锁，否者则需要再检测Mark Word中偏向锁的标识是否为1（如果未设置，则使用CAS竞争锁，否则尝试使用CAS将对象头的偏向锁指向当前线程）。</p>
+<p>当一个线程访问同步代码块并获取锁时，会在对象头和栈帧的锁记录里面存储偏向的线程ID，以后该线程在进入和退出同步代码块时不需要进行CAS操作来加锁和解锁，只需要简单的检测一下对象头的Mark Word里是否存储着指向当前线程的偏向锁。如果测试成功，表示线程已经获得了锁，否者则需要再检测 Mark Word 中偏向锁的标识是否为1（如果未设置，则使用 CAS 竞争锁，否则尝试使用 CAS 将对象头的偏向锁指向当前线程）。</p>
 <p>偏向锁使用了一种等到竞争出现才释放锁的机制，所以当其它线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁。偏向锁的撤销需要等到全局安全点（这个时间点上没有正在执行的字节码）上才能进行。它会先暂停拥有偏向锁的线程，判断锁对象是否处于被锁定的状态。撤销偏向锁后恢复到无锁或轻量级锁状态。</p>
 <p>由于难以维护，Java 15 已经准备<a href=https://openjdk.java.net/jeps/374>弃用偏向锁</a>了。</p>
 <h3 id=轻量级锁>轻量级锁</h3>
@@ -305,9 +305,9 @@ Java Developer, Runner, Cyclist
 <p>当线程进入同步代码块时，若同步对象的锁状态为无锁状态，JVM 会再当前线程的栈帧中建立一个名为 Lock Record 的空间，用于存储对象目前的 Mark Word 的副本，然后将对象头中的 Mark Word 复制进去。复制成功后，JVM 会使用 CAS 操作尝试将对象的 Mark Word 更新为指向 Lock Record 的指针，并将 Lock Record 里的 owner 指针指向对象的 Mark Word。如果更新成功，该线程就获得了锁，对象头中的 Mark Word 会被设置为 <strong><code>00</code></strong>，表示此对象处于轻量级锁状态。若更新失败，JVM 会检查对象头的 Mark Word 是否指向当前线程的栈帧，如果是就说明当前线程已经拥有锁，就直接进入同步代码块继续执行，否则说明有多个线程在竞争该锁。</p>
 <p>若当前只有一个等待线程，则该等待线程会以自旋的方式进行等待。当自旋超过一定次数，或者一个线程持有锁，一个线程在自旋，第三个线程又来访问时，轻量级锁会升级为重量级锁。</p>
 <h3 id=重量级锁>重量级锁</h3>
-<p>当锁升级为重量级锁时，Mark Word存 储的时指向重量级锁的指针，等待的线程会进入阻塞状态。</p>
+<p>当锁升级为重量级锁时，Mark Word 存储的时指向重量级锁的指针，等待的线程会进入阻塞状态。</p>
 <h3 id=锁升级小结>锁升级小结</h3>
-<p>偏向锁通过比对 Mark Word 来解决加锁问题，避免 CAS 操作；轻量级锁通过 CAS 操作和自旋解决加锁问题，避免线程阻塞和唤醒带来的性能损耗；重量级锁阻塞拥有锁的线程以外的所有线程。</p>
+<p>偏向锁通过比对 Mark Word 来解决加锁问题，避免 CAS 操作；轻量级锁通过 CAS 操作和自旋解决加锁问题，避免线程阻塞和唤醒带来的性能损耗；重量级锁则阻塞拥有锁的线程以外的所有线程。</p>
 <h2 id=从jvm视角看同步>从JVM视角看同步</h2>
 <p>JVM中的同步操作是通过 <code>monitor</code> 的进入与退出来实现的。其实现方式又可分为显式（通过使用 <code>monitorenter</code> 和 <code>monitorexit</code> 指令）和隐式（通过方法的调用与返回指令）两种。根据被修饰的代码块的形式不同，<code>synchronized</code> 关键字的使用可以分为两种情况：同步方法（<code>synchronized</code> 修饰的是静态方法或实例方法）和同步语句（<code>synchronized</code> 修饰的是一个代码块）。</p>
 <h3 id=同步方法>同步方法</h3>

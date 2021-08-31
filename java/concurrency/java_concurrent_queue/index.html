@@ -1,20 +1,20 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="Web连接着不计其数的资源，但并不是所有的资源都是可以随意访问的。某些资源只对部分特定的用户开放，为了达到这个目的，需要对用户进行认证（au">
+<meta name=description content="并发队列（或线程安全的队列）是在我们在进行多线程并发编程时经常使用的一种数据结构。并发队列不仅具备基本队列的所有特性，还是线程安全的。由于并">
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="HTTP 认证 • Nicholas Zhan">
-<meta property="og:description" content="Web连接着不计其数的资源，但并不是所有的资源都是可以随意访问的。某些资源只对部分特定的用户开放，为了达到这个目的，需要对用户进行认证（au">
-<meta property="og:url" content="https://zhannicholas.github.io/computer_networks/http/http_authentication/">
+<meta property="og:title" content="Java 中的并发队列 • Nicholas Zhan">
+<meta property="og:description" content="并发队列（或线程安全的队列）是在我们在进行多线程并发编程时经常使用的一种数据结构。并发队列不仅具备基本队列的所有特性，还是线程安全的。由于并">
+<meta property="og:url" content="https://zhannicholas.github.io/java/concurrency/java_concurrent_queue/">
 <meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="computer_networks"><meta property="article:tag" content="HTTP"><meta property="article:published_time" content="2020-12-13T17:14:07+08:00"><meta property="article:modified_time" content="2020-12-13T17:14:07+08:00"><meta name=twitter:card content="summary">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="java"><meta property="article:tag" content="Java"><meta property="article:tag" content="并发"><meta property="article:published_time" content="2021-08-31T21:11:09+08:00"><meta property="article:modified_time" content="2021-08-31T21:11:09+08:00"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.87.0">
-<title>HTTP 认证 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/computer_networks/http/http_authentication/>
+<title>Java 中的并发队列 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/java/concurrency/java_concurrent_queue/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
 </head>
-<body class="page type-computer_networks has-sidebar">
+<body class="page type-java has-sidebar">
 <div class=site><div id=sidebar class=sidebar>
 <a class=screen-reader-text href=#main-menu>跳到主菜单</a>
 <div class=container><section class="widget widget-about sep-after">
@@ -46,22 +46,22 @@ Java Developer, Runner, Cyclist
 </section>
 <section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
 <div class=container>
-<ul><li class="item has-children">
+<ul><li class="item has-children has-current">
 <a href=/java/>Java</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
 <span class=sign></span>
 </button>
 <ul class=sub-menu><li class=item>
 <a href=/java/jakartaee/>Jakarta EE</a></li><li class=item>
-<a href=/java/jvm/>JVM</a></li><li class=item>
+<a href=/java/jvm/>JVM</a></li><li class="item has-current">
 <a href=/java/concurrency/>并发</a></li></ul></li><li class=item>
 <a href=/distributed_computing/>分布式计算</a></li><li class=item>
-<a href=/operating_systems/>操作系统</a></li><li class="item has-children has-current">
+<a href=/operating_systems/>操作系统</a></li><li class="item has-children">
 <a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
 <span class=sign></span>
 </button>
-<ul class=sub-menu><li class="item has-current">
+<ul class=sub-menu><li class=item>
 <a href=/computer_networks/http/>HTTP</a></li><li class=item>
 <a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
 </div>
@@ -173,7 +173,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/computer_networks/>计算机网络</a></li><li><a href=/computer_networks/http/>HTTP</a></li><li><span>HTTP 认证</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><a href=/java/concurrency/>并发</a></li><li><span>Java 中的并发队列</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -188,17 +188,17 @@ Java Developer, Runner, Cyclist
 <header class="header entry-header">
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title>HTTP 认证</h1>
+<h1 class=title>Java 中的并发队列</h1>
 </div>
 <div class=entry-meta>
 <span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 <span class=screen-reader-text>Posted on </span>
-<time class=entry-date datetime=2020-12-13T17:14:07+08:00>2020, Dec 13</time>
+<time class=entry-date datetime=2021-08-31T21:11:09+08:00>2021, Aug 31</time>
 </span>
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-5 mins read
+2 mins read
 </span>
 </div>
 </div>
@@ -209,133 +209,72 @@ Java Developer, Runner, Cyclist
 </summary>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#http访问认证框架>HTTP访问认证框架</a></li>
-<li><a href=#basic认证>BASIC认证</a>
-<ul>
-<li><a href=#basic认证的步骤>BASIC认证的步骤</a></li>
-<li><a href=#代理认证>代理认证</a></li>
-<li><a href=#basic认证的缺陷>BASIC认证的缺陷</a></li>
-</ul>
-</li>
-<li><a href=#digest认证>DIGEST认证</a>
-<ul>
-<li><a href=#digest认证步骤>DIGEST认证步骤</a></li>
-</ul>
-</li>
-<li><a href=#参考资料>参考资料</a></li>
+<li><a href=#阻塞队列>阻塞队列</a></li>
+<li><a href=#非阻塞队列>非阻塞队列</a></li>
 </ul>
 </nav>
 </details>
 <div class="container entry-content">
-<p>Web连接着不计其数的资源，但并不是所有的资源都是可以随意访问的。某些资源只对部分特定的用户开放，为了达到这个目的，需要对用户进行<strong>认证（authentication）</strong>。通过认证，服务器可以知道用户是谁，进而判定用户可以访问哪些资源。简而言之，认证就是向服务器证明你是谁，而**授权（authorization）**就是服务器授予用户访问特定资源的权限。</p>
-<p>HTTP1.1使用的认证方式如下：</p>
-<ul>
-<li>BASIC认证（基本认证）</li>
-<li>DIGEST认证（摘要认证）</li>
-<li>SSL客户端认证</li>
-<li>FormBase认证（表单认证）
-此外，还有NTLM、Kerberos、Windows Live ID等认证方式。</li>
-</ul>
-<h2 id=http访问认证框架>HTTP访问认证框架</h2>
-<p>HTTP提供了一个简单的 <strong>质询-响应（challenge-response）</strong> 认证机制，服务器可以用它来对客户端请求进行质询，要求用户提供认证信息。下图展示了HTTP的认证模型：</p>
-<p><img src=/images/computer_networks/http/simplified-challenge-response-authentication.png alt="Simplified challenge/response authentication"></p>
-<p>HTTP认证模型由4个步骤组成：</p>
-<ol>
-<li><strong>请求（Request）</strong>：客户端发送请求。</li>
-<li><strong>质询（Challenge）</strong>：当客户端请求的资源需要认证时，服务器会以<code>401 Unauthorized</code>状态码拒绝请求，同时在响应报文中添加<code>WWW-Authenticate</code>首部字段。<code>WWW-Authenticate</code>首部字段会对保护区域进行描述并指定认证算法。</li>
-<li><strong>授权（Authorization）</strong>：客户端重新发起请求，但这次会给请求报文附加一个<code>Authorization</code>首部。<code>Authorization</code>首部说明了认证算法、用户名和密码。</li>
-<li><strong>成功（Success）</strong>：如果授权成功，服务器就会返回客户端所请求的内容。有些授权算法会在<code>Authentication-Info</code>首部中返回一些与授权会话相关的附加信息。</li>
-</ol>
-<p>HTTP允许服务器给不同的资源指定不同的访问权限，这是通过安全域来实现的。Web服务器会将受保护的文档组织成一个<strong>安全域（security realm）</strong>，每个安全域都可以有不同的授权用户。</p>
-<h2 id=basic认证>BASIC认证</h2>
-<p>BASIC认证早在HTTP/1.0规范中就被提出来了，后来被移到了RFC2617中。现在仍然有一部分网站使用这种传统的认证方式。BASIC认证中会使用<code>WWW-Authenticate</code>和<code>Authorization</code>两个首部，但并不会使用<code>Authentication-Info</code>首部：</p>
-<ul>
-<li>质询（服务器发往客户端）：网站的不同部分可能使用不同的密码，<code>Realm</code>是一个字符串，告诉用户该使用哪个账号和密码。首部格式为：<code>WWW-Authenticate: Basic realm=quoted-realm</code>。</li>
-<li>响应（客户端发往服务端）：客户端用<code>:</code>将用户名和密码连接起来，然后用Base-64进行编码。首部格式为：<code>Authorization: Basic base64-username-and-password</code>。</li>
-</ul>
-<h3 id=basic认证的步骤>BASIC认证的步骤</h3>
-<p>下面是BASIC认证的一个例子：</p>
-<p><img src=/images/computer_networks/http/basic-authentication-example.png alt="Basic authentication example"></p>
-<p>BASIC认证的步骤如下：</p>
-<ol>
-<li>客户端请求的资源需要BASIC认证的资源。</li>
-<li>服务器会随状态码<code>401 Authorization Required</code>返回带<code>WWW-Authenticate</code>首部字段的响应，该字段内包含了认证的方式（<code>BASIC</code>）和请求资源所属安全域（<code>realm="xxx"</code>）。</li>
-<li>客户端向用户询问用户名和密码，然后用<code>:</code>连接二者，再进行Base-64编码处理。编码结果会放在<code>Authorization</code>首部中回送给服务器。</li>
-<li>服务器对用户名和密码进行解码，验证它们的正确性。如果验证通过，则返回一条包含请求资源的响应。</li>
-</ol>
-<h3 id=代理认证>代理认证</h3>
-<p>位于客户端和服务器之间的代理也可以实现认证功能。代理认证的步骤和BASIC认证的身份验证步骤相同，但首部和状态码都有所不同。下表列出了Web服务器和代理在认证中使用的状态码和首部的差异：</p>
+<p>并发队列（或线程安全的队列）是在我们在进行多线程并发编程时经常使用的一种数据结构。并发队列不仅具备基本队列的所有特性，还是线程安全的。由于并发队列在实现时已经考虑了各种线程安全问题，所以我们可以在并发环境中直接使用，而不用担心出现线程安全问题，有利于降低开发难度和工作量。</p>
+<p><img src=/images/java/concurrency/java_concurrent_queue.png alt="Java 并发队列" title="Java 并发队列"></p>
+<p>Java 中的并发队列可以分为阻塞队列和非阻塞队列两大类。</p>
+<h2 id=阻塞队列>阻塞队列</h2>
+<p>除了队列的基本功能外，阻塞队列最大的特点在于 <strong>阻塞</strong>：在读取元素时，若队列为空，则阻塞读取操作直到队列非空；在写入元素时，若队列已满，则阻塞写入操作直到队列中出现可用空间。</p>
+<p>阻塞队列的典型代表是 <code>BlockingQueue</code> 接口的各个实现类，主要有 <code>ArrayBlockingQueue</code>、<code>LinkedBlockingQueue</code>、<code>SynchronousQueue</code>、<code>DelayQueue</code>、<code>PriorityBlockingQueue</code> 和 <code>LinkedTransferQueue</code>。</p>
+<p>根据阻塞队列容量的大小，又可以将其分为有界队列和无界队列。有界队列的典型代表是 <code>ArrayBlockingQueue</code>，一旦队列满了就无法入队新的元素了，因为它不会扩容。无界队列的典型代表是 <code>LinkedBlockingQueue</code>，其容量最大为 <code>Integer.MAX_VALUE</code>，即 <code>2^31 - 1</code>，这么大的容量几乎不可能被填满，故可以近似看成无限容量。</p>
+<p>在阻塞队列中有很多相似的方法，比较容易混淆。因此，有必要对它们进行分类整理，根据方法是否抛出异常、是否返回特殊值、是否阻塞、是否具有超时时间，JDK 已经分类好了：</p>
 <table>
 <thead>
 <tr>
-<th>Web Server</th>
-<th>Proxy Server</th>
+<th></th>
+<th>Throws exception</th>
+<th>Special value</th>
+<th>Blocks</th>
+<th>Times out</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Unauthorized status code: 401</td>
-<td>Unauthorized status code: 407</td>
+<td>Insert</td>
+<td>add(e)</td>
+<td>offer(e)</td>
+<td>put(e)</td>
+<td>offer(e, time, unit)</td>
 </tr>
 <tr>
-<td>WWW-Authenticate</td>
-<td>Proxy-Authenticate</td>
+<td>Remove</td>
+<td>remove()</td>
+<td>poll()</td>
+<td>take()</td>
+<td>poll(time, unit)</td>
 </tr>
 <tr>
-<td>Authorization</td>
-<td>Proxy-Authorization</td>
-</tr>
-<tr>
-<td>Authentication-Info</td>
-<td>Proxy-Authentication-Info</td>
+<td>Examine</td>
+<td>element()</td>
+<td>peek()</td>
+<td>not applicable</td>
+<td>not applicable</td>
 </tr>
 </tbody>
 </table>
-<h3 id=basic认证的缺陷>BASIC认证的缺陷</h3>
-<p>BASIC认证虽然简单便捷，但并不安全。只能用它来防止非恶意用户的无意间访问，或配合SSL等加密技术一起使用。BASIC认证存在一些缺陷：</p>
-<ul>
-<li>通过网络发送用户名和密码。虽然用户名和密码经过了Base-64编码，但可以轻松解码。</li>
-<li>攻击者可以嗅探到用户名和密码，然后实施重放攻击。</li>
-<li>缺乏针对代理或中间人等中间节点的防护措施。</li>
-<li>服务器很容易被假冒。</li>
-</ul>
-<h2 id=digest认证>DIGEST认证</h2>
-<p>BASIC认证虽然简单，但极不安全：用户名和密码是明文传输的，报文也容易被篡改，保证安全的唯一方式就是配合SSL进行BASIC认证。由于BASIC认证无法达到大多数Web网站期望的安全等级，它并不常用。为了弥补BASIC认证的不足，HTTP/1.1引入了DIGEST认证。DIGEST认证同样采用了质询/响应的方式，但不会发送明文密码，因此更加安全。</p>
-<h3 id=digest认证步骤>DIGEST认证步骤</h3>
-<p>由于DIGEST认证和BASIC认证都采用了HTTP的质询/响应框架，所以DIGEST认证的步骤与BASIC认证的步骤基本相同。下图展示了二者再语法上的差异：</p>
-<p><img src=/images/computer_networks/http/basic-authentication-vesus-digest-authentication.png alt="Basic authentication vesus digest authentication"></p>
-<p>DIGEST认证的步骤如下：</p>
-<ol>
-<li>客户端请求受保护的资源。</li>
-<li>服务器会随状态码<code>401 Authorization Required</code>返回带<code>WWW-Authenticate</code>首部字段的响应，该字段内包含了认证的方式（<code>DIGEST</code>）、对应的保护域（<code>realm</code>）、临时质询码（<code>nonce</code>，一个随机数）等。<code>realm</code>和<code>nonce</code>这两个字段是必须要有的，客户端需要依靠向服务端回送这两个值进行认证。</li>
-<li>客户端再<code>Authorization</code>首部中返回DIGEST认证所必须的信息，包括<code>username</code>、<code>realm</code>、<code>nonce</code>、<code>uri</code>、<code>response</code>的字段信息等。其中<code>realm</code>和<code>nonce</code>就是上一步中从服务器响应中收到的字段。</li>
-<li>服务器对客户端提供的信息进行验证。若验证通过，则返回受保护的资源。</li>
-</ol>
-<h2 id=参考资料>参考资料</h2>
-<ol>
-<li>David Gourley, Brian Totty. <em>HTTP: The Definitive Guide</em>. O&rsquo;Reilly Media, 2002.</li>
-<li><a href=https://tools.ietf.org/html/rfc2617>RFC2617</a>.</li>
-</ol>
+<p>根据操作类型的不同，特殊值（Special Value）略有差异：布尔类型的特殊值为 <code>false</code>，对象类型的特殊值为 <code>null</code>。</p>
+<h2 id=非阻塞队列>非阻塞队列</h2>
+<p>非阻塞队列家族则没有阻塞队列家族这么庞大，典型代表是 <code>ConcurrentLinkedQueue</code>，其内部通过 CAS 保证线程安全，不会阻塞线程，适合并发不是特别剧烈的场景。</p>
 </div>
 <footer class=entry-footer>
 <div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
-<span class=screen-reader-text>分类: </span><a class=category href=/categories/networks/>Networks</a></div>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/java/>Java</a></div>
 <div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-<span class=screen-reader-text>标签: </span><a class=tag href=/tags/http/>HTTP</a></div>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/java/>Java</a>, <a class=tag href=/tags/%E5%B9%B6%E5%8F%91/>并发</a></div>
 </div>
 </footer>
 </article>
 <nav class=entry-nav>
 <div class=container><div class="prev-entry sep-before">
-<a href=/computer_networks/http/gateway_tunnels_and_relays/>
+<a href=/java/concurrency/thread_safety/>
 <span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
 Previous</span>
-<span class=screen-reader-text>上一篇: </span>网关、隧道和中继</a>
-</div><div class="next-entry sep-before">
-<a href=/computer_networks/http/http_messages/>
-<span class=screen-reader-text>下一篇: </span>HTTP 报文<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
-</span>
-</a>
+<span class=screen-reader-text>上一篇: </span>线程安全</a>
 </div></div>
 </nav>
 </main>
