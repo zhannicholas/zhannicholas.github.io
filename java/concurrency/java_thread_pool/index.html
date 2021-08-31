@@ -3,14 +3,14 @@
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="线程池是管理一组同构工作线程的资源池，内部主要分为四部分： 线程池管理器：负责线程池的创建、销毁、添加任务等管理工作。 工作队列（Work Que">
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="线程池 • Nicholas Zhan">
+<meta property="og:title" content="Java 线程池 • Nicholas Zhan">
 <meta property="og:description" content="线程池是管理一组同构工作线程的资源池，内部主要分为四部分： 线程池管理器：负责线程池的创建、销毁、添加任务等管理工作。 工作队列（Work Que">
-<meta property="og:url" content="https://zhannicholas.github.io/java/concurrency/thread_pool/">
+<meta property="og:url" content="https://zhannicholas.github.io/java/concurrency/java_thread_pool/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="java"><meta property="article:tag" content="Java"><meta property="article:tag" content="并发"><meta property="article:published_time" content="2020-12-13T18:35:11+08:00"><meta property="article:modified_time" content="2020-12-13T18:35:11+08:00"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.87.0">
-<title>线程池 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/java/concurrency/thread_pool/>
+<title>Java 线程池 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/java/concurrency/java_thread_pool/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
 </head>
@@ -173,7 +173,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><a href=/java/concurrency/>并发</a></li><li><span>线程池</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><a href=/java/concurrency/>并发</a></li><li><span>Java 线程池</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -188,7 +188,7 @@ Java Developer, Runner, Cyclist
 <header class="header entry-header">
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title>线程池</h1>
+<h1 class=title>Java 线程池</h1>
 </div>
 <div class=entry-meta>
 <span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -210,15 +210,14 @@ Java Developer, Runner, Cyclist
 <nav id=TableOfContents>
 <ul>
 <li><a href=#设置线程池的大小>设置线程池的大小</a></li>
-<li><a href=#线程池的创建和销毁>线程池的创建和销毁</a>
+<li><a href=#创建线程池>创建线程池</a>
 <ul>
-<li><a href=#线程池的创建>线程池的创建</a></li>
-<li><a href=#线程池的销毁>线程池的销毁</a></li>
+<li><a href=#通过-executors-快速创建线程池>通过 Executors 快速创建线程池</a></li>
 </ul>
 </li>
-<li><a href=#线程的创建和销毁>线程的创建和销毁</a></li>
-<li><a href=#java线程池的实现原理>Java线程池的实现原理</a></li>
-<li><a href=#饱和策略>饱和策略</a></li>
+<li><a href=#关闭线程池>关闭线程池</a></li>
+<li><a href=#java线程池的复用原理>Java线程池的复用原理</a></li>
+<li><a href=#拒绝策略>拒绝策略</a></li>
 <li><a href=#参考资料>参考资料</a></li>
 </ul>
 </nav>
@@ -235,15 +234,14 @@ Java Developer, Runner, Cyclist
 <h2 id=设置线程池的大小>设置线程池的大小</h2>
 <p>我们调整线程池大小的主要目的是为了充分利用 CPU 和内存等资源，从而最大限度地提高程序的性能。线程池的理想大小取决于被提交的任务的类型以及所部署系统的特性。通常不应该在代码中固定线程池的大小，而应该通过某种配置机制来提供，或者根据 <code>Runtime.getRuntime().availableProcessors()</code> 来获取可用处理器的数量之后动态计算。</p>
 <p>如果线程池过大，那么大量的线程将在相对很少的 CPU 和内存资源上发生竞争，这不仅会导致更高的内存使用量，而且还可能耗尽资源。如果线程池过小，那么将导致许多空闲的处理器无法执行工作，从而降低吞吐率。</p>
-<p>Java Concurrency in Practice 一书建议我们：对于计算密集型任务，在拥有 <code>N</code> 个处理器的系统上，当线程池的大小为 <strong><code>N+1</code></strong> 时，通常能实现最优的利用率（即使当计算密集型的线程偶尔由于缺页故障或者其他原因而暂停时，这个“额外”的线程也能确保 CPU 的时钟周期不被浪费）。对于包含I/O操作或其它阻塞操作的任务，由于线程并不会一直执行，因此线程池的规模应该更大。要正确的设置线程池的大小，必须估算出任务的等待时间与计算时间的比值。书中还给了我们另一个计算线程数的公式。</p>
+<p><em>Java Concurrency in Practice</em> 一书建议我们：对于计算密集型任务，在拥有 <code>N</code> 个处理器的系统上，当线程池的大小为 <strong><code>N+1</code></strong> 时，通常能实现最优的利用率（即使当计算密集型的线程偶尔由于缺页故障或者其他原因而暂停时，这个“额外”的线程也能确保 CPU 的时钟周期不被浪费）。对于包含I/O操作或其它阻塞操作的任务，由于线程并不会一直执行，因此线程池的规模应该更大。要正确的设置线程池的大小，必须估算出任务的等待时间与计算时间的比值。书中还给了我们另一个计算线程数的公式。</p>
 <p>假设：</p>
 <p>$$N_{cpu} = number\ of\ CPUs$$
 $$U_{cpu} = target\ CPU\ utilization, 0\ \le \ U_{cpu} \le \ 1$$
 $$\frac{W}{C} = ratio\ of\ wait\ time\ to\ compute\ time$$</p>
 <p>若要使处理器达到期望的使用率，线程池的最有大小等于：</p>
 <p>$$N_{threads} = N_{cpu} * U_{cpu} * (1 + \frac{W})$$</p>
-<h2 id=线程池的创建和销毁>线程池的创建和销毁</h2>
-<h3 id=线程池的创建>线程池的创建</h3>
+<h2 id=创建线程池>创建线程池</h2>
 <p>我们可以使用 <code>ThreadPoolExecutor</code> 来创建一个线程池：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>ThreadPoolExecutor</span><span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> corePoolSize<span style=color:#f92672>,</span>
                           <span style=color:#66d9ef>int</span> maximumPoolSize<span style=color:#f92672>,</span>
@@ -276,7 +274,10 @@ $$\frac{W}{C} = ratio\ of\ wait\ time\ to\ compute\ time$$</p>
 <li><code>threadFactory</code>：执行器创建新线程时所使用的工厂，池中所有的线程都由它创建（通过 <code>addWorker()</code> 方法）。默认的线程工厂是 <code>DefaultThreadFactory</code>，它为线程指定了名字和优先级。我们可以通过实现 <code>ThreadFactory</code> 接口来实现更多自定义操作。</li>
 <li><code>handler</code>：用来执行线程池的拒绝（饱和）策略。当 <code>workQueue</code> 满了并且线程池不能再创建线程来执行新提交的任务时，就会对新任务执行拒绝策略。拒绝策略其实是一种限流保护机制。</li>
 </ul>
-<p>此外，Java类库提供了一些灵活的线程池创建方案，可以通过 <code>Executors</code> 中的静态工厂方法来创建一个线程池：</p>
+<p>线程池的基本大小（corePoolSize）、最大大小（maximumPoolSize）以及存活时间（keepAliveTime）等因素共同负责线程的创建和销毁。基本大小也是线程池的目标大小，即在没有任务执行时线程池的大小，并且只有在工作队列满了的情况下才会创建超出这个数量的线程。线程池的最大大小表示可以同时活动的线程数量的上限。如果某个线程的空闲时间超过了存活时间，那么将被标记为可回收的，当线程池的当前大小超过了基本大小时，这个线程将被终止。</p>
+<p>值得注意的是：在创建 <code>TreadPoolExecutor</code> 的初期，线程并不会立即启动，而是等到有任务提交时才会启动，除非调用 <code>prestartCoreThreads()</code>。</p>
+<h3 id=通过-executors-快速创建线程池>通过 Executors 快速创建线程池</h3>
+<p>Java类库中的 <code>Executors</code> 提供了不少创建线程池的静态工厂方法：</p>
 <ul>
 <li>
 <p><code>newFixedThreadPool()</code>。创建一个固定容量的线程池，每提交一个任务就创建一个线程，直到达到线程池的容量，这时线程池的规模将不再变化（在线程池关闭之前，若有线程因故终止，线程池将补充新的线程）。这种线程池一般适用于任务数量不均匀、对内存压力不敏感但对系统负载比较敏感的场景。</p>
@@ -304,12 +305,12 @@ service<span style=color:#f92672>.</span><span style=color:#a6e22e>scheduleWithF
 <p><code>newSingleThreadScheduledExecutor()</code>。与 <code>newScheduledTreadPool()</code> 非常相似，它只是 <code>ScheduledThreadPool</code> 的一个特例，内部只有一个线程。</p>
 </li>
 <li>
-<p><code>newWorkStealingPool</code> 用于创建 <code>ForkJoinPool</code>。<code>ForkJoinPool</code> 也是线程池，但它与 <code>ThreadPoolExecutor</code> 有着很大不同。它非常适合用来执行可以产生子任务的任务（尤其是任务执行时长不均匀的场景），整个过程主要涉及两个步骤：首先是拆分任务（Fork）为子任务，然后是汇总（Join）子任务的结果得到任务的结果。此外，<code>ForkJoinPool</code> 的内部结构也与 <code>ThreadPoolExecutor</code> 大不相同：在 <code>ForkJoinPool</code> 中，每个线程都有自己独立的任务队列（是一个 Deque，用于存储分裂出来的子任务），而 <code>ThreadPoolExecutor</code> 中所有线程共用一个队列。</p>
+<p><code>newWorkStealingPool()</code> 用于创建 <code>ForkJoinPool</code>。<code>ForkJoinPool</code> 也是线程池，但它与 <code>ThreadPoolExecutor</code> 有着很大不同。它非常适合用来执行可以产生子任务的任务（尤其是任务执行时长不均匀的场景），整个过程主要涉及两个步骤：首先是拆分任务（Fork）为子任务，然后是汇总（Join）子任务的结果得到任务的结果。此外，<code>ForkJoinPool</code> 的内部结构也与 <code>ThreadPoolExecutor</code> 大不相同：在 <code>ForkJoinPool</code> 中，每个线程都有自己独立的任务队列（是一个 Deque，用于存储分裂出来的子任务），而 <code>ThreadPoolExecutor</code> 中所有线程共用一个队列。</p>
 </li>
 </ul>
-<p>阿里巴巴的《Java开发手册》中为了规避资源耗尽的风险，禁止使用 <code>Executors</code> 类去创建线程池。这是因为 <code>Executors</code> 创建出来的线程池有以下弊端：</p>
+<p>阿里巴巴的《Java开发手册》中为了规避资源耗尽的风险，禁止使用 <code>Executors</code> 类去创建线程池。这是因为 <code>Executors</code> 创建出来的线程池有一些弊端：</p>
 <ul>
-<li><code>newFixedThreadPool()</code> 和 <code>newSingleThreadPool()</code> 创建出来的线程池允许的请求队列（<code>workQueue</code>）长度为 <code>Integer.MAX_VALUE</code>。如果线程池中任务的处理比较慢，那么随着请求的增多，队列中可能堆积大量的任务，进而占用大量内存，导致OOM。</li>
+<li><code>newFixedThreadPool()</code> 和 <code>newSingleThreadPool()</code> 创建出来的线程池允许的请求队列（<code>workQueue</code>）长度为 <code>Integer.MAX_VALUE</code>。如果线程池中任务的处理比较慢，那么随着请求的增多，队列中可能堆积大量的任务，进而占用大量内存，导致 OOM。</li>
 <li><code>newCachedThreadPool()</code> 和 <code>newScheduledThreadPool()</code> 创建出来的线程池允许的线程的最大数量（<code>maximumPoolSize</code>）为 <code>Inteter.MAX_VALUE</code>，当任务数量特别多时，就可能导致大量的线程被创建，最终因超过操作系统的上限而无法再创建新线程，或者引发 OOM。</li>
 </ul>
 <p>除了 <code>ForkJoinPool</code> 另外五种创建线程池的方法都可以认为是利用 <code>ThreadPoolExecutor</code> 来实现的，区别就在于传入的参数不同而已。</p>
@@ -320,6 +321,7 @@ service<span style=color:#f92672>.</span><span style=color:#a6e22e>scheduleWithF
 <th>corePoolSize</th>
 <th>maximumPoolSize</th>
 <th>keepAliveTime</th>
+<th>workQueue&mdash;&mdash;&ndash;</th>
 </tr>
 </thead>
 <tbody>
@@ -328,39 +330,41 @@ service<span style=color:#f92672>.</span><span style=color:#a6e22e>scheduleWithF
 <td>构造函数传入</td>
 <td>同 corePoolSize</td>
 <td>0</td>
+<td>LinkedBlockingQueue</td>
 </tr>
 <tr>
 <td>newCachedThreadPool</td>
 <td>0</td>
 <td>Integer.MAX_VALUE</td>
 <td>60s</td>
+<td>SynchronousQueue</td>
 </tr>
 <tr>
 <td>newSingleTreadExecutor</td>
 <td>1</td>
 <td>1</td>
 <td>0</td>
+<td>LinkedBlockingQueue</td>
 </tr>
 <tr>
 <td>newScheduledTreadPool</td>
 <td>构造函数传入</td>
 <td>Integer.MAX_VALUE</td>
 <td>0</td>
+<td>DelayedWorkQueue</td>
 </tr>
 <tr>
 <td>newSingleThreadScheduledExecutor</td>
 <td>1</td>
 <td>Integer.MAX_VALUE</td>
 <td>0</td>
+<td>DelayedWorkQueue</td>
 </tr>
 </tbody>
 </table>
-<h3 id=线程池的销毁>线程池的销毁</h3>
-<p>我们可以通过调用线程池的 <code>shutdown()</code> 或 <code>shutdownNow()</code> 方法来关闭线程池。它们的原理一样：都是通过遍历线程池中的工作线程，然后调用线程的 <code>interrup()</code> 方法来中断线程，所以无法响应中断的任务可能永远无法终止。但它们之间存在一定的区别： <code>shutdown()</code> 方法将执行平缓的关闭过程：不再接受新任务，同时等待已经提交的任务执行完成（包括已提交但还未执行的任务）。<code>shutdownNow()</code> 方法将执行粗暴的关闭过程：尝试取消所有运行中的任务，并且不再启动队列中尚未开始执行的任务。等所有任务都完成后，线程池就转入 <code>Terminated(已终止)</code> 状态。</p>
-<h2 id=线程的创建和销毁>线程的创建和销毁</h2>
-<p>线程池的基本大小（corePoolSize）、最大大小（maximumPoolSize）以及存活时间（keepAliveTime）等因素共同负责线程的创建和销毁。基本大小也是线程池的目标大小，即在没有任务执行时线程池的大小，并且只有在工作队列满了的情况下才会创建超出这个数量的线程。线程池的最大大小表示可以同时活动的线程数量的上限。如果某个线程的空闲时间超过了存活时间，那么将被标记为可回收的，当线程池的当前大小超过了基本大小时，这个线程将被终止。</p>
-<p>值得注意的是：在创建 <code>TreadPoolExecutor</code> 的初期，线程并不会立即启动，而是等到有任务提交时才会启动，除非调用 <code>prestartCoreThreads()</code>。</p>
-<h2 id=java线程池的实现原理>Java线程池的实现原理</h2>
+<h2 id=关闭线程池>关闭线程池</h2>
+<p>我们可以通过调用线程池的 <code>shutdown()</code> 或 <code>shutdownNow()</code> 方法来关闭线程池。它们的原理一样：都是通过遍历线程池中的工作线程，然后调用线程的 <code>interrup()</code> 方法来中断线程，所以无法响应中断的任务可能永远无法终止。但它们之间存在一定的区别： <code>shutdown()</code> 方法将执行 <strong>平缓</strong> 的关闭过程：不再接受新任务，同时等待已经提交的任务执行完成（包括已提交但还未执行的任务）。<code>shutdownNow()</code> 方法将执行粗暴的关闭过程：尝试取消所有运行中的任务，并且不再启动队列中尚未开始执行的任务。等所有任务都完成后，线程池就转入 <code>Terminated(已终止)</code> 状态。</p>
+<h2 id=java线程池的复用原理>Java线程池的复用原理</h2>
 <p><code>ThreadPoolExecutor</code> 通过 <code>execute(Runnable command)</code> 方法来执行一个线程：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>execute</span><span style=color:#f92672>(</span>Runnable command<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>command <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span>
@@ -393,16 +397,16 @@ service<span style=color:#f92672>.</span><span style=color:#a6e22e>scheduleWithF
 <li><code>firstTask</code>：线程应首先运行的任务，如果没有则可以设置为 <code>null</code>；</li>
 <li><code>core</code>：判断是否可以创建线程数量的最大值，如果等于 <code>true</code> 则表示使用 <code>corePoolSize</code> 作为上限值创建 worker，<code>false</code> 则表示使用 <code>maximumPoolSize</code> 作为上限创建 worker。</li>
 </ul>
-<h2 id=饱和策略>饱和策略</h2>
-<p>当线程池无法接收新的任务时，它会按照我们提供的饱和策略来拒绝任务。通常有两种情况：</p>
+<h2 id=拒绝策略>拒绝策略</h2>
+<p>当线程池无法接收新的任务时，它会按照我们提供的拒绝策略来拒绝任务。通常有两种情况：</p>
 <ul>
 <li>线程池内的工作已经饱和（即任务队列满了，运行中的线程数也达到了 <code>maximumPoolSize</code>），线程池没有能力继续处理新提交的任务</li>
 <li>线程池被关闭（比如调用 <code>shutdown()</code> 方法）。即便此时线程池内部依然没有执行完成的任务正在执行，但线程池也不会接收任何新的任务</li>
 </ul>
 <p>使用者可以通过调用 <code>ThreadPoolExecutor</code> 的 <code>setRejectedExecutionHandler(RejectedExecutionHandler handler)</code> 来修改其饱和策略。JDK 自带了几种不同的 <code>RejectedExecutionHandler</code> 实现，每种实现都对应着有不同的饱和策略：</p>
 <ul>
-<li><strong><code>AbortPolicy</code></strong>：终止策略。这是默认的策略，该策略直接会抛出未检查的<code>RejectedExecutionException</code>。调用者可以捕获这个异常，然后根据实际需求编写处理代码。</li>
-<li><strong><code>DiscardPolicy</code></strong>：丢弃策略。新提交的任务被直接丢弃，调用者不会收到任何通知，这是有一定风险的，可能造成数据丢失。</li>
+<li><strong><code>AbortPolicy</code></strong>：终止策略。这是默认的策略，该策略直接会抛出 <code>RejectedExecutionException</code>。调用者可以将其捕获，然后根据实际需求编写处理代码。</li>
+<li><strong><code>DiscardPolicy</code></strong>：丢弃策略。新提交的任务被直接丢弃，调用者不会收到任何通知。这是有一定风险的，可能造成数据丢失。</li>
 <li><strong><code>DiscardOldestPolicy</code></strong>：丢弃最老的任务。丢弃下一个将被执行的任务，然后尝试重新提交新的任务。这也存在数据丢失的风险。</li>
 <li><strong><code>CallerRunsPolicy</code></strong>：由调用者执行。不丢弃任务，也不抛出异常，而是将任务退回给调用者。它不会在线程池中的某个线程中执行新提交的任务，而是在调用了<code>execute(Runnable command)</code>方法的线程（调用者线程）中继续执行该任务。这么做的好处是任务不会被丢弃，但是会减缓任务提交的速度，给了线程池一定的缓冲期。</li>
 </ul>
@@ -422,10 +426,10 @@ service<span style=color:#f92672>.</span><span style=color:#a6e22e>scheduleWithF
 </article>
 <nav class=entry-nav>
 <div class=container><div class="prev-entry sep-before">
-<a href=/java/concurrency/thread/>
+<a href=/java/concurrency/java_thread/>
 <span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
 Previous</span>
-<span class=screen-reader-text>上一篇: </span>线程</a>
+<span class=screen-reader-text>上一篇: </span>Java 线程</a>
 </div><div class="next-entry sep-before">
 <a href=/java/concurrency/producer_consumer_pattern/>
 <span class=screen-reader-text>下一篇: </span>生产者消费者模式的几种实现方案<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
