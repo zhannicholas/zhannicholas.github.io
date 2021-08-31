@@ -198,7 +198,7 @@ Java Developer, Runner, Cyclist
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-11 mins read
+10 mins read
 </span>
 </div>
 </div>
@@ -209,38 +209,44 @@ Java Developer, Runner, Cyclist
 </summary>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#创建一个新线程的方法>创建一个新线程的方法</a>
+<li><a href=#创建线程>创建线程</a>
 <ul>
 <li><a href=#继承-thread-类>继承 Thread 类</a></li>
 <li><a href=#实现-runnable-接口>实现 Runnable 接口</a></li>
 <li><a href=#实现-callable-接口>实现 Callable 接口</a></li>
+<li><a href=#使用线程池>使用线程池</a></li>
 </ul>
 </li>
-<li><a href=#线程的启动与停止>线程的启动与停止</a>
-<ul>
 <li><a href=#线程的启动>线程的启动</a></li>
-<li><a href=#停止线程>停止线程</a></li>
+<li><a href=#停止线程>停止线程</a>
+<ul>
+<li><a href=#被弃用的停止方法>被弃用的停止方法</a></li>
+<li><a href=#使用状态标记>使用状态标记</a></li>
+<li><a href=#使用-interrupt>使用 interrupt</a></li>
 </ul>
 </li>
-<li><a href=#线程的状态>线程的状态</a></li>
-<li><a href=#实现多线程同步的方法>实现多线程同步的方法</a></li>
-<li><a href=#java中的原子操作>Java中的原子操作</a></li>
-<li><a href=#线程优先级>线程优先级</a></li>
-<li><a href=#常用方法>常用方法</a>
+<li><a href=#线程的状态>线程的状态</a>
 <ul>
-<li><a href=#wait与notify><code>wait()</code>与<code>notify()</code></a></li>
-<li><a href=#sleep与wait><code>sleep()</code>与<code>wait()</code></a></li>
-<li><a href=#sleep与yield><code>sleep()</code>与<code>yield()</code></a></li>
+<li><a href=#wait-与-notify><code>wait()</code> 与 <code>notify()</code></a></li>
+<li><a href=#sleep-与-wait><code>sleep()</code> 与 <code>wait()</code></a></li>
+<li><a href=#sleep-与-yield><code>sleep()</code> 与 <code>yield()</code></a></li>
 <li><a href=#join><code>join()</code></a></li>
 </ul>
 </li>
+<li><a href=#多线程同步>多线程同步</a>
+<ul>
+<li><a href=#java-中的原子操作>Java 中的原子操作</a></li>
+<li><a href=#同步的实现>同步的实现</a></li>
+</ul>
+</li>
+<li><a href=#线程优先级>线程优先级</a></li>
 <li><a href=#参考资料>参考资料</a></li>
 </ul>
 </nav>
 </details>
 <div class="container entry-content">
 <p>进程（process）是资源分配的基本单元，而线程（thread）是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源。和进程相比，线程更加轻量化，所以线程又叫<em>轻量级进程</em>。</p>
-<h2 id=创建一个新线程的方法>创建一个新线程的方法</h2>
+<h2 id=创建线程>创建线程</h2>
 <p>网上好多资料都说有三种创建线程的方式：</p>
 <ol>
 <li>继承<code>Thread</code>类，重写<code>run()</code>方法。</li>
@@ -255,7 +261,7 @@ Java Developer, Runner, Cyclist
         System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;通过继承 Thread 类来实现线程&#34;</span><span style=color:#f92672>);</span>
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>通过继承 Thread 类来实现线程最大的缺点就是代码未来的可扩展性被限制。Java 是不支持多继承的，我们的类一旦继承了 Thread 类，那么后续就没有其它办法再继承其它类了。</p>
+</code></pre></div><p>通过继承 Thread 类来实现线程最大的缺点就是代码未来的可扩展性被限制。Java 是不支持多继承的，一旦我们的类继承了 Thread 类，那么它就不能再继承其它类了。</p>
 <h3 id=实现-runnable-接口>实现 Runnable 接口</h3>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>RunnableThread</span> <span style=color:#66d9ef>implements</span> Runnable <span style=color:#f92672>{</span>
     <span style=color:#a6e22e>@Override</span>
@@ -273,12 +279,13 @@ Java Developer, Runner, Cyclist
 <span style=color:#f92672>}</span>
 
 Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleThreadExecutor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> CallableTask<span style=color:#f92672>());</span>
-</code></pre></div><p>实现 <code>Callable</code> 接口与实现 <code>Runnable</code> 接口最大的区别在于前者是有返回值的，而后者是无返回值的。</p>
+</code></pre></div><p>实现 <code>Callable</code> 接口与实现 <code>Runnable</code> 接口最大的区别在于返回值：前者有返回值的，而后者无返回值。</p>
 <blockquote>
 <p>The Callable interface is similar to Runnable, in that both are designed for classes whose instances are potentially executed by another thread. A Runnable, however, does not return a result and cannot throw a checked exception.</p>
 </blockquote>
-<p>但是，不管是 <code>Runnable</code> 还是 <code>Callable</code>，它们都表示被线程执行的任务，它们本身并不是线程。接口的不同实现意味着线程运行时执行的内容不同而已。</p>
-<p>说到创建线程，我们可能还会想到线程池。是的，线程池也可以创建线程，但最终的线程还是通过 <code>new Thread()</code> 创建出来的。这个你看了 <code>DefaultThreadFactory</code> 的源码就知道了：</p>
+<p>但是，不管是 <code>Runnable</code> 还是 <code>Callable</code>，它们都表示 <strong>被线程执行的任务</strong>，它们本身并不是线程。接口的不同实现只是意味着交给线程执行的内容不同而已。</p>
+<h3 id=使用线程池>使用线程池</h3>
+<p>我们可能还会想到线程池，使用线程池的时候，貌似不需要我们手动创建线程。那么线程池中的线程是如何创建的呢？实际上，线程池中的线程本质上是通过 <code>ThreadFactory</code> 创建的，不过最终的线程还是通过 <code>new Thread()</code> 创建出来的。我们可以来看一下 <code>ThreadFactory</code> 的默认实现 <code>DefaultThreadFactory</code> 的源码：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>DefaultThreadFactory</span> <span style=color:#66d9ef>implements</span> ThreadFactory <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> AtomicInteger poolNumber <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> AtomicInteger<span style=color:#f92672>(</span>1<span style=color:#f92672>);</span>
     <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> ThreadGroup group<span style=color:#f92672>;</span>
@@ -287,17 +294,12 @@ Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleTh
 
     DefaultThreadFactory<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
         SecurityManager s <span style=color:#f92672>=</span> System<span style=color:#f92672>.</span><span style=color:#a6e22e>getSecurityManager</span><span style=color:#f92672>();</span>
-        group <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>s <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>?</span> s<span style=color:#f92672>.</span><span style=color:#a6e22e>getThreadGroup</span><span style=color:#f92672>()</span> <span style=color:#f92672>:</span>
-                                Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>().</span><span style=color:#a6e22e>getThreadGroup</span><span style=color:#f92672>();</span>
-        namePrefix <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;pool-&#34;</span> <span style=color:#f92672>+</span>
-                        poolNumber<span style=color:#f92672>.</span><span style=color:#a6e22e>getAndIncrement</span><span style=color:#f92672>()</span> <span style=color:#f92672>+</span>
-                        <span style=color:#e6db74>&#34;-thread-&#34;</span><span style=color:#f92672>;</span>
+        group <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>s <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>?</span> s<span style=color:#f92672>.</span><span style=color:#a6e22e>getThreadGroup</span><span style=color:#f92672>()</span> <span style=color:#f92672>:</span> Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>().</span><span style=color:#a6e22e>getThreadGroup</span><span style=color:#f92672>();</span>
+        namePrefix <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;pool-&#34;</span> <span style=color:#f92672>+</span> poolNumber<span style=color:#f92672>.</span><span style=color:#a6e22e>getAndIncrement</span><span style=color:#f92672>()</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;-thread-&#34;</span><span style=color:#f92672>;</span>
     <span style=color:#f92672>}</span>
 
     <span style=color:#66d9ef>public</span> Thread <span style=color:#a6e22e>newThread</span><span style=color:#f92672>(</span>Runnable r<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-        Thread t <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Thread<span style=color:#f92672>(</span>group<span style=color:#f92672>,</span> r<span style=color:#f92672>,</span>
-                                namePrefix <span style=color:#f92672>+</span> threadNumber<span style=color:#f92672>.</span><span style=color:#a6e22e>getAndIncrement</span><span style=color:#f92672>(),</span>
-                                0<span style=color:#f92672>);</span>
+        Thread t <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Thread<span style=color:#f92672>(</span>group<span style=color:#f92672>,</span> r<span style=color:#f92672>,</span> namePrefix <span style=color:#f92672>+</span> threadNumber<span style=color:#f92672>.</span><span style=color:#a6e22e>getAndIncrement</span><span style=color:#f92672>(),</span> 0<span style=color:#f92672>);</span>
         <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>t<span style=color:#f92672>.</span><span style=color:#a6e22e>isDaemon</span><span style=color:#f92672>())</span>
             t<span style=color:#f92672>.</span><span style=color:#a6e22e>setDaemon</span><span style=color:#f92672>(</span><span style=color:#66d9ef>false</span><span style=color:#f92672>);</span>
         <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>t<span style=color:#f92672>.</span><span style=color:#a6e22e>getPriority</span><span style=color:#f92672>()</span> <span style=color:#f92672>!=</span> Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>NORM_PRIORITY</span><span style=color:#f92672>)</span>
@@ -305,22 +307,9 @@ Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleTh
         <span style=color:#66d9ef>return</span> t<span style=color:#f92672>;</span>
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><h2 id=线程的启动与停止>线程的启动与停止</h2>
-<h3 id=线程的启动>线程的启动</h3>
+</code></pre></div><h2 id=线程的启动>线程的启动</h2>
 <p>线程的启动很简单，调用 <code>Thread</code> 类的 <code>start()</code> 方法即可。<code>start()</code> 方法最终会调用 <code>Runnable</code> 的 <code>run()</code> 方法来执行任务。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>/**
-</span><span style=color:#75715e>* If this thread was constructed using a separate
-</span><span style=color:#75715e>* {@code Runnable} run object, then that
-</span><span style=color:#75715e>* {@code Runnable} object&#39;s {@code run} method is called;
-</span><span style=color:#75715e>* otherwise, this method does nothing and returns.
-</span><span style=color:#75715e>* &lt;p&gt;
-</span><span style=color:#75715e>* Subclasses of {@code Thread} should override this method.
-</span><span style=color:#75715e>*
-</span><span style=color:#75715e>* @see     #start()
-</span><span style=color:#75715e>* @see     #stop()
-</span><span style=color:#75715e>* @see     #Thread(ThreadGroup, Runnable, String)
-</span><span style=color:#75715e>*/</span>
-<span style=color:#a6e22e>@Override</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Override</span>
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>target <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
         target<span style=color:#f92672>.</span><span style=color:#a6e22e>run</span><span style=color:#f92672>();</span>
@@ -339,10 +328,6 @@ Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleTh
 </span><span style=color:#75715e>* It is never legal to start a thread more than once.
 </span><span style=color:#75715e>* In particular, a thread may not be restarted once it has completed
 </span><span style=color:#75715e>* execution.
-</span><span style=color:#75715e>*
-</span><span style=color:#75715e>* @throws     IllegalThreadStateException  if the thread was already started.
-</span><span style=color:#75715e>* @see        #run()
-</span><span style=color:#75715e>* @see        #stop()
 </span><span style=color:#75715e>*/</span>
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>synchronized</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>start</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
     <span style=color:#75715e>/**
@@ -375,15 +360,15 @@ Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleTh
         <span style=color:#f92672>}</span>
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>另外，<code>start()</code> 方法通过 <code>synchronized</code> 来保证线程安全，并且只能调用一次，还会影响线程的状态（由NEW变为RUNNABLE），而<code>run()</code>只是一个普通方法，可以被多次调用，并且不会改变线程的状态。</p>
-<h3 id=停止线程>停止线程</h3>
+</code></pre></div><p>另外，<code>start()</code> 方法通过 <code>synchronized</code> 来保证线程安全，并且只能调用一次，还会影响线程的状态（由NEW变为RUNNABLE），而 <code>run()</code> 只是一个普通方法，可以被多次调用，并且不会改变线程的状态。</p>
+<h2 id=停止线程>停止线程</h2>
 <p>通常，我们不会手动停止一个线程，而是让线程运行到结束，自然停止。但是有许多特殊的情况需要我们提前停止线程，比如：用户突然关闭程序，或程序运行出错重启等。</p>
-<h4 id=被弃用的方法>被弃用的方法</h4>
-<p>Java 在 <code>Thread</code> 类中提供了 <code>stop()</code> 方法，用于强行停止当前线程。但这个方法自 JDK1.2 开始就被标记为 <code>@Deprecated</code>，一同被标记的还有 <code>suspend()</code> 和 <code>resume()</code> 方法。为什么不再推荐使用它们了呢？因为 <code>stop()</code> 会直接停止当前线程，这样线程就没有足够的时间来处理停止前需要完成的工作，导致数据的完整性等问题。而 <code>suspend()</code> 和 <code>resume()</code> 的问题在于：调用 <code>suspend()</code> 的线程不释放锁就直接进入休眠，这可能导致死锁，因为如果线程在休眠期间持有锁的话，这把锁在线程被 <code>resume()</code> 之前是不会被释放的。</p>
+<h3 id=被弃用的停止方法>被弃用的停止方法</h3>
+<p>Java 在 <code>Thread</code> 类中提供了 <code>stop()</code> 方法，用于强行停止当前线程。但这个方法自 JDK1.2 开始就被标记为 <code>@Deprecated</code>，一同被标记的还有 <code>suspend()</code> 和 <code>resume()</code> 方法。那么，为何 JDK 要弃用这些方法呢？因为 <code>stop()</code> 会直接停止当前线程，线程就没有足够的时间来处理停止前需要完成的工作，可能会导致数据的完整性等问题。 <code>suspend()</code> 和 <code>resume()</code> 的问题则在于：调用 <code>suspend()</code> 的线程不释放锁就直接进入休眠，这可能导致死锁，因为如果线程在休眠期间持有锁的话，这把锁在线程被 <code>resume()</code> 之前是不会被释放的。</p>
 <p>来看一个具体的例子：假设线程 A 调用 <code>suspend()</code> 让线程 B 挂起，线程 B 进入休眠，而线程 B 刚好持有锁 L。假设此时线程 A 想要访问线程 B 持有的锁 L，由于线程 B 没释放锁 L 就休眠了，所以线程 A 是拿不到锁 L 的，它就会陷入阻塞。这样一来，线程 A 和线程 B 都无法继续向下执行。</p>
 <p>Java SE 的 API 文档里面其实也给出了这三个方法被弃用的原因（<a href=https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/doc-files/threadPrimitiveDeprecation.html> Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?</a>），并给出了相关的替代方案。</p>
-<h4 id=使用状态标记>使用状态标记</h4>
-<p>对于大多数情况，JDK 建议我们使用一个状态变量来指示目标线程是否应该停止运行。目标线程周期性地检查这个状态变量的值，当状态变量暗示要停止目标线程时，就从 <code>run()</code> 方法返回。为了确保停止请求的及时传播，这个状态变量应该是 <code>volatile</code> 修饰的，或者对该变量的访问进行同步处理。</p>
+<h3 id=使用状态标记>使用状态标记</h3>
+<p>对于大多数情况，JDK 建议我们使用一个状态变量来指示目标线程是否应该停止运行。目标线程周期性地检查这个状态变量的值，当状态变量暗示要停止目标线程时，就从 <code>run()</code> 方法返回。为了确保停止请求的及时传播，这个状态变量应该被 <code>volatile</code> 修饰，或者对该变量的访问进行同步处理。</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>volatile</span> Thread blinker<span style=color:#f92672>;</span>
 
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>stop</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
@@ -400,11 +385,11 @@ Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleTh
         repaint<span style=color:#f92672>();</span>
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>然而，并不是仅仅使用 <code>volatile</code> 标记状态变量就完事儿，我们还得倍加小心。下面是网上的一个例子：</p>
+</code></pre></div><p>然而，并不是仅仅使用 <code>volatile</code> 标记状态变量就百分百没问题了，我们还得倍加小心。下面是网上的一个例子：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>VolatileCannotStop</span> <span style=color:#f92672>{</span>
     <span style=color:#75715e>// 生产者
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Producer</span> <span style=color:#66d9ef>implements</span> Runnable <span style=color:#f92672>{</span>
-        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>volatile</span>  <span style=color:#66d9ef>boolean</span> canceled <span style=color:#f92672>=</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
+        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>volatile</span> <span style=color:#66d9ef>boolean</span> canceled <span style=color:#f92672>=</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
         <span style=color:#66d9ef>private</span> BlockingQueue<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> storage<span style=color:#f92672>;</span>
         <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Producer</span><span style=color:#f92672>(</span>BlockingQueue<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> storage<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
             <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>storage</span> <span style=color:#f92672>=</span> storage<span style=color:#f92672>;</span>
@@ -443,11 +428,9 @@ Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleTh
 
     <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span><span style=color:#f92672>(</span>String<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> InterruptedException <span style=color:#f92672>{</span>
         BlockingQueue storage <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ArrayBlockingQueue<span style=color:#f92672>(</span>8<span style=color:#f92672>);</span>
-
         Producer producer <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Producer<span style=color:#f92672>(</span>storage<span style=color:#f92672>);</span>
         <span style=color:#66d9ef>new</span> Thread<span style=color:#f92672>(</span>producer<span style=color:#f92672>).</span><span style=color:#a6e22e>start</span><span style=color:#f92672>();</span>
         Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>sleep</span><span style=color:#f92672>(</span>500<span style=color:#f92672>);</span>
-
         Consumer consumer <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Consumer<span style=color:#f92672>(</span>storage<span style=color:#f92672>);</span>
         <span style=color:#66d9ef>while</span> <span style=color:#f92672>(</span>consumer<span style=color:#f92672>.</span><span style=color:#a6e22e>needMoreNums</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
             System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span>consumer<span style=color:#f92672>.</span><span style=color:#a6e22e>storage</span><span style=color:#f92672>.</span><span style=color:#a6e22e>take</span><span style=color:#f92672>()</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;被消费了&#34;</span><span style=color:#f92672>);</span>
@@ -460,11 +443,11 @@ Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleTh
         System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span>producer<span style=color:#f92672>.</span><span style=color:#a6e22e>canceled</span><span style=color:#f92672>);</span>
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>直接来看 <code>main()</code> 方法，首先创建了生产者/消费者共用的仓库 <code>BlockingQueue storage</code>，仓库容量是 8，然后创建生产者并启动生产者线程，紧接着主线程进行 500 毫秒的休眠，保障生产者有足够的时间把仓库塞满，仓库被塞满后生产者就会阻塞，500 毫秒后消费者也被创建出来，并判断是否需要使用更多的数字，然后每次消费后休眠 100 毫秒，这样的业务逻辑是有可能出现在实际生产中的。</p>
-<p>当消费者不再需要数据，就会将 <code>canceled</code> 的标记位设置为 true，理论上此时生产者会跳出 <code>while</code> 循环，并打印输出“生产者运行结束”。然而结果却不是我们想象的那样，尽管已经把 <code>canceled</code> 设置成 true，但生产者仍然没有停止，这是因为在这种情况下，生产者在执行 <code>storage.put(num)</code> 时发生阻塞，在它被叫醒之前是没有办法进入下一次循环判断 <code>canceled</code> 的值的，所以在这种情况下用 <code>volatile</code> 是没有办法让生产者停下来的。在这种情况下，应该使用 <code>interrupt()</code> 来中断，即使生产者处于阻塞状态，仍然能够感受到中断信号，并做响应处理。</p>
-<h4 id=使用-interrupt>使用 interrupt</h4>
-<p>对于 Java 而言，最正确的停止线程的方式是使用 <code>interrupt()</code>。但 <code>interrupt()</code> 仅仅起到通知被停止线程的作用。而对于被停止的线程而言，它拥有完全的自主权，可以选择立即停止，也可以选择一段时间后停止，甚至可以选择压根不停止。不采用强制停止的做法的原因是：贸然强行停止线程可能造成一些安全问题，若要避免这些问题，就需要给目标线程一些时间进行收尾工作。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>while</span> <span style=color:#f92672>(!</span>Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>().</span><span style=color:#a6e22e>isInterrupted</span><span style=color:#f92672>()</span> <span style=color:#f92672>&amp;&amp;</span> has more work to <span style=color:#66d9ef>do</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</code></pre></div><p>直接看 <code>main()</code> 方法，首先创建了生产者/消费者共用的仓库 <code>storage</code>，仓库容量是 8，然后创建生产者并启动生产者线程，紧接着主线程进行 500 毫秒的休眠，保障生产者有足够的时间把仓库塞满，仓库被塞满后生产者就会阻塞，500 毫秒后消费者也被创建出来，并判断是否需要使用更多的数字，然后每次消费后休眠 100 毫秒，这样的业务逻辑是有可能出现在实际生产中的。</p>
+<p>当消费者不再需要数据，就会将 <code>canceled</code> 的标记位设置为 true，理论上此时生产者会跳出 <code>while</code> 循环，并打印输出<code>生产者运行结束</code>。然而结果并不是我们想象的那样，尽管已经把 <code>canceled</code> 设置成 true，但生产者仍然没有停止，这是因为在这种情况下，生产者在执行 <code>storage.put(num)</code> 时会被阻塞，在它被叫醒之前是没有办法进入下一次循环判断 <code>canceled</code> 的值的，所以在这种情况下用 <code>volatile</code> 是没有办法让生产者停下来的。在这种情况下，应该使用 <code>interrupt()</code> 来中断线程。即使生产者处于阻塞状态，它仍然能够感受到中断信号，并作出响应。</p>
+<h3 id=使用-interrupt>使用 interrupt</h3>
+<p>在 Java 中，停止线程的正确姿势是使用 <code>interrupt()</code>。但 <code>interrupt()</code> 仅仅起到通知被停止线程的作用。而对于被停止的线程而言，它拥有完全的自主权，可以选择立即停止，也可以选择一段时间后停止，甚至可以选择不停止。不采用强制停止的做法的原因是：贸然强行停止线程可能造成一些安全问题，若要避免这些问题，就需要给目标线程一些时间进行收尾工作。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>while</span> <span style=color:#f92672>(!</span>Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>().</span><span style=color:#a6e22e>isInterrupted</span><span style=color:#f92672>()</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>(</span>has more work to <span style=color:#66d9ef>do</span><span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>do</span> more work
 <span style=color:#f92672>}</span>
 </code></pre></div><p>调用某个线程的 <code>interrupt()</code> 方法之后，这个线程的中断标记位就会被设置成 true。每个线程都有这样的标记位，当线程执行时，应该定期检查这个标记位，如果标记位被设置成 true，就说明有程序想终止该线程。下面是一个具体的例子：</p>
@@ -485,9 +468,9 @@ Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleTh
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
 </code></pre></div><p>程序还没打印完 1000 个数就会停下来，因为对应的线程被 <code>interrupt</code> 了。</p>
-<p>休眠中的线程是可以感受到中断信号的，并且被中断的线程会抛出一个 <code>InterruptedException</code> 异常，同时清除中断信号，将中断标记位设置成 false。</p>
+<p>休眠中的线程是可以感受到中断信号的，被中断的线程会抛出一个 <code>InterruptedException</code>，同时清除中断信号，将中断标记位设置成 false。调用方可以捕获这个异常，进行处理，还可以再次中断线程。再次中断后，后续执行的方法依然可以检测到调用过程发生过中断，可以做出相应的处理，整个线程可以正常退出。</p>
 <h2 id=线程的状态>线程的状态</h2>
-<p>Java线程在其生命周期中可能处于6种状态（这6中状态指的线程在JVM中的状态，并不是操作系统中线程的状态），在一个特定的时刻，线程只能处于其中的一个状态。</p>
+<p>Java线程在其生命周期中可能处于6种状态（这6种状态指的线程在 JVM 中的状态，并不是操作系统中线程的状态），同一时刻，线程只能处于其中的一个状态。</p>
 <table>
 <thead>
 <tr>
@@ -522,91 +505,48 @@ Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleTh
 </tr>
 </tbody>
 </table>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>enum</span> State <span style=color:#f92672>{</span>
-    <span style=color:#75715e>/**
-</span><span style=color:#75715e>        * Thread state for a thread which has not yet started.
-</span><span style=color:#75715e>        */</span>
-    NEW<span style=color:#f92672>,</span>
-
-    <span style=color:#75715e>/**
-</span><span style=color:#75715e>        * Thread state for a runnable thread.  A thread in the runnable
-</span><span style=color:#75715e>        * state is executing in the Java virtual machine but it may
-</span><span style=color:#75715e>        * be waiting for other resources from the operating system
-</span><span style=color:#75715e>        * such as processor.
-</span><span style=color:#75715e>        */</span>
-    RUNNABLE<span style=color:#f92672>,</span>
-
-    <span style=color:#75715e>/**
-</span><span style=color:#75715e>        * Thread state for a thread blocked waiting for a monitor lock.
-</span><span style=color:#75715e>        * A thread in the blocked state is waiting for a monitor lock
-</span><span style=color:#75715e>        * to enter a synchronized block/method or
-</span><span style=color:#75715e>        * reenter a synchronized block/method after calling
-</span><span style=color:#75715e>        * {@link Object#wait() Object.wait}.
-</span><span style=color:#75715e>        */</span>
-    BLOCKED<span style=color:#f92672>,</span>
-
-    <span style=color:#75715e>/**
-</span><span style=color:#75715e>        * Thread state for a waiting thread.
-</span><span style=color:#75715e>        * A thread is in the waiting state due to calling one of the
-</span><span style=color:#75715e>        * following methods:
-</span><span style=color:#75715e>        * &lt;ul&gt;
-</span><span style=color:#75715e>        *   &lt;li&gt;{@link Object#wait() Object.wait} with no timeout&lt;/li&gt;
-</span><span style=color:#75715e>        *   &lt;li&gt;{@link #join() Thread.join} with no timeout&lt;/li&gt;
-</span><span style=color:#75715e>        *   &lt;li&gt;{@link LockSupport#park() LockSupport.park}&lt;/li&gt;
-</span><span style=color:#75715e>        * &lt;/ul&gt;
-</span><span style=color:#75715e>        *
-</span><span style=color:#75715e>        * &lt;p&gt;A thread in the waiting state is waiting for another thread to
-</span><span style=color:#75715e>        * perform a particular action.
-</span><span style=color:#75715e>        *
-</span><span style=color:#75715e>        * For example, a thread that has called {@code Object.wait()}
-</span><span style=color:#75715e>        * on an object is waiting for another thread to call
-</span><span style=color:#75715e>        * {@code Object.notify()} or {@code Object.notifyAll()} on
-</span><span style=color:#75715e>        * that object. A thread that has called {@code Thread.join()}
-</span><span style=color:#75715e>        * is waiting for a specified thread to terminate.
-</span><span style=color:#75715e>        */</span>
-    WAITING<span style=color:#f92672>,</span>
-
-    <span style=color:#75715e>/**
-</span><span style=color:#75715e>        * Thread state for a waiting thread with a specified waiting time.
-</span><span style=color:#75715e>        * A thread is in the timed waiting state due to calling one of
-</span><span style=color:#75715e>        * the following methods with a specified positive waiting time:
-</span><span style=color:#75715e>        * &lt;ul&gt;
-</span><span style=color:#75715e>        *   &lt;li&gt;{@link #sleep Thread.sleep}&lt;/li&gt;
-</span><span style=color:#75715e>        *   &lt;li&gt;{@link Object#wait(long) Object.wait} with timeout&lt;/li&gt;
-</span><span style=color:#75715e>        *   &lt;li&gt;{@link #join(long) Thread.join} with timeout&lt;/li&gt;
-</span><span style=color:#75715e>        *   &lt;li&gt;{@link LockSupport#parkNanos LockSupport.parkNanos}&lt;/li&gt;
-</span><span style=color:#75715e>        *   &lt;li&gt;{@link LockSupport#parkUntil LockSupport.parkUntil}&lt;/li&gt;
-</span><span style=color:#75715e>        * &lt;/ul&gt;
-</span><span style=color:#75715e>        */</span>
-    TIMED_WAITING<span style=color:#f92672>,</span>
-
-    <span style=color:#75715e>/**
-</span><span style=color:#75715e>        * Thread state for a terminated thread.
-</span><span style=color:#75715e>        * The thread has completed execution.
-</span><span style=color:#75715e>        */</span>
-    TERMINATED<span style=color:#f92672>;</span>
-<span style=color:#f92672>}</span>
-
-</code></pre></div><p>以下是线程之间的状态迁移图：</p>
+<p>以下是线程之间的状态迁移图：</p>
 <p><img src=/images/java/concurrency/thread-state-transfering-diagram.png alt="Java thread state transfering"></p>
-<h2 id=实现多线程同步的方法>实现多线程同步的方法</h2>
-<p>Java主要提供了3中实现同步机制的方法：</p>
+<h3 id=wait-与-notify><code>wait()</code> 与 <code>notify()</code></h3>
+<p>若 <code>synchronized</code> 关键字修饰的某个共享资源 R 的锁已经被线程 T1 获得，其它需要资源 R 的锁才能运行的线程就会被阻塞直至 T1 释放 R 上的锁。一般情况下，这个锁是在同步代码块执行完才被释放的。</p>
+<p>但是在同步代码块执行期间，已持有锁的线程 T1 可以调用资源 R 的 <code>wait()</code> 方法释放锁，然后进入等待状态，当前线程被挂起。锁的持有者可以调用 <code>notify()</code> 方法随机唤醒一个处于等待状态的线程，或 <code>notifyAll()</code> 方法去唤醒所有处于等待状态的线程。</p>
+<p>只有持有与共享资源 R 相关联的 <code>monitor</code> 的锁的线程才应该去调用 <code>notify()</code> 或 <code>notifyAll()</code> 方法。一个线程可以通过3种方式获得与资源 R 相关联的 <code>monitor</code> 的锁，这三种方式刚好对应于同步代码块的三种形式。因为只有持有 <code>monitor</code> 的锁，才能进入同步代码块。</p>
+<h3 id=sleep-与-wait><code>sleep()</code> 与 <code>wait()</code></h3>
+<p><code>sleep()</code> 与 <code>wait()</code> 都可以暂停线程执行，但它们还有一些区别：</p>
 <ol>
-<li>使用<code>synchronized</code>关键字。见<a href=./Synchronized.md><code>Synchronized</code>关键字</a>。</li>
-<li>使用<code>wait()</code>与<code>notify()</code>方法。</li>
-<li>使用<code>Lock</code>。见<a href=./Locks.md>Locks</a>。</li>
+<li>原理不同。<code>sleep()</code> 是 <code>Thread</code> 类的静态方法，是线程自己用来控制自身执行的，它可以使线程自己暂停一段时间，把执行的机会让给其它线程，等睡眠时间一到，便会自动“醒来”。而 <code>wait()</code> 是 <code>Object</code> 类的方法，用于线程间的通信，这个方法会使当前持有对象锁的线程释放锁并进入等待状态，直至其它线程调用对象的 <code>notify()</code> 或 <code>notifyAll()</code> 方法才会醒来。<code>wait()</code> 方法也支持设置超时时间。</li>
+<li>对锁的处理机制不同。调用 <code>sleep()</code> 方法只是让当前线程暂停一段时间，不涉及线程间通信，也不会释放锁。而调用 <code>wait()</code> 方法会释放锁。</li>
+<li>使用区域不同。<code>sleep()</code> 方法可以在任何区域使用。而由于调用 <code>wait()</code> 方法前必须先获得对象锁，因此只能在同步代码块内使用。</li>
+<li>对异常的处理方式不同。调用 <code>sleep()</code> 方法时必须处理 <code>InterruptedException</code> 异常。而调用 <code>wait()</code> 方法时不用关心异常处理。</li>
 </ol>
-<h2 id=java中的原子操作>Java中的原子操作</h2>
-<p>在Java中可以通过锁和循环CAS的方式实现原子操作。</p>
-<p>JVM中的CAS操作是利用处理器提供的 **<code>COMPXCHG</code>**指令实现的。自旋CAS实现的基本思路是循环进行CAS操作直到成功为止。但CAS存在三个问题：</p>
+<h3 id=sleep-与-yield><code>sleep()</code> 与 <code>yield()</code></h3>
+<p><code>sleep()</code>方法与<code>yield()</code>方法都属于<code>Thread</code>类，它们的区别主要体现在：</p>
+<ol>
+<li>前者被调用后会立马进入阻塞状态，在一段时间内不会再执行。而后者只是使当前线程重新回到<code>RUNNABLE</code>状态，因此可能马上又被执行。</li>
+<li>前者在方法声明上抛出了<code>InterruptedException</code>异常，而后者没有声明任何异常。</li>
+</ol>
+<h3 id=join><code>join()</code></h3>
+<p>JDK中对<code>join()</code>方法的解释为：Waits for this thread to die.</p>
+<p>实际上，当线程A调用了线程B的<code>join()</code>方法后，线程A会让出CPU的执行权给线程B。直到线程B执行完成或者过了超时时间，线程A才会继续执行。</p>
+<h2 id=多线程同步>多线程同步</h2>
+<h3 id=java-中的原子操作>Java 中的原子操作</h3>
+<p>在 Java 中可以通过锁和循环 CAS 的方式实现原子操作。</p>
+<p>JVM 中的 CAS 操作是利用处理器提供的 <strong><code>COMPXCHG</code></strong> 指令实现的。自旋 CAS 实现的基本思路是循环进行 CAS 操作直到成功为止。但 CAS 存在三个问题：</p>
 <ul>
 <li><strong>ABA问题</strong>。可以使用版本号来解决。</li>
 <li><strong>循环时间长开销大</strong>。这一般出现在自旋CAS长时间不成功的情况下。</li>
 <li><strong>只能保证一个共享变量的原子操作</strong>。对于多个共享变量的原子操作，一般采用锁来解决，也可以将多个共享变量封装进一个对象，然后使用<code>AtomicReference</code>类来解决。</li>
 </ul>
-<p>JVM内部实现了很多锁机制，有意思的是除了偏向锁，JVM实现锁的方式都用了循环CAS，即当一个线程进入同步代码块时使用循环CAS获取锁，离开同步代码块时使用循环CAS释放锁。</p>
+<p>JVM 内部实现了很多锁机制，有意思的是除了偏向锁，JVM 实现锁的方式都用了循环 CAS，即当一个线程进入同步代码块时使用循环 CAS 获取锁，离开同步代码块时使用循环 CAS 释放锁。</p>
+<h3 id=同步的实现>同步的实现</h3>
+<p>Java 提供了多种多线程同步的方法：</p>
+<ol>
+<li>使用 <code>synchronized</code> 关键字。见<a href=../synchronization/><code>Synchronized</code>关键字</a>。</li>
+<li>使用 <code>wait()</code> 与 <code>notify()</code> 方法。</li>
+<li>使用 <code>Lock</code>。见<a href=../locks/>Locks</a>。</li>
+</ol>
 <h2 id=线程优先级>线程优先级</h2>
-<p><code>Thread</code>类定义了三个和线程优先级的属性：</p>
+<p><code>Thread</code> 类定义了三个和线程优先级有关的属性：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>/**
 </span><span style=color:#75715e>* The minimum priority that a thread can have.
 </span><span style=color:#75715e>*/</span>
@@ -621,33 +561,12 @@ Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleTh
 </span><span style=color:#75715e>* The maximum priority that a thread can have.
 </span><span style=color:#75715e>*/</span>
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> MAX_PRIORITY <span style=color:#f92672>=</span> 10<span style=color:#f92672>;</span>
-</code></pre></div><p>优先级越高的线程获得CPU时间片的概率越大，但这并不是意味着优先级越高的线程一定越先执行。Java中的线程的优先级可以通过方法<code>setPriority(int newPriority)</code>来设置，有效的优先级范围为：<code>1-10</code>。</p>
-<h2 id=常用方法>常用方法</h2>
-<h3 id=wait与notify><code>wait()</code>与<code>notify()</code></h3>
-<p>若 <code>synchronized</code> 关键字修饰的某个共享资源 R 的锁已经被线程 T1 获得，其它需要资源 R 的锁才能运行的线程就会被阻塞直至 T1 释放 R 上的锁。一般情况下，这个锁是在同步代码块执行完才被释放的。</p>
-<p>但是在同步代码块执行期间，已持有锁的线程 T1 可以调用资源 R 的 <code>wait()</code> 方法释放锁，然后进入等待状态，当前线程被挂起。锁的持有者可以调用 <code>notify()</code> 方法随机唤醒一个处于等待状态的线程，或 <code>notifyAll()</code> 方法去唤醒所有处于等待状态的线程。</p>
-<p>只有持有与共享资源 R 相关联的 <code>monitor</code> 的锁的线程才应该去调用 <code>notify()</code> 或 <code>notifyAll()</code> 方法。一个线程可以通过3种方式获得与资源 R 相关联的 <code>monitor</code> 的锁，这三种方式刚好对应于同步代码块的三种形式。因为只有持有 <code>monitor</code> 的锁只有，才能进入同步代码块。</p>
-<h3 id=sleep与wait><code>sleep()</code>与<code>wait()</code></h3>
-<p><code>sleep()</code> 与 <code>wait()</code> 都可以暂停线程执行，但它们还有一些区别：</p>
-<ol>
-<li>原理不同。<code>sleep()</code> 是 <code>Thread</code> 类的静态方法，是线程自己用来控制自身执行的，它可以使线程自己暂停一段时间，把执行的机会让给其它线程，等睡眠时间一到，便会自动“醒来”。而 <code>wait()</code> 是 <code>Object</code> 类的静态方法，用于线程间的通信，这个方法会使当前持有对象锁的线程释放锁并进入等待状态，直至其它线程调用对象的 <code>notify()</code> 或 <code>notifyAll()</code> 方法才会醒来。<code>wait()</code> 方法也支持设置超时时间。</li>
-<li>对锁的处理机制不同。调用 <code>sleep()</code> 方法只是让当前线程暂停一段时间，不涉及线程间通信，也不会释放锁。而调用 <code>wait()</code> 方法会释放锁。</li>
-<li>使用区域不同。<code>sleep()</code> 方法可以在任何区域使用。而由于调用 <code>wait()</code> 方法前必须先获得对象锁，因此只能在同步代码块内使用。</li>
-<li>对异常的处理方式不同。调用 <code>sleep()</code> 方法时必须处理 <code>InterruptedException</code> 异常。而调用 <code>wait()</code> 方法时不用关心异常处理。</li>
-</ol>
-<h3 id=sleep与yield><code>sleep()</code>与<code>yield()</code></h3>
-<p><code>sleep()</code>方法与<code>yield()</code>方法都属于<code>Thread</code>类，它们的区别主要体现在：</p>
-<ol>
-<li>前者被调用后会立马进入阻塞状态，在一段时间内不会再执行。而后者只是使当前线程重新回到<code>RUNNABLE</code>状态，因此可能马上又被执行。</li>
-<li>前者在方法声明上抛出了<code>InterruptedException</code>异常，而后者没有声明任何异常。</li>
-</ol>
-<h3 id=join><code>join()</code></h3>
-<p>JDK中对<code>join()</code>方法的解释为：Waits for this thread to die.</p>
-<p>实际上，当线程A调用了线程B的<code>join()</code>方法后，线程A会让出CPU的执行权给线程B。直到线程B执行完成或者过了超时时间，线程A才会继续执行。</p>
+</code></pre></div><p>优先级越高的线程获得 CPU 时间片的概率越大，但这并不是意味着优先级越高的线程一定越先执行。在 Java 中，设置线程优先级方法是 <code>setPriority(int newPriority)</code>，有效的优先级范围为：<code>1-10</code>。</p>
 <h2 id=参考资料>参考资料</h2>
 <ol>
 <li>Brian Goetz, Tim Peierls, Joshua Bloch, Joseph Bowbeer, David Holmes, and Doug Lea. <em>Java Concurrency in Practice</em>. Addison-Wesley Professional, 2006.</li>
 <li>方腾飞, 魏鹏, 程晓明. Java并发编程的艺术. 机械工业出版社, 2015.</li>
+<li><a href=https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/doc-files/threadPrimitiveDeprecation.html>Java Thread Primitive Deprecation</a>.</li>
 </ol>
 </div>
 <footer class=entry-footer>
