@@ -8,7 +8,7 @@
 <meta property="og:url" content="https://zhannicholas.github.io/posts/redis/redis_streams/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Redis"><meta property="article:published_time" content="2020-12-13T17:49:38+08:00"><meta property="article:modified_time" content="2020-12-13T17:49:38+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.87.0">
+<meta name=generator content="Hugo 0.88.0">
 <title>Redis Streams • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/posts/redis/redis_streams/>
 <link rel=icon href=/favicon.ico>
@@ -109,6 +109,8 @@ Java Developer, Runner, Cyclist
 <a href=/tags/python/ style=font-size:1em>Python</a>
 </li><li>
 <a href=/tags/redis/ style=font-size:1.5384615384615385em>Redis</a>
+</li><li>
+<a href=/tags/rust/ style=font-size:1em>Rust</a>
 </li><li>
 <a href=/tags/sicp/ style=font-size:1em>SICP</a>
 </li><li>
@@ -244,7 +246,7 @@ Java Developer, Runner, Cyclist
 <p>通常情况下，<code>producer</code>从一个或多个源读取数据，然后将它们写入到<code>stream</code>。</p>
 <h3 id=redis-stream的生产者api>Redis Stream的生产者API</h3>
 <p><code>Redis Stream Producer API</code>允许<code>producer</code>将任何消息(<code>entry</code>)追加到<code>stream</code>的末尾，整个API只包含一个命令——<strong><code>XADD key ID field value [field value ...]</code></strong>。 **<code>XADD</code><strong>命令用于将一个<code>entry</code>追加到<code>stream</code>，当<code>key</code>不存在时，还会新建一个<code>stream</code>：第一个参数<code>key</code>代表一个特定的<code>stream</code>，<code>ID</code>表示消息的<code>ID</code>，通常情况下我们会使用<code>*</code>来告诉Redis我们希望由Redis来生成这个<code>ID</code>，接下来是<code>entry</code>的内容。</strong><code>XADD</code>**会将新加入<code>stream</code>的消息的<code>ID</code>作为返回值返回。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xadd numbers * n 0
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xadd numbers * n 0
 &quot;1587959118318-0&quot;
 &gt; xadd numbers * n 1
 &quot;1587959128680-0&quot;
@@ -253,7 +255,7 @@ stream
 </code></pre><h4 id=消息id>消息ID</h4>
 <p><code>ID</code>是唯一的，并且每个消息有且只有一个<code>ID</code>，它代表着消息在<code>stream</code>中的位置。也就是说：越接近于<code>stream</code>开头的消息的<code>ID</code>越小，越接近于<code>stream</code>末尾的消息的<code>ID</code>越大。消息的<code>ID</code>是不可变的，一旦被创建，就不能再被修改。</p>
 <p>我们可以在一个命令的前面加上一个数字，然后Redis会多次执行这个命令。这能帮助我们更好的观察Redis自动生成消息<code>ID</code>的特点：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; 7 xadd letter_number * a 1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; 7 xadd letter_number * a 1
 &quot;1587960623524-0&quot;
 &quot;1587960623525-0&quot;
 &quot;1587960623525-1&quot;
@@ -263,23 +265,23 @@ stream
 &quot;1587960623527-1&quot;
 </code></pre><p>这里重复执行了<code>7</code>次<code>xadd letter_number * a 1</code>。Redis自动生成的消息<code>ID</code>的格式为：<code>&lt;millisecond-timestamp>-&lt;sequence number></code>。可以发现：当<code>timestamp</code>相同时，<code>sequence number</code>会不断自增(多个消息可能会在同一个时间出现，用自增保证<code>ID</code>的唯一性)。每到一个新的时刻，<code>sequence number</code>会重置为<code>0</code>。</p>
 <p>实际上，<code>ID</code>包括两个数字(64位无符号整数)，数字之间用<code>-</code>分隔。<code>ID</code>是总是自增的，这体现在组成ID的两个数字的自增上。插入一个<code>ID</code>比当前<code>stream</code>中最大<code>entry</code>的<code>ID</code>还小的<code>entry</code>是不被接受的。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xadd letter_number 1-1 a 1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xadd letter_number 1-1 a 1
 (error) ERR The ID specified in XADD is equal or smaller than the target stream top item
 </code></pre><p>有时候，我们可能希望使用自己的<code>ID</code>，这个时候我们需要保证自己的<code>ID</code>是自增的，一个有效的<code>ID</code>必须大于<code>0-0</code>。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xadd mystream 0-0 max 100
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xadd mystream 0-0 max 100
 (error) ERR The ID specified in XADD must be greater than 0-0
 &gt; xadd mystream 0-1 max 100
 &quot;0-1&quot;
 &gt; xadd mystream 1-1 max 10
 &quot;1-1&quot;
 </code></pre><p>插入消息时，我们也可以将<code>ID</code>指定为一个数字，称为<code>partial ID</code>，这个时候Redis会自动帮我们添加<code>sequence number</code>。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xadd mystream 2 max 111
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xadd mystream 2 max 111
 &quot;2-0&quot;   // Redis自动添加sequence number
 </code></pre><h4 id=消息内容>消息内容</h4>
 <p>**<code>XADD</code>**命令不接收空消息，一个消息至少包含一个<code>field-value</code>对。每一个<code>field</code>上的<code>value</code>都是一个普通的Redis字符串。消息的内容对Redis来说时不透明的，Redis本身也不处理消息的内容。</p>
 <h3 id=管理stream的长度>管理Stream的长度</h3>
 <p>**<code>XLEN key</code>**可以用来查看<code>stream</code>中消息(<code>entry</code>)的数量，若<code>key</code>不存在，将返回0(就像<code>stream</code>是空的一样)。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xlen ms-1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xlen ms-1
 (integer) 0
 &gt; xadd ms-1 0-1 f1 v1 f2 v2
 &quot;0-1&quot;
@@ -288,7 +290,7 @@ stream
 &gt; xlen ms-1
 (integer) 2
 </code></pre><p>**<code>XDEL key ID [ID ...]</code>**用来从<code>stream</code>中删除消息，返回实际被删除消息的数量。虽然<code>stream</code>是一个<code>append-only</code>的数据结构，但它是保存在内存中的，所以我们可以执行删除操作。当删除某个消息时，并不是真正删除，而是<a href=https://redis.io/commands/xdel#understanding-the-low-level-details-of-entries-deletion>标记删除</a>，当满足一定条件时，才会进行真正的删除操作。即使<code>stream</code>中的所有消息都被删除，<code>stream</code>为空时，<code>stream</code>本身也不会被删除，要删除它，可以使用 **<code>DEL</code>**或 <strong><code>UNLINK</code></strong>。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xdel ms-1 0-1 1-1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xdel ms-1 0-1 1-1
 (integer) 2
 &gt; xlen ms-1
 (integer) 0
@@ -297,7 +299,7 @@ stream
 &gt; del ms-1
 (integer) 0
 </code></pre><p>使用 **<code>XDEL</code>**可以限制<code>stream</code>的长度，但我们需要知道消息的<code>ID</code>。为了防止<code>stream</code>无限扩大，Redis也允许我们对<code>stream</code>进行修剪(<code>trim</code>)，即限制<code>stream</code>长度的上限。 **<code>XTRIM key MAXLEN [~] count</code><strong>将<code>stream</code>的长度限制为<code>count</code>，当<code>stream</code>长度超过上限，</strong><code>XTRIM</code>**会开始删除<code>stream</code>中<code>ID</code>最小的消息。然而，使用<code>MAXLEN</code>对<code>stream</code>进行修建的开销非常大，这和<code>entry</code>底层的基数树(<code>radix tree</code>)中采用的宏结点(<code>macro node</code>)有关系。命令提供了一个可选参数<code>~</code>，<code>XTRIM mystream MAXLEN ~ 1000</code>表示：并不是真的不能超过1000，消息的数量可以操作1000且至少是1000。当Redis移除整个宏结点时才会进行修剪操作。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xadd ms-2 0-1 f1 v1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xadd ms-2 0-1 f1 v1
 &quot;0-1&quot;
 &gt; xadd ms-2 0-2 f1 v1
 &quot;0-2&quot;
@@ -310,7 +312,7 @@ stream
 </code></pre><p>如果需要一直限制<code>stream</code>的长度，除了周期性的手动调用 <strong><code>XTRIM</code></strong>，还可以利用 **<code>XADD</code>**提供的<code>MAXLEN</code>来在我们添加<code>entry</code>时自动修剪<code>strean</code>，例如：<code>xadd ms-3 maxlen ~ 2 * f1 v1</code>。</p>
 <h2 id=范围查询>范围查询</h2>
 <p>**<code>XRANGE key start end [COUNT count]</code>**查询<code>ID</code>在<code>[start, end]</code>之间的所有<code>entry</code>。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; 10 xadd ms-3 * f1 v1  // 生成10条消息
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; 10 xadd ms-3 * f1 v1  // 生成10条消息
 &quot;1587969310313-0&quot;
 &quot;1587969310313-1&quot;
 &quot;1587969310314-0&quot;
@@ -329,7 +331,7 @@ stream
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
 </code></pre><p><code>-</code>和<code>+</code>表示<code>stream</code>可能存在的最小<code>ID</code>和最大<code>ID</code>，<code>-</code>等价于<code>0-0</code>，<code>+</code>等价于<code>18446744073709551615-18446744073709551615</code>。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xrange ms-3 - +           // 使用-和+
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xrange ms-3 - +           // 使用-和+
  1) 1) &quot;1587969310313-0&quot;
     2) 1) &quot;f1&quot;
        2) &quot;v1&quot;
@@ -361,7 +363,7 @@ stream
     2) 1) &quot;f1&quot;
        2) &quot;v1&quot;
 </code></pre><p>此外，还可以使用<code>partial ID</code>。例如：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt;  xrange ms-3 1587969310313 1587969310314
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt;  xrange ms-3 1587969310313 1587969310314
 1) 1) &quot;1587969310313-0&quot;
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
@@ -378,13 +380,13 @@ stream
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
 </code></pre><p>可选参数<code>count</code>可以限制返回结果数量的上限：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt;  xrange ms-3 1587969310313 1587969310314 count 1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt;  xrange ms-3 1587969310313 1587969310314 count 1
 1) 1) &quot;1587969310313-0&quot;
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
 </code></pre><h3 id=迭代stream>迭代Stream</h3>
 <p>结合<code>ID</code>自增的特性和 **<code>XRANGE</code>**的<code>count</code>参数，我们可以完成对整个<code>stream</code>的迭代。首先：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xrange ms-3 - + count 2
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xrange ms-3 - + count 2
 1) 1) &quot;1587969310313-0&quot;
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
@@ -392,7 +394,7 @@ stream
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
 </code></pre><p>然后将当前迭代返回的最后一个<code>ID</code>的<code>sequence number</code>加一，作为下一次迭代的起始<code>ID</code>：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xrange ms-3 1587969310313-1 + count 2
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xrange ms-3 1587969310313-1 + count 2
 1) 1) &quot;1587969310313-1&quot;
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
@@ -402,12 +404,12 @@ stream
 </code></pre><p>重复这个过程即可。以上演示的是<code>ID</code>从小到大的正向迭代过程，若要从大到小进行反向迭代，可以使用 <strong><code>XREVRANGE key end start [COUNT count]</code></strong>。</p>
 <h3 id=查询单条消息>查询单条消息</h3>
 <p>如果只需要查询单条消息，可以将<code>count</code>参数设为<code>1</code>。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xrange ms-3 1587969310313-0 + count 1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xrange ms-3 1587969310313-0 + count 1
 1) 1) &quot;1587969310313-0&quot;
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
 </code></pre><p>因为 **<code>XRANGE</code>**和 **<code>XREVRANGE</code>**采用的是闭区间，所以当<code>start</code>和<code>end</code>相同时，查询的结果就是单条消息。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xrange ms-3 1587969310313-0 1587969310313-0
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xrange ms-3 1587969310313-0 1587969310313-0
 1) 1) &quot;1587969310313-0&quot;
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
@@ -417,20 +419,20 @@ stream
       2) &quot;v1&quot;
 </code></pre><h2 id=消费者>消费者</h2>
 <p>有时候，我们并不希望主动去查询<code>stream</code>，而是希望当<code>stream</code>中有新的消息时，新的消息可以直接推送给我们，也就是订阅<code>stream</code>。**<code>XREAD [COUNT count] [BLOCK milliseconds] STREAMS key [key ...] id [id ...]</code>**正是用来监听<code>stream</code>中新的消息的。例如：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xread count 1 streams ms-3 0
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xread count 1 streams ms-3 0
 1) 1) &quot;ms-3&quot;
    2) 1) 1) &quot;1587969310313-0&quot;
          2) 1) &quot;f1&quot;
             2) &quot;v1&quot;
 </code></pre><p>**<code>XREAD</code>**不支持<code>-</code>和<code>+</code>，<code>id</code>表示消费者上一次收到的消息<code>ID</code>，所以返回的消息<code>ID</code>都会大于<code>id</code>。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xread count 1 streams ms-3 1587969310313-0
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xread count 1 streams ms-3 1587969310313-0
 1) 1) &quot;ms-3&quot;
    2) 1) 1) &quot;1587969310313-1&quot;
          2) 1) &quot;f1&quot;
             2) &quot;v1&quot;
 </code></pre><h3 id=阻塞型消费者>阻塞型消费者</h3>
 <p>默认情况下，**<code>XREAD</code>**是非阻塞的。通过使用可选的<code>[BLOCK] milliseconds</code>参数，我们可以将 **<code>XREAD</code><strong>变成阻塞操作。在消息到来之前，</strong><code>XREAD</code>**会在新消息到来之前阻塞阻塞一段时间，若在超时之前有新的消息到来，则结束阻塞并返回新的消息，否则超时自动返回。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xrevrange ms-3 + - count 2    // 获取最新的两条消息
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xrevrange ms-3 + - count 2    // 获取最新的两条消息
 1) 1) &quot;1587969310316-2&quot;
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
@@ -446,13 +448,13 @@ stream
 (nil)
 (1.03s)
 </code></pre><p><code>BLOCK 0</code>表示新消息到来之前一直阻塞，不会超时返回。在<code>client-2</code>上阻塞，<code>$</code>表示当前<code>stream</code>中最新消息的<code>ID</code>(使用<code>$</code>之后，每个消息最多收到一次)，所以<code>client-2</code>会一直阻塞：</p>
-<pre><code class=language-Redis data-lang=Redis>client-2:6379&gt; xread count 1 block 0 streams ms-3 $
+<pre tabindex=0><code class=language-Redis data-lang=Redis>client-2:6379&gt; xread count 1 block 0 streams ms-3 $
 
 </code></pre><p>这个时候在<code>client-1</code>上向<code>ms-3</code>中写入一条消息：</p>
-<pre><code class=language-Redis data-lang=Redis>client-1:6379&gt; xadd ms-3 * f1 v1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>client-1:6379&gt; xadd ms-3 * f1 v1
 &quot;1587974321051-0&quot;
 </code></pre><p><code>client-2</code>收到消息，结束阻塞，返回：</p>
-<pre><code class=language-Redis data-lang=Redis>client-2:6379&gt; xread count 1 block 0 streams ms-3 $
+<pre tabindex=0><code class=language-Redis data-lang=Redis>client-2:6379&gt; xread count 1 block 0 streams ms-3 $
 1) 1) &quot;ms-3&quot;
    2) 1) 1) &quot;1587974321051-0&quot;
          2) 1) &quot;f1&quot;
@@ -471,7 +473,7 @@ stream
 <h3 id=创建消费组>创建消费组</h3>
 <p>要创建一个消费组，可以使用 **<code>XGROUP CREATE key groupname id-or $</code>**子命令。最后一个参数<code>id-or-$</code>是消费组开始消费的消息的<code>ID</code>(不包括这个<code>ID</code>代表的消息)。如果希望消费组从下一个最新的消息开始消费，可以使用<code>$</code>，<code>$</code>表示<code>stream</code>中的最后一个消息的<code>ID</code>。如果希望消费组消费<code>stream</code>中的所有消息，可以使用<code>0</code>作为传入<code>ID</code>。如果消费组已经存在，命令将放回一个<code>-BUSYGROUP</code>错误，否则创建成功并返回OK。</p>
 <p>如果<code>stream</code>不存在，命令会返回一个错误，可以在<code>ID</code>后面新增一个可选<code>MKSTREAM</code>子命令让Redis自动创建一个<code>stream</code>，这个时候创建出来的<code>stream</code>的长度为<code>0</code>。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xgroup create ms-4 group0 0   // ms-4不存在
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xgroup create ms-4 group0 0   // ms-4不存在
 (error) ERR The XGROUP subcommand requires the key to exist. Note that for CREATE you may want to use the MKSTREAM option to create an empty stream automatically.
 &gt; xgroup create ms-4 group0 0 MKSTREAM  // 创建group0，并让Redis自动创建出stream
 OK
@@ -507,7 +509,7 @@ OK
 <li><code>></code>。<code>></code>是一个特殊的<code>ID</code>，表示消费者只想接收那些从未被交付给任何其他消费者的消息，即消费者想收到一个从未被交付过的消息</li>
 <li>任何其它的<code>ID</code>，即<code>0</code>，其它有效<code>ID</code>或<code>partial ID</code>。这个时候，我们可以得到消费者的<code>PEL</code>(返回的<code>PEL</code>中的<code>ID</code>比传递的<code>ID</code>都要大)，而<code>BLOCK</code>和<code>NOACK</code>参数会被忽略。</li>
 </ul>
-<pre><code class=language-Redis data-lang=Redis>&gt; xreadgroup group group0 consumerA count 1 block 1000 streams ms-4 &gt;
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xreadgroup group group0 consumerA count 1 block 1000 streams ms-4 &gt;
 1) 1) &quot;ms-4&quot;
    2) 1) 1) &quot;0-1&quot;
          2) 1) &quot;f1&quot;
@@ -518,7 +520,7 @@ OK
          2) 1) &quot;f1&quot;
             2) &quot;v1&quot;
 </code></pre><p>上面这条命令让消费者<code>consumerA</code>加入到了<code>group0</code>中并消费了一条消息。如果这个时候我们再次执行<code>xinfo groups ms-4</code>，会得到和上一次不同的结果：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xinfo groups ms-4
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xinfo groups ms-4
 1) 1) &quot;name&quot;
    2) &quot;group0&quot;
    3) &quot;consumers&quot;
@@ -536,7 +538,7 @@ OK
    7) &quot;last-delivered-id&quot;
    8) &quot;0-1&quot;
 </code></pre><p>若要查看某个消费组中的消费者信息，可以使用 <strong><code>XINFO CONSUMERS &lt;key> &lt;group></code></strong>：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xinfo consumers ms-4 group0
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xinfo consumers ms-4 group0
 1) 1) &quot;name&quot;
    2) &quot;comsumerA&quot;
    3) &quot;pending&quot;
@@ -545,7 +547,7 @@ OK
    6) (integer) 905911
 </code></pre><h3 id=消息处理完成确认>消息处理完成确认</h3>
 <p>**<code>XACK key group ID [ID ...]</code>**从消费组的<code>PEL</code>移除一个或多个消息，表示他们已被成功处理。假设<code>group0</code>中的consumerA已经将<code>0-1</code>这条消息处理完成，它需要告知Redis服务器它已经这条消息处理完毕：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xack ms-4 group0 0-1  // 发送确认
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xack ms-4 group0 0-1  // 发送确认
 (integer) 1
 &gt; xreadgroup group group0 consumerA streams ms-4 0  // 查看consumerA的PEL
 1) 1) &quot;ms-4&quot;
@@ -553,14 +555,14 @@ OK
 </code></pre><p>当消息处理失败时，没有 **<code>XACK</code>**确认，消费者可以再次进行消费。有时候，当失败在可接受范围内时，我么可以使用 **<code>XREADGROUP</code>**中的子命令 **<code>NOACK</code>**来告诉Redis不需要进行确认，Redis会认为 **<code>XREADGROUP</code>**返回的所有消息都已确认，因此不用再维护对应的<code>PEL</code>。</p>
 <h3 id=管理消费组>管理消费组</h3>
 <p>先准备一些测试数据，创建3个消费组，它们都从最新的消息开始消费：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xgroup create ms-5 group0 $ MKSTREAM
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xgroup create ms-5 group0 $ MKSTREAM
 OK
 &gt; xgroup create ms-5 group1 $
 OK
 &gt; xgroup create ms-5 group3 $
 OK
 </code></pre><p>向<code>ms-5</code>中写入7条消息：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; 7 xadd ms-5 * f1 v1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; 7 xadd ms-5 * f1 v1
 &quot;1587991174542-0&quot;
 &quot;1587991174542-1&quot;
 &quot;1587991174542-2&quot;
@@ -570,18 +572,18 @@ OK
 &quot;1587991174544-0&quot;
 </code></pre><h4 id=修改消费者的位置>修改消费者的位置</h4>
 <p>**<code>XGROUP SETID key groupname id-or-$</code>**允许我们修改消费组的<code>last-delivered-id</code>的值，进而改变接下来要消费的消息(即消费者的位置)。若要重新消费所有消息，可以使用：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xgroup setid ms-5 group1 0
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xgroup setid ms-5 group1 0
 OK
 </code></pre><p>若现在指向消费最新的消息，则可以使用：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xgroup setid ms-5 group1 $
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xgroup setid ms-5 group1 $
 OK
 </code></pre><h4 id=删除消费组>删除消费组</h4>
 <p>因为并不会自动删除未使用的消费组，所以我们需要自己来做这件事情。**<code>XGROUP DESTROY key groupname</code>**会永久删除某个消费组和相关的消费者。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xgroup destroy ms-5 group3  // 删除group3
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xgroup destroy ms-5 group3  // 删除group3
 (integer) 1
 </code></pre><h4 id=从消费组删除消费者>从消费组删除消费者</h4>
 <p>**<code>XGROUP DELCONSUMER key groupname consumername</code>**命令用于从消费组里面删除消费者，它还会删除消费者对应的<code>PEL</code>，返回值为被删消费的的<code>PEL</code>中的消息数量。</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xreadgroup group group0 consumerA count 1 block 1000 streams ms-5 &gt;
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xreadgroup group group0 consumerA count 1 block 1000 streams ms-5 &gt;
 1) 1) &quot;ms-5&quot;
    2) 1) 1) &quot;1587991174542-0&quot;
          2) 1) &quot;f1&quot;
@@ -619,7 +621,7 @@ OK
 <h4 id=查看未确认的消息>查看未确认的消息</h4>
 <p>有两种方式可以查看未确认的消息：**<code>XINFO CONSUMERS key group</code>**和 <strong><code>XPENDING key group [start end count] [consumer]</code></strong>。</p>
 <p>先准备测试数据，创建消费组<code>group0</code>并向<code>ms-6</code>中写入5条消息，然后添加消费者<code>consumerA</code>：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xgroup create ms-6 group0 0 MKSTREAM
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xgroup create ms-6 group0 0 MKSTREAM
 OK
 &gt; 5 xadd ms-6 * f1 v1
 &quot;1587996240331-0&quot;
@@ -633,7 +635,7 @@ OK
          2) 1) &quot;f1&quot;
             2) &quot;v1&quot;
 </code></pre><p>查看消息确认状态：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xinfo consumers ms-6 group0
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xinfo consumers ms-6 group0
 1) 1) &quot;name&quot;
    2) &quot;consumerA&quot;
    3) &quot;pending&quot;
@@ -650,7 +652,7 @@ OK
 <h4 id=更换消费者>更换消费者</h4>
 <p>假设<code>consumerA</code>在发送确认消息之前下线了，为了继续处理<code>consumerA</code>在下线前未处理完的消息，我们可以使用 **<code>XCLAIM key group consumer min-idle-time ID [ID ...] [IDLE ms] [TIME ms-unix-time] [RETRYCOUNT count] [FORCE] [JUSTID]</code>**命令让另一个消费者获得未处理完的消息并继续处理。</p>
 <p>先创建一个消费者<code>consumerB</code>：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xreadgroup group group0 consumerB count 1 block 1000 streams ms-6 &gt;
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xreadgroup group group0 consumerB count 1 block 1000 streams ms-6 &gt;
 1) 1) &quot;ms-6&quot;
    2) 1) 1) &quot;1587996240331-1&quot;
          2) 1) &quot;f1&quot;
@@ -661,12 +663,12 @@ OK
 1) 1) &quot;ms-6&quot;
    2) (empty list or set)     // consumerB的消息都已经处理完并确认
 </code></pre><p>将<code>consumerA</code>未处理完的消息<code>1587996240331-0</code>转交给<code>consumerB</code>：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xclaim ms-6 group0 consumerB 1000 1587996240331-0
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xclaim ms-6 group0 consumerB 1000 1587996240331-0
 1) 1) &quot;1587996240331-0&quot;
    2) 1) &quot;f1&quot;
       2) &quot;v1&quot;
 </code></pre><p>查看<code>consumerA</code>和<code>consumerB</code>的<code>PEL</code>：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xreadgroup group group0 consumerA streams ms-6 0
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xreadgroup group group0 consumerA streams ms-6 0
 1) 1) &quot;ms-6&quot;
    2) (empty list or set)
 &gt; xreadgroup group group0 consumerB streams ms-6 0
@@ -675,7 +677,7 @@ OK
          2) 1) &quot;f1&quot;
             2) &quot;v1&quot;
 </code></pre><p>如果我们运行 <strong><code>XPENDING</code></strong>，也可以发现消息<code>1587996240331-0</code>现在归<code>consumerB</code>所有：</p>
-<pre><code class=language-Redis data-lang=Redis>&gt; xpending ms-6 group0
+<pre tabindex=0><code class=language-Redis data-lang=Redis>&gt; xpending ms-6 group0
 1) (integer) 1
 2) &quot;1587996240331-0&quot;
 3) &quot;1587996240331-0&quot;

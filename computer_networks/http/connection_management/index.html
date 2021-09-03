@@ -8,7 +8,7 @@
 <meta property="og:url" content="https://zhannicholas.github.io/computer_networks/http/connection_management/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="computer_networks"><meta property="article:tag" content="HTTP"><meta property="article:published_time" content="2020-12-13T17:05:53+08:00"><meta property="article:modified_time" content="2020-12-13T17:05:53+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.87.0">
+<meta name=generator content="Hugo 0.88.0">
 <title>HTTP连接管理 • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/computer_networks/http/connection_management/>
 <link rel=icon href=/favicon.ico>
@@ -109,6 +109,8 @@ Java Developer, Runner, Cyclist
 <a href=/tags/python/ style=font-size:1em>Python</a>
 </li><li>
 <a href=/tags/redis/ style=font-size:1.5384615384615385em>Redis</a>
+</li><li>
+<a href=/tags/rust/ style=font-size:1em>Rust</a>
 </li><li>
 <a href=/tags/sicp/ style=font-size:1em>SICP</a>
 </li><li>
@@ -302,7 +304,7 @@ Java Developer, Runner, Cyclist
 <li><code>Keep-Alive</code>首部还支持任意未经处理的属性，这些属性主要用于诊断和调试，语法为<code>name [=value]</code>。</li>
 </ul>
 <p><code>Keep-Alive</code>首部是可选的，只有在<code>Connection: Keep-Alive</code>出现时才会被使用。例如下面这两行表示服务器最多还会为另外5个事务保持连接的打开状态，或者将连接的打开状态再保持120秒：</p>
-<pre><code>Connection: Keep-Alive
+<pre tabindex=0><code>Connection: Keep-Alive
 Keep-Alive: max=5, timeout=120
 </code></pre><h5 id=keep-alive连接的限制与规则>Keep-Alive连接的限制与规则</h5>
 <p>使用keep-alive连接时有一些限制和需要特别说明的地方：</p>

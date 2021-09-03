@@ -8,7 +8,7 @@
 <meta property="og:url" content="https://zhannicholas.github.io/posts/redis/publish_subscribe/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Redis"><meta property="article:published_time" content="2020-12-13T17:45:33+08:00"><meta property="article:modified_time" content="2020-12-13T17:45:33+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.87.0">
+<meta name=generator content="Hugo 0.88.0">
 <title>Publish/Subscribe • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/posts/redis/publish_subscribe/>
 <link rel=icon href=/favicon.ico>
@@ -109,6 +109,8 @@ Java Developer, Runner, Cyclist
 <a href=/tags/python/ style=font-size:1em>Python</a>
 </li><li>
 <a href=/tags/redis/ style=font-size:1.5384615384615385em>Redis</a>
+</li><li>
+<a href=/tags/rust/ style=font-size:1em>Rust</a>
 </li><li>
 <a href=/tags/sicp/ style=font-size:1em>SICP</a>
 </li><li>
@@ -232,16 +234,16 @@ Java Developer, Runner, Cyclist
 <p>若客户端不想再监听某个<code>channel</code>上的消息，可以执行 **<code>UNSUBSCRIBE [channel [channel ...]]</code>**来停止对指定<code>channel</code>上消息的订阅。若没有给出<code>channel</code>参数，客户端将停止对之前订阅的所有<code>channel</code>的监听。</p>
 <p>下面是一个例子：
 首先<code>client-2</code>订阅了<code>ch1</code>上的消息：</p>
-<pre><code class=language-Redis data-lang=Redis>client-2:6379&gt; subscribe ch1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>client-2:6379&gt; subscribe ch1
 Reading messages... (press Ctrl-C to quit)
 1) &quot;subscribe&quot;
 2) &quot;ch1&quot;
 3) (integer) 1
 </code></pre><p>然后<code>client-1</code>往<code>ch1</code>上发布消息：</p>
-<pre><code class=language-Redis data-lang=Redis>client-1:6379&gt; publish ch1 &quot;hello&quot;
+<pre tabindex=0><code class=language-Redis data-lang=Redis>client-1:6379&gt; publish ch1 &quot;hello&quot;
 (integer) 1             // 有一个订阅者收到了消息
 </code></pre><p>收到消息的正是<code>client-2</code>，<code>client-2</code>上应该可以看到这样的信息：</p>
-<pre><code class=language-Redis data-lang=Redis>client-2:6379&gt; subscribe ch1
+<pre tabindex=0><code class=language-Redis data-lang=Redis>client-2:6379&gt; subscribe ch1
 Reading messages... (press Ctrl-C to quit)
 1) &quot;subscribe&quot;
 2) &quot;ch1&quot;
@@ -265,16 +267,16 @@ Reading messages... (press Ctrl-C to quit)
 </ul>
 <p>**<code>PUNSUBSCRIBE [pattern [pattern]]</code>**表示不再订阅满足给定模式的<code>channel</code>。若没有给出<code>pattern</code>参数，客户端将停止对之前订阅的所有<code>channel</code>的监听。</p>
 <p>接着上一部分举例，新开一个<code>client-3</code>订阅<code>ch?</code>模式的<code>channel</code>：</p>
-<pre><code class=language-Redis data-lang=Redis>client-3:6379&gt; psubscribe ch?
+<pre tabindex=0><code class=language-Redis data-lang=Redis>client-3:6379&gt; psubscribe ch?
 Reading messages... (press Ctrl-C to quit)
 1) &quot;psubscribe&quot;         // 订阅pattern成功
 2) &quot;ch?&quot;                // 订阅的pattern
 3) (integer) 1          // 订阅该pattern的订阅者数量
 </code></pre><p>然后<code>client-1</code>往<code>ch3</code>上发布消息：</p>
-<pre><code class=language-Redis data-lang=Redis>client-1:6379&gt; publish ch3 &quot;hello, ch3&quot;
+<pre tabindex=0><code class=language-Redis data-lang=Redis>client-1:6379&gt; publish ch3 &quot;hello, ch3&quot;
 (integer) 1             // 有一个客户端收到了消息
 </code></pre><p>收到消息的正是<code>client-3</code>，由于<code>client-2</code>只订阅了<code>ch1</code>，因此它不会收到消息。<code>client-3</code>上应该可以看到这样的信息：</p>
-<pre><code class=language-Redis data-lang=Redis>client-3:6379&gt; psubscribe ch?
+<pre tabindex=0><code class=language-Redis data-lang=Redis>client-3:6379&gt; psubscribe ch?
 Reading messages... (press Ctrl-C to quit)
 1) &quot;psubscribe&quot;
 2) &quot;ch?&quot;
@@ -293,7 +295,7 @@ Reading messages... (press Ctrl-C to quit)
 <li><strong><code>PUBSUB NUMPAT</code></strong>：返回被订阅<code>pattern</code>的数量</li>
 </ul>
 <p>接着上面的例子，在<code>client-1</code>上执行 <strong><code>PUBSUB</code></strong>，查看系统状态：</p>
-<pre><code class=language-Redis data-lang=Redis>client-1:6379&gt; pubsub channels       // 不带pattern参数
+<pre tabindex=0><code class=language-Redis data-lang=Redis>client-1:6379&gt; pubsub channels       // 不带pattern参数
 1) &quot;ch1&quot;
 client-1:6379&gt; pubsub channels ch?
 1) &quot;ch1&quot;

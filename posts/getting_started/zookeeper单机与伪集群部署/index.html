@@ -8,7 +8,7 @@
 <meta property="og:url" content="https://zhannicholas.github.io/posts/getting_started/zookeeper%E5%8D%95%E6%9C%BA%E4%B8%8E%E4%BC%AA%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="ZooKeeper"><meta property="article:published_time" content="2019-09-30T13:38:40+08:00"><meta property="article:modified_time" content="2019-09-30T13:38:40+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.87.0">
+<meta name=generator content="Hugo 0.88.0">
 <title>ZooKeeper单机与伪集群部署 • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/posts/getting_started/zookeeper%E5%8D%95%E6%9C%BA%E4%B8%8E%E4%BC%AA%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/>
 <link rel=icon href=/favicon.ico>
@@ -109,6 +109,8 @@ Java Developer, Runner, Cyclist
 <a href=/tags/python/ style=font-size:1em>Python</a>
 </li><li>
 <a href=/tags/redis/ style=font-size:1.5384615384615385em>Redis</a>
+</li><li>
+<a href=/tags/rust/ style=font-size:1em>Rust</a>
 </li><li>
 <a href=/tags/sicp/ style=font-size:1em>SICP</a>
 </li><li>
@@ -239,13 +241,13 @@ tar -xzvf apache-zookeeper-3.5.5-bin.tar.gz
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>cd apache-zookeeper-3.5.5-bin
 vim conf/zoo.cfg
 </code></pre></div><p>下面是<code>zoo.cfg</code>文件内容的一个示例，文件内容参考自<a href=http://zookeeper.apache.org/doc/r3.5.5/zookeeperStarted.html>ZooKeeper Getting Started Guide</a>:</p>
-<pre><code>tickTime=2000
+<pre tabindex=0><code>tickTime=2000
 dataDir=/opt/Apache/apache-zookeeper-3.5.5-bin/data/standalone  # 数据目录
 clientPort=2181
 </code></pre><p>其实压缩包里附带了一份配置文件的样本<code>zoo_sample.cfg</code>，也可以参考这个文件进行修改。默认情况下，ZooKeeper内置的<code>AdminServer</code>使用了<code>8080</code>端口，如果安装机器上的<code>8080</code>端口已被使用，需要新增一个配置项，例如：</p>
-<pre><code>admin.serverPort=9090 # 使用9090端口作为AdminServer通信端口
+<pre tabindex=0><code>admin.serverPort=9090 # 使用9090端口作为AdminServer通信端口
 </code></pre><p>还可以自定义ZooKeeper的日志文件夹，比如：</p>
-<pre><code>dataLogDir=/opt/Apache/apache-zookeeper-3.5.5-bin/logs/standalone
+<pre tabindex=0><code>dataLogDir=/opt/Apache/apache-zookeeper-3.5.5-bin/logs/standalone
 </code></pre><h2 id=启动zookeeper>启动ZooKeeper</h2>
 <p>准备好配置文件之后，就可以启动ZooKeeper了:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>bin/zkServer.sh start
@@ -261,7 +263,7 @@ clientPort=2181
 <p>很多时候，单机版的ZooKeeper已经能够满足我们的测试要求了。有时候，我们也需要模拟集群环境。ZooKeeper推荐在集群中使用<strong>奇数</strong>台机器。下面将部署的是3节点的伪集群。</p>
 <h2 id=准备配置文件>准备配置文件</h2>
 <p>集群模式的配置文件在单机的基础上增加了一些和集群相关的信息，下面是一个例子，在<code>conf</code>目录中建立文件<code>zoo1.cfg</code>：</p>
-<pre><code>tickTime=2000                                                                                                          
+<pre tabindex=0><code>tickTime=2000                                                                                                          
 dataDir=/opt/Apache/apache-zookeeper-3.5.5-bin/data/cluster/zk1
 clientPort=2182
 initLimit=10
@@ -272,7 +274,7 @@ server.2=127.0.0.1:2888:3888
 server.3=127.0.0.1:2889:3889                           
 </code></pre><p>上面的<code>server.X</code>中，<code>X</code>代表服务器的id。服务器在启动时，会去读取<code>dataDir</code>目录下一个名为<code>myid</code>的文件。<code>myid</code>文件的内容即服务器的id。</p>
 <p>同理，<code>zoo2.cfg</code>的内容为：</p>
-<pre><code>tickTime=2000                                                                                                          
+<pre tabindex=0><code>tickTime=2000                                                                                                          
 dataDir=/opt/Apache/apache-zookeeper-3.5.5-bin/data/cluster/zk2
 clientPort=2183
 initLimit=10
@@ -282,7 +284,7 @@ server.1=127.0.0.1:2887:3887
 server.2=127.0.0.1:2888:3888
 server.3=127.0.0.1:2889:3889   
 </code></pre><p><code>zoo3.cfg</code>:</p>
-<pre><code>tickTime=2000                                                                                                          
+<pre tabindex=0><code>tickTime=2000                                                                                                          
 dataDir=/opt/Apache/apache-zookeeper-3.5.5-bin/data/cluster/zk3
 clientPort=2184
 initLimit=10

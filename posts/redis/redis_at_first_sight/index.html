@@ -8,7 +8,7 @@
 <meta property="og:url" content="https://zhannicholas.github.io/posts/redis/redis_at_first_sight/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Redis"><meta property="article:published_time" content="2019-09-25T19:24:06+08:00"><meta property="article:modified_time" content="2019-09-25T19:24:06+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.87.0">
+<meta name=generator content="Hugo 0.88.0">
 <title>初见Redis • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/posts/redis/redis_at_first_sight/>
 <link rel=icon href=/favicon.ico>
@@ -109,6 +109,8 @@ Java Developer, Runner, Cyclist
 <a href=/tags/python/ style=font-size:1em>Python</a>
 </li><li>
 <a href=/tags/redis/ style=font-size:1.5384615384615385em>Redis</a>
+</li><li>
+<a href=/tags/rust/ style=font-size:1em>Rust</a>
 </li><li>
 <a href=/tags/sicp/ style=font-size:1em>SICP</a>
 </li><li>
@@ -221,7 +223,7 @@ Java Developer, Runner, Cyclist
 <h2 id=strings>Strings</h2>
 <p>字符串(<code>string</code>)是Redis最基本的数据类型，最大不能超过512MB。</p>
 <p>Redis提供了20多个操作<code>string</code>类型的命令。下面是一些例子：</p>
-<pre><code>&gt;&gt; set s1 &quot;Hello, Redis&quot;    // 设置s1的值为&quot;Hello, Redis&quot;
+<pre tabindex=0><code>&gt;&gt; set s1 &quot;Hello, Redis&quot;    // 设置s1的值为&quot;Hello, Redis&quot;
 OK                          // 成功返回OK
 &gt;&gt; get s1                   // 获取值
 &quot;Hello, Redis&quot;
@@ -247,7 +249,7 @@ OK
 5
 </code></pre><p><strong><code>SET</code></strong> 和 <strong><code>GET</code></strong> 分别用来设置和检索key对应的值(这个值是一个<strong>字符串</strong>)。需要注意的是，如果某个key已经有对应的值，<strong><code>SET</code></strong> 命令会覆盖掉已有的值(不管之前的值是何种类型都会被覆盖)，和这个key关联的<code>TTL</code>也会被丢弃。如果不希望已有key的值被覆盖，可以使用 <strong><code>SETNX</code></strong> 命令，当key存在时，<strong><code>SETNX</code></strong> 不会进行任何操作。</p>
 <p>虽然值是<code>string</code>，但如果这个值是一个数字的字符串形式的话，可以对其进行加减操作。上面的例子中，<code>s1</code>的值被重新修改为了<code>"2"</code>，随后执行了 <strong><code>INCR</code></strong> 和 <strong><code>INCRBY</code></strong> 两个加法命令，值变成了<code>13</code>，之后的减法命令 <strong><code>DECR</code></strong> 和 <strong><code>DECRBY</code></strong> 将值减到了<code>7</code>。更加有趣的是，Redis还提供了 <strong><code>INCRBYFLOAT</code></strong> 以支持浮点加减运算。</p>
-<pre><code>&gt;&gt; mset s1 1 s2 2 s3 a
+<pre tabindex=0><code>&gt;&gt; mset s1 1 s2 2 s3 a
 OK
 &gt;&gt; mget s1 s2 s3
 [
@@ -259,7 +261,7 @@ OK
 <h2 id=lists>Lists</h2>
 <p>在Redis中，列表(<code>list</code>)表示由一些元素组成的有序序列。通常情况下，List的实现有数组和链表两种方式，两者各有优劣。数组实现的List可以通过索引快速访问元素，但在插入或删除元素的时候较慢；链表实现的List在插入或删除元素时非常迅速，但访问元素时较慢。Redis中的<code>list</code>使用链表实现，因为对于一个数据库系统来说，快速向一个非常长的列表中添加元素至关重要。基于链表的实现还带来了一个重大优势，那就是可以快速的选取列表中的某一部分。</p>
 <p>Redis提供了10多个操作<code>list</code>的命令，下面时一些例子：</p>
-<pre><code>&gt;&gt; lpush list1 a 1 b    // 向列表list1的头部依次插入a、1、b这三个元素
+<pre tabindex=0><code>&gt;&gt; lpush list1 a 1 b    // 向列表list1的头部依次插入a、1、b这三个元素
 3                       // 成功插入，当前列表list1含有3个元素
 &gt;&gt; lrange list1 0 -1    // 查看list1
 1) &quot;b&quot;
@@ -291,9 +293,9 @@ d
 &gt;&gt; lindex list1 -1     // 查看列表list1中最后一个元素
 c
 </code></pre><p>命令 <strong><code>LPUSH</code></strong> 和 <strong><code>RPUSH</code></strong> 分别用来向列表头部(左侧)和尾部(右侧)添加元素，<strong><code>LPOP</code></strong> 和 <strong><code>RPOP</code></strong> 分别用来从列表头部(左侧)和尾部(右侧)移除元素。在一个空的列表上执行 <strong><code>LPOP</code></strong> 或 <strong><code>RPOP</code></strong> 将返回 <strong>NULL</strong> 。有时候，我们希望只有当列表中有元素时，才执行POP操作，这时候可以使用 <strong><code>BLPOP</code></strong> 和 <strong><code>BRPOP</code></strong> 。两个命令的都是从列表中移除元素，只是方向不一样。以 <strong><code>BLPOP</code></strong> 为例，<strong><code>BLPOP</code></strong> 的完整命令如下：</p>
-<pre><code>BLPOP key [key ...] timeout
+<pre tabindex=0><code>BLPOP key [key ...] timeout
 </code></pre><p><strong><code>BLPOP</code></strong> 接收一个或多个key以及一个超时时间<code>timeout</code>(可阻塞时间，单位为秒，0代表一直阻塞)。在这些key中，如果有key对应的列表不为空，将会返回第一个非空列表的key及POP出的值。举个例子：</p>
-<pre><code>&gt;&gt; lrange list1 0 -1  // 列表list1包含两个元素
+<pre tabindex=0><code>&gt;&gt; lrange list1 0 -1  // 列表list1包含两个元素
 1) &quot;a&quot;
 2) &quot;c&quot;
 &gt;&gt; lrange list2 0 -1  // 列表list2为空
@@ -303,7 +305,7 @@ c
 </code></pre><p><strong><code>BLPOP</code></strong> 依次检查list2和list1，然后移除并返回list1的头部元素(list2是一个空列表)。</p>
 <p>如果 <strong><code>BLPOP</code></strong> 命令后面给出的的key对应的都是空列表，<strong><code>BLPOP</code></strong> 就会阻塞当前连接。一旦另外一个客户端向某一个key对应的列表插入元素，<strong><code>BLPOP</code></strong> 就会解除阻塞并返回。若阻塞的时间超过了<code>timeout</code>，将返回<code>NULL</code>。</p>
 <p>若要查看列表中的元素，可以使用 <strong><code>LRANGE</code></strong> 命令，<strong><code>LRANGE</code></strong> 命令需要两个索引作为参数。这两个索引形成一个区间，分别指向待返回的第一个和最后一个元素在列表中的位置。索引可以是负数，<code>0</code>、<code>-1</code>、<code>-2</code>分别代表链表中的第一个、最后一个和倒数第二个元素。除了区间查看外，还可以使用 <strong><code>LINDEX</code></strong> 命令查看指定位置的元素。</p>
-<pre><code>&gt;&gt; llen list1          // 查看列表list1的长度
+<pre tabindex=0><code>&gt;&gt; llen list1          // 查看列表list1的长度
 3
 &gt;&gt; ltrim list1 1 2     // 修剪列表list1，只保留位于区间[1,2]中的元素
 OK
@@ -314,7 +316,7 @@ OK
 <h2 id=hashes>Hashes</h2>
 <p>Redis中的哈希表(<code>hash</code>)是一个字符串类型的field-value映射表，非常适合用来表示对象。</p>
 <p>下面是一些例子：</p>
-<pre><code>&gt;&gt; hset user:1 name Tome  // 将哈希表user:1的name字段的值设置为Tome
+<pre tabindex=0><code>&gt;&gt; hset user:1 name Tome  // 将哈希表user:1的name字段的值设置为Tome
 1
 &gt;&gt; hget user:1 name       // 获取哈希表user:1中name字段对应的值
 Tome
@@ -348,7 +350,7 @@ OK
 </code></pre><h2 id=sets>Sets</h2>
 <p>Redis中的集合(<code>set</code>)是一个由字符串构成的无序集合。除了基本的插入、删除、存在性检测等操作，Redis还支持集合的交、并、差计算。</p>
 <p>下面是基本操作的一些例子：</p>
-<pre><code>&gt;&gt; sadd set1 red blue white black // 向集合set1中插入4个元素
+<pre tabindex=0><code>&gt;&gt; sadd set1 red blue white black // 向集合set1中插入4个元素
 4
 &gt;&gt; smembers set1                  // 查看集合set1内容
 [
@@ -373,7 +375,7 @@ white
   &quot;red&quot;
 ]
 </code></pre><p>下面是集合运算：</p>
-<pre><code>&gt;&gt; sadd set2 a b c red blue gold
+<pre tabindex=0><code>&gt;&gt; sadd set2 a b c red blue gold
 6
 &gt;&gt; smembers set2
 [
@@ -422,7 +424,7 @@ white
 <li>如果A.socre = B.score，A > B的前提是A的字典序大于B。因为集合的元素都是唯一的，A和B的内容不能相同。</li>
 </ul>
 <p>下面是一些例子：</p>
-<pre><code>&gt;&gt; zadd z1 2 a -1 b               // 向有序集合z1中添加a(score=2)和b(score=-1)， ZADD还可以用来更新元素对应的分数
+<pre tabindex=0><code>&gt;&gt; zadd z1 2 a -1 b               // 向有序集合z1中添加a(score=2)和b(score=-1)， ZADD还可以用来更新元素对应的分数
 2
 &gt;&gt; zrange z1 0 -1                 // 查看z1内容(正序)，因为b.score &lt; a.score，所有b在前面
 [
@@ -459,7 +461,7 @@ white
 <p>严格地说，<code>Bitmap</code>并不是一种新的数据类型，而是基于<code>string</code>的一种数据类型，它提供了一些基于比特位的操作。</p>
 <p>相关的命令分为两种：操作单个比特位的和操作一组比特位的。</p>
 <p>比特位的设置和检索使用的是 <strong><code>BITSET</code></strong> 和 <strong><code>BITGET</code></strong> 命令:</p>
-<pre><code>&gt;&gt; setbit bits 2 1
+<pre tabindex=0><code>&gt;&gt; setbit bits 2 1
 0
 &gt;&gt; getbit bits 2
 1
@@ -475,7 +477,7 @@ white
 <h2 id=hyperloglogs>HyperLogLogs</h2>
 <p>Redis使用<code>HyperLogLog</code>进行计数，这个算法是基于统计的。Redis的实现中，标准误差只有1%，并且在最坏的情况下只需要消耗 <strong>12KB</strong> 的内存。<code>HyperLogLog</code>在技术上是一种不同的数据结构，但也是基于<code>string</code>实现的。</p>
 <p>我们使用 <strong><code>SADD</code></strong> 向集合中添加元素，类似的，我们也可以使用 <strong><code>PFADD</code></strong> 向<code>HyperLogLog</code>中添加元素。实际上，<code>HyperLogLog</code>并不存储我们添加的元素，只是更新内部状态。</p>
-<pre><code>&gt;&gt; pfadd hll a b c d    // 向hll中加入四个元素
+<pre tabindex=0><code>&gt;&gt; pfadd hll a b c d    // 向hll中加入四个元素
 1
 &gt;&gt; type hll             // 查看hll类型
 string                  // HyperLogLog实际为string
@@ -492,7 +494,7 @@ OK
 </code></pre><h2 id=geospatial-indexes>Geospatial indexes</h2>
 <p>Redis在3.2.0版本中加入了地理空间(<code>geospatial</code>)这一数据类型，并支持索引半径查询功能。一个具体的位置信息由三元组(longtitude, latitude, name)确定，当向某一个key添加数据时，数据会被存储为有序集合，这么做为半径查询 <strong><code>GEORADIU</code></strong> 提供了支持。</p>
 <p>下面是一些例子：</p>
-<pre><code>&gt;&gt; geoadd municipalities 116.4551113869 39.6733986505 beijing 121.6406041505 30.8267595167 shanghai 106.6992091675 29.3055601981 chongqing  // 添加3个地理空间数据
+<pre tabindex=0><code>&gt;&gt; geoadd municipalities 116.4551113869 39.6733986505 beijing 121.6406041505 30.8267595167 shanghai 106.6992091675 29.3055601981 chongqing  // 添加3个地理空间数据
 3
 &gt;&gt; geodist municipalities beijing chongqing             // 查看beijing和chongqing直接的距离(单位为米)
 1457336.8906
@@ -524,7 +526,7 @@ OK
 <h1 id=数据过期>数据过期</h1>
 <p>我们可以为某个key设置过期时间(<code>expires</code>)。当<code>expires</code>达到时，对应的key就会被自动删除，就像我们显式的执行 <strong><code>DEL</code></strong> 命令一样。过期时间的单位可以是秒，也可以是毫秒。关于<code>expires</code>的信息都存放在磁盘上，且有备份。这意味着，即使Redis服务器停止运行，过期时间仍然会有效。实际上，Redis保存的是key过期的确切时间，而不是剩余生存时间，虽然参数是秒或毫秒。</p>
 <p>下面是一些例子：</p>
-<pre><code>&gt;&gt; set s1 v1 
+<pre tabindex=0><code>&gt;&gt; set s1 v1 
 OK
 &gt;&gt; expire s1 10      // 设置s1于10秒后过期
 1

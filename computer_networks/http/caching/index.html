@@ -8,7 +8,7 @@
 <meta property="og:url" content="https://zhannicholas.github.io/computer_networks/http/caching/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="computer_networks"><meta property="article:tag" content="HTTP"><meta property="article:published_time" content="2020-12-13T16:41:19+08:00"><meta property="article:modified_time" content="2020-12-13T16:41:19+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.87.0">
+<meta name=generator content="Hugo 0.88.0">
 <title>Web缓存 • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/computer_networks/http/caching/>
 <link rel=icon href=/favicon.ico>
@@ -109,6 +109,8 @@ Java Developer, Runner, Cyclist
 <a href=/tags/python/ style=font-size:1em>Python</a>
 </li><li>
 <a href=/tags/redis/ style=font-size:1.5384615384615385em>Redis</a>
+</li><li>
+<a href=/tags/rust/ style=font-size:1em>Rust</a>
 </li><li>
 <a href=/tags/sicp/ style=font-size:1em>SICP</a>
 </li><li>
@@ -300,7 +302,7 @@ Java Developer, Runner, Cyclist
 </ul>
 <h3 id=no-store与no-cache><code>no-store</code>与<code>no-cache</code></h3>
 <p>HTTP/1.1提供了几种标记对象不可被缓存的方式。从技术上说，这些不可缓存的页面永远都不应该被存储在缓存中。下面就是几个标记文档不可被缓存的首部：</p>
-<pre><code>Pragma: no-cache
+<pre tabindex=0><code>Pragma: no-cache
 Cache-Control: no-cache
 Cache-Control: no-store
 </code></pre><p><code>no-cache</code> 并不意味着"don&rsquo;t cache"，当响应被标记为 <code>no-cache</code> 时，缓存在与源服务器进行新鲜度再验证之前，不能将其提供给客户端。标记为 <code>no-store</code> 的响应禁止缓存保持响应的副本。HTTP/1.1中的 <code>Pragma: no-cache</code> 首部的目的是兼容 HTTP/1.0+。</p>
@@ -308,10 +310,10 @@ Cache-Control: no-store
 <p><code>must-revalidate</code> 并不意味着"must revalidate"。<code>Cache-Control: must-revalidate</code> 响应首部告诉缓存，当本地资源的存活时间没有超过 <code>max-age</code> 时，可以直接返回。否则，必须跟源服务器进行再验证。</p>
 <h3 id=max-age><code>max-age</code></h3>
 <p><code>Cache-Control: max-age</code> 首部表示从服务器将文档传来之时起，可以认为该文档处于新鲜状态的秒数。还有一个 <code>s-maxage</code> 首部，其行为与 <code>max-age</code> 类似，但只用于共享（公有）缓存：</p>
-<pre><code>Cache-Control: max-age=3600
+<pre tabindex=0><code>Cache-Control: max-age=3600
 Cache-Control: s-maxage=3600
 </code></pre><p>服务器可以将 <code>max-age</code> 或 <code>s-maxage</code> 的值设置为 0，从而要求缓存不缓存某个文档或每次访问该文档时都刷新：</p>
-<pre><code>Cache-Control: max-age=0
+<pre tabindex=0><code>Cache-Control: max-age=0
 Cache-Control: s-maxage=0
 </code></pre><h3 id=expires><code>Expires</code></h3>
 <p><code>Expires</code> 响应首部已被弃用，因为它声明的是实际的过期时间而不是相对时长。当机器的时钟不同步时，会有问题。</p>
