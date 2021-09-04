@@ -221,7 +221,7 @@ Java Developer, Runner, Cyclist
 <li><a href=#使用-cargo-创建新项目>使用 cargo 创建新项目</a></li>
 <li><a href=#构建并运行-cargo-项目>构建并运行 Cargo 项目</a></li>
 <li><a href=#使用-cargo-check-检查错误>使用 <code>cargo check</code> 检查错误</a></li>
-<li><a href=#发布项目>发布项目</a></li>
+<li><a href=#profiles>profiles</a></li>
 </ul>
 </li>
 <li><a href=#参考资料>参考资料</a></li>
@@ -310,8 +310,14 @@ Hello, world!
 <p>除了先手动构建项目再手动运行可执行文件外，Cargo 还给我们提供了一条可以自动构建并运行可执行文件的命令——<code>cargo run</code>。</p>
 <h3 id=使用-cargo-check-检查错误>使用 <code>cargo check</code> 检查错误</h3>
 <p>Cargo 还给我们提供了一个叫 <code>cargo check</code> 的命令，它会分析当前包内的代码并报告错误，但并不会产生可执行文件。通常情况下，<code>cargo check</code> 的执行速度比 <code>cargo build</code> 要快得多。如果你经常在编写代码的过程中通过编译来检查代码问题，那么 <code>cargo check</code> 绝对会成为你加速开发的好帮手。很多 Rustaceans 都在编写代码的过程中定期运行 <code>cargo check</code>，确保代码可以正常编译。当他们准备好运行可执行文件时，才会使用 <code>cargo build</code>。</p>
-<h3 id=发布项目>发布项目</h3>
-<p>当你的项目准备好最终的发布时，你就可以使用 <code>cargo build --release</code> 来编译项目了，Cargo 会在编译发布版本的过程中进行一系列优化。这些优化会使得你的 Rust 程序运行得更快，但是会消耗更多的编译时间。在开发过程中，我们通常希望编译尽可能快，这样我们能够更快地进行验证，所以 <code>cargo build</code> 默认会生成开发用过程使用的可执行文件。而最终用户通常希望程序运行尽可能地快，这就是 <code>cargo build --realease</code> 花更多编译时间进行优化的原因。<code>cargo build --release</code> 最终编译出来的文件位于 <code>target/release</code> 目录下。</p>
+<h3 id=profiles>profiles</h3>
+<p>Cargo 给我们提供了两种 profile，用于不同场景下的程序构建：</p>
+<ul>
+<li>Default Profile：用于开发环境，<code>cargo build</code> 默认选项</li>
+<li>&ndash;release Profile：用于发布项目，需要通过 <code>cargo build --release</code> 显式指出</li>
+</ul>
+<p>在开发过程中，我们通常希望编译尽可能快，这样我们能够更快地进行验证，所以 <code>cargo build</code> 默认会生成开发用过程使用的可执行文件。在我们使用 <code>cargo build --release</code> 构建发布项目时，Cargo 会在编译发布版本的过程中进行一系列优化。这些优化会使得你的 Rust 程序运行得更快，但是会消耗更多的编译时间。程序的最终用户通常希望程序运行尽可能地快，这正是是 <code>cargo build --realease</code> 花更多编译时间进行优化的原因。</p>
+<p>不同 profile 构建出来的最终文件存放位置是不一样的。<code>cargo build</code> 编译出来的文件位于 <code>target/debug</code> 目录下，而<code>cargo build --release</code> 编译出来的文件位于 <code>target/release</code> 目录下。</p>
 <h2 id=参考资料>参考资料</h2>
 <ol>
 <li>Steve Klabnik, Carol Nichols. <a href=https://doc.rust-lang.org/stable/book/>The Rust Programming Language</a>.</li>
