@@ -1,0 +1,476 @@
+<!doctype html><html lang=zh-cn dir=auto><head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="变量 变量与可变性 在 Rust 中，变量（variables）有两种： 不可变变量：一经赋值，就不再允许对变量的值进行修改 可变变量：可可对变量的值进行多次">
+<meta name=theme-color content="#ffcd00">
+<meta property="og:title" content="Rust 基础：变量与数据类型 • Nicholas Zhan">
+<meta property="og:description" content="变量 变量与可变性 在 Rust 中，变量（variables）有两种： 不可变变量：一经赋值，就不再允许对变量的值进行修改 可变变量：可可对变量的值进行多次">
+<meta property="og:url" content="https://zhannicholas.github.io/rust/rust_basics_variables_and_data_types/">
+<meta property="og:site_name" content="Nicholas Zhan">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="rust"><meta property="article:tag" content="Rust"><meta property="article:published_time" content="2021-09-03T21:32:35+08:00"><meta property="article:modified_time" content="2021-09-03T21:32:35+08:00"><meta name=twitter:card content="summary">
+<meta name=generator content="Hugo 0.88.0">
+<title>Rust 基础：变量与数据类型 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/rust/rust_basics_variables_and_data_types/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
+</head>
+<body class="page type-rust has-sidebar">
+<div class=site><div id=sidebar class=sidebar>
+<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
+<div class=container><section class="widget widget-about sep-after">
+<header>
+<div class=logo>
+<a href=/>
+<img src=/images/logo.png>
+</a>
+</div>
+<h2 class="title site-title">
+<a href=/>
+Nicholas Zhan
+</a>
+</h2>
+<div class=desc>
+Java Developer, Runner, Cyclist
+</div>
+</header>
+</section>
+<section class="widget widget-search sep-after">
+<header>
+<h4 class="title widget-title">搜索</h4>
+</header>
+<form action=/search id=search-form class=search-form>
+<label>
+<span class=screen-reader-text>搜索</span>
+<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
+</label></form>
+</section>
+<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
+<div class=container>
+<ul><li class="item has-children">
+<a href=/java/>Java</a><button class=sub-menu-toggler>
+<span class=screen-reader-text>expand sub menu</span>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/java/jakartaee/>Jakarta EE</a></li><li class=item>
+<a href=/java/jvm/>JVM</a></li><li class=item>
+<a href=/java/concurrency/>并发</a></li></ul></li><li class=item>
+<a href=/distributed_computing/>分布式计算</a></li><li class=item>
+<a href=/operating_systems/>操作系统</a></li><li class="item has-children">
+<a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=screen-reader-text>expand sub menu</span>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/computer_networks/http/>HTTP</a></li><li class=item>
+<a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
+</div>
+</nav>
+</section><section class="widget widget-taxonomy_cloud sep-after">
+<header>
+<h4 class="title widget-title">标签</h4>
+</header>
+<div class="container list-container">
+<ul class="list taxonomy-cloud"><li>
+<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.3846153846153846em>C算法</a>
+</li><li>
+<a href=/tags/english/ style=font-size:1em>English</a>
+</li><li>
+<a href=/tags/gc/ style=font-size:1.1538461538461537em>GC</a>
+</li><li>
+<a href=/tags/git/ style=font-size:1em>Git</a>
+</li><li>
+<a href=/tags/http/ style=font-size:1.5384615384615385em>HTTP</a>
+</li><li>
+<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
+</li><li>
+<a href=/tags/jakartaee/ style=font-size:1.1538461538461537em>JakartaEE</a>
+</li><li>
+<a href=/tags/java/ style=font-size:2em>Java</a>
+</li><li>
+<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
+</li><li>
+<a href=/tags/jvm/ style=font-size:1.2307692307692308em>JVM</a>
+</li><li>
+<a href=/tags/leetcode/ style=font-size:1.1538461538461537em>Leetcode</a>
+</li><li>
+<a href=/tags/life/ style=font-size:1em>Life</a>
+</li><li>
+<a href=/tags/linux/ style=font-size:1.2307692307692308em>Linux</a>
+</li><li>
+<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
+</li><li>
+<a href=/tags/networks/ style=font-size:1.1538461538461537em>Networks</a>
+</li><li>
+<a href=/tags/os/ style=font-size:1.4615384615384617em>OS</a>
+</li><li>
+<a href=/tags/ostep/ style=font-size:1.1538461538461537em>OSTEP</a>
+</li><li>
+<a href=/tags/python/ style=font-size:1em>Python</a>
+</li><li>
+<a href=/tags/redis/ style=font-size:1.5384615384615385em>Redis</a>
+</li><li>
+<a href=/tags/rust/ style=font-size:1.0769230769230769em>Rust</a>
+</li><li>
+<a href=/tags/sicp/ style=font-size:1em>SICP</a>
+</li><li>
+<a href=/tags/spring/ style=font-size:1em>Spring</a>
+</li><li>
+<a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a>
+</li><li>
+<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
+</li><li>
+<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
+</li><li>
+<a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0769230769230769em>分布式计算</a>
+</li><li>
+<a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0769230769230769em>多处理器编程的艺术</a>
+</li><li>
+<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
+</li><li>
+<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.4615384615384617em>并发</a>
+</li><li>
+<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
+</li><li>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0769230769230769em>数据库</a>
+</li><li>
+<a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
+</li><li>
+<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0769230769230769em>现代操作系统</a>
+</li><li>
+<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
+</li><li>
+<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.2307692307692308em>算法导论</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.9230769230769231em>设计模式</a>
+</li></ul>
+</div>
+</section>
+</div>
+<div class=sidebar-overlay></div>
+</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
+<div class=container>
+<a class=screen-reader-text href=#content>跳到内容</a>
+<button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
+<span class=screen-reader-text>Toggle Sidebar</span>
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</span>
+<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</span>
+</button>
+<ul><li class=item>
+<a href=/>主页</a>
+</li><li class=item>
+<a href=/posts/>博客</a>
+</li><li class=item>
+<a href=/notebook/>笔记本</a>
+</li><li class=item>
+<a href=/itinerary/>游山玩水</a>
+</li></ul>
+</div>
+</nav><div class=header-widgets>
+<div class=container>
+<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+<section class="widget widget-breadcrumbs sep-after">
+<nav id=breadcrumbs>
+<ol><li><a href=/>主页</a></li><li><a href=/rust/>Rusts</a></li><li><span>Rust 基础：变量与数据类型</span></li></ol>
+</nav>
+</section></div>
+</div>
+<header id=header class="header site-header">
+<div class="container sep-after">
+<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
+</div>
+</div>
+</header>
+<main id=content>
+<article lang=zh-cn class=entry>
+<header class="header entry-header">
+<div class="container sep-after">
+<div class=header-info>
+<h1 class=title>Rust 基础：变量与数据类型</h1>
+</div>
+<div class=entry-meta>
+<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+<span class=screen-reader-text>Posted on </span>
+<time class=entry-date datetime=2021-09-03T21:32:35+08:00>2021, Sep 03</time>
+</span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
+<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
+6 mins read
+</span>
+</div>
+</div>
+</header>
+<details class="container entry-toc">
+<summary class=title>
+<span>目录</span>
+</summary>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#变量>变量</a>
+<ul>
+<li><a href=#变量与可变性>变量与可变性</a></li>
+<li><a href=#常量>常量</a></li>
+<li><a href=#隐藏>隐藏</a></li>
+</ul>
+</li>
+<li><a href=#数据类型>数据类型</a>
+<ul>
+<li><a href=#标量类型>标量类型</a></li>
+<li><a href=#复合类型>复合类型</a></li>
+</ul>
+</li>
+<li><a href=#参考资料>参考资料</a></li>
+</ul>
+</nav>
+</details>
+<div class="container entry-content">
+<h2 id=变量>变量</h2>
+<h3 id=变量与可变性>变量与可变性</h3>
+<p>在 Rust 中，变量（variables）有两种：</p>
+<ul>
+<li>不可变变量：一经赋值，就不再允许对变量的值进行修改</li>
+<li>可变变量：可可对变量的值进行多次修改</li>
+</ul>
+<p>在 Rust 中，我们使用 <code>let</code> 关键字声明一个变量，例如：<code>let x = 1</code>。默认情况下，<code>let</code> 声明的变量是 <strong>不可变的</strong>。如果代码里面出现不可变变量被多次赋值的情况，则代码是不会编译通过的。例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
+    <span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>5</span>;
+    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The value of x is: {}&#34;</span>, x);
+    x <span style=color:#f92672>=</span> <span style=color:#ae81ff>6</span>;
+    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The value of x is: {}&#34;</span>, x);
+}
+</code></pre></div><p>如果使用 <code>cargo run</code> 运行这段代码，则会出现以下错误：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>&gt; cargo run  
+   Compiling variables v0.1.0 (F:\Code\Rust\rust-study\variables)
+error<span style=color:#66d9ef>[E0384]</span><span style=color:#960050;background-color:#1e0010>:</span> cannot assign twice to immutable variable `x`
+ --&gt; src\main.rs<span style=color:#960050;background-color:#1e0010>:</span>4<span style=color:#960050;background-color:#1e0010>:</span>5
+  |
+2 |     let x = 5;
+  |         -
+  |         |
+  |         first assignment to `x`
+  |         help<span style=color:#960050;background-color:#1e0010>:</span> consider making this binding mutable<span style=color:#960050;background-color:#1e0010>:</span> `mut x`
+3 |     println!(<span style=color:#e6db74>&#34;The value of x is: {}&#34;</span>, x);
+4 |     x = 6;
+  |     ^^^^^ cannot assign twice to immutable variable
+
+error<span style=color:#960050;background-color:#1e0010>:</span> aborting due to previous error
+
+<span style=color:#66d9ef>For</span> more information about this error, <span style=color:#66d9ef>try</span> `rustc --explain E0384`.
+error<span style=color:#960050;background-color:#1e0010>:</span> could not compile `variables`
+
+To learn more, run the command again with --verbose.
+</code></pre></div><p>Cargo 给了我们很多有用的错误信息，其中就一行被标成了红色，十分醒目：<code>cannot assign twice to immutable variable</code>。也就是说，不可以再次给不可变变量赋值。</p>
+<p>解决错误的方法很简单，将第二行替换成 <code>let mut x = 5</code> 即可。我们在变量 <code>x</code> 之前加了一个关键字 <code>mut</code>，表明 <code>x</code> 是一个可变变量。再次运行 <code>cargo run</code>，我们就能看到正确的输出了。</p>
+<h3 id=常量>常量</h3>
+<p>和其它编程语言一样，Rust 中也有常量（constants）这个概念。Rust 中的常量在赋值之后就不能修改。有人可能会问，这不就跟不可变变量一样吗？实际上，这只是常量与不可变变量的一个相同点，二者还是有差异的。</p>
+<p>首先，声明常量的关键字是 <code>const</code>，而声明变量的关键字是 <code>let</code>。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>const</span> ONE: <span style=color:#66d9ef>u32</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+</code></pre></div><p>以上代码声明了一个名为 <code>ONE</code> 的常量，并赋值为 <code>1</code>。常量名约定使用大写字母，多个单词之间用下划线隔开。</p>
+<p>其次，常量的赋值部分只能是一个常量表达式，不能是某个函数调用的结果或运行期间计算出来的值。而变量就没有这个限制。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+<span style=color:#66d9ef>const</span> SQUARE <span style=color:#f92672>=</span> x <span style=color:#f92672>*</span> x;
+</code></pre></div><p>上面这段代码是无法正常编译的，因为 <code>x</code> 是变量，而 <code>SQUARE</code> 是常量，<code>x * x</code> 的值是在程序运行过程中计算出来的。</p>
+<h3 id=隐藏>隐藏</h3>
+<p>我们可以多次定义一个同名的变量，后面定义的变量会隐藏（shadowing）它之前的同名变量，即程序只能看到最新一个同名变量的值。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
+    <span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>5</span>;
+    <span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> x <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
+    {
+        <span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> x <span style=color:#f92672>*</span> <span style=color:#ae81ff>2</span>;
+        println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The value of x in the inner scope is: {}&#34;</span>, x);
+    }
+    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The value of x is: {}&#34;</span>, x);
+}
+</code></pre></div><p>以上这段代码很有意思，它首先将变量 <code>x</code> 的值绑定为 <code>5</code>，然后通过 <code>let x =</code> 隐藏 <code>5</code> 这个值，真正可见的值是 <code>6</code>。而在内部作用域中，第二个 <code>let</code> 再次隐藏 <code>x</code> 之前的值，真正可见的值是 <code>12</code>。内部作用域结束，作用域内的隐藏效果也结束了，<code>x</code> 的值又变成 <code>6</code>。所以，这个程序的输出结果应该是：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>The value of x <span style=color:#66d9ef>in</span> the inner scope is<span style=color:#960050;background-color:#1e0010>:</span> 12
+The value of x <span style=color:#66d9ef>in</span> the inner scope is<span style=color:#960050;background-color:#1e0010>:</span> 6
+</code></pre></div><p>如果我们去掉第二行开头的 <code>let</code>，程序就因不可变变量被再次赋值而编译失败。不可变变量的隐藏与不可变变量的赋值是完全不同的，我们可以认为隐藏就是重新声明了一个新的变量。</p>
+<p>既然如此，为啥不直接使用可变变量呢？原因是隐藏更加灵活，因为不可变变量的变量类型在声明之后就不能再改了，而隐藏可以修改变量的数据类型。例如，下面的代码是可以编译成功的：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> a <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+<span style=color:#66d9ef>let</span> a <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;1&#34;</span>;
+</code></pre></div><p>而下面这段代码将会编译失败：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> a <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+a <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;1&#34;</span>;
+</code></pre></div><h2 id=数据类型>数据类型</h2>
+<p>Rust 是一门 <strong>静态类型</strong> 语言，在编译期间就必须确定所有变量的类型。Rust 中的每一个变量的值都属于某一数据类型，Rust 通过数据类型得知变量的值是何种数据，进而决定如何处理这个值。</p>
+<p>我们并不需要一一声明变量所属的数据类型，Rust 的编译器是很智能的，它可以根据值及其使用方式推断出我们想要使用的数据类型。但是，当某个值可能属于多种数据类型时，我们就必须通过类型注解显式地给出变量的数据类型，否则编译就会出错。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;  <span style=color:#75715e>// 编译器可以推断出 x 的数据类型
+</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> guess: <span style=color:#66d9ef>u32</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;42&#34;</span>.parse().expect(<span style=color:#e6db74>&#34;Not a number!&#34;</span>);  <span style=color:#75715e>// &#34;42&#34;.parse() 的结果可能对应多种类型，所以需要使用类型注解
+</span></code></pre></div><p>在 Rust 中，数据类型分为两类：标量类型（scalar types）和复合类型（compound types）</p>
+<h3 id=标量类型>标量类型</h3>
+<p>一个标量类型表示的是单个值。Rust 中有四种基本的标量类型：整型、浮点型、布尔类型和字符类型。</p>
+<h4 id=整型>整型</h4>
+<p>整型（integer）是没有小数部分的数字。根据是否可以表示负数，整型又可以分为有符号整型和无符号整型。下面的表格列出了 Rust 中的所有整型：</p>
+<table>
+<thead>
+<tr>
+<th>Length</th>
+<th>Signed</th>
+<th>Unsigned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8-bit</td>
+<td>i8</td>
+<td>u8</td>
+</tr>
+<tr>
+<td>16-bit</td>
+<td>i16</td>
+<td>u16</td>
+</tr>
+<tr>
+<td>32-bit</td>
+<td>i32</td>
+<td>u32</td>
+</tr>
+<tr>
+<td>64-bit</td>
+<td>i64</td>
+<td>u64</td>
+</tr>
+<tr>
+<td>128-bit</td>
+<td>i128</td>
+<td>u128</td>
+</tr>
+<tr>
+<td>arch</td>
+<td>isize</td>
+<td>usize</td>
+</tr>
+</tbody>
+</table>
+<p>其中，有符号整型以字母 <code>i</code> 开头，无符号整型以字母 <code>u</code> 开头。<code>i</code> 或 <code>u</code> 后面的数字即该类型所占的二进制位数。假设整型的长度为 <code>n</code> 位，则有符号整型能表示数值范围的区间是 $[-2^{n - 1}, 2^{n - 1} - 1]$，而无符号整型能表示数值范围区间是 $[0, 2^n - 1]$。例如，<code>i8</code> 可存储的数值范围是 [0, 255]，而 <code>u8</code> 可存储的数值范围是 [-128, 127]。表格中的 <code>isize</code> 和 <code>usize</code> 类型由运行程序的机器架构决定：对于 64 位架构的计算机来说，它们就是 64 位的，而对于 32 位架构的计算机来说，它们就是 32 位的。Rust 中默认的整型是 <code>i32</code>。</p>
+<p>除了将整数写成最常见的十进制形式外，Rust 还允许我们将数字写成十六进制、八进制等形式。为了便于阅读，我们不仅可以在数值后面跟上它的具体类型（比如 <code>58u8</code> 表示 <code>u8</code> 类型的数字 <code>58</code>），还可以使用下划线（<code>_</code>）对数字进行分隔（比如 <code>10_000</code> 就是数字 <code>10000</code>）。下面表格列出了 Rust 中的各种整数表示法：</p>
+<table>
+<thead>
+<tr>
+<th>Number Literals</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Decimal</td>
+<td>98_222</td>
+</tr>
+<tr>
+<td>Hex</td>
+<td>0xff</td>
+</tr>
+<tr>
+<td>Octal</td>
+<td>0o77</td>
+</tr>
+<tr>
+<td>Binary</td>
+<td>0b1111_0000</td>
+</tr>
+<tr>
+<td>Byte(<code>u8</code> only)</td>
+<td>b&rsquo;A'</td>
+</tr>
+</tbody>
+</table>
+<h4 id=浮点型>浮点型</h4>
+<p>浮点型（floating-point）是带小数点的数字。Rust 有两种原生的浮点类型：单精度浮点型 <code>f32</code>（占 32 位）和双精度浮点型 <code>f64</code>（占 64 位）。<code>f64</code> 是 Rust 中默认的浮点类型。例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>2.0</span>;  <span style=color:#75715e>// f64
+</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> y: <span style=color:#66d9ef>f32</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>3.0</span>; <span style=color:#75715e>// f32
+</span></code></pre></div><p>和大多数编程语言一眼，Rust 中的浮点型是使用 IEEE-754 标准表示的。</p>
+<h4 id=布尔类型>布尔类型</h4>
+<p>Rust 中的布尔类型有两个可能的值：<code>true</code> 和 <code>false</code>。布尔类型占一个字节，类型注解为 <code>bool</code>。</p>
+<h4 id=字符类型>字符类型</h4>
+<p>字符类型（<code>char</code>）占 4 个字节，可以表示 <code>U+0000</code> 到 <code>U+D7FF</code> 之间和 <code>U+E000</code> 到 <code>U+10FFF</code> 之间的 Unicode 字符。</p>
+<h3 id=复合类型>复合类型</h3>
+<p>复合类型可以将多个值组合到一个类型中。Rust 内置了元组（tuples）和数组（arrays）这两种复合类型。</p>
+<h4 id=元组>元组</h4>
+<p>元组可以包含不同类型得值，其长度在指定后就不能修改。创建一个元组的方式很简单，将各个值用逗号分隔，放在小括号当中即可：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> tup: (<span style=color:#66d9ef>i32</span>, <span style=color:#66d9ef>f64</span>, <span style=color:#66d9ef>u8</span>) <span style=color:#f92672>=</span> (<span style=color:#ae81ff>500</span>, <span style=color:#ae81ff>6.4</span>, <span style=color:#ae81ff>1</span>);
+</code></pre></div><p>以上代码创建了一个包含三个不同类型数值的元组 <code>tup</code>。那么如何访问元组中的元素呢？Rust 给我们提供了两种方法，其中一种是使用模式匹配对元组进行解构（destructure）：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> tup <span style=color:#f92672>=</span> (<span style=color:#ae81ff>500</span>, <span style=color:#ae81ff>6.4</span>, <span style=color:#ae81ff>1</span>);
+<span style=color:#66d9ef>let</span> (x, y, z) <span style=color:#f92672>=</span> tup;
+println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The value of y is: {}&#34;</span>, y);
+</code></pre></div><p>以上代码首先将元组 <code>(500, 6.4, 1)</code> 绑定到了变量 <code>tup</code> 上，然后使用模式 <code>(x, y, z)</code> 将 <code>tup</code> 分成了三个不同的部分，这个过程就是解构（destructring）。除了使用模式匹配解构外，我们还可以通过点号（<code>.</code>）加索引的方式访问元组中的值：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> tup <span style=color:#f92672>=</span> (<span style=color:#ae81ff>500</span>, <span style=color:#ae81ff>6.4</span>, <span style=color:#ae81ff>1</span>);
+<span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> tup.<span style=color:#ae81ff>0</span>;  <span style=color:#75715e>// 500
+</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> y <span style=color:#f92672>=</span> tup.<span style=color:#ae81ff>1</span>;  <span style=color:#75715e>// 6.4
+</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> z <span style=color:#f92672>=</span> tup.<span style=color:#ae81ff>2</span>;  <span style=color:#75715e>// 1
+</span><span style=color:#75715e></span>println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;x = {}, y = {}, z = {}&#34;</span>, x, y, z);
+</code></pre></div><p>和大多数编程语言一样，Rust 中的下标也是从 0 开始的。</p>
+<h4 id=数组>数组</h4>
+<p>数组只能包含多个相同类型得值，其长度在指定后也不能修改。创建一个数组的方式也很简单，将各个值用逗号分隔，然后放到中括号当中即可：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> arr <span style=color:#f92672>=</span> [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>];
+</code></pre></div><p>我们可以通过下标访问数组中的元素：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> arr <span style=color:#f92672>=</span> [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>];
+<span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> arr[<span style=color:#ae81ff>0</span>]; <span style=color:#75715e>// 1
+</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> y <span style=color:#f92672>=</span> arr[<span style=color:#ae81ff>1</span>]; <span style=color:#75715e>// 2
+</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> z <span style=color:#f92672>=</span> arr[<span style=color:#ae81ff>2</span>]; <span style=color:#75715e>// 3
+</span><span style=color:#75715e></span>println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;x = {}, y = {}, z = {}&#34;</span>, x, y, z);
+</code></pre></div><p>我们也可以在声明数组的时候显式给出数组元素的类型和数组长度，例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> arr: [<span style=color:#66d9ef>i32</span>; <span style=color:#ae81ff>3</span>] <span style=color:#f92672>=</span> [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>];
+</code></pre></div><p>以上代码声明了一个长度为 <code>3</code> 的数组 <code>[1, 2, 3]</code>，数组中的元素类型为 <code>i32</code>。</p>
+<p>此外，Rust 还给我们提供了将数组初始化为相同值的简便写法：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> arr <span style=color:#f92672>=</span> [<span style=color:#ae81ff>1</span>; <span style=color:#ae81ff>3</span>];
+</code></pre></div><p>以上代码声明了一个长度为 <code>3</code> 的数组，数组中所有元素都是 <code>1</code>。该写法等价于：<code>let arr = [1, 1, 1]</code>。</p>
+<h2 id=参考资料>参考资料</h2>
+<ol>
+<li>Steve Klabnik, Carol Nichols. <a href=https://doc.rust-lang.org/stable/book/>The Rust Programming Language</a>.</li>
+</ol>
+</div>
+<footer class=entry-footer>
+<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/rust/>Rust</a></div>
+<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/rust/>Rust</a></div>
+</div>
+</footer>
+</article>
+<nav class=entry-nav>
+<div class=container><div class="prev-entry sep-before">
+<a href=/rust/hello_rust/>
+<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
+Previous</span>
+<span class=screen-reader-text>上一篇: </span>Hello, Rust!</a>
+</div></div>
+</nav>
+</main>
+<footer id=footer class=footer>
+<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
+<ul><li>
+<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a>
+</li><li>
+<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
+</a>
+</li><li>
+<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
+<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+</a>
+</li><li>
+<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+</a>
+</li></ul>
+</nav>
+</section><div class=copyright>
+<p> &copy; 2018-2021 Nicholas Zhan </p>
+</div>
+</div>
+</footer>
+</div>
+</div><script>window.__assets_js_src="/assets/js/"</script>
+<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script><script type=text/x-mathjax-config>
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"processEscapes":true}})
+</script>
+<script type=text/javascript async src="//unpkg.com/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
+</html>
