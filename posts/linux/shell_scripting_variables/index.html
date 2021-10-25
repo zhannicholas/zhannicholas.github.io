@@ -1,0 +1,411 @@
+<!doctype html><html lang=zh-cn dir=auto><head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Shell 脚本用变量（variable）来表示数据，变量仅仅只是一个标签（label），它实际上是一个引用（reference）或指针（pointe">
+<meta name=theme-color content="#ffcd00">
+<meta property="og:title" content="Shell 脚本：变量 • Nicholas Zhan">
+<meta property="og:description" content="Shell 脚本用变量（variable）来表示数据，变量仅仅只是一个标签（label），它实际上是一个引用（reference）或指针（pointe">
+<meta property="og:url" content="https://zhannicholas.github.io/posts/linux/shell_scripting_variables/">
+<meta property="og:site_name" content="Nicholas Zhan">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Shell"><meta property="article:published_time" content="2021-10-20T21:26:46+08:00"><meta property="article:modified_time" content="2021-10-20T21:26:46+08:00"><meta name=twitter:card content="summary">
+<meta name=generator content="Hugo 0.88.1">
+<title>Shell 脚本：变量 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/posts/linux/shell_scripting_variables/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
+</head>
+<body class="page type-posts has-sidebar">
+<div class=site><div id=sidebar class=sidebar>
+<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
+<div class=container><section class="widget widget-about sep-after">
+<header>
+<div class=logo>
+<a href=/>
+<img src=/images/logo.png>
+</a>
+</div>
+<h2 class="title site-title">
+<a href=/>
+Nicholas Zhan
+</a>
+</h2>
+<div class=desc>
+Java Developer, Runner, Cyclist
+</div>
+</header>
+</section>
+<section class="widget widget-search sep-after">
+<header>
+<h4 class="title widget-title">搜索</h4>
+</header>
+<form action=/search id=search-form class=search-form>
+<label>
+<span class=screen-reader-text>搜索</span>
+<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
+</label></form>
+</section>
+<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
+<div class=container>
+<ul><li class="item has-children">
+<a href=/java/>Java</a><button class=sub-menu-toggler>
+<span class=screen-reader-text>expand sub menu</span>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/java/jakartaee/>Jakarta EE</a></li><li class=item>
+<a href=/java/jvm/>JVM</a></li><li class=item>
+<a href=/java/concurrency/>并发</a></li></ul></li><li class=item>
+<a href=/rust/>Rust</a></li><li class=item>
+<a href=/distributed_computing/>分布式计算</a></li><li class=item>
+<a href=/operating_systems/>操作系统</a></li><li class="item has-children">
+<a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=screen-reader-text>expand sub menu</span>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/computer_networks/http/>HTTP</a></li><li class=item>
+<a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
+</div>
+</nav>
+</section><section class="widget widget-taxonomy_cloud sep-after">
+<header>
+<h4 class="title widget-title">标签</h4>
+</header>
+<div class="container list-container">
+<ul class="list taxonomy-cloud"><li>
+<a href=/tags/communication/ style=font-size:1em>Communication</a>
+</li><li>
+<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.3846153846153846em>C算法</a>
+</li><li>
+<a href=/tags/english/ style=font-size:1em>English</a>
+</li><li>
+<a href=/tags/gc/ style=font-size:1.1538461538461537em>GC</a>
+</li><li>
+<a href=/tags/git/ style=font-size:1em>Git</a>
+</li><li>
+<a href=/tags/http/ style=font-size:1.5384615384615385em>HTTP</a>
+</li><li>
+<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
+</li><li>
+<a href=/tags/jakartaee/ style=font-size:1.1538461538461537em>JakartaEE</a>
+</li><li>
+<a href=/tags/java/ style=font-size:2em>Java</a>
+</li><li>
+<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
+</li><li>
+<a href=/tags/jvm/ style=font-size:1.2307692307692308em>JVM</a>
+</li><li>
+<a href=/tags/leetcode/ style=font-size:1.1538461538461537em>Leetcode</a>
+</li><li>
+<a href=/tags/life/ style=font-size:1em>Life</a>
+</li><li>
+<a href=/tags/linux/ style=font-size:1.2307692307692308em>Linux</a>
+</li><li>
+<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
+</li><li>
+<a href=/tags/networks/ style=font-size:1.1538461538461537em>Networks</a>
+</li><li>
+<a href=/tags/os/ style=font-size:1.4615384615384617em>OS</a>
+</li><li>
+<a href=/tags/ostep/ style=font-size:1.1538461538461537em>OSTEP</a>
+</li><li>
+<a href=/tags/python/ style=font-size:1em>Python</a>
+</li><li>
+<a href=/tags/redis/ style=font-size:1.5384615384615385em>Redis</a>
+</li><li>
+<a href=/tags/rpc/ style=font-size:1em>RPC</a>
+</li><li>
+<a href=/tags/rust/ style=font-size:1.5384615384615385em>Rust</a>
+</li><li>
+<a href=/tags/shell/ style=font-size:1.2307692307692308em>Shell</a>
+</li><li>
+<a href=/tags/sicp/ style=font-size:1em>SICP</a>
+</li><li>
+<a href=/tags/spring/ style=font-size:1em>Spring</a>
+</li><li>
+<a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a>
+</li><li>
+<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
+</li><li>
+<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
+</li><li>
+<a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0769230769230769em>分布式计算</a>
+</li><li>
+<a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0769230769230769em>多处理器编程的艺术</a>
+</li><li>
+<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
+</li><li>
+<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.4615384615384617em>并发</a>
+</li><li>
+<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
+</li><li>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0769230769230769em>数据库</a>
+</li><li>
+<a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
+</li><li>
+<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0769230769230769em>现代操作系统</a>
+</li><li>
+<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
+</li><li>
+<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.2307692307692308em>算法导论</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.9230769230769231em>设计模式</a>
+</li></ul>
+</div>
+</section>
+</div>
+<div class=sidebar-overlay></div>
+</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
+<div class=container>
+<a class=screen-reader-text href=#content>跳到内容</a>
+<button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
+<span class=screen-reader-text>Toggle Sidebar</span>
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</span>
+<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</span>
+</button>
+<ul><li class=item>
+<a href=/>主页</a>
+</li><li class="item current">
+<a aria-current=page href=/posts/>博客</a>
+</li><li class=item>
+<a href=/notebook/>笔记本</a>
+</li><li class=item>
+<a href=/itinerary/>游山玩水</a>
+</li></ul>
+</div>
+</nav><div class=header-widgets>
+<div class=container>
+<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+<section class="widget widget-breadcrumbs sep-after">
+<nav id=breadcrumbs>
+<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><span>Shell 脚本：变量</span></li></ol>
+</nav>
+</section></div>
+</div>
+<header id=header class="header site-header">
+<div class="container sep-after">
+<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
+</div>
+</div>
+</header>
+<main id=content>
+<article lang=zh-cn class=entry>
+<header class="header entry-header">
+<div class="container sep-after">
+<div class=header-info>
+<h1 class=title>Shell 脚本：变量</h1>
+</div>
+<div class=entry-meta>
+<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+<span class=screen-reader-text>Posted on </span>
+<time class=entry-date datetime=2021-10-20T21:26:46+08:00>2021, Oct 20</time>
+</span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
+<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
+6 mins read
+</span>
+</div>
+</div>
+</header>
+<details class="container entry-toc">
+<summary class=title>
+<span>目录</span>
+</summary>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#创建变量>创建变量</a></li>
+<li><a href=#变量的类型>变量的类型</a>
+<ul>
+<li><a href=#设置变量的类型>设置变量的类型</a></li>
+</ul>
+</li>
+<li><a href=#导出变量>导出变量</a></li>
+<li><a href=#特殊参数special-parameters>特殊参数（Special parameters）</a></li>
+<li><a href=#quoting-characters>Quoting characters</a>
+<ul>
+<li><a href=#转义字符>转义字符（\）</a></li>
+<li><a href=#单引号>单引号（''）</a></li>
+<li><a href=#双引号>双引号（""）</a></li>
+</ul>
+</li>
+<li><a href=#参数替换>参数替换</a></li>
+<li><a href=#参考资料>参考资料</a></li>
+</ul>
+</nav>
+</details>
+<div class="container entry-content">
+<p>Shell 脚本用变量（variable）来表示数据，变量仅仅只是一个标签（label），它实际上是一个引用（reference）或指针（pointer），指向着与变量相关联的实际数据所存放的内存地址。
+变量的名字就是变量的值的占位符（placehoder），变量的值（value）持有着数据。引用（reference）或检索（retrive）变量的值的操作被称为变量替换（variable substitution）。</p>
+<p>变量的名字和值是完全不同的，如果 <code>variable1</code> 是一个变量的名字，那么 <code>$variable1</code>（<code>$variable1</code> 是 <code>${variable1</code>} 的简单形式）就是对该变量值的引用。<code>$</code> 符号在这里的作用就是进行变量替换。</p>
+<p>按照作用域的不同，变量分为全局变量（global variables）和局部变量（local variables）</p>
+<ul>
+<li>全局变量也就是我们通常说的环境变量（environment variables），对所有的 shell 都有效。查看环境变量的命令：<code>env</code> 或 <code>printenv</code>。</li>
+<li>局部变量只对当前的 shell 有效。使用 shell 内置的 <code>set</code> 命令（不带任何选项参数）就可以输出所有变量（包括环境变量）和一系列的函数。</li>
+</ul>
+<h2 id=创建变量>创建变量</h2>
+<p>变量名是大小写敏感的，一般用大写命名全局变量，用小写命名局部变量。变量名可以包含数字，但是不能以数字开头。定义变量的语法为：<code>VARNAME=value</code>。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ variable1<span style=color:#f92672>=</span><span style=color:#ae81ff>123</span>
+~$ echo variable1
+variable1
+~$ echo $variable1
+<span style=color:#ae81ff>123</span>
+~$ echo <span style=color:#e6db74>${</span>variable1<span style=color:#e6db74>}</span>
+<span style=color:#ae81ff>123</span>
+</code></pre></div><p>与我们常用的编程语言不同，shell 中变量定义中的 <strong>等号两侧是不能有空格的</strong>，否则会出错。这与 shell 对命令的解释有关，例如：</p>
+<ul>
+<li>shell 会将 <code>VARIABLE =value</code> 当作命令 <code>VARIABLE</code> 运行，它有一个参数 <code>=value</code></li>
+<li>shell 会将 <code>VARIABLE= value</code> 当作命令 <code>value</code> 运行，并且认为有一个值为 <code>""</code> 的环境变量 <code>VARIABLE</code></li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ VARIABLE<span style=color:#f92672>=</span> value
+value: command not found
+~$ VARIABLE <span style=color:#f92672>=</span>value
+VARIABLE: command not found
+~$ VARIABLE <span style=color:#f92672>=</span> value
+VARIABLE: command not found
+</code></pre></div><p>从技术的角度来说，变量的名字因出现在赋值语句的左边而被称为 <code>lvalue</code>，变量的值因出现在赋值语句的右边而被称为 <code>rvalue</code>。</p>
+<h2 id=变量的类型>变量的类型</h2>
+<p>Bash 并不像其它编程语言那样看重变量的类型。Bash 变量本质上都是字符串，但是根据上下文的不同，如果bash 也是允许在变量上进行算术运算和比较操作的。</p>
+<p>如果变量的值只包含数字，那么我们是可以在它上面进行正常的算术运算的。如果变量的值为 <code>null</code> 或包含数字以外的字符，在它上面进行算术运算时，变量的值会被当做整数 0。</p>
+<h3 id=设置变量的类型>设置变量的类型</h3>
+<p>如果我们硬是要指定变量的类型，也是可以的。Shell 内置的 <code>declare</code> 和 <code>typeset</code> 命令都可以设置变量的值和属性，这两个命令是同义词（synonym）。<code>declare</code> 语句的语法为：<code>declare OPTION(s) VARIABLE=value</code>，它支持的选项可以用 <code>man</code> 命令查看。</p>
+<h2 id=导出变量>导出变量</h2>
+<p>在 shell 中创建的变量只对当前 shell 有效，它们都是局部变量。如果我们在当前 shell 中使用 bash 或类似的命令开启一个子 shell，父 shell 中定义的变量是不可用的。要将变量传递到子 shell 中，我们可以使用 <code>export</code> 命令导出变量，导出后的变量就会被当作环境变量对待。</p>
+<h2 id=特殊参数special-parameters>特殊参数（Special parameters）</h2>
+<p>从命令行传递给脚本的参数用：<code>$0,$1,$2,$3...</code> 表示。其中，<code>$0</code> 时脚本本身的名字，<code>$1</code> 是第一个参数，<code>$2</code> 是第二个参数，依次类推。<code>$9</code> 之后的参数必须用大括号包裹起来，例如：<code>${10}</code>。这些参数由于和出现位置有关，所以被称为位置参数（positional parameters）。特殊变量 <code>$*</code> 和 <code>$@</code> 表示所有的参数。</p>
+<h2 id=quoting-characters>Quoting characters</h2>
+<p>在有些上下文中，很多字符或者单词都有特殊的含义，用特殊符号将它们引起来可以消除这些特殊含义。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ a<span style=color:#f92672>=</span><span style=color:#ae81ff>123</span>
+</code></pre></div><h3 id=转义字符>转义字符（\）</h3>
+<p>转义字符（Escape characters）用来移除其后 <strong>单个字符</strong> 的特殊含义。Bash 中的转义字符是反斜杠（\）。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo <span style=color:#ae81ff>\$</span>a
+$a
+~$ echo <span style=color:#ae81ff>\$</span><span style=color:#f92672>{</span>a<span style=color:#f92672>}</span>
+<span style=color:#e6db74>${</span>a<span style=color:#e6db74>}</span>
+</code></pre></div><p>转义符在行尾（对换行符进行转义）时，表示当前行的命令还未写完。这允许我们写出可读性更强的长命令，例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo foo<span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>&gt; bar
+foobar
+</code></pre></div><h3 id=单引号>单引号（''）</h3>
+<p>将变量的引用放在单引号中（'…'）就会让变量名被当作字面值处理，即不会发生变量替换，所以单引号被称为“full quoting”，有时又称“strong quoting”。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo <span style=color:#e6db74>&#39;$a&#39;</span>
+$a
+~$ echo <span style=color:#e6db74>&#39;${a}&#39;</span>
+<span style=color:#e6db74>${</span>a<span style=color:#e6db74>}</span>
+</code></pre></div><p>单引号（Single quotes）被用来移除两个单引号之间 <strong>所有字符</strong> 的特殊含义，即单引号中的所有字符都是字面值（literal value）。两个单引号之间是不能有单引号的，即便这个单引号被转义都不行。</p>
+<h3 id=双引号>双引号（""）</h3>
+<p>将变量的引用放在双引号中（"…"）并不会对变量替换造成影响，所以双引号被称为“partial quoting”，有时又称“weak quoting”。</p>
+<p>双引号（Double quotes）会移除两个双引号之间除美元符号（$）、反引号（`）和反斜杠（\）之外的所有字符的特殊含义。美元符号和反引号的特殊含义在双引号之间会保留，而反斜杠只有在其后的字符是美元符号、反引号、双引号、反斜杠或换行符时才保留特殊含义，输入流会将这些字符前的反斜杠去掉。双引号之间是可以有由反斜杠转义的双引号的。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo <span style=color:#e6db74>&#34;</span>$a<span style=color:#e6db74>&#34;</span>
+<span style=color:#ae81ff>123</span>
+~$ echo <span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>a<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+<span style=color:#ae81ff>123</span>
+</code></pre></div><p>双引号还可以保留变量值中的空白符，防止 shell 在解释命令时去掉多余的空白符。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ hello<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;A B  C   D&#34;</span>
+echo $hello
+A B C D
+echo <span style=color:#e6db74>&#34;</span>$hello<span style=color:#e6db74>&#34;</span>
+A B  C   D
+</code></pre></div><h2 id=参数替换>参数替换</h2>
+<p><code>${parameter}</code>：获取变量 <code>parameter</code> 的值，同 <code>$parameter</code>，但是前者的含义更加明确</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ param<span style=color:#f92672>=</span><span style=color:#ae81ff>123</span>
+~$ echo <span style=color:#e6db74>${</span>param<span style=color:#e6db74>}</span>
+<span style=color:#ae81ff>123</span>
+</code></pre></div><p><code>${parameter-default}</code> 或 <code>${parameter:-default}</code>：如果参数 <code>parameter</code> 未设置，则使用 <code>default</code> 作为结果，但不会将 <code>default</code> 赋值给 <code>parameter</code>。<code>:</code> 的作用是：如果 <code>parameter</code> 已声明且值为 <code>null</code>，则使用 <code>default</code>。若没有 <code>:</code>，则只要 <code>parameter</code> 已声明，就不会使用 <code>default</code></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo <span style=color:#e6db74>${</span>param-1<span style=color:#e6db74>}</span>
+<span style=color:#ae81ff>123</span>
+~$ echo <span style=color:#e6db74>${</span>param<span style=color:#66d9ef>:-</span>1<span style=color:#e6db74>}</span>
+<span style=color:#ae81ff>123</span>
+~$ echo <span style=color:#e6db74>${</span>param1-1<span style=color:#e6db74>}</span>
+<span style=color:#ae81ff>1</span>
+~$ echo <span style=color:#e6db74>${</span>param2<span style=color:#66d9ef>:-</span>2<span style=color:#e6db74>}</span>
+<span style=color:#ae81ff>2</span>
+~$ param3<span style=color:#f92672>=</span>  <span style=color:#75715e># param3 is declared, but is null</span>
+~$ echo <span style=color:#e6db74>${</span>param3<span style=color:#66d9ef>:-</span>3<span style=color:#e6db74>}</span>
+<span style=color:#ae81ff>3</span>
+~$ echo <span style=color:#e6db74>${</span>param3-3<span style=color:#e6db74>}</span>
+
+~$ echo <span style=color:#e6db74>${</span>param3<span style=color:#e6db74>}</span>
+
+</code></pre></div><p><code>${parameter=default}</code> 和 <code>${parameter:=default}</code>：如果 <code>parameter</code> 未设置，则使用 <code>default</code> 并将其赋值给 <code>parameter</code>。这里 <code>:</code> 的含义与 <code>${parameter:-default}</code> 中的 <code>:</code> 类似。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ param4<span style=color:#f92672>=</span>  <span style=color:#75715e># param4 is declared, but is null</span>
+~$ echo <span style=color:#e6db74>${</span>param4:=4<span style=color:#e6db74>}</span>
+<span style=color:#ae81ff>4</span>
+~$ echo <span style=color:#e6db74>${</span>param5=5<span style=color:#e6db74>}</span>
+<span style=color:#ae81ff>5</span>
+~$ echo <span style=color:#e6db74>${</span>param5<span style=color:#e6db74>}</span>
+<span style=color:#ae81ff>4</span>
+</code></pre></div><p><code>${parameter+alt_value}</code> 和 <code>${parameter:+alt_value}</code>：如果 <code>parameter</code> 已设置，则使用 <code>alt_value</code> 但不进行赋值，否则使用 <code>null</code>。</p>
+<p><code>${parameter?err_msg}</code> 和 <code>${parameter:?err_msg}</code>：如果 <code>parameter</code> 已设置，则使用它，否则打印 <code>err_msg</code> 并终止脚本执行。</p>
+<p><code>${#var}</code>：计算字符串 <code>var</code> 的长度，或数组 <code>var</code> 中第一个元素的长度。</p>
+<p><code>${var#Pattern}</code> 和 <code>${var##Pattern}</code>：从 <code>$var</code> 首部开始移除 <code>$Pattern</code> 最短（<code>#</code>）或最长（<code>##</code>）匹配上的部分。</p>
+<p><code>${var%Pattern}</code> 和 <code>${var%%Pattern}</code>：从 <code>$var</code> 尾部开始移除 <code>$Pattern</code> 最短（<code>%</code>）或最长（<code>%%</code>）匹配上的部分。</p>
+<p><code>${var:pos}</code>：从偏移量 <code>pos</code> 处（即跳过 <code>pos</code> 个字符）展开 <code>$var</code>。</p>
+<p><code>${var:pos:len}</code>：从偏移量 <code>pos</code> 处展开最大长度为 <code>len</code> 个字符。</p>
+<p><code>${var/Pattern/Replacement}</code>：使用 <code>Replacement</code> 替换 <code>var</code> 中第一个匹配上 <code>Pattern</code> 的部分。</p>
+<p><code>${var//Pattern/Replacement}</code>：使用 <code>Replacement</code> 替换 <code>var</code> 中所有匹配上 <code>Pattern</code> 的部分。</p>
+<p><code>${var/#Pattern/Replacement}</code>：若 <code>var</code> 的前缀匹配上了 <code>Pattern</code>，则使用 <code>Replacement</code> 替换 <code>Pattern</code>。</p>
+<p><code>${var/%Pattern/Replacement}</code>：若 <code>var</code> 的后缀匹配上了 <code>Pattern</code>，则使用 <code>Replacement</code> 替换 <code>Pattern</code>。</p>
+<p><code>${!varprefix*}</code> 和 <code>${!varprefix@}</code>：筛选出所有名字以 <code>varprefix</code> 开头的已声明的变量。</p>
+<h2 id=参考资料>参考资料</h2>
+<ol>
+<li><a href=https://tldp.org/LDP/Bash-Beginners-Guide/html/index.html>Bash Guide for Beginners</a>.</li>
+<li><a href=https://tldp.org/LDP/abs/html/index.html>Advanced Bash-Scripting Guide</a>.</li>
+</ol>
+</div>
+<footer class=entry-footer>
+<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/shell/>Shell</a></div>
+<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/shell/>Shell</a></div>
+</div>
+</footer>
+</article>
+<nav class=entry-nav>
+<div class=container><div class="prev-entry sep-before">
+<a href=/posts/linux/shell_scripting_introduction/>
+<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
+Previous</span>
+<span class=screen-reader-text>上一篇: </span>Shell 脚本：初见</a>
+</div><div class="next-entry sep-before">
+<a href=/posts/linux/shell_scripting_conditional_statements_and_loops/>
+<span class=screen-reader-text>下一篇: </span>Shell 脚本：条件分支与循环<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+</span>
+</a>
+</div></div>
+</nav>
+</main>
+<footer id=footer class=footer>
+<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
+<ul><li>
+<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a>
+</li><li>
+<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
+</a>
+</li><li>
+<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
+<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+</a>
+</li><li>
+<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+</a>
+</li></ul>
+</nav>
+</section><div class=copyright>
+<p> &copy; 2018-2021 Nicholas Zhan </p>
+</div>
+</div>
+</footer>
+</div>
+</div><script>window.__assets_js_src="/assets/js/"</script>
+<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script>
+</body>
+</html>
