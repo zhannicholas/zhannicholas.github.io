@@ -1,21 +1,20 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="Java Developer, Runner, Cyclist">
+<meta name=description content="文件输入和输出是通过整数句柄（integer handle）实现的——每个打开的文件都会被赋予一个数字，这个数字就是文件描述符（file des">
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="作者: Nicholas Zhan • Nicholas Zhan">
-<meta property="og:description" content="Java Developer, Runner, Cyclist">
-<meta property="og:url" content="https://zhannicholas.github.io/authors/zhannicholas/">
+<meta property="og:title" content="Shell 脚本：I/O 重定向 • Nicholas Zhan">
+<meta property="og:description" content="文件输入和输出是通过整数句柄（integer handle）实现的——每个打开的文件都会被赋予一个数字，这个数字就是文件描述符（file des">
+<meta property="og:url" content="https://zhannicholas.github.io/posts/linux/shell_scripting_io_redirection/">
 <meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="website"><meta property="og:updated_time" content="2021-10-27T22:26:55+08:00"><meta name=twitter:card content="summary">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Shell"><meta property="article:published_time" content="2021-10-27T22:26:55+08:00"><meta property="article:modified_time" content="2021-10-27T22:26:55+08:00"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.88.1">
-<title>作者: Nicholas Zhan • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/authors/zhannicholas/>
-<link href=https://zhannicholas.github.io/authors/zhannicholas/index.xml rel=alternate type=application/rss+xml title="Nicholas Zhan">
+<title>Shell 脚本：I/O 重定向 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/posts/linux/shell_scripting_io_redirection/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
 </head>
-<body class="term type-authors taxonomy-author has-sidebar">
+<body class="page type-posts has-sidebar">
 <div class=site><div id=sidebar class=sidebar>
 <a class=screen-reader-text href=#main-menu>跳到主菜单</a>
 <div class=container><section class="widget widget-about sep-after">
@@ -170,8 +169,8 @@ Java Developer, Runner, Cyclist
 </button>
 <ul><li class=item>
 <a href=/>主页</a>
-</li><li class=item>
-<a href=/posts/>博客</a>
+</li><li class="item current">
+<a aria-current=page href=/posts/>博客</a>
 </li><li class=item>
 <a href=/notebook/>笔记本</a>
 </li><li class=item>
@@ -183,7 +182,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/authors/>Authors</a></li><li><span>zhannicholas</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><span>Shell 脚本：I/O 重定向</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -194,169 +193,109 @@ Java Developer, Runner, Cyclist
 </div>
 </header>
 <main id=content>
-<header class=header>
+<article lang=zh-cn class=entry>
+<header class="header entry-header">
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title><span class=taxonomy-name>作者: </span>Nicholas Zhan</h1>
+<h1 class=title>Shell 脚本：I/O 重定向</h1>
 </div>
-</div>
-</header>
-<div class="container list-container">
-<ul class=list>
-<li class=item>
-<div class=meta>
-<span>
+<div class=entry-meta>
+<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 <span class=screen-reader-text>Posted on </span>
-<time datetime=2020-12-13T18:22:56+08:00>2020, Dec 13</time>
+<time class=entry-date datetime=2021-10-27T22:26:55+08:00>2021, Oct 27</time>
+</span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
+<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
+3 mins read
 </span>
 </div>
-<header class=item-header>
-<h3 class=item-title>
-<a href=/java/java_lang/reflection/>反射</a>
-</h3>
-</header>
-</li>
-<li class=item>
-<div class=meta>
-<span>
-<span class=screen-reader-text>Posted on </span>
-<time datetime=2020-12-13T18:19:11+08:00>2020, Dec 13</time>
-</span>
 </div>
-<header class=item-header>
-<h3 class=item-title>
-<a href=/java/java_lang/cloning_objects/>Cloning Objects</a>
-</h3>
 </header>
-</li>
-<li class=item>
-<div class=meta>
-<span>
-<span class=screen-reader-text>Posted on </span>
-<time datetime=2020-12-13T18:18:04+08:00>2020, Dec 13</time>
-</span>
-</div>
-<header class=item-header>
-<h3 class=item-title>
-<a href=/java/java_lang/nested_classes/>Nested Classes</a>
-</h3>
-</header>
-</li>
-<li class=item>
-<div class=meta>
-<span>
-<span class=screen-reader-text>Posted on </span>
-<time datetime=2020-12-13T18:07:45+08:00>2020, Dec 13</time>
-</span>
-</div>
-<header class=item-header>
-<h3 class=item-title>
-<a href=/java/jakartaee/what_is_servlet/>What is Servlet</a>
-</h3>
-</header>
-</li>
-<li class=item>
-<div class=meta>
-<span>
-<span class=screen-reader-text>Posted on </span>
-<time datetime=2020-12-13T18:04:42+08:00>2020, Dec 13</time>
-</span>
-</div>
-<header class=item-header>
-<h3 class=item-title>
-<a href=/java/jakartaee/the_servlet_interface/>The Servlet Interface</a>
-</h3>
-</header>
-</li>
-<li class=item>
-<div class=meta>
-<span>
-<span class=screen-reader-text>Posted on </span>
-<time datetime=2020-12-13T18:03:23+08:00>2020, Dec 13</time>
-</span>
-</div>
-<header class=item-header>
-<h3 class=item-title>
-<a href=/java/jakartaee/about/>About Jakarta EE</a>
-</h3>
-</header>
-</li>
-<li class=item>
-<div class=meta>
-<span>
-<span class=screen-reader-text>Posted on </span>
-<time datetime=2020-12-13T17:52:50+08:00>2020, Dec 13</time>
-</span>
-</div>
-<header class=item-header>
-<h3 class=item-title>
-<a href=/posts/redis/redis_transactions/>Redis中的事务</a>
-</h3>
-</header>
-</li>
-<li class=item>
-<div class=meta>
-<span>
-<span class=screen-reader-text>Posted on </span>
-<time datetime=2020-12-13T17:49:38+08:00>2020, Dec 13</time>
-</span>
-</div>
-<header class=item-header>
-<h3 class=item-title>
-<a href=/posts/redis/redis_streams/>Redis Streams</a>
-</h3>
-</header>
-</li>
-<li class=item>
-<div class=meta>
-<span>
-<span class=screen-reader-text>Posted on </span>
-<time datetime=2020-12-13T17:47:33+08:00>2020, Dec 13</time>
-</span>
-</div>
-<header class=item-header>
-<h3 class=item-title>
-<a href=/posts/redis/redis_datastructures/>Redis数据结构</a>
-</h3>
-</header>
-</li>
-<li class=item>
-<div class=meta>
-<span>
-<span class=screen-reader-text>Posted on </span>
-<time datetime=2020-12-13T17:45:33+08:00>2020, Dec 13</time>
-</span>
-</div>
-<header class=item-header>
-<h3 class=item-title>
-<a href=/posts/redis/publish_subscribe/>Publish/Subscribe</a>
-</h3>
-</header>
-</li>
+<details class="container entry-toc">
+<summary class=title>
+<span>目录</span>
+</summary>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#输出重定向>输出重定向</a></li>
+<li><a href=#输入重定向>输入重定向</a></li>
+<li><a href=#关闭文件描述符>关闭文件描述符</a></li>
+<li><a href=#here-documents>Here documents</a></li>
+<li><a href=#here-strings>Here strings</a></li>
+<li><a href=#参考资料>参考资料</a></li>
 </ul>
-<nav id=pagination>
-<div class=page-links>
-<a class="page-link prev" href=/authors/zhannicholas/page/6/><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
-<span class=screen-reader-text>上一页</span>
-</a>
-<a class=page-link href=/authors/zhannicholas/>
-<span class=screen-reader-text>页面: </span>1</a>
-<span class="page-link dots">&mldr;</span>
-<a class=page-link href=/authors/zhannicholas/page/6/>
-<span class=screen-reader-text>页面: </span>6</a>
-<span aria-current=page class="page-link current">
-<span class=screen-reader-text>当前页: </span>7</span>
-<a class=page-link href=/authors/zhannicholas/page/8/>
-<span class=screen-reader-text>页面: </span>8</a>
-<span class="page-link dots">&mldr;</span>
-<a class=page-link href=/authors/zhannicholas/page/12/>
-<span class=screen-reader-text>页面: </span>12</a>
-<a class="page-link next" href=/authors/zhannicholas/page/8/>
-<span class=screen-reader-text>下一页</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
-</a>
-</div>
 </nav>
+</details>
+<div class="container entry-content">
+<p>文件输入和输出是通过整数句柄（integer handle）实现的——每个打开的文件都会被赋予一个数字，这个数字就是文件描述符（file descriptor）。</p>
+<p>最常见的文件描述符是标准输入（stdin）、标准输出（stdout）和标准错误（stderr），它们的文件描述符数字分别是 0、1、2。这些数字和相应的设备都是系统保留的，我们可以通过命令 <code>ls -l /dev/std*</code> 查看。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ ls -l /dev/std*
+lrwxrwxrwx <span style=color:#ae81ff>1</span> root root <span style=color:#ae81ff>15</span> Oct <span style=color:#ae81ff>16</span> 18:47 /dev/stderr -&gt; /proc/self/fd/2
+lrwxrwxrwx <span style=color:#ae81ff>1</span> root root <span style=color:#ae81ff>15</span> Oct <span style=color:#ae81ff>16</span> 18:47 /dev/stdin -&gt; /proc/self/fd/0
+lrwxrwxrwx <span style=color:#ae81ff>1</span> root root <span style=color:#ae81ff>15</span> Oct <span style=color:#ae81ff>16</span> 18:47 /dev/stdout -&gt; /proc/self/fd/1
+</code></pre></div><p>每个进程看到的 <code>/proc/self</code> 目录下的东西都不一样，因为 <code>/proc/self</code> 实际上是一个指向 <code>/proc/&lt;process_ID></code> 的符号链接。</p>
+<h2 id=输出重定向>输出重定向</h2>
+<ul>
+<li><code>COMMAND_OUTPUT ></code>：重定向输出到一个文件。如果文件不存在，则创建并写入，否则覆盖原文件</li>
+<li><code>: > filename</code>：删除（truncate）文件的内容，如果文件不存在，则创建它。<code>:</code> 是一个占位符，代表无。</li>
+<li><code>> filename</code>：和 <code>: > filename</code> 类似，但是在某些 shell 下工作不正常</li>
+<li><code>COMMAND_OUTPUT >></code>：重定向输出到一个文件，已追加的方式写入</li>
+<li><code>1>filename</code>：重定向标准输出到文件，以覆盖的方式写入</li>
+<li><code>1>>filename</code>：重定向标准输出到文件，以追加的方式写入</li>
+<li><code>2>filename</code>：重定向标准错误到文件，以覆盖的方式写入</li>
+<li><code>2>>filename</code>：重定向标准错误到文件，以追加的方式写入</li>
+<li><code>&>filename</code>：重定向标准输出和标准错误到文件</li>
+<li><code>M>N</code>：重定向文件描述符 <code>M</code>（如果未给出，则默认为 1）对应的文件到文件 <code>N</code> 。注意：<code>M</code> 是一个文件描述符，<code>N</code> 是一个文件。</li>
+<li><code>M>&N</code>：定向文件描述符 <code>M</code>（如果未给出，则默认为 1）对应的文件到文件描述符 <code>N</code> 对应的文件。注意：这里 <code>M</code> 和 <code>N</code> 都是文件描述符</li>
+<li><code>2>&1</code>：重定向标准错误到标准输出</li>
+<li><code>i>&j</code>：重定向文件描述符 <code>i</code> 到 <code>j</code></li>
+<li><code>>&j</code>：重定向标准输出到文件描述符 <code>j</code></li>
+</ul>
+<h2 id=输入重定向>输入重定向</h2>
+<ul>
+<li><code>0&lt; filename</code>：从文件获取输入</li>
+<li><code>[j]&lt;>filename</code>：打开文件 <code>filename</code> 进行读写，若该文件不存在则创建它。如果文件描述符 <code>j</code> 未声明，则默认为 0</li>
+</ul>
+<h2 id=关闭文件描述符>关闭文件描述符</h2>
+<ul>
+<li><code>n&lt;&-</code>：关闭输入文件描述符 <code>n</code></li>
+<li><code>0&lt;&-</code> 和 <code>&lt;&-</code>：关闭标准输入</li>
+<li><code>n>&-</code>：关闭输出文件描述符 <code>n</code></li>
+<li><code>1>&-</code> 和 <code>>&-</code>：关闭标准输出</li>
+</ul>
+<h2 id=here-documents>Here documents</h2>
+<p><code>here document</code> 是一个有着特殊用途的代码块，它告诉 shell 从当前位置读取输入，直到遇到结束字符串。然后，读取到的内容会被用作命令的标准输入。语法如下：</p>
+<pre tabindex=0><code>COMMAND &lt;&lt;InputComesFromHERE
+...
+...
+...
+InputComesFromHERE
+</code></pre><p>这里包含一个命令 <code>COMMAND</code>，一个限制字符串（limit string）<code>InputComesFromHERE</code>。限制字符串之间的内容就是 <code>COMMAND</code> 的标准输入，特殊字符 <code>&lt;&lt;</code> 出现在限制字符串的前面。由于 <code>here document</code> 使用限制字符串来判断输入是否结束，所以限制字符串的选取就非常重要，它不应该出现在给 <code>COMMAND</code> 的内容中。</p>
+<h2 id=here-strings>Here strings</h2>
+<p><code>here string</code> 可以被看做 <code>here document</code> 的简单版本。它的形式为：<code>COMMAND &lt;&lt;&lt; $WORD</code>。其中 <code>$WORD</code> 展开后的结果就会做为 <code>COMMAND</code> 的标准输入。</p>
+<h2 id=参考资料>参考资料</h2>
+<ol>
+<li><a href=https://tldp.org/LDP/Bash-Beginners-Guide/html/index.html>Bash Guide for Beginners</a>.</li>
+<li><a href=https://tldp.org/LDP/abs/html/index.html>Advanced Bash-Scripting Guide</a>.</li>
+</ol>
 </div>
+<footer class=entry-footer>
+<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/shell/>Shell</a></div>
+<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/shell/>Shell</a></div>
+</div>
+</footer>
+</article>
+<nav class=entry-nav>
+<div class=container><div class="prev-entry sep-before">
+<a href=/posts/linux/shell_scripting_regular_expressions/>
+<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
+Previous</span>
+<span class=screen-reader-text>上一篇: </span>Shell 脚本：正则表达式</a>
+</div></div>
+</nav>
 </main>
 <footer id=footer class=footer>
 <div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
