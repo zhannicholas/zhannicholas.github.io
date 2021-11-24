@@ -1,14 +1,14 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="Anaconda 是一个 **python** 的发行版，可以用来管理 python** 的包和环境，同时它包含1000+的开源package。正如那句话一样：\ _The Most Trusted Distribution for Data Science_\ 还有一个没有包含那么">
+<meta name=description content="Anaconda 是一个 python 的发行版，可以用来管理 python 的包和环境，同时它包含1000+的开源package。正如那句话一样：\ The Most Trusted Distribution for Data Science\ 还有一个没有包含那么">
 <meta name=theme-color content="#ffcd00">
 <meta property="og:title" content="配置Anaconda源 • Nicholas Zhan">
-<meta property="og:description" content="Anaconda 是一个 **python** 的发行版，可以用来管理 python** 的包和环境，同时它包含1000+的开源package。正如那句话一样：\ _The Most Trusted Distribution for Data Science_\ 还有一个没有包含那么">
+<meta property="og:description" content="Anaconda 是一个 python 的发行版，可以用来管理 python 的包和环境，同时它包含1000+的开源package。正如那句话一样：\ The Most Trusted Distribution for Data Science\ 还有一个没有包含那么">
 <meta property="og:url" content="https://zhannicholas.github.io/posts/python/anaconda-source-configuration/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Python"><meta property="article:published_time" content="2018-07-07T09:38:08+08:00"><meta property="article:modified_time" content="2018-07-07T09:38:08+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.88.1">
+<meta name=generator content="Hugo 0.89.4">
 <title>配置Anaconda源 • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/posts/python/anaconda-source-configuration/>
 <link rel=icon href=/favicon.ico>
@@ -226,9 +226,9 @@ Java Developer, Runner, Cyclist
 </details>
 <div class="container entry-content">
 <blockquote>
-<p><a href=https://www.anaconda.com/download/><strong><code>Anaconda</code></strong></a> 是一个 **<code>python</code>** 的发行版，可以用来管理 <strong><code>python</code>** 的包和环境，同时它包含1000+的开源package。正如那句话一样：\<br>
-_The Most Trusted Distribution for Data Science_\<br>
-还有一个没有包含那么多包的 <strong><code>python</code>** 发行版，叫做</strong><code>Miniconda</code></strong><a href=https://conda.io/miniconda.html></a>。</p>
+<p><a href=https://www.anaconda.com/download/><strong><code>Anaconda</code></strong></a> 是一个 <strong><code>python</code></strong> 的发行版，可以用来管理 <strong><code>python</code></strong> 的包和环境，同时它包含1000+的开源package。正如那句话一样：\
+<em>The Most Trusted Distribution for Data Science</em>\
+还有一个没有包含那么多包的 <strong><code>python</code></strong> 发行版，叫做<a href=https://conda.io/miniconda.html><strong><code>Miniconda</code></strong></a>。</p>
 </blockquote>
 <h1 id=是用anaconda-navigator还是conda>是用Anaconda Navigator还是conda</h1>
 <p><strong><code>Navigator</code></strong> 和 <strong><code>conda</code></strong> 都是可以用来管理包和环境。在安装完 <strong><code>Anaconda</code></strong> 之后，它们就都已经存在于系统之中了。区别是：</p>
@@ -258,7 +258,7 @@ conda config --set show_channel_urls yes
   - defaults
 ssl_verify: true
 show_channel_urls: true
-</code></pre><p>其中有一个字段是 <strong><code>defaults</code></strong>, 这使得所有默认的源都包含在当前的源里面，当然也可以删除它。\<br>
+</code></pre><p>其中有一个字段是 <strong><code>defaults</code></strong>, 这使得所有默认的源都包含在当前的源里面，当然也可以删除它。\
 我们也可以改变默认的源，修改**<code>defalut_channels</code>** 即可。</p>
 <h2 id=让conda自动更新auto_update_conda>让conda自动更新(auto_update_conda)</h2>
 <p><strong><code>conda</code></strong> 默认是自动更新的，每当用户在root环境更新或安装包的时候，就会触发。可以采用命令：</p>

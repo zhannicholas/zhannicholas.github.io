@@ -8,7 +8,7 @@
 <meta property="og:url" content="https://zhannicholas.github.io/rust/rust_basics_variables_and_data_types/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="rust"><meta property="article:tag" content="Rust"><meta property="article:published_time" content="2021-09-03T21:32:35+08:00"><meta property="article:modified_time" content="2021-09-03T21:32:35+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.88.1">
+<meta name=generator content="Hugo 0.89.4">
 <title>Rust 基础：变量与数据类型 • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/rust/rust_basics_variables_and_data_types/>
 <link rel=icon href=/favicon.ico>
@@ -207,7 +207,7 @@ Java Developer, Runner, Cyclist
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-6 mins read
+8 mins read
 </span>
 </div>
 </div>
@@ -223,12 +223,16 @@ Java Developer, Runner, Cyclist
 <li><a href=#变量与可变性>变量与可变性</a></li>
 <li><a href=#常量>常量</a></li>
 <li><a href=#隐藏>隐藏</a></li>
+<li><a href=#冻结freezing>冻结（Freezing）</a></li>
 </ul>
 </li>
 <li><a href=#数据类型>数据类型</a>
 <ul>
 <li><a href=#标量类型>标量类型</a></li>
 <li><a href=#复合类型>复合类型</a></li>
+<li><a href=#自定义数据类型>自定义数据类型</a></li>
+<li><a href=#类型转换>类型转换</a></li>
+<li><a href=#类型别名>类型别名</a></li>
 </ul>
 </li>
 <li><a href=#参考资料>参考资料</a></li>
@@ -246,9 +250,9 @@ Java Developer, Runner, Cyclist
 <p>在 Rust 中，我们使用 <code>let</code> 关键字声明一个变量，例如：<code>let x = 1</code>。默认情况下，<code>let</code> 声明的变量是 <strong>不可变的</strong>。如果代码里面出现不可变变量被多次赋值的情况，则代码是不会编译通过的。例如：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
     <span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>5</span>;
-    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The value of x is: {}&#34;</span>, x);
+    println!(<span style=color:#e6db74>&#34;The value of x is: {}&#34;</span>, x);
     x <span style=color:#f92672>=</span> <span style=color:#ae81ff>6</span>;
-    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The value of x is: {}&#34;</span>, x);
+    println!(<span style=color:#e6db74>&#34;The value of x is: {}&#34;</span>, x);
 }
 </code></pre></div><p>如果使用 <code>cargo run</code> 运行这段代码，则会出现以下错误：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>&gt; cargo run  
@@ -282,6 +286,7 @@ To learn more, run the command again with --verbose.
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
 <span style=color:#66d9ef>const</span> SQUARE <span style=color:#f92672>=</span> x <span style=color:#f92672>*</span> x;
 </code></pre></div><p>上面这段代码是无法正常编译的，因为 <code>x</code> 是变量，而 <code>SQUARE</code> 是常量，<code>x * x</code> 的值是在程序运行过程中计算出来的。</p>
+<p>此外，<code>static</code> 关键字也可以用来声明一个常量，使用 <code>static</code> 关键字声明的常量代表的是一个内存地址，它的生命周期为 <code>'static</code>，而 <code>const</code> 声明的常量代表的是一个值。<a href=https://github.com/rust-lang/rfcs/blob/master/text/0246-const-vs-static.md>0246-const-vs-static</a> 描述了二者的不同。</p>
 <h3 id=隐藏>隐藏</h3>
 <p>我们可以多次定义一个同名的变量，后面定义的变量会隐藏（shadowing）它之前的同名变量，即程序只能看到最新一个同名变量的值。</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
@@ -289,9 +294,9 @@ To learn more, run the command again with --verbose.
     <span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> x <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
     {
         <span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> x <span style=color:#f92672>*</span> <span style=color:#ae81ff>2</span>;
-        println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The value of x in the inner scope is: {}&#34;</span>, x);
+        println!(<span style=color:#e6db74>&#34;The value of x in the inner scope is: {}&#34;</span>, x);
     }
-    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The value of x is: {}&#34;</span>, x);
+    println!(<span style=color:#e6db74>&#34;The value of x is: {}&#34;</span>, x);
 }
 </code></pre></div><p>以上这段代码很有意思，它首先将变量 <code>x</code> 的值绑定为 <code>5</code>，然后通过 <code>let x =</code> 隐藏 <code>5</code> 这个值，真正可见的值是 <code>6</code>。而在内部作用域中，第二个 <code>let</code> 再次隐藏 <code>x</code> 之前的值，真正可见的值是 <code>12</code>。内部作用域结束，作用域内的隐藏效果也结束了，<code>x</code> 的值又变成 <code>6</code>。所以，这个程序的输出结果应该是：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>The value of x <span style=color:#66d9ef>in</span> the inner scope is<span style=color:#960050;background-color:#1e0010>:</span> 12
@@ -303,6 +308,24 @@ The value of x <span style=color:#66d9ef>in</span> the inner scope is<span style
 </code></pre></div><p>而下面这段代码将会编译失败：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> a <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
 a <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;1&#34;</span>;
+</code></pre></div><h3 id=冻结freezing>冻结（Freezing）</h3>
+<p>当数据被绑定到不可变的同名变量上时，该数据会被冻结。被冻结的数据只有在超出不可变绑定的作用域之外才能被修改。例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
+    <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> _mutable_integer <span style=color:#f92672>=</span> <span style=color:#ae81ff>7</span><span style=color:#66d9ef>i32</span>;
+    {
+        <span style=color:#75715e>// Shadowing by immutable `_mutable_integer`
+</span><span style=color:#75715e></span>        <span style=color:#66d9ef>let</span> _mutable_integer <span style=color:#f92672>=</span> _mutable_integer;
+
+        <span style=color:#75715e>// Error! `_mutable_integer` is frozen in this scope
+</span><span style=color:#75715e></span>        _mutable_integer <span style=color:#f92672>=</span> <span style=color:#ae81ff>50</span>;
+        <span style=color:#75715e>// FIXME ^ Comment out this line
+</span><span style=color:#75715e></span>
+        <span style=color:#75715e>// `_mutable_integer` goes out of scope
+</span><span style=color:#75715e></span>    }
+
+    <span style=color:#75715e>// Ok! `_mutable_integer` is not frozen in this scope
+</span><span style=color:#75715e></span>    _mutable_integer <span style=color:#f92672>=</span> <span style=color:#ae81ff>3</span>;
+}
 </code></pre></div><h2 id=数据类型>数据类型</h2>
 <p>Rust 是一门 <strong>静态类型</strong> 语言，在编译期间就必须确定所有变量的类型。Rust 中的每一个变量的值都属于某一数据类型，Rust 通过数据类型得知变量的值是何种数据，进而决定如何处理这个值。</p>
 <p>我们并不需要一一声明变量所属的数据类型，Rust 的编译器是很智能的，它可以根据值及其使用方式推断出我们想要使用的数据类型。但是，当某个值可能属于多种数据类型时，我们就必须通过类型注解显式地给出变量的数据类型，否则编译就会出错。</p>
@@ -355,7 +378,7 @@ a <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;1&#34;</span
 </tbody>
 </table>
 <p>其中，有符号整型以字母 <code>i</code> 开头，无符号整型以字母 <code>u</code> 开头。<code>i</code> 或 <code>u</code> 后面的数字即该类型所占的二进制位数。假设整型的长度为 <code>n</code> 位，则有符号整型能表示数值范围的区间是 $[-2^{n - 1}, 2^{n - 1} - 1]$，而无符号整型能表示数值范围区间是 $[0, 2^n - 1]$。例如，<code>i8</code> 可存储的数值范围是 [0, 255]，而 <code>u8</code> 可存储的数值范围是 [-128, 127]。表格中的 <code>isize</code> 和 <code>usize</code> 类型由运行程序的机器架构决定：对于 64 位架构的计算机来说，它们就是 64 位的，而对于 32 位架构的计算机来说，它们就是 32 位的。Rust 中默认的整型是 <code>i32</code>。</p>
-<p>除了将整数写成最常见的十进制形式外，Rust 还允许我们将数字写成十六进制、八进制等形式。为了便于阅读，我们不仅可以在数值后面跟上它的具体类型（比如 <code>58u8</code> 表示 <code>u8</code> 类型的数字 <code>58</code>），还可以使用下划线（<code>_</code>）对数字进行分隔（比如 <code>10_000</code> 就是数字 <code>10000</code>）。下面表格列出了 Rust 中的各种整数表示法：</p>
+<p>除了将整数写成最常见的十进制形式外，Rust 还允许我们将数字写成十六进制、八进制等形式。为了便于阅读，我们不仅可以在数值后面跟上它的具体类型（比如 <code>58u8</code> 表示 <code>u8</code> 类型的数字 <code>58</code>），还可以使用下划线（<code>_</code>）对数字进行分隔（比如 <code>10_000</code> 就是数字 <code>10000</code>）。下面表格列出了 Rust 中的各种整数表示法，除了默认的十进制表示法外，各个表示形式都有特定的前缀：</p>
 <table>
 <thead>
 <tr>
@@ -398,19 +421,25 @@ a <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;1&#34;</span
 <h3 id=复合类型>复合类型</h3>
 <p>复合类型可以将多个值组合到一个类型中。Rust 内置了元组（tuples）和数组（arrays）这两种复合类型。</p>
 <h4 id=元组>元组</h4>
-<p>元组可以包含不同类型得值，其长度在指定后就不能修改。创建一个元组的方式很简单，将各个值用逗号分隔，放在小括号当中即可：</p>
+<p>元组是一个由多个值组成的集合，每个值的类型可以不同，其长度在指定后就不能修改。创建一个元组的方式很简单，将各个值用逗号分隔，放在小括号当中即可：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> tup: (<span style=color:#66d9ef>i32</span>, <span style=color:#66d9ef>f64</span>, <span style=color:#66d9ef>u8</span>) <span style=color:#f92672>=</span> (<span style=color:#ae81ff>500</span>, <span style=color:#ae81ff>6.4</span>, <span style=color:#ae81ff>1</span>);
 </code></pre></div><p>以上代码创建了一个包含三个不同类型数值的元组 <code>tup</code>。那么如何访问元组中的元素呢？Rust 给我们提供了两种方法，其中一种是使用模式匹配对元组进行解构（destructure）：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> tup <span style=color:#f92672>=</span> (<span style=color:#ae81ff>500</span>, <span style=color:#ae81ff>6.4</span>, <span style=color:#ae81ff>1</span>);
 <span style=color:#66d9ef>let</span> (x, y, z) <span style=color:#f92672>=</span> tup;
-println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The value of y is: {}&#34;</span>, y);
+println!(<span style=color:#e6db74>&#34;The value of y is: {}&#34;</span>, y);
 </code></pre></div><p>以上代码首先将元组 <code>(500, 6.4, 1)</code> 绑定到了变量 <code>tup</code> 上，然后使用模式 <code>(x, y, z)</code> 将 <code>tup</code> 分成了三个不同的部分，这个过程就是解构（destructring）。除了使用模式匹配解构外，我们还可以通过点号（<code>.</code>）加索引的方式访问元组中的值：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> tup <span style=color:#f92672>=</span> (<span style=color:#ae81ff>500</span>, <span style=color:#ae81ff>6.4</span>, <span style=color:#ae81ff>1</span>);
 <span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> tup.<span style=color:#ae81ff>0</span>;  <span style=color:#75715e>// 500
 </span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> y <span style=color:#f92672>=</span> tup.<span style=color:#ae81ff>1</span>;  <span style=color:#75715e>// 6.4
 </span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> z <span style=color:#f92672>=</span> tup.<span style=color:#ae81ff>2</span>;  <span style=color:#75715e>// 1
-</span><span style=color:#75715e></span>println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;x = {}, y = {}, z = {}&#34;</span>, x, y, z);
+</span><span style=color:#75715e></span>println!(<span style=color:#e6db74>&#34;x = {}, y = {}, z = {}&#34;</span>, x, y, z);
 </code></pre></div><p>和大多数编程语言一样，Rust 中的下标也是从 0 开始的。</p>
+<p>元组甚至可以包含元组，例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> tuple_of_tuples <span style=color:#f92672>=</span> ((<span style=color:#ae81ff>1</span><span style=color:#66d9ef>u8</span>, <span style=color:#ae81ff>2</span><span style=color:#66d9ef>u16</span>, <span style=color:#ae81ff>2</span><span style=color:#66d9ef>u32</span>), (<span style=color:#ae81ff>4</span><span style=color:#66d9ef>u64</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span><span style=color:#66d9ef>i8</span>), <span style=color:#f92672>-</span><span style=color:#ae81ff>2</span><span style=color:#66d9ef>i16</span>);
+</code></pre></div><p>如果元组中只有一个值，那么末尾的那个逗号是不能省略的，否则编译器会认为那是一个字面量。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust>println!(<span style=color:#e6db74>&#34;A tuple: {:?}&#34;</span>, (<span style=color:#ae81ff>5</span>,)); <span style=color:#75715e>// A tuple: (5,)
+</span><span style=color:#75715e></span>print!(<span style=color:#e6db74>&#34;An integer: {:?}&#34;</span>, (<span style=color:#ae81ff>5</span>));  <span style=color:#75715e>// An integer: 5
+</span></code></pre></div><p>不包含任何值的元组（空元组）是一种特殊的数据类型——单元类型（unit type）。这种数据类型只有一个可能的值，即 <code>()</code>，它被称为单元值（unit value）。虽然单元值是一个元组，但是它并不属于复合类型，因为它并不包含多个值。</p>
 <h4 id=数组>数组</h4>
 <p>数组只能包含多个相同类型得值，其长度在指定后也不能修改。创建一个数组的方式也很简单，将各个值用逗号分隔，然后放到中括号当中即可：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> arr <span style=color:#f92672>=</span> [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>];
@@ -419,16 +448,44 @@ println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The val
 <span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> arr[<span style=color:#ae81ff>0</span>]; <span style=color:#75715e>// 1
 </span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> y <span style=color:#f92672>=</span> arr[<span style=color:#ae81ff>1</span>]; <span style=color:#75715e>// 2
 </span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> z <span style=color:#f92672>=</span> arr[<span style=color:#ae81ff>2</span>]; <span style=color:#75715e>// 3
-</span><span style=color:#75715e></span>println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;x = {}, y = {}, z = {}&#34;</span>, x, y, z);
+</span><span style=color:#75715e></span>println!(<span style=color:#e6db74>&#34;x = {}, y = {}, z = {}&#34;</span>, x, y, z);
 </code></pre></div><p>我们也可以在声明数组的时候显式给出数组元素的类型和数组长度，例如：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> arr: [<span style=color:#66d9ef>i32</span>; <span style=color:#ae81ff>3</span>] <span style=color:#f92672>=</span> [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>];
 </code></pre></div><p>以上代码声明了一个长度为 <code>3</code> 的数组 <code>[1, 2, 3]</code>，数组中的元素类型为 <code>i32</code>。</p>
 <p>此外，Rust 还给我们提供了将数组初始化为相同值的简便写法：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> arr <span style=color:#f92672>=</span> [<span style=color:#ae81ff>1</span>; <span style=color:#ae81ff>3</span>];
 </code></pre></div><p>以上代码声明了一个长度为 <code>3</code> 的数组，数组中所有元素都是 <code>1</code>。该写法等价于：<code>let arr = [1, 1, 1]</code>。</p>
-<h2 id=参考资料>参考资料</h2>
+<h3 id=自定义数据类型>自定义数据类型</h3>
+<p>Rust 当然支持我们创建自定义的数据类型，创建自定义数据类型的主要途径有两种：</p>
+<ul>
+<li><a href=../rust_basics_enums_and_patterns_matching>使用 <code>enum</code> 定义枚举类</a></li>
+<li><a href=../rust_basics_struct>使用 <code>struct</code> 定义结构体</a></li>
+</ul>
+<h3 id=类型转换>类型转换</h3>
+<h4 id=基本类型之间的类型转换>基本类型之间的类型转换</h4>
+<p>Rust 是不允许基本类型的数据之间进行隐式类型转换的。不过，我们可以使用 <code>as</code> 关键字显式要求进行数据转换。例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>let</span> decimal <span style=color:#f92672>=</span> <span style=color:#ae81ff>6.5</span>;
+<span style=color:#75715e>// Error! No implicit conversion
+</span><span style=color:#75715e>//  let integer: u8 = decimal;
+</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> integer <span style=color:#f92672>=</span> decimal <span style=color:#66d9ef>as</span> <span style=color:#66d9ef>u8</span>;
+<span style=color:#66d9ef>let</span> character <span style=color:#f92672>=</span> integer <span style=color:#66d9ef>as</span> <span style=color:#66d9ef>char</span>;
+</code></pre></div><p>Rust 管基本类型数据之间的类型转换叫 Casting。</p>
+<h4 id=自定义类型数据之间的类型转换>自定义类型数据之间的类型转换</h4>
+<p>在 Rust 中，自定义类型数据之间的类型转换是通过使用 traits 实现的。一般情况下使用的 traits 是 <a href=https://doc.rust-lang.org/std/convert/trait.From.html><code>From</code></a> 和 <a href=https://doc.rust-lang.org/std/convert/trait.Into.html><code>Into</code></a>。如果转换可能失败，则使用 <a href=https://doc.rust-lang.org/std/convert/trait.TryFrom.html><code>TryFrom</code></a> 和 <a href=https://doc.rust-lang.org/std/convert/trait.TryInto.html><code>TryInto</code></a> 会更合适。此外，数据类型和字符串之间的转换使用的 traits 是 <a href=https://doc.rust-lang.org/std/str/trait.FromStr.html><code>FromStr</code></a> 和 <a href=https://doc.rust-lang.org/std/string/trait.ToString.html><code>ToString</code></a>。</p>
+<p>Rust 管自定义类型数据之间的类型转换叫 Conversion。</p>
+<h3 id=类型别名>类型别名</h3>
+<p>Rust 允许我们使用 <code>type</code> 关键字给已存在的数据类型设置新的名字（alias）。如果新的名字不是驼峰命名的，编译器会发出警告，但编译还是会通过。如果不想让编译器发出警告，可以使用 <code>#[allow(non_camel_case_types)]</code> 属性。类型别名并不是新的数据类型，它只是一个别名而已。类型别名主要用于减少样板代码，比如 <code>IoResult&lt;T></code> 就是 <code>Result&lt;T, IoError></code> 的一个别名。下面是使用类型别名的例子：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust>ype NanoSecond <span style=color:#f92672>=</span> <span style=color:#66d9ef>u64</span>;
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Inch</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>u64</span>;
+
+<span style=color:#75715e>#[allow(non_camel_case_types)]</span>
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>u64_t</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>u64</span>;
+
+<span style=color:#75715e>// NanoSecond, Inch and u64_t are the same type as u64
+</span></code></pre></div><h2 id=参考资料>参考资料</h2>
 <ol>
 <li>Steve Klabnik, Carol Nichols. <a href=https://doc.rust-lang.org/stable/book/>The Rust Programming Language</a>.</li>
+<li><a href=https://doc.rust-lang.org/stable/rust-by-example>Rust by Example</a>.</li>
 </ol>
 </div>
 <footer class=entry-footer>

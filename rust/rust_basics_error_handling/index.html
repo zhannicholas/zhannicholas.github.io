@@ -8,7 +8,7 @@
 <meta property="og:url" content="https://zhannicholas.github.io/rust/rust_basics_error_handling/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="rust"><meta property="article:tag" content="Rust"><meta property="article:published_time" content="2021-09-29T20:55:48+08:00"><meta property="article:modified_time" content="2021-09-29T20:55:48+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.88.1">
+<meta name=generator content="Hugo 0.89.4">
 <title>Rust 基础：错误处理 • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/rust/rust_basics_error_handling/>
 <link rel=icon href=/favicon.ico>
@@ -239,7 +239,7 @@ Java Developer, Runner, Cyclist
 <p>有时候，你碰到的错误（比如数组下标越界）会让你束手无策。这时，你可以使用 Rust 提供的 <code>panic!</code> 宏直接终止程序，防止更坏的事情发生。当 <code>panic!</code> 执行时，Rust 程序默认会先打印出失败信息，<a href=https://doc.rust-lang.org/nomicon/unwinding.html>解退（unwinding）</a>并清理栈，然后退出。解退是一种比较优雅退出方式，与之相对的是直接终止（abort）。二者的区别在于，解退会清理数据，归还内存，而直接终止就不会清理数据，回收内存的工作交给了操作系统。</p>
 <p>先来看一个简单的 <code>panic!</code>：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
-    panic<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;crash and burn&#34;</span>);
+    panic!(<span style=color:#e6db74>&#34;crash and burn&#34;</span>);
 }
 </code></pre></div><p>这个程序一运行，就会出现错误信息：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>&gt; cargo run
@@ -253,7 +253,7 @@ error<span style=color:#960050;background-color:#1e0010>:</span> <span style=col
 <h3 id=backtrace>Backtrace</h3>
 <p>如果 panic 出现在我们写的代码还好，这时可以直接看到错误发生在哪一行。但如果 panic 出现在 Rust 的核心库或者标准库内部会怎样呢？我们来看一个数组下标越界的例子：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
-    <span style=color:#66d9ef>let</span> v <span style=color:#f92672>=</span> vec<span style=color:#f92672>!</span>[<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>];
+    <span style=color:#66d9ef>let</span> v <span style=color:#f92672>=</span> vec![<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>];
     v[<span style=color:#ae81ff>99</span>];
 }
 </code></pre></div><p>这份代码能够正常通过编译，但是在运行的时候会出现以下错误：</p>
@@ -313,7 +313,7 @@ error<span style=color:#960050;background-color:#1e0010>:</span> <span style=col
 
     <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> <span style=color:#66d9ef>match</span> f {
         Ok(file) <span style=color:#f92672>=&gt;</span> file,
-        Err(error) <span style=color:#f92672>=&gt;</span> panic<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, error),
+        Err(error) <span style=color:#f92672>=&gt;</span> panic!(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, error),
     };
 }
 </code></pre></div><p>以上代码用 <code>match</code> 去匹配枚举类 <code>Result</code>，成功时得到文件句柄，失败时输出错误信息并退出程序。如果我们想在文件不存在时创建文件该怎么做呢？这种情况下，就需要去判断错误的类型：</p>
@@ -328,10 +328,10 @@ error<span style=color:#960050;background-color:#1e0010>:</span> <span style=col
         Err(error) <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>match</span> error.kind() {
             ErrorKind::NotFound <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>match</span> File::create(<span style=color:#e6db74>&#34;hello.txt&#34;</span>) {
                 Ok(fc) <span style=color:#f92672>=&gt;</span> fc,
-                Err(e) <span style=color:#f92672>=&gt;</span> panic<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;Problem creating the file: {:?}&#34;</span>, e),
+                Err(e) <span style=color:#f92672>=&gt;</span> panic!(<span style=color:#e6db74>&#34;Problem creating the file: {:?}&#34;</span>, e),
             },
             other_error <span style=color:#f92672>=&gt;</span> {
-                panic<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, other_error)
+                panic!(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, other_error)
             }
         },
     };
@@ -344,10 +344,10 @@ error<span style=color:#960050;background-color:#1e0010>:</span> <span style=col
     <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>).unwrap_or_else(<span style=color:#f92672>|</span>error<span style=color:#f92672>|</span> {
         <span style=color:#66d9ef>if</span> error.kind() <span style=color:#f92672>==</span> ErrorKind::NotFound {
             File::create(<span style=color:#e6db74>&#34;hello.txt&#34;</span>).unwrap_or_else(<span style=color:#f92672>|</span>error<span style=color:#f92672>|</span> {
-                panic<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;Problem creating the file: {:?}&#34;</span>, error);
+                panic!(<span style=color:#e6db74>&#34;Problem creating the file: {:?}&#34;</span>, error);
             })
         } <span style=color:#66d9ef>else</span> {
-            panic<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, error);
+            panic!(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, error);
         }
     });
 }

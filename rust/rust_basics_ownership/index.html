@@ -8,7 +8,7 @@
 <meta property="og:url" content="https://zhannicholas.github.io/rust/rust_basics_ownership/">
 <meta property="og:site_name" content="Nicholas Zhan">
 <meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="rust"><meta property="article:tag" content="Rust"><meta property="article:published_time" content="2021-09-25T10:51:29+08:00"><meta property="article:modified_time" content="2021-09-25T10:51:29+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.88.1">
+<meta name=generator content="Hugo 0.89.4">
 <title>Rust 基础：所有权 • Nicholas Zhan</title>
 <link rel=canonical href=https://zhannicholas.github.io/rust/rust_basics_ownership/>
 <link rel=icon href=/favicon.ico>
@@ -257,7 +257,7 @@ Java Developer, Runner, Cyclist
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
     <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> s <span style=color:#f92672>=</span> String::from(<span style=color:#e6db74>&#34;hello&#34;</span>);
     s.push_str(<span style=color:#e6db74>&#34;, world!&#34;</span>); <span style=color:#75715e>// push_str() appends a literal to a String
-</span><span style=color:#75715e></span>    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;{}&#34;</span>, s); <span style=color:#75715e>// This will print `hello, world!`
+</span><span style=color:#75715e></span>    println!(<span style=color:#e6db74>&#34;{}&#34;</span>, s); <span style=color:#75715e>// This will print `hello, world!`
 </span><span style=color:#75715e></span>}
 </code></pre></div><h2 id=所有权规则>所有权规则</h2>
 <p>所有权的规则如下，它们不可被违反：</p>
@@ -282,14 +282,14 @@ Java Developer, Runner, Cyclist
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
     <span style=color:#66d9ef>let</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>5</span>;
     <span style=color:#66d9ef>let</span> y <span style=color:#f92672>=</span> x;
-    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;x = {}, y = {}.&#34;</span>, x, y);
+    println!(<span style=color:#e6db74>&#34;x = {}, y = {}.&#34;</span>, x, y);
 }
 </code></pre></div><p>这段代码很简单，也能通过编译，最终运行会打印出结果 <code>x = 5, y = 5.</code>。如果将 <code>let x = 5;</code> 修改为 <code>let x = "5";</code>，仍然能得到一样的运行结果。但是，如果我将 <code>let x = 5;</code> 修改成 <code>let x = String::from("5");</code>，编译都过不去了😂。我并没有改动代码的结构，唯一改变的只有变量 <code>x</code> 的类型，这里面到底发生了什么？🤔</p>
 <p>要回答这个问题，我们需要了解 Rust 中 <code>String</code> 在内存中的存储形式。为了能够使用官方的图，让我将代码修改为官方的代码😁：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
     <span style=color:#66d9ef>let</span> s1 <span style=color:#f92672>=</span> String::from(<span style=color:#e6db74>&#34;hello&#34;</span>);
     <span style=color:#66d9ef>let</span> s2 <span style=color:#f92672>=</span> s1;
-    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;s1 = {}, s2 = {}&#34;</span>, s1, s2);
+    println!(<span style=color:#e6db74>&#34;s1 = {}, s2 = {}&#34;</span>, s1, s2);
 }
 </code></pre></div><p>在 Rust 中，<code>String</code> 由三部分组成：指向字符串实际内容的指针、长度和容量。它们存放在栈上，对应下图中的左侧部分，字符串的实际内容则存放在堆上，对应下图中的右侧部分：</p>
 <p><img src=/images/rust/trpl04-01.svg alt></p>
@@ -346,7 +346,7 @@ To learn more, run the command again with --verbose.
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
     <span style=color:#66d9ef>let</span> s1 <span style=color:#f92672>=</span> String::from(<span style=color:#e6db74>&#34;hello&#34;</span>);
     <span style=color:#66d9ef>let</span> s2 <span style=color:#f92672>=</span> s1.clone();
-    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;s1 = {}, s2 = {}&#34;</span>, s1, s2);
+    println!(<span style=color:#e6db74>&#34;s1 = {}, s2 = {}&#34;</span>, s1, s2);
 }
 </code></pre></div><p>这样一来，<code>s1</code> 和 <code>s2</code> 涉及的数据就是下图中展示的这样了：</p>
 <p><img src=/images/rust/trpl04-03.svg alt></p>
@@ -372,12 +372,12 @@ To learn more, run the command again with --verbose.
 </span><span style=color:#75715e></span>  <span style=color:#75715e>// special happens.
 </span><span style=color:#75715e></span>
 <span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>takes_ownership</span>(some_string: String) { <span style=color:#75715e>// some_string comes into scope
-</span><span style=color:#75715e></span>    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;{}&#34;</span>, some_string);
+</span><span style=color:#75715e></span>    println!(<span style=color:#e6db74>&#34;{}&#34;</span>, some_string);
 } <span style=color:#75715e>// Here, some_string goes out of scope and `drop` is called. The backing
 </span><span style=color:#75715e></span>  <span style=color:#75715e>// memory is freed.
 </span><span style=color:#75715e></span>
 <span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>makes_copy</span>(some_integer: <span style=color:#66d9ef>i32</span>) { <span style=color:#75715e>// some_integer comes into scope
-</span><span style=color:#75715e></span>    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;{}&#34;</span>, some_integer);
+</span><span style=color:#75715e></span>    println!(<span style=color:#e6db74>&#34;{}&#34;</span>, some_integer);
 } <span style=color:#75715e>// Here, some_integer goes out of scope. Nothing special happens.
 </span></code></pre></div><p>如果函数带返回值呢？这个时候所有权也会发生转移：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
@@ -408,7 +408,7 @@ To learn more, run the command again with --verbose.
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
     <span style=color:#66d9ef>let</span> s1 <span style=color:#f92672>=</span> String::from(<span style=color:#e6db74>&#34;hello&#34;</span>);
     <span style=color:#66d9ef>let</span> len <span style=color:#f92672>=</span> calculate_length(<span style=color:#f92672>&amp;</span>s1);
-    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;The length of &#39;{}&#39; is {}.&#34;</span>, s1, len);
+    println!(<span style=color:#e6db74>&#34;The length of &#39;{}&#39; is {}.&#34;</span>, s1, len);
 }
 
 <span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>calculate_length</span>(s: <span style=color:#66d9ef>&amp;</span>String) -&gt; <span style=color:#66d9ef>usize</span> {  <span style=color:#75715e>// s is a reference to a String
@@ -459,7 +459,7 @@ To learn more, run the command again with --verbose.
     <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> s <span style=color:#f92672>=</span> String::from(<span style=color:#e6db74>&#34;hello&#34;</span>);
     <span style=color:#66d9ef>let</span> r1 <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s;
     <span style=color:#66d9ef>let</span> r2 <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s;
-    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;{}, {}&#34;</span>, r1, r2);
+    println!(<span style=color:#e6db74>&#34;{}, {}&#34;</span>, r1, r2);
 }
 </code></pre></div><p>编译器简单明了地指出了我的错误：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>&gt; cargo run
@@ -488,7 +488,7 @@ To learn more, run the command again with --verbose.
       <span style=color:#66d9ef>let</span> r1 <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s;
     }
     <span style=color:#66d9ef>let</span> r2 <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s;
-    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;{}, {}&#34;</span>, r1, r2);
+    println!(<span style=color:#e6db74>&#34;{}, {}&#34;</span>, r1, r2);
 }
 </code></pre></div><p><strong>在 Rust 中，引用的作用域从声明开始，结束于引用最后一次被使用</strong>。Rust 不允许同一份数据在一个作用域内同时出现可变引用和不可变引用的情况。例如：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
@@ -498,7 +498,7 @@ To learn more, run the command again with --verbose.
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>let</span> r2 <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>s; <span style=color:#75715e>// no problem
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>let</span> r3 <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s; <span style=color:#75715e>// BIG PROBLEM
 </span><span style=color:#75715e></span>
-    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;{}, {}, and {}&#34;</span>, r1, r2, r3);
+    println!(<span style=color:#e6db74>&#34;{}, {}, and {}&#34;</span>, r1, r2, r3);
 }
 </code></pre></div><p>会出现以下编译错误：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>&gt; cargo run  
@@ -525,10 +525,10 @@ To learn more, run the command again with --verbose.
     <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> s <span style=color:#f92672>=</span> String::from(<span style=color:#e6db74>&#34;hello&#34;</span>);
     <span style=color:#66d9ef>let</span> r1 <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>s; <span style=color:#75715e>// no problem
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>let</span> r2 <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>s; <span style=color:#75715e>// no problem
-</span><span style=color:#75715e></span>    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;{} and {}&#34;</span>, r1, r2);
+</span><span style=color:#75715e></span>    println!(<span style=color:#e6db74>&#34;{} and {}&#34;</span>, r1, r2);
     <span style=color:#75715e>// variables r1 and r2 will not be used after this point
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>let</span> r3 <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s; <span style=color:#75715e>// no problem
-</span><span style=color:#75715e></span>    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;{}&#34;</span>, r3);
+</span><span style=color:#75715e></span>    println!(<span style=color:#e6db74>&#34;{}&#34;</span>, r3);
 }
 </code></pre></div><p>程序就能通过编译并正常运行。这是因为，<code>r3</code> 被声明之前，<code>r1</code> 和 <code>r2</code> 的作用域已经结束了，不存在作用域的重叠。</p>
 <h2 id=切片slice>切片（Slice）</h2>
@@ -537,9 +537,9 @@ To learn more, run the command again with --verbose.
 <p>字符串切片（string slice）是一个指向 <code>String</code> 中的一部分内容的引用，这部分内容是原字符串的一个子串。例如：</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
     <span style=color:#66d9ef>let</span> s <span style=color:#f92672>=</span> String::from(<span style=color:#e6db74>&#34;hello world&#34;</span>);
-    <span style=color:#66d9ef>let</span> hello <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>s[<span style=color:#ae81ff>0</span>..<span style=color:#ae81ff>5</span>];   <span style=color:#75715e>// hello
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>let</span> world <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>s[<span style=color:#ae81ff>6</span>..<span style=color:#ae81ff>11</span>];  <span style=color:#75715e>// world
-</span><span style=color:#75715e></span>    println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;{}, {}&#34;</span>, hello, world); <span style=color:#75715e>// hello, world
+    <span style=color:#66d9ef>let</span> hello <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>s[<span style=color:#ae81ff>0</span><span style=color:#f92672>..</span><span style=color:#ae81ff>5</span>];   <span style=color:#75715e>// hello
+</span><span style=color:#75715e></span>    <span style=color:#66d9ef>let</span> world <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>s[<span style=color:#ae81ff>6</span><span style=color:#f92672>..</span><span style=color:#ae81ff>11</span>];  <span style=color:#75715e>// world
+</span><span style=color:#75715e></span>    println!(<span style=color:#e6db74>&#34;{}, {}&#34;</span>, hello, world); <span style=color:#75715e>// hello, world
 </span><span style=color:#75715e></span>}
 </code></pre></div><p>在上面这段代码中，<code>hello</code> 和 <code>world</code> 都只引用了 <code>s</code> 中的一部分：</p>
 <p><img src=/images/rust/trpl04-06.svg alt></p>
@@ -549,10 +549,10 @@ To learn more, run the command again with --verbose.
 
     <span style=color:#66d9ef>for</span> (i, <span style=color:#f92672>&amp;</span>item) <span style=color:#66d9ef>in</span> bytes.iter().enumerate() {
         <span style=color:#66d9ef>if</span> item <span style=color:#f92672>==</span> <span style=color:#e6db74>b&#39; &#39;</span> {
-            <span style=color:#66d9ef>return</span> <span style=color:#f92672>&amp;</span>s[<span style=color:#ae81ff>0</span>..i];
+            <span style=color:#66d9ef>return</span> <span style=color:#f92672>&amp;</span>s[<span style=color:#ae81ff>0</span><span style=color:#f92672>..</span>i];
         }
     }
-    <span style=color:#f92672>&amp;</span>s[..]
+    <span style=color:#f92672>&amp;</span>s[<span style=color:#f92672>..</span>]
 }
 </code></pre></div><p>现在可以来回答为啥字符串字面量是不可变的这个问题了。因为字符串字面量的数据类型是 <code>&str</code>，而 <code>&str</code> 是不可变引用。</p>
 <h3 id=其它类型的切片>其它类型的切片</h3>
@@ -561,8 +561,8 @@ To learn more, run the command again with --verbose.
 <span style=color:#75715e>#![allow(unused)]</span>
 <span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
 <span style=color:#66d9ef>let</span> a <span style=color:#f92672>=</span> [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>4</span>, <span style=color:#ae81ff>5</span>];
-<span style=color:#66d9ef>let</span> slice <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>a[<span style=color:#ae81ff>1</span>..<span style=color:#ae81ff>3</span>];
-assert_eq<span style=color:#f92672>!</span>(slice, <span style=color:#f92672>&amp;</span>[<span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>]);
+<span style=color:#66d9ef>let</span> slice <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>a[<span style=color:#ae81ff>1</span><span style=color:#f92672>..</span><span style=color:#ae81ff>3</span>];
+assert_eq!(slice, <span style=color:#f92672>&amp;</span>[<span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>]);
 }
 </code></pre></div><p>在以上代码中，<code>slice</code> 是数组 <code>a</code> 的切片，它的数据类型是 <code>&[int32]</code>。</p>
 <h2 id=参考资料>参考资料</h2>
