@@ -1,0 +1,430 @@
+<!doctype html><html lang=zh-cn dir=auto><head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Notes from Java Performance, 2nd Edition by Scott Oaks. We have two conflicting goals here. The first general rule is to create objects sparingly and to discard them as quickly as possible. Using less memory is the best way to improve the efficiency of the garbage collector. On the other hand, frequently re-creating some kinds of objects can lead to worse overall performance (even if GC performance improves). If those">
+<meta name=theme-color content="#ffcd00">
+<meta property="og:title" content="Java Performance: Heap Memory and Native Best Practices • Nicholas Zhan">
+<meta property="og:description" content="Notes from Java Performance, 2nd Edition by Scott Oaks. We have two conflicting goals here. The first general rule is to create objects sparingly and to discard them as quickly as possible. Using less memory is the best way to improve the efficiency of the garbage collector. On the other hand, frequently re-creating some kinds of objects can lead to worse overall performance (even if GC performance improves). If those">
+<meta property="og:url" content="https://zhannicholas.github.io/notebook/reading_notes/java_performance/heap_and_native_memory_best_practices/">
+<meta property="og:site_name" content="Nicholas Zhan">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="notebook"><meta property="article:tag" content="Java"><meta property="article:published_time" content="2021-12-08T19:13:20+08:00"><meta property="article:modified_time" content="2021-12-08T19:13:20+08:00"><meta name=twitter:card content="summary">
+<meta name=generator content="Hugo 0.89.4">
+<title>Java Performance: Heap Memory and Native Best Practices • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/notebook/reading_notes/java_performance/heap_and_native_memory_best_practices/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
+</head>
+<body class="page type-notebook has-sidebar">
+<div class=site><div id=sidebar class=sidebar>
+<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
+<div class=container><section class="widget widget-about sep-after">
+<header>
+<div class=logo>
+<a href=/>
+<img src=/images/logo.png>
+</a>
+</div>
+<h2 class="title site-title">
+<a href=/>
+Nicholas Zhan
+</a>
+</h2>
+<div class=desc>
+Java Developer, Runner, Cyclist
+</div>
+</header>
+</section>
+<section class="widget widget-search sep-after">
+<header>
+<h4 class="title widget-title">搜索</h4>
+</header>
+<form action=/search id=search-form class=search-form>
+<label>
+<span class=screen-reader-text>搜索</span>
+<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
+</label></form>
+</section>
+<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
+<div class=container>
+<ul><li class="item has-children">
+<a href=/java/>Java</a><button class=sub-menu-toggler>
+<span class=screen-reader-text>expand sub menu</span>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/java/jakartaee/>Jakarta EE</a></li><li class=item>
+<a href=/java/jvm/>JVM</a></li><li class=item>
+<a href=/java/concurrency/>并发</a></li></ul></li><li class=item>
+<a href=/rust/>Rust</a></li><li class=item>
+<a href=/distributed_computing/>分布式计算</a></li><li class=item>
+<a href=/operating_systems/>操作系统</a></li><li class="item has-children">
+<a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=screen-reader-text>expand sub menu</span>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/computer_networks/http/>HTTP</a></li><li class=item>
+<a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
+</div>
+</nav>
+</section><section class="widget widget-taxonomy_cloud sep-after">
+<header>
+<h4 class="title widget-title">标签</h4>
+</header>
+<div class="container list-container">
+<ul class="list taxonomy-cloud"><li>
+<a href=/tags/communication/ style=font-size:1em>Communication</a>
+</li><li>
+<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.2941176470588236em>C算法</a>
+</li><li>
+<a href=/tags/english/ style=font-size:1em>English</a>
+</li><li>
+<a href=/tags/gc/ style=font-size:1.1176470588235294em>GC</a>
+</li><li>
+<a href=/tags/git/ style=font-size:1em>Git</a>
+</li><li>
+<a href=/tags/http/ style=font-size:1.4117647058823528em>HTTP</a>
+</li><li>
+<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
+</li><li>
+<a href=/tags/jakartaee/ style=font-size:1.1176470588235294em>JakartaEE</a>
+</li><li>
+<a href=/tags/java/ style=font-size:2em>Java</a>
+</li><li>
+<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
+</li><li>
+<a href=/tags/jvm/ style=font-size:1.1764705882352942em>JVM</a>
+</li><li>
+<a href=/tags/leetcode/ style=font-size:1.1176470588235294em>Leetcode</a>
+</li><li>
+<a href=/tags/life/ style=font-size:1em>Life</a>
+</li><li>
+<a href=/tags/linux/ style=font-size:1.1764705882352942em>Linux</a>
+</li><li>
+<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
+</li><li>
+<a href=/tags/networks/ style=font-size:1.1176470588235294em>Networks</a>
+</li><li>
+<a href=/tags/os/ style=font-size:1.3529411764705883em>OS</a>
+</li><li>
+<a href=/tags/ostep/ style=font-size:1.1176470588235294em>OSTEP</a>
+</li><li>
+<a href=/tags/python/ style=font-size:1em>Python</a>
+</li><li>
+<a href=/tags/redis/ style=font-size:1.4117647058823528em>Redis</a>
+</li><li>
+<a href=/tags/rpc/ style=font-size:1em>RPC</a>
+</li><li>
+<a href=/tags/rust/ style=font-size:1.4117647058823528em>Rust</a>
+</li><li>
+<a href=/tags/shell/ style=font-size:1.2941176470588236em>Shell</a>
+</li><li>
+<a href=/tags/sicp/ style=font-size:1em>SICP</a>
+</li><li>
+<a href=/tags/spring/ style=font-size:1em>Spring</a>
+</li><li>
+<a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a>
+</li><li>
+<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
+</li><li>
+<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
+</li><li>
+<a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0588235294117647em>分布式计算</a>
+</li><li>
+<a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0588235294117647em>多处理器编程的艺术</a>
+</li><li>
+<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
+</li><li>
+<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.3529411764705883em>并发</a>
+</li><li>
+<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
+</li><li>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0588235294117647em>数据库</a>
+</li><li>
+<a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
+</li><li>
+<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0588235294117647em>现代操作系统</a>
+</li><li>
+<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
+</li><li>
+<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.1764705882352942em>算法导论</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.7058823529411764em>设计模式</a>
+</li></ul>
+</div>
+</section>
+</div>
+<div class=sidebar-overlay></div>
+</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
+<div class=container>
+<a class=screen-reader-text href=#content>跳到内容</a>
+<button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
+<span class=screen-reader-text>Toggle Sidebar</span>
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</span>
+<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</span>
+</button>
+<ul><li class=item>
+<a href=/>主页</a>
+</li><li class=item>
+<a href=/posts/>博客</a>
+</li><li class="item current">
+<a aria-current=page href=/notebook/>笔记本</a>
+</li><li class=item>
+<a href=/itinerary/>游山玩水</a>
+</li></ul>
+</div>
+</nav><div class=header-widgets>
+<div class=container>
+<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+<section class="widget widget-breadcrumbs sep-after">
+<nav id=breadcrumbs>
+<ol><li><a href=/>主页</a></li><li><a href=/notebook/>笔记本</a></li><li><span>Java Performance: Heap Memory and Native Best Practices</span></li></ol>
+</nav>
+</section></div>
+</div>
+<header id=header class="header site-header">
+<div class="container sep-after">
+<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
+</div>
+</div>
+</header>
+<main id=content>
+<article lang=zh-cn class=entry>
+<header class="header entry-header">
+<div class="container sep-after">
+<div class=header-info>
+<h1 class=title>Java Performance: Heap Memory and Native Best Practices</h1>
+</div>
+<div class=entry-meta>
+<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+<span class=screen-reader-text>Posted on </span>
+<time class=entry-date datetime=2021-12-08T19:13:20+08:00>2021, Dec 08</time>
+</span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
+<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
+5 mins read
+</span>
+</div>
+</div>
+</header>
+<details class="container entry-toc">
+<summary class=title>
+<span>目录</span>
+</summary>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#heap-analysis>Heap Analysis</a>
+<ul>
+<li><a href=#heap-histograms>Heap Histograms</a></li>
+<li><a href=#heap-dumps>Heap Dumps</a></li>
+<li><a href=#out-of-memory-errors>Out-of-Memory Errors</a></li>
+</ul>
+</li>
+<li><a href=#using-less-memory>Using Less Memory</a>
+<ul>
+<li><a href=#reducing-object-size>Reducing Object Size</a></li>
+<li><a href=#using-lazy-initialization>Using Lazy Initialization</a></li>
+<li><a href=#using-immutable-and-canonical-objects>Using Immutable and Canonical Objects</a></li>
+</ul>
+</li>
+<li><a href=#object-life-cycle-management>Object Life-Cycle Management</a>
+<ul>
+<li><a href=#object-reuse>Object Reuse</a></li>
+<li><a href=#soft-weak-and-other-references>Soft, Weak, and Other References</a></li>
+<li><a href=#compressed-oops>Compressed Oops</a></li>
+</ul>
+</li>
+<li><a href=#native-memory-best-practices>Native Memory Best Practices</a>
+<ul>
+<li><a href=#native-memory-tracking>Native Memory Tracking</a></li>
+<li><a href=#native-nio-buffers>Native NIO buffers</a></li>
+</ul>
+</li>
+<li><a href=#jvm-tunings-for-the-operating-system>JVM Tunings for the Operating System</a>
+<ul>
+<li><a href=#large-pages>Large Pages</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</details>
+<div class="container entry-content">
+<blockquote>
+<p>Notes from <em>Java Performance, 2nd Edition by Scott Oaks.</em></p>
+</blockquote>
+<p>We have two conflicting goals here. The first general rule is to create objects sparingly and to discard them as quickly as possible. Using less memory is the best way to improve the efficiency of the garbage collector. On the other hand, frequently re-creating some kinds of objects can lead to worse overall performance (even if GC performance improves). If those objects are instead reused, programs can see substantial performance gains.</p>
+<h2 id=heap-analysis>Heap Analysis</h2>
+<h3 id=heap-histograms>Heap Histograms</h3>
+<p>Heap histograms are a quick way to look at the number of objects within an application without doing a full heap dump. If a few particular object types are responsible for creating memory pressure in an application, a heap histogram is a quick way to find that.</p>
+<p>Heap histograms can be obtained by using <code>jcmd</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ jcmd &lt;process_id&gt; GC.class_histogram
+</code></pre></div><p><code>jmap</code> can show heap histograms too:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ jmap -histo &lt;process_id&gt;
+</code></pre></div><p>The output from <code>jmap</code> includes objects that are eligible to be collected (dead objects). To force a full GC prior to seeing the histogram, run this command instead:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ jmap -histo:live &lt;process_id&gt;
+</code></pre></div><h3 id=heap-dumps>Heap Dumps</h3>
+<p>To perform a deeper heap analysis, a <em>heap dump</em> is required. There are many tools can look at heap dumps. For example:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ jcmd &lt;process_id&gt; GC.heap_dump /path/to/heap_dump.hprof
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ map -dump:live,file<span style=color:#f92672>=</span>/path/to/heap_dump.hprof &lt;process_id&gt;
+</code></pre></div><p><code>live</code> option in <code>jmap</code> will force a full GC to occur before the heap is dumped.</p>
+<p>GUI tools like <code>jvisualvm</code> and <code>mat</code> can also dump heaps.</p>
+<p>The first-pass analysis of a heap generally involves <strong>retained memory</strong>. The retained memory of an object is the amount of memory that would be freed if the object itself were eligible to be collected.</p>
+<h4 id=shallow-retained-and-deep-object-sizes>Shallow, Retained, and Deep Object Sizes</h4>
+<p>The <strong>shallow size</strong> of an object is the size of the object itself. If the object contains a reference to another object, the 4 or 8 bytes of the reference is included, but the size of the target object is not included.</p>
+<p>The <strong>deep size</strong> of an object includes the size of the object it references.</p>
+<p>Objects that retain a large amount of heap space are often called the <em>dominators</em> of the heap.</p>
+<h3 id=out-of-memory-errors>Out-of-Memory Errors</h3>
+<p>The JVM throws an out-of-memory error under these circumstances:</p>
+<ul>
+<li>No native memory is available for the JVM.</li>
+<li>The metaspace is out of memory.
+<ul>
+<li>This error can have two root causes: The first is simply that the application uses more classes than can fit in the metaspace you’ve assigned. The second case is trickier: it involves a classloader memory leak.</li>
+</ul>
+</li>
+<li>The Java heap itself is out of memory: the application cannot create any additional objects for the given heap size.</li>
+<li>The JVM is spending too much time performing GC.</li>
+</ul>
+<h4 id=automatic-heap-dumps>Automatic Heap Dumps</h4>
+<p>Out-of-memory errors can occur unpredictably, making it difficult to know when to get a heap dump. Several JVM flags can help:</p>
+<ul>
+<li><code>-XX:+HeapDumpOnOutOfMemoryError</code>: Turning on this flag (which is false by default) will cause the JVM to create a heap dump whenever an out-of-memory error is thrown.</li>
+<li><code>-XX:HeapDumpPath=&lt;path></code>: This specifies the location where the heap dump will be written; the default is <em>java_pid.hprof</em> in the application’s current working directory. The path can specify either a directory (in which case the default filename is used) or the name of the actual file to produce.</li>
+<li><code>-XX:+HeapDumpAfterFullGC</code>: This generates a heap dump after running a full GC.</li>
+<li><code>-XX:+HeapDumpBeforeFullGC</code>: This generates a heap dump before running a full GC.</li>
+</ul>
+<h2 id=using-less-memory>Using Less Memory</h2>
+<p>The first approach to using memory more efficiently in Java is to use less heap memory.</p>
+<p>There are mainly three ways to use less memory: reducing object size, using lazy initialization of objects, and using canonical objects.</p>
+<h3 id=reducing-object-size>Reducing Object Size</h3>
+<p>Defining only required instance variables is one way to save space in an object. The less obvious case involves using smaller data types.</p>
+<p>object sizes are always padded so that they are a multiple of 8 bytes.</p>
+<p>The JVM will also pad objects that have an uneven number of bytes so that arrays of that object fit neatly along whatever address boundaries are optimal for the underlying architecture.</p>
+<p>Even <code>null</code> instance variables consume space within object classes.</p>
+<p>The OpenJDK project has a separate downloadable tool called <code>jol</code> that can calculate object sizes.</p>
+<h3 id=using-lazy-initialization>Using Lazy Initialization</h3>
+<p>If objects are expensive to create, and it definitely makes sense to keep that object around rather than re-create it on demand. This is a case where lazy initialization can help.</p>
+<p>Lazy initialization is best used when the operation in question is only infrequently used.</p>
+<h3 id=using-immutable-and-canonical-objects>Using Immutable and Canonical Objects</h3>
+<p>If something reduces to its most basic form, then it&rsquo;s canonical. These singular representations of immutable objects are known as the <em>canonical version</em> of the object.</p>
+<p>Strings can call the <code>intern()</code> method to find a canonical version of the string.</p>
+<p>To canonicalize an object, create a map that stores the canonical version of the object. To prevent a memory leak, make sure that the objects in the map are weakly referenced.</p>
+<h2 id=object-life-cycle-management>Object Life-Cycle Management</h2>
+<h3 id=object-reuse>Object Reuse</h3>
+<p>Object reuse is commonly achieved in two ways: object pools and thread-local variables.</p>
+<p>Overall, the longer objects are kept in the heap, the less efficient GC will be. So: object reuse is bad.</p>
+<p><em>Soft references</em>, which are discussed later in this section, are essentially a big pool of reusable objects.</p>
+<p>The reason for reusing objects is that many objects are expensive to initialize, and reusing them is more efficient than the trade-off in increased GC time.</p>
+<p>Thread-local objects are always available within the thread and needn’t be explicitly returned.</p>
+<p>Microbenchmarking threads that contend on a lock is always unreliable.</p>
+<h3 id=soft-weak-and-other-references>Soft, Weak, and Other References</h3>
+<p>An ordinary instance variable that refers to an object is a strong reference.</p>
+<p>The <code>-XX:+PrintReferenceGC</code> flag (which is <code>false</code> by default). This allows you to see how much time is spent processing those references.</p>
+<h4 id=soft-references>Soft References</h4>
+<p>Soft references are used when the object in question has a good chance of being reused in the future, but you want to let the garbage collector reclaim the object if it hasn’t been used recently. Soft references are essentially one large, least recently used (LRU) object pool.</p>
+<p>When, exactly, is a soft reference freed? First the referent must not be strongly referenced elsewhere. If the soft reference is the only remaining reference to its referent, the referent is freed during the next GC cycle only if the soft reference has not recently been accessed. If we use pseudocode to display when a soft reference is freed, it will be:</p>
+<pre tabindex=0><code>long ms = SoftRefLRUPolicyMSPerMB * AmountOfFreeMemoryInMB;
+if (now - last_access_to_reference &gt; ms)
+   free the reference
+</code></pre><p>If the JVM completely runs out of memory or starts thrashing too severely, it will clear all soft references.</p>
+<h4 id=weak-references>Weak References</h4>
+<p>objects that are only weakly referenced are reclaimed at every GC cycle. objects that are only weakly referenced are reclaimed at every GC cycle.</p>
+<p>This is what is meant by simultaneous access in weak references It is as if we are saying to the JVM: “Hey, as long as someone else is interested in this object, let me know where it is, but if they no longer need it, throw it away and I will re-create it myself.” Compare that to a soft reference, which essentially says: “Hey, try to keep this around as long as there is enough memory and as long as it seems that someone is occasionally accessing it.”</p>
+<p>Don’t make the mistake of thinking that a weak reference is just like a soft reference except that it is freed more quickly: a softly referenced object will be available for (usually) minutes or even hours, but a weakly referenced object will be available for only as long as its referent is still around (subject to the next GC cycle clearing it).</p>
+<h4 id=finalizers-and-cleaners>Finalizers and Cleaners</h4>
+<p>The finalizer queue is the reference queue used to process the Finalizer references when the referent is eligible for GC.</p>
+<p>In JDK 11, it’s much easier to use the new <code>java.lang.ref.Cleaner</code> class in place of the <code>finalize()</code> method.</p>
+<h3 id=compressed-oops>Compressed Oops</h3>
+<p>Using simple programming, 64-bit JVMs are slower than 32-bit JVMs. This performance gap is because of the 64-bit object references: the 64-bit references take up twice the space (8 bytes) in the heap as 32-bit references (4 bytes). That leads to more GC cycles, since there is now less room in the heap for other data.</p>
+<p><em>Oops</em> stands for <em>ordinary object pointers</em>, which are the handles the JVM uses as object references.</p>
+<p>Two implications:</p>
+<ul>
+<li>For heaps that are between 4 GB and 32 GB, use compressed oops. Compressed oops are enabled using the <code>-XX:+UseCompressedOops</code> flag.</li>
+<li>A program that uses a 31 GB heap and compressed oops will usually be faster than a program that uses a 33 GB heap.</li>
+</ul>
+<h2 id=native-memory-best-practices>Native Memory Best Practices</h2>
+<p>In Unix-based systems, programs like <code>top</code> and <code>ps</code> can show you that data at a basic level; on Windows, you can use <code>perfmon</code> or <code>VMMap</code>.</p>
+<p>Every time the JVM creates a thread, the OS allocates some native memory to hold that thread’s stack.</p>
+<p>In Unix systems, the footprint of an application can be estimated by the <em>resident set size (RSS)</em> of the process. On Windows systems, the equivalent idea is called the <em>working set</em> of an application, which is what is reported by the task manager.</p>
+<p>The distinction between allocated and reserved memory comes about as a result of the way the JVM (and all programs) manage memory.</p>
+<ul>
+<li><em>Reserve memory</em> means the operating system promises that when the JVM attempts to allocate additional memory when it increases the size of the heap, that memory will be available.</li>
+<li>The (actually allocated) memory is known as the committed memory. The amount of committed memory will fluctuate as the heap resizes; in particular, as the heap size increases, the committed memory correspondingly increases.</li>
+</ul>
+<h3 id=native-memory-tracking>Native Memory Tracking</h3>
+<p>Using the option <code>-XX:NativeMemoryTracking=off|summary|detail</code> enables this visibility. By default, Native Memory Tracking (NMT) is off.</p>
+<p>If the summary or detail mode is enabled, you can get the native memory information at any time from jcmd:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ jcmd &lt;process_id&gt; VM.native_memory summary
+</code></pre></div><h3 id=native-nio-buffers>Native NIO buffers</h3>
+<p>Native byte buffers are important from a performance perspective, since they allow native code and Java code to share data without copying it.</p>
+<p>The total amount of memory that can be allocated for direct byte buffers is specified by setting the <code>-XX:MaxDirectMemorySize=N</code> flag.</p>
+<p>In particular, native memory is never compacted. Hence, allocation patterns in native memory can lead to the same fragmentation.</p>
+<p>It is possible to run out of native memory in Java because of native memory fragmentation.</p>
+<h2 id=jvm-tunings-for-the-operating-system>JVM Tunings for the Operating System</h2>
+<h3 id=large-pages>Large Pages</h3>
+<p>A page is a unit of memory used by operating systems to manage physical memory. It is the minimum unit of allocation for the operating system.</p>
+<p>Large pages must be enabled at both the Java and OS levels. At the Java level, the <code>-XX:+UseLargePages</code> flag enables large page use; by default, this flag is <code>false</code>. Not all operating systems support large pages, and the way to enable them obviously varies.</p>
+<p>Linux refers to large pages as huge pages.</p>
+<h4 id=linux-transparent-huge-pages>Linux transparent huge pages</h4>
+<p>Linux kernels starting with version 2.6.32 support transparent huge pages. These offer (in theory) the same performance benefit as traditional huge pages, but they have some differences from traditional huge pages.</p>
+<ul>
+<li>First, traditional huge pages are locked into memory; they can never be swapped. For Java, this is an advantage. Transparent huge pages can be swapped to disk, which is bad for performance.</li>
+<li>Second, allocation of a transparent huge page is also significantly different from a traditional huge page. Traditional huge pages are set aside at kernel boot time; they are always available. Transparent huge pages are allocated on demand.</li>
+<li>Third, transparent huge pages are configured differently at both the OS and Java levels.</li>
+</ul>
+<p>Because of the differences in swapping and allocation of transparent huge pages, they are often not recommended for use with Java; certainly their use can lead to unpredictable spikes in pause times.</p>
+<h4 id=windows-large-pages>Windows large pages</h4>
+<p>Windows large pages can be enabled on only server-based Windows versions.</p>
+</div>
+<footer class=entry-footer>
+<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/>读书笔记</a></div>
+<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/java/>Java</a></div>
+</div>
+</footer>
+</article>
+<nav class=entry-nav>
+<div class=container><div class="prev-entry sep-before">
+<a href=/notebook/reading_notes/java_performance/garbage_collection/>
+<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
+Previous</span>
+<span class=screen-reader-text>上一篇: </span>Java Performance: Garbage Collection</a>
+</div></div>
+</nav>
+</main>
+<footer id=footer class=footer>
+<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
+<ul><li>
+<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a>
+</li><li>
+<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
+</a>
+</li><li>
+<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
+<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+</a>
+</li><li>
+<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+</a>
+</li></ul>
+</nav>
+</section><div class=copyright>
+<p> &copy; 2018-2021 Nicholas Zhan </p>
+</div>
+</div>
+</footer>
+</div>
+</div><script>window.__assets_js_src="/assets/js/"</script>
+<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script>
+</body>
+</html>
