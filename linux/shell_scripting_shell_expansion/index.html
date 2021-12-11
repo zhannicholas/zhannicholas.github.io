@@ -205,7 +205,7 @@ Java Developer, Runner, Cyclist
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-3 mins read
+4 mins read
 </span>
 </div>
 </div>
@@ -253,7 +253,7 @@ spell spill spall
 如果波浪号前缀是”~+“，那么它会被替换为变量 PWD 的值。如果波浪号前缀是”~-“，那么它会被替换为变量 OLDPWD 的值。</p>
 <h2 id=参数或变量展开>参数或变量展开</h2>
 <p>美元符号（$）用于参数展开、命令替换或算术展开。被展开的参数名或符号可能被包裹在大括号中。
-最基本的参数展开的形式是”${PARAMETER}“。如果我们想在某个变量不存在时创建这个变量，则可以使用”${VAR:=value}“</p>
+最基本的参数展开的形式是<code>${PARAMETER}</code>。如果我们想在某个变量不存在时创建这个变量，则可以使用<code>${VAR:=value}</code>。</p>
 <h2 id=命令替换>命令替换</h2>
 <p>命令替换（command substitution）允许我们用命令的输出来替换命令本身，它有两种形式：</p>
 <ul>
@@ -299,12 +299,31 @@ ubuntu2004
 <h2 id=单词拆分>单词拆分</h2>
 <p>Shell 会扫描不在双引号之内的参数展开、命令替换和算术展开的结果，用于单词拆分。分隔符为变量 IFS 中的每个字符，默认为 <code>&lt;space>&lt;tab>&lt;newline></code>。</p>
 <h2 id=文件名展开>文件名展开</h2>
-<p>单词拆分之后，如果 bash 的 -f 选项没有被设置，bash 就会扫描每个单词，寻找字符 <code>*</code>、<code>?</code>、<code>[</code>。如果这三个字符有所出现，单词会被视为一个模式（PATTERN），然后被替换为一个按照字段序排列与这个模式相匹配的文件名列表。</p>
+<p>单词拆分之后，如果 bash 的 -f 选项没有被设置，bash 就会扫描每个单词，寻找字符 <code>*</code>、<code>?</code>、<code>[</code>。如果这三个字符有所出现，单词会被视为一个模式（PATTERN），然后被替换为一个与这个模式相匹配的按照字典序排列文件名列表。三个字符的作用各不相同:</p>
+<ul>
+<li><code>*</code>：匹配任何由零个或任意个字符组成序列（除了前导 <code>.</code>）</li>
+<li><code>?</code>：匹配任何单个字符（除了前导 <code>.</code>）</li>
+<li><code>[]</code>：匹配一组字符集中的单个字符</li>
+</ul>
 <p>举个例子，命令 <code>ls *.py</code> 的作用是查询当前目录下所有的 Python 源文件。命令中有一个通配符 <code>*</code>，那么谁负责来处理这个通配符呢？Shell 还是程序 <code>ls</code>？实际上，处理 <code>*</code> 的并不是 <code>ls</code>，而是 Shell （我以前一致认为是 <code>ls</code> 处理的通配符🤦‍），<code>ls</code> 根本不知道通配符的存在。Shell 会先对表达式 <code>*.py</code> 进行计算，然后将它替换为与模式 <code>*.py</code> 相匹配的文件名列表。这一切都发生在 <code>ls</code> 运行之前。若 <code>*.py</code> 匹配上了 <code>a.py</code> 和 <code>b.py</code> 这两个文件，则从 <code>ls</code> 的角度来说，我们输入的命令是 <code>ls a.py b.py</code>。</p>
+<p>如果模式没有匹配上任何文件，shell 就会将它以字面值的形式传递给命令。例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ ls
+a.txt
+$ ls *.py
+ls: cannot access <span style=color:#e6db74>&#39;*.py&#39;</span>: No such file or directory
+</code></pre></div><p>当我们使用模式匹配时，有两点需要注意：</p>
+<ul>
+<li>进行模式匹配操作的是 shell，而不是被调用的程序</li>
+<li>shell 进行的模式匹配只适用于文件（目录）的路径</li>
+</ul>
+<blockquote>
+<p><code>grep</code>、<code>sed</code> 和 <code>awk</code> 等程序有自己的模式匹配机制。</p>
+</blockquote>
 <h2 id=参考资料>参考资料</h2>
 <ol>
 <li><a href=https://tldp.org/LDP/Bash-Beginners-Guide/html/index.html>Bash Guide for Beginners</a>.</li>
 <li><a href=https://tldp.org/LDP/abs/html/index.html>Advanced Bash-Scripting Guide</a>.</li>
+<li><a href=https://www.gnu.org/software/bash/manual/html_node/>Bash Reference Manual</a>.</li>
 </ol>
 </div>
 <footer class=entry-footer>

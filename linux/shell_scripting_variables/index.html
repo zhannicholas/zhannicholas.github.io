@@ -205,7 +205,7 @@ Java Developer, Runner, Cyclist
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-6 mins read
+7 mins read
 </span>
 </div>
 </div>
@@ -247,23 +247,24 @@ Java Developer, Runner, Cyclist
 </ul>
 <h2 id=创建变量>创建变量</h2>
 <p>变量名是大小写敏感的，一般用大写命名全局变量，用小写命名局部变量。变量名可以包含数字，但是不能以数字开头。定义变量的语法为：<code>VARNAME=value</code>。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ variable1<span style=color:#f92672>=</span><span style=color:#ae81ff>123</span>
-~$ echo variable1
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ variable1<span style=color:#f92672>=</span><span style=color:#ae81ff>123</span>
+$ echo variable1
 variable1
-~$ echo $variable1
+$ echo $variable1
 <span style=color:#ae81ff>123</span>
-~$ echo <span style=color:#e6db74>${</span>variable1<span style=color:#e6db74>}</span>
+$ echo <span style=color:#e6db74>${</span>variable1<span style=color:#e6db74>}</span>
 <span style=color:#ae81ff>123</span>
-</code></pre></div><p>与我们常用的编程语言不同，shell 中变量定义中的 <strong>等号两侧是不能有空格的</strong>，否则会出错。这与 shell 对命令的解释有关，例如：</p>
+</code></pre></div><p>我们经常使用 <code>echo</code> 命令输出某个变量的值。你可能会认为 <code>echo</code> 会计算出变量 <code>variable1</code> 的值，然后将值输出。但事实可不是这样，<code>echo</code> 并不知道变量的值是多少！<code>echo</code> 只负责打印我们传递给它的内容，也就是说，我们传什么给它，它就打印什么。而 shell 会在运行 <code>echo</code> 之前计算出 <code>$variable1</code> 的值，并将结果传给 <code>echo</code>。若 <code>variable1=123</code>，则当我们运行 <code>echo $variable1</code> 时，实际执行的命令是 <code>echo 123</code>。</p>
+<p>与我们常用的编程语言不同，shell 中变量定义中的 <strong>等号两侧是不能有空格的</strong>，否则会出错。这与 shell 对命令的解释有关，例如：</p>
 <ul>
 <li>shell 会将 <code>VARIABLE =value</code> 当作命令 <code>VARIABLE</code> 运行，它有一个参数 <code>=value</code></li>
 <li>shell 会将 <code>VARIABLE= value</code> 当作命令 <code>value</code> 运行，并且认为有一个值为 <code>""</code> 的环境变量 <code>VARIABLE</code></li>
 </ul>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ VARIABLE<span style=color:#f92672>=</span> value
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ VARIABLE<span style=color:#f92672>=</span> value
 value: command not found
-~$ VARIABLE <span style=color:#f92672>=</span>value
+$ VARIABLE <span style=color:#f92672>=</span>value
 VARIABLE: command not found
-~$ VARIABLE <span style=color:#f92672>=</span> value
+$ VARIABLE <span style=color:#f92672>=</span> value
 VARIABLE: command not found
 </code></pre></div><p>从技术的角度来说，变量的名字因出现在赋值语句的左边而被称为 <code>lvalue</code>，变量的值因出现在赋值语句的右边而被称为 <code>rvalue</code>。</p>
 <h2 id=变量的类型>变量的类型</h2>
@@ -277,65 +278,65 @@ VARIABLE: command not found
 <p>从命令行传递给脚本的参数用：<code>$0,$1,$2,$3...</code> 表示。其中，<code>$0</code> 时脚本本身的名字，<code>$1</code> 是第一个参数，<code>$2</code> 是第二个参数，依次类推。<code>$9</code> 之后的参数必须用大括号包裹起来，例如：<code>${10}</code>。这些参数由于和出现位置有关，所以被称为位置参数（positional parameters）。特殊变量 <code>$*</code> 和 <code>$@</code> 表示所有的参数。</p>
 <h2 id=quoting-characters>Quoting characters</h2>
 <p>在有些上下文中，很多字符或者单词都有特殊的含义，用特殊符号将它们引起来可以消除这些特殊含义。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ a<span style=color:#f92672>=</span><span style=color:#ae81ff>123</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ a<span style=color:#f92672>=</span><span style=color:#ae81ff>123</span>
 </code></pre></div><h3 id=转义字符>转义字符（\）</h3>
 <p>转义字符（Escape characters）用来移除其后 <strong>单个字符</strong> 的特殊含义。Bash 中的转义字符是反斜杠（\）。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo <span style=color:#ae81ff>\$</span>a
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ echo <span style=color:#ae81ff>\$</span>a
 $a
-~$ echo <span style=color:#ae81ff>\$</span><span style=color:#f92672>{</span>a<span style=color:#f92672>}</span>
+$ echo <span style=color:#ae81ff>\$</span><span style=color:#f92672>{</span>a<span style=color:#f92672>}</span>
 <span style=color:#e6db74>${</span>a<span style=color:#e6db74>}</span>
-</code></pre></div><p>转义符在行尾（对换行符进行转义）时，表示当前行的命令还未写完。这允许我们写出可读性更强的长命令，例如：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo foo<span style=color:#ae81ff>\
+</code></pre></div><p>转义符在行尾（对换行符进行转义）时，表示当前行的命令还未写完。所以，转义符有时候又被称为行连续字符（line continuation character）。我们可以通过这种方式写出可读性更强的长命令，例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ echo foo<span style=color:#ae81ff>\
 </span><span style=color:#ae81ff></span>&gt; bar
 foobar
 </code></pre></div><h3 id=单引号>单引号（''）</h3>
 <p>将变量的引用放在单引号中（'…'）就会让变量名被当作字面值处理，即不会发生变量替换，所以单引号被称为“full quoting”，有时又称“strong quoting”。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo <span style=color:#e6db74>&#39;$a&#39;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ echo <span style=color:#e6db74>&#39;$a&#39;</span>
 $a
-~$ echo <span style=color:#e6db74>&#39;${a}&#39;</span>
+$ echo <span style=color:#e6db74>&#39;${a}&#39;</span>
 <span style=color:#e6db74>${</span>a<span style=color:#e6db74>}</span>
 </code></pre></div><p>单引号（Single quotes）被用来移除两个单引号之间 <strong>所有字符</strong> 的特殊含义，即单引号中的所有字符都是字面值（literal value）。两个单引号之间是不能有单引号的，即便这个单引号被转义都不行。</p>
 <h3 id=双引号>双引号（""）</h3>
 <p>将变量的引用放在双引号中（"…"）并不会对变量替换造成影响，所以双引号被称为“partial quoting”，有时又称“weak quoting”。</p>
 <p>双引号（Double quotes）会移除两个双引号之间除美元符号（$）、反引号（`）和反斜杠（\）之外的所有字符的特殊含义。美元符号和反引号的特殊含义在双引号之间会保留，而反斜杠只有在其后的字符是美元符号、反引号、双引号、反斜杠或换行符时才保留特殊含义，输入流会将这些字符前的反斜杠去掉。双引号之间是可以有由反斜杠转义的双引号的。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo <span style=color:#e6db74>&#34;</span>$a<span style=color:#e6db74>&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ echo <span style=color:#e6db74>&#34;</span>$a<span style=color:#e6db74>&#34;</span>
 <span style=color:#ae81ff>123</span>
-~$ echo <span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>a<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+$ echo <span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>a<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
 <span style=color:#ae81ff>123</span>
 </code></pre></div><p>双引号还可以保留变量值中的空白符，防止 shell 在解释命令时去掉多余的空白符。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ hello<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;A B  C   D&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ hello<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;A B  C   D&#34;</span>
 echo $hello
 A B C D
 echo <span style=color:#e6db74>&#34;</span>$hello<span style=color:#e6db74>&#34;</span>
 A B  C   D
 </code></pre></div><h2 id=参数替换>参数替换</h2>
 <p><code>${parameter}</code>：获取变量 <code>parameter</code> 的值，同 <code>$parameter</code>，但是前者的含义更加明确</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ param<span style=color:#f92672>=</span><span style=color:#ae81ff>123</span>
-~$ echo <span style=color:#e6db74>${</span>param<span style=color:#e6db74>}</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ param<span style=color:#f92672>=</span><span style=color:#ae81ff>123</span>
+$ echo <span style=color:#e6db74>${</span>param<span style=color:#e6db74>}</span>
 <span style=color:#ae81ff>123</span>
 </code></pre></div><p><code>${parameter-default}</code> 或 <code>${parameter:-default}</code>：如果参数 <code>parameter</code> 未设置，则使用 <code>default</code> 作为结果，但不会将 <code>default</code> 赋值给 <code>parameter</code>。<code>:</code> 的作用是：如果 <code>parameter</code> 已声明且值为 <code>null</code>，则使用 <code>default</code>。若没有 <code>:</code>，则只要 <code>parameter</code> 已声明，就不会使用 <code>default</code></p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo <span style=color:#e6db74>${</span>param-1<span style=color:#e6db74>}</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ echo <span style=color:#e6db74>${</span>param-1<span style=color:#e6db74>}</span>
 <span style=color:#ae81ff>123</span>
-~$ echo <span style=color:#e6db74>${</span>param<span style=color:#66d9ef>:-</span>1<span style=color:#e6db74>}</span>
+$ echo <span style=color:#e6db74>${</span>param<span style=color:#66d9ef>:-</span>1<span style=color:#e6db74>}</span>
 <span style=color:#ae81ff>123</span>
-~$ echo <span style=color:#e6db74>${</span>param1-1<span style=color:#e6db74>}</span>
+$ echo <span style=color:#e6db74>${</span>param1-1<span style=color:#e6db74>}</span>
 <span style=color:#ae81ff>1</span>
-~$ echo <span style=color:#e6db74>${</span>param2<span style=color:#66d9ef>:-</span>2<span style=color:#e6db74>}</span>
+$ echo <span style=color:#e6db74>${</span>param2<span style=color:#66d9ef>:-</span>2<span style=color:#e6db74>}</span>
 <span style=color:#ae81ff>2</span>
-~$ param3<span style=color:#f92672>=</span>  <span style=color:#75715e># param3 is declared, but is null</span>
-~$ echo <span style=color:#e6db74>${</span>param3<span style=color:#66d9ef>:-</span>3<span style=color:#e6db74>}</span>
+$ param3<span style=color:#f92672>=</span>  <span style=color:#75715e># param3 is declared, but is null</span>
+$ echo <span style=color:#e6db74>${</span>param3<span style=color:#66d9ef>:-</span>3<span style=color:#e6db74>}</span>
 <span style=color:#ae81ff>3</span>
-~$ echo <span style=color:#e6db74>${</span>param3-3<span style=color:#e6db74>}</span>
+$ echo <span style=color:#e6db74>${</span>param3-3<span style=color:#e6db74>}</span>
 
-~$ echo <span style=color:#e6db74>${</span>param3<span style=color:#e6db74>}</span>
+$ echo <span style=color:#e6db74>${</span>param3<span style=color:#e6db74>}</span>
 
 </code></pre></div><p><code>${parameter=default}</code> 和 <code>${parameter:=default}</code>：如果 <code>parameter</code> 未设置，则使用 <code>default</code> 并将其赋值给 <code>parameter</code>。这里 <code>:</code> 的含义与 <code>${parameter:-default}</code> 中的 <code>:</code> 类似。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ param4<span style=color:#f92672>=</span>  <span style=color:#75715e># param4 is declared, but is null</span>
-~$ echo <span style=color:#e6db74>${</span>param4:=4<span style=color:#e6db74>}</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ param4<span style=color:#f92672>=</span>  <span style=color:#75715e># param4 is declared, but is null</span>
+$ echo <span style=color:#e6db74>${</span>param4:=4<span style=color:#e6db74>}</span>
 <span style=color:#ae81ff>4</span>
-~$ echo <span style=color:#e6db74>${</span>param5=5<span style=color:#e6db74>}</span>
+$ echo <span style=color:#e6db74>${</span>param5=5<span style=color:#e6db74>}</span>
 <span style=color:#ae81ff>5</span>
-~$ echo <span style=color:#e6db74>${</span>param5<span style=color:#e6db74>}</span>
+$ echo <span style=color:#e6db74>${</span>param5<span style=color:#e6db74>}</span>
 <span style=color:#ae81ff>4</span>
 </code></pre></div><p><code>${parameter+alt_value}</code> 和 <code>${parameter:+alt_value}</code>：如果 <code>parameter</code> 已设置，则使用 <code>alt_value</code> 但不进行赋值，否则使用 <code>null</code>。</p>
 <p><code>${parameter?err_msg}</code> 和 <code>${parameter:?err_msg}</code>：如果 <code>parameter</code> 已设置，则使用它，否则打印 <code>err_msg</code> 并终止脚本执行。</p>
@@ -353,6 +354,7 @@ A B  C   D
 <ol>
 <li><a href=https://tldp.org/LDP/Bash-Beginners-Guide/html/index.html>Bash Guide for Beginners</a>.</li>
 <li><a href=https://tldp.org/LDP/abs/html/index.html>Advanced Bash-Scripting Guide</a>.</li>
+<li><a href=https://www.gnu.org/software/bash/manual/html_node/>Bash Reference Manual</a>.</li>
 </ol>
 </div>
 <footer class=entry-footer>

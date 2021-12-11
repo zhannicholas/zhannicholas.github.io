@@ -237,10 +237,10 @@ Java Developer, Runner, Cyclist
 <p>Shell 既是一个命令解释器（command interpreter），又是一门编程语言。Shell 脚本（shell scripts）是用 shell 编程语言编写的程序，它可以将系统调用、各种工具和已编译的二进制文件粘合在一起，形成新的应用。</p>
 <p>Shell 脚本是解释执行的，shell 从脚本中逐行读取命令，然后在系统中昂搜索这些命令并执行。</p>
 <p>Shell 有很多种，比如 sh（Bourne Shell）、bash（Bourne Again shell）、csh（C shell）、tcsh（TENEX C shell）、ksh（Korn shell）、tmux 等</p>
-<p>查看系统内已经有的 shell：<code>cat /etc/shells</code>
-查看当前用户默认的 shell：<code>cat /etc/passwd | grep $USER | awk 'BEGIN { FS=":" } { print $7 }</code></p>
+<p>查看系统内已经有的 shell：<code>cat /etc/shells</code>。
+查看当前用户默认的 shell：<code>cat /etc/passwd | grep $USER | awk 'BEGIN { FS=":" } { print $7 }</code>。</p>
 <h2 id=bash>Bash</h2>
-<p>绝大多数 Linux/Unix 系统默认的 shell 都是 bash，bash 与 sh 相兼容，但是能力更强。</p>
+<p>绝大多数 Linux/Unix 系统默认的 shell 都是 bash，bash 不仅兼容 sh，而且能力更强。</p>
 <h3 id=bash-启动时加载的文件>Bash 启动时加载的文件</h3>
 <p>当 bash 在不同的情况下被调用时（invoked），它会在启动时会读取并执行一些特定的文件，文件的读取顺序会在下面列出，如果某个文件不存在，bash 就会跳过它继续查找下一个文件。</p>
 <h4 id=invoked-as-an-interactive-login-shellor-with---login>Invoked as an interactive login shell，or with <code>--login</code></h4>
@@ -288,6 +288,7 @@ Java Developer, Runner, Cyclist
 <ol>
 <li><a href=https://tldp.org/LDP/Bash-Beginners-Guide/html/index.html>Bash Guide for Beginners</a>.</li>
 <li><a href=https://tldp.org/LDP/abs/html/index.html>Advanced Bash-Scripting Guide</a>.</li>
+<li><a href=https://www.gnu.org/software/bash/manual/html_node/>Bash Reference Manual</a>.</li>
 </ol>
 </div>
 <footer class=entry-footer>
