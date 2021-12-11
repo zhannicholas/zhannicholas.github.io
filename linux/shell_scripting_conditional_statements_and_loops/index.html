@@ -1,20 +1,20 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="在 Linux 中，有一个东西叫链接文件，它有点像 Windows 中的快捷方式，可以很方便地实现文件的共享。链接主要分为两种：硬链接（hard link） 和 软连接（so">
+<meta name=description content="和其它编程语言类似，bash 也给我们提供了条件语句（conditional statements）。 条件分支 if 在 shell 中，if/then 的语法为：">
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="Linux 中的硬链接与软链接 • Nicholas Zhan">
-<meta property="og:description" content="在 Linux 中，有一个东西叫链接文件，它有点像 Windows 中的快捷方式，可以很方便地实现文件的共享。链接主要分为两种：硬链接（hard link） 和 软连接（so">
-<meta property="og:url" content="https://zhannicholas.github.io/posts/linux/links_in_the_linux_filesystem/">
+<meta property="og:title" content="Shell 脚本：条件分支与循环 • Nicholas Zhan">
+<meta property="og:description" content="和其它编程语言类似，bash 也给我们提供了条件语句（conditional statements）。 条件分支 if 在 shell 中，if/then 的语法为：">
+<meta property="og:url" content="https://zhannicholas.github.io/linux/shell_scripting_conditional_statements_and_loops/">
 <meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Linux"><meta property="article:published_time" content="2021-07-27T10:46:48+08:00"><meta property="article:modified_time" content="2021-07-27T10:46:48+08:00"><meta name=twitter:card content="summary">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="linux"><meta property="article:tag" content="Shell"><meta property="article:published_time" content="2021-10-21T23:05:45+08:00"><meta property="article:modified_time" content="2021-10-21T23:05:45+08:00"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.90.1">
-<title>Linux 中的硬链接与软链接 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/posts/linux/links_in_the_linux_filesystem/>
+<title>Shell 脚本：条件分支与循环 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/linux/shell_scripting_conditional_statements_and_loops/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
 </head>
-<body class="page type-posts has-sidebar">
+<body class="page type-linux has-sidebar">
 <div class=site><div id=sidebar class=sidebar>
 <a class=screen-reader-text href=#main-menu>跳到主菜单</a>
 <div class=container><section class="widget widget-about sep-after">
@@ -167,10 +167,12 @@ Java Developer, Runner, Cyclist
 </button>
 <ul><li class=item>
 <a href=/>主页</a>
-</li><li class="item current">
-<a aria-current=page href=/posts/>博客</a>
+</li><li class=item>
+<a href=/posts/>博客</a>
 </li><li class=item>
 <a href=/notebook/>笔记本</a>
+</li><li class="item current">
+<a aria-current=page href=/linux/>Linux</a>
 </li></ul>
 </div>
 </nav><div class=header-widgets>
@@ -178,7 +180,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><span>Linux 中的硬链接与软链接</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><a href=/linux/>Linux</a></li><li><span>Shell 脚本：条件分支与循环</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -193,17 +195,17 @@ Java Developer, Runner, Cyclist
 <header class="header entry-header">
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title>Linux 中的硬链接与软链接</h1>
+<h1 class=title>Shell 脚本：条件分支与循环</h1>
 </div>
 <div class=entry-meta>
 <span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 <span class=screen-reader-text>Posted on </span>
-<time class=entry-date datetime=2021-07-27T10:46:48+08:00>2021, Jul 27</time>
+<time class=entry-date datetime=2021-10-21T23:05:45+08:00>2021, Oct 21</time>
 </span>
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-4 mins read
+2 mins read
 </span>
 </div>
 </div>
@@ -214,91 +216,102 @@ Java Developer, Runner, Cyclist
 </summary>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#inode>Inode</a></li>
-<li><a href=#硬链接>硬链接</a></li>
-<li><a href=#软连接>软连接</a></li>
-<li><a href=#实践>实践</a></li>
+<li><a href=#条件分支>条件分支</a>
+<ul>
+<li><a href=#if>if</a></li>
+<li><a href=#case>case</a></li>
+<li><a href=#select>select</a></li>
+</ul>
+</li>
+<li><a href=#循环>循环</a>
+<ul>
+<li><a href=#for>for</a></li>
+<li><a href=#while>while</a></li>
+<li><a href=#until>until</a></li>
+<li><a href=#break--continue>break & continue</a></li>
+</ul>
+</li>
 <li><a href=#参考资料>参考资料</a></li>
 </ul>
 </nav>
 </details>
 <div class="container entry-content">
-<p>在 Linux 中，有一个东西叫链接文件，它有点像 Windows 中的快捷方式，可以很方便地实现文件的共享。链接主要分为两种：<strong>硬链接（hard link）</strong> 和 <strong>软连接（soft link）</strong>。链接在 Linux 非常有用，因为在 Linux 中，“every thing is a file”，链接可以带来极大的灵活性。</p>
-<h2 id=inode>Inode</h2>
-<p>在开始之前，让我们先简单了解一下磁盘分区与 <a href=https://en.wikipedia.org/wiki/Inode>索引节点（inode）</a>。</p>
-<p>为了方便管理和保证数据的安全，我们通常会对磁盘进行分区。每个分区都可以被单独挂载（mount）或取消挂载（umount）。每个分区都有自己的文件系统，不同分区的文件系统可以不同。在 Linux 文件系统中，文件就用 inode 表示，每个文件都有自己对应的 inode。每个分区都有一组自己的 inode ，不同分区的 inode 互不影响，因为它们位于不同的文件系统。在建立文件系统时，会建立一个 inode 表，表中包含一定数量的 inode 。每创建一个文件，系统就会分配一个 inode 号（inode number）给它，这个 inode 号就相当于文件的地址。</p>
-<p>Linux 的文件实际上由两部分组成：数据部分和文件名部分。文件名部分保存在目录中，它包含文件的名字以及对应的 inode 号，通过 inode 号我们就可以找到数据部分的相关信息。通过分开存储文件名和文件数据，Linux 系统就能做到多个文件名关联同一个 inode 号。文件的数据部分不仅包括文件所有者、创建时间等元数据，还包括实际文件内容所在的磁盘位置。硬链接和软连接其实就是两种将多个文件名关联到同一份文件数据的方法。</p>
-<h2 id=硬链接>硬链接</h2>
-<p>多个文件名可以指向同一个 inode 号，这些文件的关系就是硬链接的关系。简单来说，一个硬链接就是一个目录项，它关联的是文件名与 inode。由于文件本身就是一个目录项，因此一个文件至少有一个硬链接。删除硬链接时，对应 inode 的硬链接数量减一，只有当 inode 的硬链接数量为 0 时，文件才会被删除。硬链接是不能跨分区（或者跨文件系统）的，因为每个分区都有自己独立的 inode。</p>
-<h2 id=软连接>软连接</h2>
-<p>软链接也叫符号链接（symbolic link or symlink），它是一种特殊类型的文件。符号链接的文件内容实际上是另外一个文件（目标文件）的路径。操作系统会把对符号链接的读写操作重定向到目标文件上。由于符号链接指向的是文件路径而不是 inode，所以符号链接是可以跨分区的。删除符号链接并不会对目标文件造成任何影响。但是，如果目标文件被删除或者重命名了，符号链接就成为了死链接。</p>
-<p>用一张图来说明硬链接与符号链接的区别：</p>
-<p><img src=/images/linux/links.png alt=硬链接与软链接></p>
-<h2 id=实践>实践</h2>
-<p>创建链接的命令是 <code>ln targetfile linkname</code>，命令默认创建的是硬链接，若要创建符号链接，需要加上 <code>-s</code> 参数，即 <code>ln -s targetfile linkname</code>。此外，我们可以通过 <code>ls -l</code> 查看文件硬链接的个数，通过 <code>ls -i</code> 查看文件所对应的 inode 号。</p>
-<p>先用 <code>mkdir links</code> 创建一个测试目录，<code>cd links</code> 切换工作目录，再创建一个测试文件 <code>echo "hello" > hello.txt</code>。现在用 <code>ls -li</code> 检查一下：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>ubuntu@XPS9380:~/links$ ls -li
-total <span style=color:#ae81ff>4</span>
-<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>1</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hello.txt
-</code></pre></div><p>可以看到，<code>hello.txt</code> 的硬链接个数为 1。现在创建一个硬链接：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>ubuntu@XPS9380:~/links$ ln hello.txt hlink
-ubuntu@XPS9380:~/links$ ls -li
-total <span style=color:#ae81ff>8</span>
-<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>2</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hello.txt
-<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>2</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hlink
-</code></pre></div><p>可以看到，<code>hello.txt</code> 与 <code>hlink</code> 对应的 inode 号都是 <code>3095</code>。此外，<code>hlink</code> 的文件类型是 <code>-</code>，说明硬链接就是一个普通文件。</p>
-<p>再来检查一下文件内容：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>ubuntu@XPS9380:~/links$ cat hello.txt
-hello
-ubuntu@XPS9380:~/links$ cat hlink
-hello
-</code></pre></div><p>两个文件的内容是一样的。</p>
-<p>现在来创建一个符号链接：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>ubuntu@XPS9380:~/links$ ln -s hello.txt slink
-ubuntu@XPS9380:~/links$ ls -li
-total <span style=color:#ae81ff>8</span>
-<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>2</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hello.txt
-<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>2</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hlink
-<span style=color:#ae81ff>3633</span> lrwxrwxrwx <span style=color:#ae81ff>1</span> ubuntu ubuntu <span style=color:#ae81ff>9</span> Jul <span style=color:#ae81ff>27</span> 14:38 slink -&gt; hello.txt
-ubuntu@XPS9380:~/links$ cat slink
-hello
-</code></pre></div><p>从执行结果可以看出，<code>slink</code> 的文件类型是 <code>l</code>（符号链接）。虽然 <code>cat</code> 命令的输出内容与 <code>hello.txt</code> 相同，但 <code>slink</code> 有着不同的 inode 号，文件大小也不同。</p>
-<p>现在来试一下删除操作，我们先删除 <code>hello.txt</code>，然后分别查看 <code>slink</code> 与 <code>hlink</code> 的内容：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>ubuntu@XPS9380:~/links$ rm hello.txt ; ls -li
-total <span style=color:#ae81ff>4</span>
-<span style=color:#ae81ff>3095</span> -rw-r--r-- <span style=color:#ae81ff>1</span> ubuntu ubuntu <span style=color:#ae81ff>6</span> Jul <span style=color:#ae81ff>27</span> 14:25 hlink
-<span style=color:#ae81ff>3633</span> lrwxrwxrwx <span style=color:#ae81ff>1</span> ubuntu ubuntu <span style=color:#ae81ff>9</span> Jul <span style=color:#ae81ff>27</span> 14:38 slink -&gt; hello.txt
-ubuntu@XPS9380:~/links$ cat slink
-cat: slink: No such file or directory
-ubuntu@XPS9380:~/links$ cat hlink
-hello
-ubuntu@XPS9380:~/links$
-</code></pre></div><p>可以发现，通过 <code>slink</code> 不能再访问到文件内容了，而通过 <code>hlink</code> 就可以。</p>
+<p>和其它编程语言类似，bash 也给我们提供了条件语句（conditional statements）。</p>
+<h2 id=条件分支>条件分支</h2>
+<h3 id=if>if</h3>
+<p>在 shell 中，<code>if/then</code> 的语法为：<code>if TEST-COMMANDS; then CONSEQUENT-CONMMANDS; fi</code>。</p>
+<p><code>TEST-COMMANDS</code> 列表执行后，如果它的返回状态是 0，就执行 <code>CONSEQUENT-COMMANDS</code> 列表，其中最后一条命令的退出状态就是整个 <code>if</code> 表达式的返回状态。</p>
+<p><strong>在 UNIX/Linux 中，通常用 0 表示成功，非零表示失败</strong>。</p>
+<h4 id=ifthenelse>if/then/else</h4>
+<p><code>If/then/else</code> 的语法为：<code>if TEST-COMMANDS; then CONSEQUENT-CONMMANDS; else ALTERNATE-CONSEQUENT-COMMANDS; fi</code></p>
+<h4 id=ifthenelifelse>if/then/elif/else</h4>
+<p>if 表达式的完整的语法为：<code>if TEST-COMMANDS; then CONSEQUENT-CONMMANDS; elif MORE-TEST-COMMANDS; then MORE-CONSEQUENT-COMMANDS; else ALTERNATE-CONSEQUENT-COMMANDS; fi</code></p>
+<h4 id=test>test</h4>
+<p><code>test</code> 是一个 bash 内置的命令，用于检查文件的类型和进行值的比较。特殊字符 <code>[</code> 是 <code>test</code> 的同义词。</p>
+<p><code>[]</code> 与 <code>[[]]</code> 的区别在于：<code>[[]]</code>（extended test command）比 <code>[]</code> 更强，它会阻止 shell 进行变量名的分词操作、阻止路径名展开。<code>[</code> 和 <code>[[</code> 的类型也不同：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ type <span style=color:#f92672>[</span>
+<span style=color:#f92672>[</span> is a shell builtin
+~$ type <span style=color:#f92672>[[</span>
+<span style=color:#f92672>[[</span> is a shell keyword
+</code></pre></div><p>还有更加有趣的：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ type <span style=color:#f92672>]</span>
+-bash: type: <span style=color:#f92672>]</span>: not found
+~$ type <span style=color:#f92672>]]</span>
+<span style=color:#f92672>]]</span> is a shell keyword
+</code></pre></div><blockquote>
+<p>A builtin is a command contained within the Bash tool set, literally built in.</p>
+</blockquote>
+<blockquote>
+<p>A keyword is a reserved word, token or operator. A keyword is not in itself a command, but a subunit of a command construct.</p>
+</blockquote>
+<p>与文件相关的测试操作符很多，进一步查看：<a href=https://tldp.org/LDP/abs/html/fto.html>File test operators</a>。
+比较操作符也有很多，进一步查看：<a href=https://tldp.org/LDP/abs/html/comparison-ops.html>Other Comparision Operators</a>。</p>
+<h3 id=case>case</h3>
+<p>case 表达式的语法为：<code>case EXPRESSION in CASE1) COMMAND-LIST;; CASE2) COMMAND-LIST;; ... CASEN) COMMAND-LIST;; esac</code></p>
+<p>每个 <code>case</code> 都是一个匹配模式的表达式，若某个 <code>case</code> 的模式匹配成功，则执行 <code>)</code> 后的 <code>COMMAND-LIST</code>。<code>)</code> 的代表着模式的结束，它前面甚至可以写多个模式，每个模式之前用 <code>|</code> 分隔，例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#66d9ef>case</span> $1 in
+  start | Start<span style=color:#f92672>)</span>
+    start
+    ;;
+  *<span style=color:#f92672>)</span>
+    echo <span style=color:#e6db74>&#34;Default branch&#34;</span>
+    ;;
+<span style=color:#66d9ef>esac</span>
+</code></pre></div><p>每个 <code>case</code> 加上对应的 <code>COMMAND-LIST</code> 就构成了一个子句（clause），每个子句都必须以 <code>;;</code> 结束</p>
+<h3 id=select>select</h3>
+<p>select 语句的语法为：<code>select WORD [in LIST]; do RESPECTIVE-COMMANDS; done</code>。select 结构一般用于生成菜单。</p>
+<h2 id=循环>循环</h2>
+<h3 id=for>for</h3>
+<p>for 循环的语法为：<code>for NAME [in LIST ]; do COMMANDS; done</code>。如果 <code>[in LIST]</code> 不存在，则它会被替换为 <code>in $@</code>，for 循环会为每一个位置参数执行一遍 <code>COMMANDS</code>。</p>
+<h3 id=while>while</h3>
+<p>while 循环的语法为：<code>while CONTROL-COMMAND; do CONSEQUENT-COMMANDS; done</code></p>
+<h3 id=until>until</h3>
+<p>until 循环的语法为：<code>until TEST-COMMAND; do CONSEQUENT-COMMANDS; done</code>。until 循环与 while 循环稍有不同，它会在 <code>TEST-COMMAND</code> 为 false 时继续循环，在 <code>TEST-COMMAND</code> 为 true 时结束循环，二者循环进行的条件刚好相反。</p>
+<h3 id=break--continue>break & continue</h3>
+<p><code>break</code> 和 <code>continue</code> 是两个能够影响循环执行的命令：前者终止整个循环，后者跳过当前循环进入下一次循环。</p>
 <h2 id=参考资料>参考资料</h2>
 <ol>
-<li><a href=https://en.wikipedia.org/wiki/Hard_link>Hard link</a>.</li>
-<li><a href=https://en.wikipedia.org/wiki/Symbolic_link>Symbolic link</a>.</li>
-<li><a href=https://tldp.org/LDP/intro-linux/html/sect_03_03.html>Manipulating files</a>.</li>
-<li><a href=https://linuxgazette.net/105/pitcher.html>The difference between hard and soft links</a>.</li>
+<li><a href=https://tldp.org/LDP/Bash-Beginners-Guide/html/index.html>Bash Guide for Beginners</a>.</li>
+<li><a href=https://tldp.org/LDP/abs/html/index.html>Advanced Bash-Scripting Guide</a>.</li>
 </ol>
 </div>
 <footer class=entry-footer>
 <div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
-<span class=screen-reader-text>分类: </span><a class=category href=/categories/linux/>Linux</a></div>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/shell/>Shell</a></div>
 <div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-<span class=screen-reader-text>标签: </span><a class=tag href=/tags/linux/>Linux</a></div>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/shell/>Shell</a></div>
 </div>
 </footer>
 </article>
 <nav class=entry-nav>
 <div class=container><div class="prev-entry sep-before">
-<a href=/posts/linux/linux_directory_structure/>
+<a href=/linux/shell_scripting_variables/>
 <span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
 Previous</span>
-<span class=screen-reader-text>上一篇: </span>Linux 目录结构</a>
+<span class=screen-reader-text>上一篇: </span>Shell 脚本：变量</a>
 </div><div class="next-entry sep-before">
-<a href=/posts/databases/database_normalization/>
-<span class=screen-reader-text>下一篇: </span>数据库规范化<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+<a href=/linux/shell_scripting_shell_expansion/>
+<span class=screen-reader-text>下一篇: </span>Shell 脚本：shell 展开<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
 </span>
 </a>
 </div></div>

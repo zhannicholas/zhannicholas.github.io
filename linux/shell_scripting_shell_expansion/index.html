@@ -1,20 +1,20 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="接下来将会有一系列与 Shell 脚本相关的笔记文章。在之前的工作中，作为一个 Java Boy，我几乎不需要自己编写 Shell 脚本，所以大学学过的 Shell 脚本编程基本忘完（实">
+<meta name=description content="Bash 和其它 shell 做的工作远不止执行命令那么简单。以下提到的各种展开（expansion）操作发生在 Bash 执行命令之前。准确来说，是在重定向之前，重定向">
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="Shell 脚本：初见 • Nicholas Zhan">
-<meta property="og:description" content="接下来将会有一系列与 Shell 脚本相关的笔记文章。在之前的工作中，作为一个 Java Boy，我几乎不需要自己编写 Shell 脚本，所以大学学过的 Shell 脚本编程基本忘完（实">
-<meta property="og:url" content="https://zhannicholas.github.io/posts/linux/shell_scripting_introduction/">
+<meta property="og:title" content="Shell 脚本：shell 展开 • Nicholas Zhan">
+<meta property="og:description" content="Bash 和其它 shell 做的工作远不止执行命令那么简单。以下提到的各种展开（expansion）操作发生在 Bash 执行命令之前。准确来说，是在重定向之前，重定向">
+<meta property="og:url" content="https://zhannicholas.github.io/linux/shell_scripting_shell_expansion/">
 <meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Shell"><meta property="article:published_time" content="2021-10-20T20:45:55+08:00"><meta property="article:modified_time" content="2021-10-20T20:45:55+08:00"><meta name=twitter:card content="summary">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="linux"><meta property="article:tag" content="shell"><meta property="article:published_time" content="2021-10-23T17:15:13+08:00"><meta property="article:modified_time" content="2021-10-23T17:15:13+08:00"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.90.1">
-<title>Shell 脚本：初见 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/posts/linux/shell_scripting_introduction/>
+<title>Shell 脚本：shell 展开 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/linux/shell_scripting_shell_expansion/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
 </head>
-<body class="page type-posts has-sidebar">
+<body class="page type-linux has-sidebar">
 <div class=site><div id=sidebar class=sidebar>
 <a class=screen-reader-text href=#main-menu>跳到主菜单</a>
 <div class=container><section class="widget widget-about sep-after">
@@ -167,10 +167,12 @@ Java Developer, Runner, Cyclist
 </button>
 <ul><li class=item>
 <a href=/>主页</a>
-</li><li class="item current">
-<a aria-current=page href=/posts/>博客</a>
+</li><li class=item>
+<a href=/posts/>博客</a>
 </li><li class=item>
 <a href=/notebook/>笔记本</a>
+</li><li class="item current">
+<a aria-current=page href=/linux/>Linux</a>
 </li></ul>
 </div>
 </nav><div class=header-widgets>
@@ -178,7 +180,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><span>Shell 脚本：初见</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><a href=/linux/>Linux</a></li><li><span>Shell 脚本：shell 展开</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -193,17 +195,17 @@ Java Developer, Runner, Cyclist
 <header class="header entry-header">
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title>Shell 脚本：初见</h1>
+<h1 class=title>Shell 脚本：shell 展开</h1>
 </div>
 <div class=entry-meta>
 <span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 <span class=screen-reader-text>Posted on </span>
-<time class=entry-date datetime=2021-10-20T20:45:55+08:00>2021, Oct 20</time>
+<time class=entry-date datetime=2021-10-23T17:15:13+08:00>2021, Oct 23</time>
 </span>
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-4 mins read
+3 mins read
 </span>
 </div>
 </div>
@@ -214,74 +216,91 @@ Java Developer, Runner, Cyclist
 </summary>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#shell>Shell</a></li>
-<li><a href=#bash>Bash</a>
-<ul>
-<li><a href=#bash-启动时加载的文件>Bash 启动时加载的文件</a></li>
-</ul>
-</li>
-<li><a href=#shell-语法>Shell 语法</a></li>
-<li><a href=#she-bang>She-Bang</a></li>
-<li><a href=#调试-shell-脚本>调试 Shell 脚本</a></li>
+<li><a href=#大括号展开>大括号展开</a></li>
+<li><a href=#波浪号展开>波浪号展开</a></li>
+<li><a href=#参数或变量展开>参数或变量展开</a></li>
+<li><a href=#命令替换>命令替换</a></li>
+<li><a href=#算术展开>算术展开</a></li>
+<li><a href=#进程替换>进程替换</a></li>
+<li><a href=#单词拆分>单词拆分</a></li>
+<li><a href=#文件名展开>文件名展开</a></li>
 <li><a href=#参考资料>参考资料</a></li>
 </ul>
 </nav>
 </details>
 <div class="container entry-content">
+<p>Bash 和其它 shell 做的工作远不止执行命令那么简单。以下提到的各种展开（expansion）操作发生在 Bash 执行命令之前。准确来说，是在重定向之前，重定向操作完成之后才会真正执行命令。</p>
 <blockquote>
-<p>接下来将会有一系列与 Shell 脚本相关的笔记文章。在之前的工作中，作为一个 Java Boy，我几乎不需要自己编写 Shell 脚本，所以大学学过的 Shell 脚本编程基本忘完（实际上我并没有系统的学过它😂），工作中碰到相关东西时也是 Google 一下就搞定了。但是，现在的工作要求我能够编写 Shell 脚本实现一些自动化操作，所以我决定系统地学习一下 Shell 脚本编程的相关知识。主要参考的学习资料是 <a href=https://tldp.org/guides.html>The Linux Documentation Project</a> 网站上推荐的两本在线书籍：<a href=https://tldp.org/LDP/Bash-Beginners-Guide/html/index.html>Bash Guide for Beginners</a> 和 <a href=https://tldp.org/LDP/abs/html/index.html>Advanced Bash-Scripting Guide</a>。前者适合入门，后者适合精进，感谢作者的无私分享。</p>
+<p>若命令中存在重定向操作，则 Shell 会在执行命令之前进行处理。管道（<code>|</code>）就是一个很好的例子，Shell 会透明地将上一条命令的 stdout 重定向到下一条命令的 stdin。而与这个重定向操作有关的两条命令根本不知道自己在和谁通信。</p>
 </blockquote>
-<h2 id=shell>Shell</h2>
-<p>Shell 既是一个命令解释器（command interpreter），又是一门编程语言。Shell 脚本（shell scripts）是用 shell 编程语言编写的程序，它可以将系统调用、各种工具和已编译的二进制文件粘合在一起，形成新的应用。</p>
-<p>Shell 脚本是解释执行的，shell 从脚本中逐行读取命令，然后在系统中昂搜索这些命令并执行。</p>
-<p>Shell 有很多种，比如 sh（Bourne Shell）、bash（Bourne Again shell）、csh（C shell）、tcsh（TENEX C shell）、ksh（Korn shell）、tmux 等</p>
-<p>查看系统内已经有的 shell：<code>cat /etc/shells</code>
-查看当前用户默认的 shell：<code>cat /etc/passwd | grep $USER | awk 'BEGIN { FS=":" } { print $7 }</code></p>
-<h2 id=bash>Bash</h2>
-<p>绝大多数 Linux/Unix 系统默认的 shell 都是 bash，bash 与 sh 相兼容，但是能力更强。</p>
-<h3 id=bash-启动时加载的文件>Bash 启动时加载的文件</h3>
-<p>当 bash 在不同的情况下被调用时（invoked），它会在启动时会读取并执行一些特定的文件，文件的读取顺序会在下面列出，如果某个文件不存在，bash 就会跳过它继续查找下一个文件。</p>
-<h4 id=invoked-as-an-interactive-login-shellor-with---login>Invoked as an interactive login shell，or with <code>--login</code></h4>
-<p>交互式（interactive）bash 意味着我们可以输入命令，shell 通常会从它连接到的终端（terminal）读取命令，然后将执行结果输出到终端。而“login shell”则表示系统会在使用者使用 shell 之前对其进行身份的认证（通常要使用者提供用户名和密码）。这种情况下 bash 启动时读取的文件有：</p>
-<ul>
-<li>/etc/profile</li>
-<li>~/.bash_profile or ~/.bash_login or ~/.profile：第一个存在的可读文件会被读取</li>
-<li>~/.bash_logout：退出时读取</li>
-</ul>
-<h4 id=invoked-as-an-interactive-non-login-shell>Invoked as an interactive non-login shell</h4>
-<p>non-login shell 表示系统在使用者使用 shell 之前不会对其进行身份的认证。这种情况下读取的文件有：</p>
-<ul>
-<li>~/.bashrc</li>
-</ul>
-<h4 id=invoked-non-interactively>Invoked non-interactively</h4>
-<p>所有 bash 脚本使用的都是非交互式（non-interactively）shell。这时读取的文件有：</p>
-<ul>
-<li>由变量 <code>BASH_ENV</code> 定义的文件，不过在搜索这个文件时并不会用上 <code>PATH</code></li>
-</ul>
-<h4 id=invoked-with-the-sh-command>Invoked with the sh command</h4>
-<p>这个时候读取的文件有：</p>
-<ul>
-<li>/etc/profile</li>
-<li>~/.profile</li>
-</ul>
-<h2 id=shell-语法>Shell 语法</h2>
-<p>如果输入不是注释（comment），shell 会读入并将其拆分成单词（word）和操作符（operator），使用“quoting rules”确定输入中每个字符的含义。然后，这些单词和操作符会被翻译成命令和其它结构（construct）。Shell 分析输入的过程如下：</p>
+<p>在 shell 将读取的命令分割成符号（token）之后，这些符号（或单词）会被展开或解析。Shell 会按照顺序执行八种类型的展开：</p>
 <ol>
-<li>Shell 从文件、字符串或用户的终端读取输入</li>
-<li>按照“quoting rules”将输入分解为单词和操作符。这些符号（token）被元字符（metacharacter）分隔。别名（alias）展开被执行</li>
-<li>Shell 将这些符号解析（分析和替换）成简单命令或复合命令</li>
-<li>Bash 执行各种 shell 展开（expansion），将展开的符号分解成文件名（filename）、命令（command）和参数（argument）列表</li>
-<li>如果有必要的话，重定向被执行。重定向操作符和它们的操作数被从参数列表中移除</li>
-<li>命令被执行</li>
-<li>（可选）shell 等待命令执行完毕并收集命令的退出状态。</li>
+<li>Brace expansion</li>
+<li>Tilde expansion</li>
+<li>Shell parameter and variable expansion</li>
+<li>Command substitution</li>
+<li>Arithmetic expansion</li>
+<li>Process substitution</li>
+<li>Word splitting</li>
+<li>File name expansion</li>
 </ol>
-<h2 id=she-bang>She-Bang</h2>
-<p>Sha-Bang，又叫 Shebang、Hashbang，是一个由井号（sharp）和叹号（bang）构成的字符串 <code>#!</code>。若文件的第一行（空白行也是有效行）的前两个字符是 Sha-Bang，Linux 操作系统的进程加载器会分析 Sha-Bang 后面的内容，将这些内容作为解释器指令并调用该指令，载有 Sha-Bang 的文件路径会作为该解释器的参数（常见的 <code>$0</code>）。所以 Sha-Bang 的作用是告知系统这个文件包含着要交给命令解释器执行的命令（即整个脚本），而 Sha-Bang 后面的路径就是这个命令解释器的路径。很多 shell 脚本的第一行都是 <code>#!/bin/bash</code> 或 <code>#!/usr/bin/bash</code>。</p>
-<p><strong>要执行某个脚本，用户不仅需要具备该脚本的读取权限，还需要具备该脚本的执行权限，光有执行权限是不够的。</strong></p>
-<h2 id=调试-shell-脚本>调试 Shell 脚本</h2>
-<p>若要调试（debug）shell 脚本，可以使用 bash 的 <code>-x</code> 选项 （在执行命令之前打印命令的 trace 信息）选项，例如：<code>bash -x your_script.sh</code>。</p>
-<p><code>bash -x</code> 是作用域整个脚本的，即脚本中所有命令的 trace 信息都会被打印出来。有时候，我们只想关注脚本中的某一部分，这个使用可以使用 shell 内置的 <code>set</code> 命令：使用 <code>set -x</code> 开启调试，使用 <code>set +x</code> 关闭调试。Shell 选项中的 <code>+/-</code> 与我们平常使用其它程序的习惯刚好相反，需要注意。<code>set -x</code> 和 <code>set +x</code> 可以在脚本中出现任意多次。</p>
-<p>还有一种开启整个脚本调试信息的方法，那就是将 <code>-x</code> 选项直接加到 Sha-Bang 行解释器路径的后面，例如：<code>#!/bin/bash -x</code>。</p>
+<h2 id=大括号展开>大括号展开</h2>
+<p>大括号展开的形式为：一个可选的前导符（PREAMBLE）、一组位于一对大括号之间的由逗号分隔的字符串和一个可选的跋（POSTSCRIPT）。例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ echo sp<span style=color:#f92672>{</span>el,il,al<span style=color:#f92672>}</span>l
+spell spill spall
+</code></pre></div><h2 id=波浪号展开>波浪号展开</h2>
+<p>如果一个单词以没有被引起来的波浪号（~）开始，则在第一个没有被引起来的斜杠（若没有斜杠，则一直到最后一个字符）之前的字符将被视作波浪号前缀（tidle-prefix）。如果波浪号前缀中没有字符被引起来，那么波浪号前缀中的这些字符就会被当作一个可能的登录用户名。如果这个登录用户名是 null 字符串，则波浪号被替换为 shell 变量 HOME。如果 HOME 变量没有被设置，则替换为执行这个 shell 的用户的主目录。
+如果波浪号前缀是”~+“，那么它会被替换为变量 PWD 的值。如果波浪号前缀是”~-“，那么它会被替换为变量 OLDPWD 的值。</p>
+<h2 id=参数或变量展开>参数或变量展开</h2>
+<p>美元符号（$）用于参数展开、命令替换或算术展开。被展开的参数名或符号可能被包裹在大括号中。
+最基本的参数展开的形式是”${PARAMETER}“。如果我们想在某个变量不存在时创建这个变量，则可以使用”${VAR:=value}“</p>
+<h2 id=命令替换>命令替换</h2>
+<p>命令替换（command substitution）允许我们用命令的输出来替换命令本身，它有两种形式：</p>
+<ul>
+<li>$(command)</li>
+<li>`command`</li>
+</ul>
+<p>其中前者工作得更好，是用来取代后者的。</p>
+<p>例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ whoami
+ubuntu2004
+~$ echo <span style=color:#e6db74>`</span>whoami<span style=color:#e6db74>`</span>
+ubuntu2004
+~$ echo <span style=color:#66d9ef>$(</span>whoami<span style=color:#66d9ef>)</span>
+ubuntu2004
+</code></pre></div><p>命令替换会调用一个 subshell。</p>
+<blockquote>
+<p>A subshell is a child process launched by a shell (or shell script).</p>
+</blockquote>
+<h2 id=算术展开>算术展开</h2>
+<p>算术展开（arithmetic expansion）允许我们用一个算术表达式计算得到的值替换表达式本身。它也有两种形式：</p>
+<ul>
+<li><code>$(( EXPRESSION ))</code></li>
+<li>`$[ EXPRESSION ]`</li>
+</ul>
+<p>例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ a<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span>
+~$ echo <span style=color:#66d9ef>$((</span> $a<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span> <span style=color:#66d9ef>))</span>
+<span style=color:#ae81ff>2</span>
+~$ echo $<span style=color:#f92672>[</span> $a+1 <span style=color:#f92672>]</span>
+<span style=color:#ae81ff>2</span>
+</code></pre></div><p>如果执行算术运算的操作数是一个字符串，那么它会被当作 0 处理。例如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>~$ a<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span>
+~$ echo <span style=color:#66d9ef>$((</span> $a<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span> <span style=color:#66d9ef>))</span>
+<span style=color:#ae81ff>1</span>
+~$ echo $<span style=color:#f92672>[</span> $a+1 <span style=color:#f92672>]</span>
+<span style=color:#ae81ff>1</span>
+</code></pre></div><h2 id=进程替换>进程替换</h2>
+<p>进程替换（Process substitution）在支持命名管道（FIFO）和命名打开文件的 /dev/fd 方法的系统上。形式也有两种：</p>
+<ul>
+<li><code>&lt;(LIST)</code></li>
+<li><code>>(LIST)</code></li>
+</ul>
+<h2 id=单词拆分>单词拆分</h2>
+<p>Shell 会扫描不在双引号之内的参数展开、命令替换和算术展开的结果，用于单词拆分。分隔符为变量 IFS 中的每个字符，默认为 <code>&lt;space>&lt;tab>&lt;newline></code>。</p>
+<h2 id=文件名展开>文件名展开</h2>
+<p>单词拆分之后，如果 bash 的 -f 选项没有被设置，bash 就会扫描每个单词，寻找字符 <code>*</code>、<code>?</code>、<code>[</code>。如果这三个字符有所出现，单词会被视为一个模式（PATTERN），然后被替换为一个按照字段序排列与这个模式相匹配的文件名列表。</p>
+<p>举个例子，命令 <code>ls *.py</code> 的作用是查询当前目录下所有的 Python 源文件。命令中有一个通配符 <code>*</code>，那么谁负责来处理这个通配符呢？Shell 还是程序 <code>ls</code>？实际上，处理 <code>*</code> 的并不是 <code>ls</code>，而是 Shell （我以前一致认为是 <code>ls</code> 处理的通配符🤦‍），<code>ls</code> 根本不知道通配符的存在。Shell 会先对表达式 <code>*.py</code> 进行计算，然后将它替换为与模式 <code>*.py</code> 相匹配的文件名列表。这一切都发生在 <code>ls</code> 运行之前。若 <code>*.py</code> 匹配上了 <code>a.py</code> 和 <code>b.py</code> 这两个文件，则从 <code>ls</code> 的角度来说，我们输入的命令是 <code>ls a.py b.py</code>。</p>
 <h2 id=参考资料>参考资料</h2>
 <ol>
 <li><a href=https://tldp.org/LDP/Bash-Beginners-Guide/html/index.html>Bash Guide for Beginners</a>.</li>
@@ -298,13 +317,13 @@ Java Developer, Runner, Cyclist
 </article>
 <nav class=entry-nav>
 <div class=container><div class="prev-entry sep-before">
-<a href=/posts/communication/gprc-and-protocol-buffers/>
+<a href=/linux/shell_scripting_conditional_statements_and_loops/>
 <span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
 Previous</span>
-<span class=screen-reader-text>上一篇: </span>gPRC 与 Protocol Buffers</a>
+<span class=screen-reader-text>上一篇: </span>Shell 脚本：条件分支与循环</a>
 </div><div class="next-entry sep-before">
-<a href=/posts/linux/shell_scripting_variables/>
-<span class=screen-reader-text>下一篇: </span>Shell 脚本：变量<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+<a href=/linux/shell_scripting_regular_expressions/>
+<span class=screen-reader-text>下一篇: </span>Shell 脚本：正则表达式<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
 </span>
 </a>
 </div></div>

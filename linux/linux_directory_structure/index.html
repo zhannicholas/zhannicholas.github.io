@@ -1,20 +1,20 @@
 <!doctype html><html lang=zh-cn dir=auto><head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="正则表达式（regular expression, RE）在 Shell 中的应用非常广泛，我们常用的 find、grep、sed、awk 等命令都涉及到正则表达式…… 在 Shell 中，表达">
+<meta name=description content="在平常使用 Linux 的过程中，总感觉各个目录的作用存在某种约定，似乎大家都将程序放在 /bin、/sbin、/usr/bin 或 usr/sbin 下，将配置文件放到 /etc 下">
 <meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="Shell 脚本：正则表达式 • Nicholas Zhan">
-<meta property="og:description" content="正则表达式（regular expression, RE）在 Shell 中的应用非常广泛，我们常用的 find、grep、sed、awk 等命令都涉及到正则表达式…… 在 Shell 中，表达">
-<meta property="og:url" content="https://zhannicholas.github.io/posts/linux/shell_scripting_regular_expressions/">
+<meta property="og:title" content="Linux 目录结构 • Nicholas Zhan">
+<meta property="og:description" content="在平常使用 Linux 的过程中，总感觉各个目录的作用存在某种约定，似乎大家都将程序放在 /bin、/sbin、/usr/bin 或 usr/sbin 下，将配置文件放到 /etc 下">
+<meta property="og:url" content="https://zhannicholas.github.io/linux/linux_directory_structure/">
 <meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="posts"><meta property="article:tag" content="Shell"><meta property="article:published_time" content="2021-10-27T21:10:27+08:00"><meta property="article:modified_time" content="2021-10-27T21:10:27+08:00"><meta name=twitter:card content="summary">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="linux"><meta property="article:tag" content="Linux"><meta property="article:published_time" content="2021-07-24T21:57:59+08:00"><meta property="article:modified_time" content="2021-07-24T21:57:59+08:00"><meta name=twitter:card content="summary">
 <meta name=generator content="Hugo 0.90.1">
-<title>Shell 脚本：正则表达式 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/posts/linux/shell_scripting_regular_expressions/>
+<title>Linux 目录结构 • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/linux/linux_directory_structure/>
 <link rel=icon href=/favicon.ico>
 <link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
 </head>
-<body class="page type-posts has-sidebar">
+<body class="page type-linux has-sidebar">
 <div class=site><div id=sidebar class=sidebar>
 <a class=screen-reader-text href=#main-menu>跳到主菜单</a>
 <div class=container><section class="widget widget-about sep-after">
@@ -167,10 +167,12 @@ Java Developer, Runner, Cyclist
 </button>
 <ul><li class=item>
 <a href=/>主页</a>
-</li><li class="item current">
-<a aria-current=page href=/posts/>博客</a>
+</li><li class=item>
+<a href=/posts/>博客</a>
 </li><li class=item>
 <a href=/notebook/>笔记本</a>
+</li><li class="item current">
+<a aria-current=page href=/linux/>Linux</a>
 </li></ul>
 </div>
 </nav><div class=header-widgets>
@@ -178,7 +180,7 @@ Java Developer, Runner, Cyclist
 <style>.widget-breadcrumbs li:after{content:'\2f '}</style>
 <section class="widget widget-breadcrumbs sep-after">
 <nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/posts/>博客</a></li><li><span>Shell 脚本：正则表达式</span></li></ol>
+<ol><li><a href=/>主页</a></li><li><a href=/linux/>Linux</a></li><li><span>Linux 目录结构</span></li></ol>
 </nav>
 </section></div>
 </div>
@@ -193,17 +195,17 @@ Java Developer, Runner, Cyclist
 <header class="header entry-header">
 <div class="container sep-after">
 <div class=header-info>
-<h1 class=title>Shell 脚本：正则表达式</h1>
+<h1 class=title>Linux 目录结构</h1>
 </div>
 <div class=entry-meta>
 <span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 <span class=screen-reader-text>Posted on </span>
-<time class=entry-date datetime=2021-10-27T21:10:27+08:00>2021, Oct 27</time>
+<time class=entry-date datetime=2021-07-24T21:57:59+08:00>2021, Jul 24</time>
 </span>
 <span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
 <span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
 <span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-2 mins read
+6 mins read
 </span>
 </div>
 </div>
@@ -214,66 +216,124 @@ Java Developer, Runner, Cyclist
 </summary>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#标准正则表达式中的特殊字符>标准正则表达式中的特殊字符</a></li>
-<li><a href=#扩展正则表达式中的特殊字符>扩展正则表达式中的特殊字符</a></li>
-<li><a href=#globbing>Globbing</a></li>
+<li><a href=#区分文件>区分文件</a></li>
+<li><a href=#根目录>根目录</a></li>
+<li><a href=#usr-目录>/usr 目录</a></li>
+<li><a href=#var-目录>/var 目录</a></li>
 <li><a href=#参考资料>参考资料</a></li>
 </ul>
 </nav>
 </details>
 <div class="container entry-content">
-<p>正则表达式（regular expression, RE）在 Shell 中的应用非常广泛，我们常用的 <code>find</code>、<code>grep</code>、<code>sed</code>、<code>awk</code> 等命令都涉及到正则表达式……</p>
-<p>在 Shell 中，表达式就是一个字符串。字符串由字符组成，其中有些字符除了字面含义之外还有特殊含义，这些具有特殊含义的字符就是元字符（metacharacter）。</p>
-<p>正则表达式主要用于搜索文本和操作字符串，它包含以下内容：</p>
+<p>在平常使用 Linux 的过程中，总感觉各个目录的作用存在某种约定，似乎大家都将程序放在 <code>/bin</code>、<code>/sbin</code>、<code>/usr/bin</code> 或 <code>usr/sbin</code> 下，将配置文件放到 <code>/etc</code> 下，将用户的主目录放到 <code>/home</code> 下……深入查阅相关资料后才发现，这背后还隐藏着一个标准——<a href=https://wiki.linuxfoundation.org/lsb/fhs>Filesystem Hierarchy Standard</a>。本文的主要内容就来自 FHS 3.0。</p>
+<p>仔细一想，这么做也很有道理。毕竟 Linux 是开源的，发行版众多，更有很多人在 Linux 的基础上进行定制开发。如果大家都按照自己的想法配置 Linux 系统的文件系统结构，对文件的管理将会是一个令人头疼的问题。为了避免五花八门的目录层级结构，Linux 基金会发布了 FHS（Filesystem Hierarchy Standard），标准主要规范了 Linux 系统中一级目录和部分二级目录的用途，以及各个目录应该存储什么样的数据，大多数 Linux 发行版都遵循这一标准。这样，在与 FHS 相兼容的 Linux 系统上，用户可以很方便地进行文件的管理。</p>
+<h2 id=区分文件>区分文件</h2>
+<p>FHS 采用了两种不同的方式对文件进行区分：</p>
 <ul>
-<li>字符集（character set）。字符集内所有的字符都只具有字面含义，不包括元字符</li>
-<li>锚点（anchor）。锚点标识着正则表达式要匹配的文本中的位置，比如 <code>^</code> 和 <code>$</code></li>
-<li>修饰符（modifier）。修饰符的作用是扩展或者缩小正则表达式要匹配的文本的范围，包括星号（*）、方括号（[）和反斜杠（/）</li>
+<li>可共享（sharable）vs 不可共享（unsharable）</li>
+<li>可变（variable） vs 不可变（static）</li>
 </ul>
-<h2 id=标准正则表达式中的特殊字符>标准正则表达式中的特殊字符</h2>
+<p>可共享文件指那些可以共享给其它主机使用的文件，不可共享文件则相反。不可变文件包括二进制文件、库文件、文档等，文件的改变通常需要系统的管理员介入，可变文件则相反。</p>
+<p>以下是 FHS 给出的一个例子：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>sharable</th>
+<th>unsharable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static</td>
+<td>/usr, /opt</td>
+<td>/etc, /boot</td>
+</tr>
+<tr>
+<td>variable</td>
+<td>/var/mail, /var/spool/news</td>
+<td>/var/run, /var/lock</td>
+</tr>
+</tbody>
+</table>
+<h2 id=根目录>根目录</h2>
+<p>Linux 将整个文件系统看成一棵树，这棵树的根节点就是根目录，用 <code>/</code> 表示。根目录很重要，所有的目录都是由根目录衍生出来的，它还与开机、还原、系统修复等操作有关。</p>
+<p>FHS 建议将根目录放在不太大的分区，因为分区越大，可放入的数据就越多，出错的可能性就会增大。FHS 要求根目录下应该有以下目录：</p>
 <ul>
-<li><code>*</code>：匹配前一个字符出现任意次数，包括 0 次</li>
-<li><code>.</code>：匹配除换行符（\n）之外的任何单字符</li>
-<li><code>^</code>：匹配字符串的开始位置</li>
-<li><code>$</code>：匹配字符串的结束位置</li>
-<li><code>[...]</code>：封装正则表达式中用到的一组字符</li>
-<li><code>\</code>：对特殊字符进行转义，转移后的特殊字符只具备字面含义</li>
-<li><code>\&lt;...\></code>：标记单词边界</li>
-</ul>
-<h2 id=扩展正则表达式中的特殊字符>扩展正则表达式中的特殊字符</h2>
-<p>扩展正则表达式给标准正则表达式中加入了新的元字符，主要用在 <code>egrep</code>、<code>awk</code> 和 <code>Perl</code> 中。</p>
+<li><strong>/bin</strong>：存放供所有用户使用的完成基本维护任务的命令。这里的 <code>bin</code> 是 <code>binaries</code> 的缩写，代表二进制文件，通常是可执行的。一些常用的命令，比如 <code>cat</code>、<code>ls</code>、<code>cp</code>、<code>rm</code> 等都在这个目录下。FHS 还要求 <code>/bin</code> 目录不能有子目录。</li>
+<li><strong>/boot</strong>：存放启动 Linux 时用到的一些核心文件，比如操作系统内核、引导程序 Grub 等。</li>
+<li><strong>/dev</strong>：存放所有的设备文件。从此目录可以访问磁盘、内存、CD-ROM 等系统设备。<code>dev</code> 表示 <code>devices</code>。FHS 还要求 <code>/dev</code> 下有以下设备：
 <ul>
-<li><code>?</code>：匹配前一个字符出现零次或一次</li>
-<li><code>+</code>：匹配前面的子表达式出现一次或多次</li>
-<li><code>\{\}</code>：限定前面的子表达式出现的次数</li>
-<li><code>()</code>：封装一组正则表达式</li>
-<li><code>|</code>：从一组选择中选择一个，即或的含义</li>
+<li><strong>/dev/null</strong>：写到这个设备的所有内容都会被丢弃，我们可以通过 <code>></code> 重定向符号将输出流重定向到 <code>/dev/null</code> 来忽略输出的结果。</li>
+<li><strong>/dev/zero</strong>：这是一个产生数字 0 的设备，写到这个设备的所有内容都会被丢弃。无论你对它进行多少次读取，都会读到 0。</li>
+<li><strong>/dev/tty</strong>：表示当前进程的控制终端（如果有的话）。所以，当我们执行 <code>echo "hello" > /dev/tty</code> 时，<code>hello</code> 就会出现在屏幕上。<code>tty</code> 是 <code>Teletype</code> 的缩写。</li>
 </ul>
-<h2 id=globbing>Globbing</h2>
-<p>Bash 本身并不能识别正则表达式，解释正则表达式的是一些像 <code>sed</code> 和 <code>awk</code> 这样的命令和工具。Shell 展开中有一种类型叫文件名展开（filename expansion），但展开的事情并不是 Bash 自己完成的，而是由一个叫做 <code>globbing</code> 的进程完成的。但是 globbing 本身并不能使用标准的正则表达式，它只能识别通配符 <code>*</code>、<code>?</code>、<code>[]</code> 和某些其它的特殊字符。需要注意的是：<code>*</code> 并不会匹配以 <code>.</code> 开头的文件名。</p>
+</li>
+<li><strong>/etc</strong>：存放配置文件。</li>
+<li><strong>/home</strong>：用户的主目录，存放用户的个人文件。除 root 用户外，每个用户的主目录均在 <code>/home</code> 下以用户自己的名字命名。</li>
+<li><strong>/lib</strong>：存放启用系统或运行 <code>/bin</code> 和 <code>/sbin</code> 目录中的命令所需的共享库。<code>/lib</code>目录可能会有一些变种，比如 <code>lib32</code> 存放 32 位程序所需的库文件，而 <code>lib64</code> 存放 64 位程序所需的库文件。</li>
+<li><strong>/media</strong>：挂载可移动设备，一般用于自动挂载 U 盘等媒体。</li>
+<li><strong>/mnt</strong>：临时用于挂载文件系统的地方，</li>
+<li><strong>/opt</strong>：多数第三方软件默认会安装到此位置。这里的 <code>opt</code> 是 <code>optional</code> 的缩写。</li>
+<li><strong>/root</strong>：root 用户主目录的默认位置。</li>
+<li><strong>/run</strong>：存放系统启动后与系统的信息数据，包括 PID(process identifier) 文件，PID 文件通常命名为 <code>&lt;program-name>.pid</code>。在 boot 进程开始之前，这个目录必须被清空。</li>
+<li><strong>/sbin</strong>：存放与系统启动、修复、恢复等与系统维护有关的命令，例如 <code>shutdown</code>、<code>reboot</code>、<code>fsck</code>、<code>ifconfig</code> 等，需要 root 用户才能执行。<code>sbin</code> 表示 <code>system binaries</code>。</li>
+<li><strong>/srv</strong>：存放系统所提供的服务的相关数据，例如 <code>/srv/www</code> 可包含 Web 服务器相关的数据。<code>srv</code> 表示 <code>service</code>。</li>
+<li><strong>/tmp</strong>：存放临时文件。所有用户都可以在这个目录中创建、编辑文件，但只有文件拥有者才能删除文件。<code>tmp</code> 表示 <code>temporary</code>。</li>
+<li><strong>/sys</strong>：存放与设备、驱动和一些与内核有关的信息。</li>
+<li><strong>/proc</strong>：存放内核与进程的状态信息。例如 <code>/proc/cpuinfo</code> 含有与 CPU 相关的信息。</li>
+</ul>
+<h2 id=usr-目录>/usr 目录</h2>
+<p><code>/usr</code> 是一个庞大的文件夹，其下的目录结构与根目录相似。根目录中的文件多是系统级的文件，而 <code>/usr</code> 中是用户级的文件，一般与具体的系统无关。<code>/usr</code> 目录存放的是 <strong>可共享</strong>、<strong>只读</strong> 的数据。这意味着 <code>/usr</code> 中的文件可以在与 FHS 兼容的主机之间共享，且不可以被修改。</p>
+<p>在早期的 Unix/Linux 系统中，<code>/usr</code> 被用作用户的主目录（类似于现在的 <code>/home</code> 目录），<code>usr</code> 表示 <code>user</code>。而在现在的 Unix/Linux 系统中，<code>/usr</code> 存放的是用户级的程序和数据，<code>usr</code> 表示 <code>User System Resources</code>。不过在网上，有人说 <code>usr</code> 是 <code>Unix Software Resources</code> 的缩写，还有人说是 <code>Unix System Resources</code> 的缩写……笔者在这里给出上面内容的参考来源——<a href=https://tldp.org/LDP/Linux-Filesystem-Hierarchy/html/usr.html>Linux Filesystem Hierarchy：/usr</a>，大家可以自行判断。当然，名字的来源不知重点🤭</p>
+<p><code>/usr</code> 的子目录一般有：</p>
+<ul>
+<li><strong>/usr/bin</strong>：绝大部分用户可使用的命令都放在这里，这些命令通常与系统的维护无关。</li>
+<li><strong>/usr/include</strong>：主要放置 C/C++ 程序的头文件。</li>
+<li><strong>/usr/lib</strong>：存放供应用程序使用的库文件。</li>
+<li><strong>/usr/local</strong>：系统管理员在本机安装的软件一般都在这下面，其目录结构与 <code>/usr</code> 目录类似。</li>
+<li><strong>/usr/sbin</strong>：存放不是 <code>/sbin</code> 中一定要有的系统管理命令。</li>
+<li><strong>/usr/share</strong>：存放于系统硬件架构无关的数据。比如 <code>/usr/share/man</code> 存放有在线手册、<code>/usr/share/xml</code> 存放 XML 数据。</li>
+<li><strong>/usr/src</strong>：存放源代码文件。</li>
+</ul>
+<h2 id=var-目录>/var 目录</h2>
+<p><code>/var</code> 目录存放着可变的数据文件，比如运行日志、临时文件等。<code>var</code> 表示 <code>variable</code>。</p>
+<p><code>/var</code> 的子目录主要有：</p>
+<ul>
+<li><strong>/var/cache</strong>：存放应用的缓存数据。</li>
+<li><strong>/var/crash</strong>：存放系统崩溃后的转储文件（dump）。</li>
+<li><strong>/var/lib</strong>：存放应用程序运行时需要的状态信息。</li>
+<li><strong>/var/lock</strong>：存放锁文件。某些设备或资源一次只能被一个应用程序使用，如果资源同时被两个或多个程序使用，就可能产生一些错误，因此需要上锁。</li>
+<li><strong>/var/log</strong>：存放日志数据。</li>
+<li><strong>/var/opt</strong>：存放安装在 <code>/opt</code> 目录中的程序用到的可变数据。</li>
+<li><strong>/var/run</strong>：存放正在执行的程序的信息，例如 PID 文件。</li>
+<li><strong>/var/tmp</strong>：存放系统重启之间保存的临时文件。</li>
+</ul>
 <h2 id=参考资料>参考资料</h2>
 <ol>
-<li><a href=https://tldp.org/LDP/Bash-Beginners-Guide/html/index.html>Bash Guide for Beginners</a>.</li>
-<li><a href=https://tldp.org/LDP/abs/html/index.html>Advanced Bash-Scripting Guide</a>.4w</li>
+<li><a href=https://refspecs.linuxfoundation.org/fhs.shtml>FHS 3 Specification Series</a>.</li>
+<li><a href=https://tldp.org/LDP/Linux-Filesystem-Hierarchy/html/usr.html>Linux Filesystem Hierarchy：/usr</a>.</li>
+<li><a href=https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard>Filesystem Hierarchy Standard</a>.</li>
+<li><a href=https://tldp.org/HOWTO/Text-Terminal-HOWTO-7.html> Terminal Special Files such as /dev/tty</a>.</li>
 </ol>
 </div>
 <footer class=entry-footer>
 <div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
-<span class=screen-reader-text>分类: </span><a class=category href=/categories/shell/>Shell</a></div>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/linux/>Linux</a></div>
 <div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-<span class=screen-reader-text>标签: </span><a class=tag href=/tags/shell/>Shell</a></div>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/linux/>Linux</a></div>
 </div>
 </footer>
 </article>
 <nav class=entry-nav>
 <div class=container><div class="prev-entry sep-before">
-<a href=/posts/linux/shell_scripting_shell_expansion/>
+<a href=/linux/file_types_in_linux_or_unix/>
 <span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
 Previous</span>
-<span class=screen-reader-text>上一篇: </span>Shell 脚本：shell 展开</a>
+<span class=screen-reader-text>上一篇: </span>Linux/Unix 中的文件类型</a>
 </div><div class="next-entry sep-before">
-<a href=/posts/linux/shell_scripting_io_redirection/>
-<span class=screen-reader-text>下一篇: </span>Shell 脚本：I/O 重定向<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+<a href=/linux/links_in_the_linux_filesystem/>
+<span class=screen-reader-text>下一篇: </span>Linux 中的硬链接与软链接<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
 </span>
 </a>
 </div></div>
