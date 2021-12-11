@@ -1,0 +1,859 @@
+<!doctype html><html lang=zh-cn dir=auto><head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Notes from Java Performance, 2nd Edition by Scott Oaks. Flags to tune the just-in-time compiler Flag What it does When to use it -server This flag no longer has any effect; it is silently ignored. N/A -client This flag no longer has any effect; it is silently ignored. N/A -XX:+TieredCompilation Uses tiered compilation. Always, unless you are severely constrained for memory. -XX:ReservedCodeCacheSize=<MB> Reserves space for code compiled by the JIT">
+<meta name=theme-color content="#ffcd00">
+<meta property="og:title" content="Java Performance: Summary of Tuning Flags • Nicholas Zhan">
+<meta property="og:description" content="Notes from Java Performance, 2nd Edition by Scott Oaks. Flags to tune the just-in-time compiler Flag What it does When to use it -server This flag no longer has any effect; it is silently ignored. N/A -client This flag no longer has any effect; it is silently ignored. N/A -XX:+TieredCompilation Uses tiered compilation. Always, unless you are severely constrained for memory. -XX:ReservedCodeCacheSize=<MB> Reserves space for code compiled by the JIT">
+<meta property="og:url" content="https://zhannicholas.github.io/notebook/reading_notes/java_performance/summary_of_tuning_flags/">
+<meta property="og:site_name" content="Nicholas Zhan">
+<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="notebook"><meta property="article:tag" content="Java"><meta property="article:published_time" content="2021-12-10T22:33:48+08:00"><meta property="article:modified_time" content="2021-12-10T22:33:48+08:00"><meta name=twitter:card content="summary">
+<meta name=generator content="Hugo 0.90.1">
+<title>Java Performance: Summary of Tuning Flags • Nicholas Zhan</title>
+<link rel=canonical href=https://zhannicholas.github.io/notebook/reading_notes/java_performance/summary_of_tuning_flags/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
+</head>
+<body class="page type-notebook has-sidebar">
+<div class=site><div id=sidebar class=sidebar>
+<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
+<div class=container><section class="widget widget-about sep-after">
+<header>
+<div class=logo>
+<a href=/>
+<img src=/images/logo.png>
+</a>
+</div>
+<h2 class="title site-title">
+<a href=/>
+Nicholas Zhan
+</a>
+</h2>
+<div class=desc>
+Java Developer, Runner, Cyclist
+</div>
+</header>
+</section>
+<section class="widget widget-search sep-after">
+<header>
+<h4 class="title widget-title">搜索</h4>
+</header>
+<form action=/search id=search-form class=search-form>
+<label>
+<span class=screen-reader-text>搜索</span>
+<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
+</label></form>
+</section>
+<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
+<div class=container>
+<ul><li class="item has-children">
+<a href=/java/>Java</a><button class=sub-menu-toggler>
+<span class=screen-reader-text>expand sub menu</span>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/java/jakartaee/>Jakarta EE</a></li><li class=item>
+<a href=/java/jvm/>JVM</a></li><li class=item>
+<a href=/java/concurrency/>并发</a></li></ul></li><li class=item>
+<a href=/rust/>Rust</a></li><li class=item>
+<a href=/distributed_computing/>分布式计算</a></li><li class=item>
+<a href=/operating_systems/>操作系统</a></li><li class="item has-children">
+<a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=screen-reader-text>expand sub menu</span>
+<span class=sign></span>
+</button>
+<ul class=sub-menu><li class=item>
+<a href=/computer_networks/http/>HTTP</a></li><li class=item>
+<a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
+</div>
+</nav>
+</section><section class="widget widget-taxonomy_cloud sep-after">
+<header>
+<h4 class="title widget-title">标签</h4>
+</header>
+<div class="container list-container">
+<ul class="list taxonomy-cloud"><li>
+<a href=/tags/communication/ style=font-size:1em>Communication</a>
+</li><li>
+<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.2380952380952381em>C算法</a>
+</li><li>
+<a href=/tags/english/ style=font-size:1em>English</a>
+</li><li>
+<a href=/tags/gc/ style=font-size:1.0952380952380953em>GC</a>
+</li><li>
+<a href=/tags/git/ style=font-size:1em>Git</a>
+</li><li>
+<a href=/tags/http/ style=font-size:1.3333333333333333em>HTTP</a>
+</li><li>
+<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
+</li><li>
+<a href=/tags/jakartaee/ style=font-size:1.0952380952380953em>JakartaEE</a>
+</li><li>
+<a href=/tags/java/ style=font-size:2em>Java</a>
+</li><li>
+<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
+</li><li>
+<a href=/tags/jvm/ style=font-size:1.1428571428571428em>JVM</a>
+</li><li>
+<a href=/tags/leetcode/ style=font-size:1.0952380952380953em>Leetcode</a>
+</li><li>
+<a href=/tags/life/ style=font-size:1em>Life</a>
+</li><li>
+<a href=/tags/linux/ style=font-size:1.1428571428571428em>Linux</a>
+</li><li>
+<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
+</li><li>
+<a href=/tags/networks/ style=font-size:1.0952380952380953em>Networks</a>
+</li><li>
+<a href=/tags/os/ style=font-size:1.2857142857142856em>OS</a>
+</li><li>
+<a href=/tags/ostep/ style=font-size:1.0952380952380953em>OSTEP</a>
+</li><li>
+<a href=/tags/python/ style=font-size:1em>Python</a>
+</li><li>
+<a href=/tags/redis/ style=font-size:1.3333333333333333em>Redis</a>
+</li><li>
+<a href=/tags/rpc/ style=font-size:1em>RPC</a>
+</li><li>
+<a href=/tags/rust/ style=font-size:1.3333333333333333em>Rust</a>
+</li><li>
+<a href=/tags/shell/ style=font-size:1.2380952380952381em>Shell</a>
+</li><li>
+<a href=/tags/sicp/ style=font-size:1em>SICP</a>
+</li><li>
+<a href=/tags/spring/ style=font-size:1em>Spring</a>
+</li><li>
+<a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a>
+</li><li>
+<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
+</li><li>
+<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
+</li><li>
+<a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0476190476190477em>分布式计算</a>
+</li><li>
+<a href=/tags/%E5%A4%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/ style=font-size:1.0476190476190477em>多处理器编程的艺术</a>
+</li><li>
+<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
+</li><li>
+<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.2857142857142856em>并发</a>
+</li><li>
+<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
+</li><li>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0476190476190477em>数据库</a>
+</li><li>
+<a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
+</li><li>
+<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0476190476190477em>现代操作系统</a>
+</li><li>
+<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
+</li><li>
+<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.1428571428571428em>算法导论</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
+</li><li>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.5714285714285714em>设计模式</a>
+</li></ul>
+</div>
+</section>
+</div>
+<div class=sidebar-overlay></div>
+</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
+<div class=container>
+<a class=screen-reader-text href=#content>跳到内容</a>
+<button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
+<span class=screen-reader-text>Toggle Sidebar</span>
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</span>
+<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</span>
+</button>
+<ul><li class=item>
+<a href=/>主页</a>
+</li><li class=item>
+<a href=/posts/>博客</a>
+</li><li class="item current">
+<a aria-current=page href=/notebook/>笔记本</a>
+</li><li class=item>
+<a href=/itinerary/>游山玩水</a>
+</li></ul>
+</div>
+</nav><div class=header-widgets>
+<div class=container>
+<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
+<section class="widget widget-breadcrumbs sep-after">
+<nav id=breadcrumbs>
+<ol><li><a href=/>主页</a></li><li><a href=/notebook/>笔记本</a></li><li><span>Java Performance: Summary of Tuning Flags</span></li></ol>
+</nav>
+</section></div>
+</div>
+<header id=header class="header site-header">
+<div class="container sep-after">
+<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
+</div>
+</div>
+</header>
+<main id=content>
+<article lang=zh-cn class=entry>
+<header class="header entry-header">
+<div class="container sep-after">
+<div class=header-info>
+<h1 class=title>Java Performance: Summary of Tuning Flags</h1>
+</div>
+<div class=entry-meta>
+<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+<span class=screen-reader-text>Posted on </span>
+<time class=entry-date datetime=2021-12-10T22:33:48+08:00>2021, Dec 10</time>
+</span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
+<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
+6 mins read
+</span>
+</div>
+</div>
+</header>
+<details class="container entry-toc">
+<summary class=title>
+<span>目录</span>
+</summary>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#flags-to-tune-the-just-in-time-compiler>Flags to tune the just-in-time compiler</a></li>
+<li><a href=#flags-to-choose-the-gc-algorithm>Flags to choose the GC algorithm</a></li>
+<li><a href=#flags-common-to-all-gc-algorithms>Flags common to all GC algorithms</a></li>
+<li><a href=#flags-controlling-gc-logging>Flags controlling GC logging</a></li>
+<li><a href=#flags-for-the-throughput-collector>Flags for the throughput collector</a></li>
+<li><a href=#flags-for-the-g1-collector>Flags for the G1 collector</a></li>
+<li><a href=#flags-for-the-cms-collector>Flags for the CMS collector</a></li>
+<li><a href=#flags-for-memory-management>Flags for memory management</a></li>
+<li><a href=#flags-for-native-memory-tracking>Flags for native memory tracking</a></li>
+<li><a href=#flags-for-thread-handling>Flags for thread handling</a></li>
+<li><a href=#miscellaneous-jvm-flags>Miscellaneous JVM flags</a></li>
+<li><a href=#flags-for-java-flight-recorder>Flags for Java Flight Recorder</a></li>
+</ul>
+</nav>
+</details>
+<div class="container entry-content">
+<blockquote>
+<p>Notes from <em>Java Performance, 2nd Edition by Scott Oaks.</em></p>
+</blockquote>
+<h2 id=flags-to-tune-the-just-in-time-compiler>Flags to tune the just-in-time compiler</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-server</code></td>
+<td>This flag no longer has any effect; it is silently ignored.</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><code>-client</code></td>
+<td>This flag no longer has any effect; it is silently ignored.</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><code>-XX:+TieredCompilation</code></td>
+<td>Uses tiered compilation.</td>
+<td>Always, unless you are severely constrained for memory.</td>
+</tr>
+<tr>
+<td><code>-XX:ReservedCodeCacheSize=&lt;MB></code></td>
+<td>Reserves space for code compiled by the JIT compiler.</td>
+<td>When running a large program and you see a warning that you are out of code cache.</td>
+</tr>
+<tr>
+<td><code>-XX:InitialCodeCacheSize=&lt;MB></code></td>
+<td>Allocates the initial space for code compiled by the JIT compiler.</td>
+<td>If you need to preallocate the memory for the code cache (which is uncommon).</td>
+</tr>
+<tr>
+<td><code>-XX:CompileThreshold=&lt;N></code></td>
+<td>Sets the number of times a method or loop is executed before compiling it.</td>
+<td>This flag is no longer recommended.</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintCompilation</code></td>
+<td>Provides a log of operations by the JIT compiler.</td>
+<td>When you suspect an important method isn’t being compiled or are generally curious as to what the compiler is doing.</td>
+</tr>
+<tr>
+<td><code>-XX:CICompilerCount=&lt;N></code></td>
+<td>Sets the number of threads used by the JIT compiler.</td>
+<td>When too many compiler threads are being started. This primarily affects large machines running many JVMs.</td>
+</tr>
+<tr>
+<td><code>-XX:+DoEscapeAnalysis</code></td>
+<td>Enables aggressive optimizations by the compiler.</td>
+<td>On rare occasions, this can trigger crashes, so it is sometimes recommended to be disabled. Don’t disable it unless you know it is causing an issue.</td>
+</tr>
+<tr>
+<td><code>-XX:UseAVX=&lt;N></code></td>
+<td>Sets the instruction set for use on Intel processors.</td>
+<td>You should set this to 2 in early versions of Java 11; in later versions, it defaults to 2.</td>
+</tr>
+<tr>
+<td><code>-XX:AOTLibrary=&lt;path></code></td>
+<td>Uses the specified library for ahead-of-time compilation.</td>
+<td>In limited cases, may speed up initial program execution. Experimental in Java 11 only.</td>
+</tr>
+</tbody>
+</table>
+<h2 id=flags-to-choose-the-gc-algorithm>Flags to choose the GC algorithm</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-XX:+UseSerialGC</code></td>
+<td>Uses a simple, single-threaded GC algorithm.</td>
+<td>For single-core virtual machines and containers, or for small (100 MB) heaps.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseParallelGC</code></td>
+<td>Uses multiple threads to collect both the young and old generations while application threads are stopped.</td>
+<td>Use to tune for throughput rather than responsiveness; default in Java 8.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseG1GC</code></td>
+<td>Uses multiple threads to collect the young generation while application threads are stopped, and background thread(s) to remove garbage from the old generation with minimal pauses.</td>
+<td>When you have available CPU for the background thread(s) and you do not want long GC pauses. Default in Java 11.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseConcMarkSweepGC</code></td>
+<td>Uses background thread(s) to remove garbage from the old generation with minimal pauses.</td>
+<td>No longer recommended; use G1 GC instead.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseParNewGC</code></td>
+<td>With CMS, uses multiple threads to collect the young generation while application threads are stopped.</td>
+<td>No longer recommended; use G1 GC instead.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseZGC</code></td>
+<td>Uses the experimental Z Garbage Collector (Java 12 only).</td>
+<td>To have shorter pauses for young GC, which is collected concurrently.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseShenandoahGC</code></td>
+<td>Uses the experimental Shenandoah Garbage Collector (Java 12 OpenJDK only).</td>
+<td>To have shorter pauses for young GC, which is collected concurrently.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseEpsilonGC</code></td>
+<td>Uses the experimental Epsilon Garbage Collector (Java 12 only).</td>
+<td>If your app never needs to perform GC.</td>
+</tr>
+</tbody>
+</table>
+<h2 id=flags-common-to-all-gc-algorithms>Flags common to all GC algorithms</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-Xms</code></td>
+<td>Sets the initial size of the heap.</td>
+<td>When the default initial size is too small for your application.</td>
+</tr>
+<tr>
+<td><code>-Xmx</code></td>
+<td>Sets the maximum size of the heap.</td>
+<td>When the default maximum size is too small (or possibly too large) for your application.</td>
+</tr>
+<tr>
+<td><code>-XX:NewRatio</code></td>
+<td>Sets the ratio of the young generation to the old generation.</td>
+<td>Increase this to reduce the proportion of the heap given to the young generation; lower it to increase the proportion of the heap given to the young generation. This is only an initial setting; the proportion will change unless adaptive sizing is turned off. As the young-generation size is reduced, you will see more frequent young GCs and less frequent full GCs (and vice versa).</td>
+</tr>
+<tr>
+<td><code>-XX:NewSize</code></td>
+<td>Sets the initial size of the young generation.</td>
+<td>When you have finely tuned your application requirements.</td>
+</tr>
+<tr>
+<td><code>-XX:MaxNewSize</code></td>
+<td>Sets the maximum size of the young generation.</td>
+<td>When you have finely tuned your application requirements.</td>
+</tr>
+<tr>
+<td><code>-Xmn</code></td>
+<td>Sets the initial and maximum size of the young generation.</td>
+<td>When you have finely tuned your application requirements.</td>
+</tr>
+<tr>
+<td><code>-XX:MetaspaceSize=N</code></td>
+<td>Sets the initial size of the metaspace.</td>
+<td>For applications that use a lot of classes, increase this from the default.</td>
+</tr>
+<tr>
+<td><code>-XX:MaxMetaspaceSize=N</code></td>
+<td>Sets the maximum size of the metaspace.</td>
+<td>Lower this number to limit the amount of native space used by class metadata.</td>
+</tr>
+<tr>
+<td><code>-XX:ParallelGCThreads=N</code></td>
+<td>Sets the number of threads used by the garbage collectors for foreground activities (e.g., collecting the young generation, and for throughput GC, collecting the old generation).</td>
+<td>Lower this value on systems running many JVMs, or in Docker containers on Java 8 before update 192. Consider increasing it for JVMs with very large heaps on very large systems.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseAdaptiveSizePolicy</code></td>
+<td>When set, the JVM will resize various heap sizes to attempt to meet GC goals.</td>
+<td>Turn this off if the heap sizes have been finely tuned.</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintAdaptiveSizePolicy</code></td>
+<td>Adds information about how generations are resized to the GC log.</td>
+<td>Use this flag to gain an understanding of how the JVM is operating. When using G1, check this output to see if full GCs are triggered by humongous object allocation.</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintTenuringDistribution</code></td>
+<td>Adds tenuring information to the GC logs.</td>
+<td>Use the tenuring information to determine if and how the tenuring options should be adjusted.</td>
+</tr>
+<tr>
+<td><code>-XX:InitialSurvivorRatio=N</code></td>
+<td>Sets the amount of the young generation set aside for survivor spaces.</td>
+<td>Increase this if short-lived objects are being promoted into the old generation too frequently.</td>
+</tr>
+<tr>
+<td><code>-XX:MinSurvivorRatio=N</code></td>
+<td>Sets the adaptive amount of the young generation set aside for survivor spaces.</td>
+<td>Decreasing this value reduces the maximum size of the survivor spaces (and vice versa).</td>
+</tr>
+<tr>
+<td><code>-XX:TargetSurvivorRatio=N</code></td>
+<td>The amount of free space the JVM attempts to keep in the survivor spaces.</td>
+<td>Increasing this value reduces the size of the survivor spaces (and vice versa).</td>
+</tr>
+<tr>
+<td><code>-XX:InitialTenuringThreshold=N</code></td>
+<td>The initial number of GC cycles the JVM attempts to keep an object in the survivor spaces.</td>
+<td>Increase this number to keep objects in the survivor spaces longer, though be aware that the JVM will tune it.</td>
+</tr>
+<tr>
+<td><code>-XX:MaxTenuringThreshold=N</code></td>
+<td>The maximum number of GC cycles the JVM attempts to keep an object in the survivor spaces.</td>
+<td>Increase this number to keep objects in the survivor spaces longer; the JVM will tune the actual threshold between this value and the initial threshold.</td>
+</tr>
+<tr>
+<td><code>-XX:+DisableExplicitGC></code></td>
+<td>Prevents calls to <code>System.gc()</code> from having any effect.</td>
+<td>Use to prevent bad applications from explicitly performing GC.</td>
+</tr>
+<tr>
+<td><code>-XX:-AggressiveHeap</code></td>
+<td>Enables a set of tuning flags that are “optimized” for machines with a large amount of memory running a single JVM with a large heap.</td>
+<td>It is better not to use this flag, and instead use specific flags as necessary .</td>
+</tr>
+</tbody>
+</table>
+<h2 id=flags-controlling-gc-logging>Flags controlling GC logging</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-Xlog:gc*</code></td>
+<td>Controls GC logging in Java 11.</td>
+<td>GC logging should always be enabled, even in production. Unlike the following set of flags for Java 8, this flag controls all options to Java 11 GC logging; see the text for a mapping of options for this to Java 8 flags.</td>
+</tr>
+<tr>
+<td><code>-verbose:gc</code></td>
+<td>Enables basic GC logging in Java 8.</td>
+<td>GC logging should always be enabled, but other, more detailed logs are generally better.</td>
+</tr>
+<tr>
+<td><code>-Xloggc:&lt;path></code></td>
+<td>In Java 8, directs the GC log to a special file rather than standard output.</td>
+<td>Always, the better to preserve the information in the log.</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintGC</code></td>
+<td>Enables basic GC logging in Java 8.</td>
+<td>GC logging should always be enabled, but other, more detailed logs are generally better.</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintGCDetails</code></td>
+<td>Enables detailed GC logging in Java 8.</td>
+<td>Always, even in production (the logging overhead is minimal).</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintGCTimeStamps</code></td>
+<td>Prints a relative timestamp for each entry in the GC log in Java 8.</td>
+<td>Always, unless datestamps are enabled.</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintGCDateStamps</code></td>
+<td>Prints a time-of-day stamp for each entry in the GC log in Java 8.</td>
+<td>Has slightly more overhead than timestamps, but may be easier to process.</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintReferenceGC</code></td>
+<td>Prints information about soft and weak reference processing during GC in Java 8.</td>
+<td>If the program uses a lot of those references, add this flag to determine their effect on the GC overhead.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseGCLogFileRotation</code></td>
+<td>Enables rotations of the GC log to conserve file space in Java 8.</td>
+<td>In production systems that run for weeks at a time when the GC logs can be expected to consume a lot of space.</td>
+</tr>
+<tr>
+<td><code>-XX:NumberOfGCLogFiles=N</code></td>
+<td>When logfile rotation is enabled in Java 8, indicates the number of logfiles to retain.</td>
+<td>In production systems that run for weeks at a time when the GC logs can be expected to consume a lot of space.</td>
+</tr>
+<tr>
+<td><code>-XX:GCLogFileSize=N</code></td>
+<td>When logfile rotation is enabled in Java 8, indicates the size of each logfile before rotating it.</td>
+<td>In production systems that run for weeks at a time when the GC logs can be expected to consume a lot of space.</td>
+</tr>
+</tbody>
+</table>
+<h2 id=flags-for-the-throughput-collector>Flags for the throughput collector</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-XX:MaxGCPauseMillis=N</code></td>
+<td>Hints to the throughput collector how long pauses should be; the heap is dynamically sized to attempt to meet that goal.</td>
+<td>As a first step in tuning the throughput collector if the default sizing it calculates doesn’t meet application goals.</td>
+</tr>
+<tr>
+<td><code>-XX:GCTimeRatio=N</code></td>
+<td>Hints to the throughput collector how much time you are willing to spend in GC; the heap is dynamically sized to attempt to meet that goal.</td>
+<td>As a first step in tuning the throughput collector if the default sizing it calculates doesn’t meet application goals.</td>
+</tr>
+</tbody>
+</table>
+<h2 id=flags-for-the-g1-collector>Flags for the G1 collector</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-XX:MaxGCPauseMillis=N</code></td>
+<td>Hints to the G1 collector how long pauses should be; the G1 algorithm is adjusted to attempt to meet that goal.</td>
+<td>As a first step in tuning the G1 collector; increase this value to attempt to prevent full GCs.</td>
+</tr>
+<tr>
+<td><code>-XX:ConcGCThreads=N</code></td>
+<td>Sets the number of threads to use for G1 background scanning.</td>
+<td>When lots of CPU is available and G1 is experiencing concurrent mode failures.</td>
+</tr>
+<tr>
+<td><code>-XX:InitiatingHeapOccupancyPercent=N</code></td>
+<td>Sets the point at which G1 background scanning begins.</td>
+<td>Lower this value if G1 is experiencing concurrent mode failures.</td>
+</tr>
+<tr>
+<td><code>-XX:G1MixedGCCountTarget=N</code></td>
+<td>Sets the number of mixed GCs over which G1 attempts to free regions previously identified as containing mostly garbage.</td>
+<td>Lower this value if G1 is experiencing concurrent mode failures; increase it if mixed GC cycles take too long.</td>
+</tr>
+<tr>
+<td><code>-XX:G1MixedGCCountTarget=N</code></td>
+<td>Sets the number of mixed GCs over which G1 attempts to free regions previously identified as containing mostly garbage.</td>
+<td>Lower this value if G1 is experiencing concurrent mode failures; increase it if mixed GC cycles take too long.</td>
+</tr>
+<tr>
+<td><code>-XX:G1HeapRegionSize=N</code></td>
+<td>Sets the size of a G1 region.</td>
+<td>Increase this value for very large heaps, or when the application allocates very, very large objects.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseStringDeduplication</code></td>
+<td>Allows G1 to eliminate duplicate strings.</td>
+<td>Use for programs that have a lot of duplicate strings and when interning is impractical.</td>
+</tr>
+</tbody>
+</table>
+<h2 id=flags-for-the-cms-collector>Flags for the CMS collector</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-XX:CMSInitiating​OccupancyFraction=N</code></td>
+<td>Determines when CMS should begin background scanning of the old generation.</td>
+<td>When CMS experiences concurrent mode failures, reduces this value.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseCMSInitiating​OccupancyOnly</code></td>
+<td>Causes CMS to use only <code>CMSInitiatingOccupancyFraction</code> to determine when to start CMS background scanning.</td>
+<td>Whenever <code>CMSInitiatingOccupancyFraction</code> is specified.</td>
+</tr>
+<tr>
+<td><code>-XX:ConcGCThreads=N</code></td>
+<td>Sets the number of threads to use for CMS background scanning.</td>
+<td>When lots of CPU is available and CMS is experiencing concurrent mode failures.</td>
+</tr>
+<tr>
+<td><code>-XX:+CMSIncrementalMode</code></td>
+<td>Runs CMS in incremental mode. No longer supported.</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h2 id=flags-for-memory-management>Flags for memory management</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-XX:+HeapDumpOnOutOfMemoryError</code></td>
+<td>Generates a heap dump when the JVM throws an out-of-memory error.</td>
+<td>Enable this flag if the application throws out-of-memory errors due to the heap space or permgen, so the heap can be analyzed for memory leaks.</td>
+</tr>
+<tr>
+<td><code>-XX:HeapDumpPath=&lt;path></code></td>
+<td>Specifies the filename where automatic heap dumps should be written.</td>
+<td>To specify a path other than <em>java_pid.hprof</em> for heap dumps generated on out-of-memory errors or GC events (when those options have been enabled).</td>
+</tr>
+<tr>
+<td><code>-XX:GCTimeLimit=&lt;N></code></td>
+<td>Specifies the amount of time the JVM can spend performing GC without throwing an <code>OutOfMemoryException</code> .</td>
+<td>Lower this value to have the JVM throw an OOME sooner when the program is executing too many GC cycles.</td>
+</tr>
+<tr>
+<td><code>-XX:HeapFreeLimit=&lt;N></code></td>
+<td>Specifies the amount of memory the JVM must free to prevent throwing an <code>OutOfMemoryException</code> .</td>
+<td>Lower this value to have the JVM throw an OOME sooner when the program is executing too many GC cycles.</td>
+</tr>
+<tr>
+<td><code>-XX:SoftRefLRUPolicyMSPerMB=N</code></td>
+<td>Controls how long soft references survive after being used.</td>
+<td>Decrease this value to clean up soft references more quickly, particularly in low-memory conditions.</td>
+</tr>
+<tr>
+<td><code>-XX:MaxDirectMemorySize=N</code></td>
+<td>Controls how much native memory can be allocated via the <code>allocateDirect()</code> method of the <code>ByteBuffer</code> class.</td>
+<td>Consider setting this if you want to limit the amount of direct memory a program can allocate. It is no longer necessary to set this flag to allocate more than 64 MB of direct memory.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseLargePages</code></td>
+<td>Directs the JVM to allocate pages from the operating system’s large page system, if applicable.</td>
+<td>If supported by the OS, this option will generally improve performance.</td>
+</tr>
+<tr>
+<td><code>-XX:+StringTableSize=N</code></td>
+<td>Sets the size of the hash table the JVM uses to hold interned strings.</td>
+<td>Increase this value if the application performs a significant amount of string interning.</td>
+</tr>
+<tr>
+<td><code>-XX:+UseCompressedOops</code></td>
+<td>Emulates 35-bit pointers for object references.</td>
+<td>This is the default for heaps that are less than 32 GB in size; there is never an advantage to disabling it.</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintTLAB</code></td>
+<td>Prints summary information about TLABs in the GC log.</td>
+<td>When using a JVM without support for JFR, use this to ensure that TLAB allocation is working efficiently.</td>
+</tr>
+<tr>
+<td><code>-XX:TLABSize=N</code></td>
+<td>Sets the size of the TLABs.</td>
+<td>When the application is performing a lot of allocation outside TLABs, use this value to increase the TLAB size.</td>
+</tr>
+<tr>
+<td><code>-XX:-ResizeTLAB</code></td>
+<td>Disables resizing of TLABs.</td>
+<td>Whenever <code>TLABSize</code> is specified, make sure to disable this flag.</td>
+</tr>
+</tbody>
+</table>
+<h2 id=flags-for-native-memory-tracking>Flags for native memory tracking</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-XX:NativeMemoryTracking= X</code></td>
+<td>Enable Native Memory Tracking.</td>
+<td>When you need to see what memory the JVM is using outside the heap.</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintNMTStatistics</code></td>
+<td>Prints Native Memory Tracking statistics when the program terminates.</td>
+<td>When you need to see what memory the JVM is using outside the heap.</td>
+</tr>
+</tbody>
+</table>
+<h2 id=flags-for-thread-handling>Flags for thread handling</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-Xss&lt;N></code></td>
+<td>Sets the size of the native stack for threads.</td>
+<td>Decrease this size to make more memory available for other parts of the JVM.</td>
+</tr>
+<tr>
+<td><code>-XX:-BiasedLocking</code></td>
+<td>Disables the biased locking algorithm of the JVM.</td>
+<td>Can help performance of thread pool–based applications.</td>
+</tr>
+</tbody>
+</table>
+<h2 id=miscellaneous-jvm-flags>Miscellaneous JVM flags</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-XX:+CompactStrings</code></td>
+<td>Uses 8-bit string representations when possible (Java 11 only).</td>
+<td>Default; always use.</td>
+</tr>
+<tr>
+<td><code>-XX:-StackTraceInThrowable</code></td>
+<td>Prevents the stack trace from being gathered whenever an exception is thrown.</td>
+<td>On systems with very deep stacks where exceptions are frequently thrown (and where fixing the code to throw fewer exceptions is not a possibility).</td>
+</tr>
+<tr>
+<td><code>-Xshare</code></td>
+<td>Controls class data sharing.</td>
+<td>Use this flag to make new CDS archives for application code.</td>
+</tr>
+</tbody>
+</table>
+<h2 id=flags-for-java-flight-recorder>Flags for Java Flight Recorder</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-XX:+FlightRecorder</code></td>
+<td>Enables Java Flight Recorder.</td>
+<td>Enabling Flight Recorder is always recommended, as it has little overhead unless an actual recording is happening (in which case, the overhead will vary depending on the features used, but still be relatively small).</td>
+</tr>
+<tr>
+<td><code>-XX:+FlightRecorderOptions</code></td>
+<td>Sets options for a default recording via the command line (Java 8 only).</td>
+<td>Control how a default recording can be made for the JVM.</td>
+</tr>
+<tr>
+<td><code>-XX:+StartFlightRecorder</code></td>
+<td>Starts the JVM with the given Flight Recorder options.</td>
+<td>Control how a default recording can be made for the JVM.</td>
+</tr>
+<tr>
+<td><code>-XX:+UnlockCommercialFeatures</code></td>
+<td>Allows the JVM to use commercial (non-open-source) features.</td>
+<td>If you have the appropriate license, setting this flag is required to enable Java Flight Recorder in Java 8.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<footer class=entry-footer>
+<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
+<span class=screen-reader-text>分类: </span><a class=category href=/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/>读书笔记</a></div>
+<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
+<span class=screen-reader-text>标签: </span><a class=tag href=/tags/java/>Java</a></div>
+</div>
+</footer>
+</article>
+<nav class=entry-nav>
+<div class=container><div class="prev-entry sep-before">
+<a href=/notebook/reading_notes/java_performance/java_se_api_tips/>
+<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
+Previous</span>
+<span class=screen-reader-text>上一篇: </span>Java Performance: Java SE API Tips</a>
+</div></div>
+</nav>
+</main>
+<footer id=footer class=footer>
+<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
+<ul><li>
+<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a>
+</li><li>
+<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
+</a>
+</li><li>
+<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
+<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+</a>
+</li><li>
+<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
+<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+</a>
+</li></ul>
+</nav>
+</section><div class=copyright>
+<p> &copy; 2018-2021 Nicholas Zhan </p>
+</div>
+</div>
+</footer>
+</div>
+</div><script>window.__assets_js_src="/assets/js/"</script>
+<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script><script type=text/x-mathjax-config>
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"processEscapes":true}})
+</script>
+<script type=text/javascript async src="//unpkg.com/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
+</html>
