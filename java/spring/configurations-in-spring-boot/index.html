@@ -1,408 +1,57 @@
-<!doctype html><html lang=zh-cn dir=auto><head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="开发的同学可能都遇到过一个 Spring Boot 应用要在多个环境上部署，而每个环境的配置都不同的情况。比如，开发环境用一套配置，测试环境用另一套配置，生产环境">
-<meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="Spring Boot 中的配置体系 • Nicholas Zhan">
-<meta property="og:description" content="开发的同学可能都遇到过一个 Spring Boot 应用要在多个环境上部署，而每个环境的配置都不同的情况。比如，开发环境用一套配置，测试环境用另一套配置，生产环境">
-<meta property="og:url" content="https://zhannicholas.github.io/java/spring/configurations-in-spring-boot/">
-<meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="java"><meta property="article:tag" content="Spring Boot"><meta property="article:published_time" content="2021-08-27T20:36:10+08:00"><meta property="article:modified_time" content="2021-08-27T20:36:10+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.90.1">
-<title>Spring Boot 中的配置体系 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/java/spring/configurations-in-spring-boot/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
-</head>
-<body class="page type-java has-sidebar">
-<div class=site><div id=sidebar class=sidebar>
-<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
-<div class=container><section class="widget widget-about sep-after">
-<header>
-<div class=logo>
-<a href=/>
-<img src=/images/logo.png>
-</a>
-</div>
-<h2 class="title site-title">
-<a href=/>
-Nicholas Zhan
-</a>
-</h2>
-<div class=desc>
-Java Developer, Runner, Cyclist
-</div>
-</header>
-</section>
-<section class="widget widget-search sep-after">
-<header>
-<h4 class="title widget-title">搜索</h4>
-</header>
-<form action=/search id=search-form class=search-form>
-<label>
-<span class=screen-reader-text>搜索</span>
-<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
-</label></form>
-</section>
-<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
-<div class=container>
-<ul><li class="item has-children has-current">
-<a href=/java/>Java</a><button class=sub-menu-toggler>
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="开发的同学可能都遇到过一个 Spring Boot 应用要在多个环境上部署，而每个环境的配置都不同的情况。比如，开发环境用一套配置，测试环境用另一套配置，生产环境"><meta name=theme-color content="#ffcd00"><meta property="og:title" content="Spring Boot 中的配置体系 • Nicholas Zhan"><meta property="og:description" content="开发的同学可能都遇到过一个 Spring Boot 应用要在多个环境上部署，而每个环境的配置都不同的情况。比如，开发环境用一套配置，测试环境用另一套配置，生产环境"><meta property="og:url" content="https://zhannicholas.github.io/java/spring/configurations-in-spring-boot/"><meta property="og:site_name" content="Nicholas Zhan"><meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="java"><meta property="article:tag" content="Spring Boot"><meta property="article:published_time" content="2021-08-27T20:36:10+08:00"><meta property="article:modified_time" content="2021-08-27T20:36:10+08:00"><meta name=twitter:card content="summary"><meta name=generator content="Hugo 0.107.0"><title>Spring Boot 中的配置体系 • Nicholas Zhan</title><link rel=canonical href=https://zhannicholas.github.io/java/spring/configurations-in-spring-boot/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style></head><body class='page type-java has-sidebar'><div class=site><div id=sidebar class=sidebar><a class=screen-reader-text href=#main-menu>跳到主菜单</a><div class=container><section class='widget widget-about sep-after'><header><div class=logo><a href=/><img src=/images/logo.png></a></div><h2 class='title site-title'><a href=/>Nicholas Zhan</a></h2><div class=desc>Java Developer, Runner, Cyclist</div></header></section><section class='widget widget-search sep-after'><header><h4 class='title widget-title'>搜索</h4></header><form action=/search id=search-form class=search-form><label><span class=screen-reader-text>搜索</span>
+<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;></label></form></section><section class='widget widget-sidebar_menu sep-after'><nav id=sidebar-menu class='menu sidebar-menu' aria-label=侧边栏菜单><div class=container><ul><li class='item has-children has-current'><a href=/java/>Java</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/java/jakartaee/>Jakarta EE</a></li><li class=item>
-<a href=/java/jvm/>JVM</a></li><li class=item>
-<a href=/java/concurrency/>并发</a></li></ul></li><li class=item>
-<a href=/rust/>Rust</a></li><li class=item>
-<a href=/distributed_computing/>分布式计算</a></li><li class=item>
-<a href=/operating_systems/>操作系统</a></li><li class="item has-children">
-<a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/java/jakartaee/>Jakarta EE</a></li><li class=item><a href=/java/jvm/>JVM</a></li><li class=item><a href=/java/concurrency/>并发</a></li></ul></li><li class=item><a href=/rust/>Rust</a></li><li class=item><a href=/distributed_computing/>分布式计算</a></li><li class=item><a href=/operating_systems/>操作系统</a></li><li class='item has-children'><a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/computer_networks/http/>HTTP</a></li><li class=item>
-<a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
-</div>
-</nav>
-</section><section class="widget widget-taxonomy_cloud sep-after">
-<header>
-<h4 class="title widget-title">标签</h4>
-</header>
-<div class="container list-container">
-<ul class="list taxonomy-cloud"><li>
-<a href=/tags/communication/ style=font-size:1em>Communication</a>
-</li><li>
-<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.2380952380952381em>C算法</a>
-</li><li>
-<a href=/tags/english/ style=font-size:1em>English</a>
-</li><li>
-<a href=/tags/gc/ style=font-size:1.0952380952380953em>GC</a>
-</li><li>
-<a href=/tags/git/ style=font-size:1em>Git</a>
-</li><li>
-<a href=/tags/http/ style=font-size:1.3333333333333333em>HTTP</a>
-</li><li>
-<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
-</li><li>
-<a href=/tags/jakartaee/ style=font-size:1.0952380952380953em>JakartaEE</a>
-</li><li>
-<a href=/tags/java/ style=font-size:2em>Java</a>
-</li><li>
-<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
-</li><li>
-<a href=/tags/jvm/ style=font-size:1.1428571428571428em>JVM</a>
-</li><li>
-<a href=/tags/leetcode/ style=font-size:1.0952380952380953em>Leetcode</a>
-</li><li>
-<a href=/tags/life/ style=font-size:1em>Life</a>
-</li><li>
-<a href=/tags/linux/ style=font-size:1.1428571428571428em>Linux</a>
-</li><li>
-<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
-</li><li>
-<a href=/tags/networks/ style=font-size:1.0952380952380953em>Networks</a>
-</li><li>
-<a href=/tags/os/ style=font-size:1.2857142857142856em>OS</a>
-</li><li>
-<a href=/tags/ostep/ style=font-size:1.0952380952380953em>OSTEP</a>
-</li><li>
-<a href=/tags/python/ style=font-size:1em>Python</a>
-</li><li>
-<a href=/tags/redis/ style=font-size:1.3333333333333333em>Redis</a>
-</li><li>
-<a href=/tags/rpc/ style=font-size:1em>RPC</a>
-</li><li>
-<a href=/tags/rust/ style=font-size:1.3333333333333333em>Rust</a>
-</li><li>
-<a href=/tags/shell/ style=font-size:1.2380952380952381em>Shell</a>
-</li><li>
-<a href=/tags/sicp/ style=font-size:1em>SICP</a>
-</li><li>
-<a href=/tags/spring/ style=font-size:1em>Spring</a>
-</li><li>
-<a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a>
-</li><li>
-<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
-</li><li>
-<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
-</li><li>
-<a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0476190476190477em>分布式计算</a>
-</li><li>
-<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
-</li><li>
-<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.380952380952381em>并发</a>
-</li><li>
-<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
-</li><li>
-<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0476190476190477em>数据库</a>
-</li><li>
-<a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
-</li><li>
-<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0476190476190477em>现代操作系统</a>
-</li><li>
-<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
-</li><li>
-<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.1428571428571428em>算法导论</a>
-</li><li>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
-</li><li>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.5714285714285714em>设计模式</a>
-</li></ul>
-</div>
-</section>
-</div>
-<div class=sidebar-overlay></div>
-</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
-<div class=container>
-<a class=screen-reader-text href=#content>跳到内容</a>
+<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/computer_networks/http/>HTTP</a></li><li class=item><a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul></div></nav></section><section class='widget widget-taxonomy_cloud sep-after'><header><h4 class='title widget-title'>标签</h4></header><div class='container list-container'><ul class='list taxonomy-cloud'><li><a href=/tags/communication/ style=font-size:1em>Communication</a></li><li><a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.2380952380952381em>C算法</a></li><li><a href=/tags/english/ style=font-size:1em>English</a></li><li><a href=/tags/gc/ style=font-size:1.0952380952380953em>GC</a></li><li><a href=/tags/geography/ style=font-size:1em>Geography</a></li><li><a href=/tags/geohash/ style=font-size:1em>Geohash</a></li><li><a href=/tags/git/ style=font-size:1em>Git</a></li><li><a href=/tags/http/ style=font-size:1.3333333333333333em>HTTP</a></li><li><a href=/tags/hugo/ style=font-size:1em>Hugo</a></li><li><a href=/tags/jakartaee/ style=font-size:1.0952380952380953em>JakartaEE</a></li><li><a href=/tags/java/ style=font-size:2em>Java</a></li><li><a href=/tags/jdbc/ style=font-size:1em>JDBC</a></li><li><a href=/tags/jvm/ style=font-size:1.1428571428571428em>JVM</a></li><li><a href=/tags/leetcode/ style=font-size:1.0952380952380953em>Leetcode</a></li><li><a href=/tags/life/ style=font-size:1em>Life</a></li><li><a href=/tags/linux/ style=font-size:1.1428571428571428em>Linux</a></li><li><a href=/tags/mybatis/ style=font-size:1em>MyBatis</a></li><li><a href=/tags/networks/ style=font-size:1.0952380952380953em>Networks</a></li><li><a href=/tags/os/ style=font-size:1.2857142857142856em>OS</a></li><li><a href=/tags/ostep/ style=font-size:1.0952380952380953em>OSTEP</a></li><li><a href=/tags/python/ style=font-size:1em>Python</a></li><li><a href=/tags/redis/ style=font-size:1.3333333333333333em>Redis</a></li><li><a href=/tags/rpc/ style=font-size:1em>RPC</a></li><li><a href=/tags/rust/ style=font-size:1.3333333333333333em>Rust</a></li><li><a href=/tags/shell/ style=font-size:1.2380952380952381em>Shell</a></li><li><a href=/tags/sicp/ style=font-size:1em>SICP</a></li><li><a href=/tags/spring/ style=font-size:1em>Spring</a></li><li><a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a></li><li><a href=/tags/tomcat/ style=font-size:1em>Tomcat</a></li><li><a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a></li><li><a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.380952380952381em>并发</a></li><li><a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0476190476190477em>分布式计算</a></li><li><a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a></li><li><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.5714285714285714em>设计模式</a></li><li><a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a></li><li><a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a></li><li><a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0476190476190477em>数据库</a></li><li><a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a></li><li><a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.1428571428571428em>算法导论</a></li><li><a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0476190476190477em>现代操作系统</a></li><li><a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a></li></ul></div></section></div><div class=sidebar-overlay></div></div><div class=main><nav id=main-menu class='menu main-menu' aria-label=主菜单><div class=container><a class=screen-reader-text href=#content>跳到内容</a>
 <button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
 <span class=screen-reader-text>Toggle Sidebar</span>
-<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-</span>
-<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-</span>
-</button>
-<ul><li class=item>
-<a href=/>主页</a>
-</li><li class=item>
-<a href=/posts/>博客</a>
-</li><li class=item>
-<a href=/notebook/>笔记本</a>
-</li><li class=item>
-<a href=/linux/>Linux</a>
-</li></ul>
-</div>
-</nav><div class=header-widgets>
-<div class=container>
-<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
-<section class="widget widget-breadcrumbs sep-after">
-<nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><span>Spring Boot 中的配置体系</span></li></ol>
-</nav>
-</section></div>
-</div>
-<header id=header class="header site-header">
-<div class="container sep-after">
-<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
-</div>
-</div>
-</header>
-<main id=content>
-<article lang=zh-cn class=entry>
-<header class="header entry-header">
-<div class="container sep-after">
-<div class=header-info>
-<h1 class=title>Spring Boot 中的配置体系</h1>
-</div>
-<div class=entry-meta>
-<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-<span class=screen-reader-text>Posted on </span>
-<time class=entry-date datetime=2021-08-27T20:36:10+08:00>2021, Aug 27</time>
-</span>
-<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
-<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
-<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-4 mins read
-</span>
-</div>
-</div>
-</header>
-<details class="container entry-toc">
-<summary class=title>
-<span>目录</span>
-</summary>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#配置源>配置源</a>
-<ul>
-<li><a href=#命令行参数>命令行参数</a></li>
-<li><a href=#spring_application_json>SPRING_APPLICATION_JSON</a></li>
-<li><a href=#外部应用属性>外部应用属性</a></li>
-<li><a href=#配置随机值>配置随机值</a></li>
-</ul>
-</li>
-<li><a href=#使用-yaml>使用 YAML</a></li>
-<li><a href=#属性的注入与使用>属性的注入与使用</a>
-<ul>
-<li><a href=#value>@Value</a></li>
-<li><a href=#configurationproperties>@ConfigurationProperties</a></li>
-</ul>
-</li>
-<li><a href=#profiles>Profiles</a></li>
-<li><a href=#参考资料>参考资料</a></li>
-</ul>
-</nav>
-</details>
-<div class="container entry-content">
-<p>开发的同学可能都遇到过一个 Spring Boot 应用要在多个环境上部署，而每个环境的配置都不同的情况。比如，开发环境用一套配置，测试环境用另一套配置，生产环境又是一套新配置。如果我们把配置放在同一个地方，然后每次都根据不同的环境进行修改，可能要不了多久，我们的头就大了。因为，我们可能一不小心把开发环境的配置放到测试环境中去了……</p>
-<p>为了方便我们在不同环境中运行应用程序，Spring Boot 允许我们将配置信息<a href=https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config>外部化</a>。Spring Boot 支持多种外部化的配置源，包括 Java 的 properties 文件、YAML 文件、环境变量和命令行参数。</p>
-<h2 id=配置源>配置源</h2>
-<p>既然配置可以来自很多不同的地方，那么就有可能出现同一个配置项在多个配置源中出现的情况。所以 Spring Boot 有一个配置值覆盖规则，优先级高的配置会覆盖优先级低的，优先级从低到高依次为：</p>
-<ol>
-<li>默认属性（即通过 <code>SpringApplication.setDefaultProperties</code> 设置的属性）</li>
-<li><code>@Configuration</code> 类上的 <code>@PropertySource</code> 注解</li>
-<li>配置数据（比如 <code>application.properties</code>）。配置数据文件的优先级如下，当<code>.properties</code> 文件与 <code>.yml</code> 文件同时出现时，前者的优先级会高于后者：
-<ol>
-<li>Jar 包内的 <code>application.properties</code> 和 <code>application.yml</code></li>
-<li>Jar 包内特定 Profile 的 <code>application-{profile}.properties</code> 和 <code>application-{profile}.yml</code></li>
-<li>Jar 包外的 <code>application.properties</code> 和 <code>application.yml</code></li>
-<li>Jar 包外特定 Profile 的 <code>application-{profile}.properties</code> 和 <code>application-{profile}.yml</code></li>
-</ol>
-</li>
-<li>由 <code>RandomValuePropertySource</code> 配置的 <code>random.*</code> 属性值</li>
-<li>操作系统环境变量</li>
-<li>Java 系统属性（<code>System.getProperties()</code>）</li>
-<li>来自 <code>java:comp/env</code> 的 JNDI 属性</li>
-<li><code>ServletContext</code> 的初始化参数</li>
-<li><code>ServletConfig</code> 的初始化参数</li>
-<li><code>SPRING_APPLICATION_JSON</code>（环境变量或系统属性中的单行 JSON） 中的属性值</li>
-<li>命令行参数</li>
-<li>测试上的 <code>properties</code> 属性。在 <code>@SpringBootTest</code> 和其它测试相关注解上有用</li>
-<li>测试上的 <code>@TestPropertySource</code> 注解</li>
-<li>当 devtools 激活时，<code>$HOME/.config/spring-boot</code> 目录下的 devtools 全局设置属性</li>
-</ol>
-<h3 id=命令行参数>命令行参数</h3>
-<p>默认情况下，<code>SpringApplication</code> 会将所有以 <code>--</code> 开头的命令行参数转换为 <code>property</code> 并将它们加入到 Spring 的 <code>Environment</code> 中。例如：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ java -jar app.jar --name<span style=color:#f92672>=</span>value
-</code></pre></div><p>如果你不希望 <code>SpringApplication</code> 将命令行参数添加到 <code>Environment</code>，可以使用 <code>SpringApplication.setAddCommandLineProperties(false)</code> 关闭此功能。</p>
-<h3 id=spring_application_json>SPRING_APPLICATION_JSON</h3>
-<p>环境变量和系统属性通常有一些限制，导致部分属性名无法使用。为了解决这个问题，Spring Boot 允许我们将一组属性放到单行 JSON 中。在 Spring Boot 应用启动时，所有的 <code>spring.application.json</code> 或 <code>SPRING_APPLICATION_JSON</code> 都会被解析并加入到 <code>Environment</code> 中。例如：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ java -Dspring.application.json<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;{\&#34;name\&#34;:\&#34;value\&#34;}&#34;</span> -jar app.jar
-</code></pre></div><h3 id=外部应用属性>外部应用属性</h3>
-<p>在应用启动时，Spring Boot 会自动从下列位置查找和加载 <code>application.properties</code>、<code>application-{profile}.properties</code>、<code>application.yml</code> 和 <code>application-{profile}.yml</code>。其中，高优先级的配置项会覆盖低优先级的配置项，配置覆盖的优先级从低到高依次为：</p>
-<ol>
-<li>classpath:
-<ul>
-<li>classpath 根目录</li>
-<li>classpath 目录下的 <code>/config</code> 包</li>
-</ul>
-</li>
-<li>当前目录：
-<ul>
-<li>当前目录</li>
-<li>当前目录的 <code>/config</code> 子目录</li>
-<li><code>/config</code> 子目录的直接子目录</li>
-</ul>
-</li>
-</ol>
-<p>这里的 <code>application.properties</code> 的文件名也不是写死的，Spring Boot 允许我们通过 <code>spring.config.name</code> 这个环境属性定义自己喜欢的配置文件名。例如，以下命名告知 Spring Boot 去寻找 <code>myname.properties</code> 或 <code>myname.yml</code> 文件：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ java -jar app.jar --spring.config.name<span style=color:#f92672>=</span>myname
-</code></pre></div><p>此外，我们还可以通过 <code>spring.config.location</code> 和 <code>spring.config.additional-location</code> 环境属性 <strong>显式</strong> 指出配置文件的位置。由于Spring Boot 需要使用 <code>spring.config.name</code>、<code>spring.config.location</code> 和 <code>spring.config.additional-location</code> 来决定加载哪些配置文件，所以它们必须被定义成环境属性（通常是操作系统的环境变量、系统属性或命令行参数）。</p>
-<h3 id=配置随机值>配置随机值</h3>
-<p>有时候，我们可能希望某个配置项的值是随机生成的。如果每次都生成一个随机值放到配置文件中去，未免太过繁琐。这时，我们可以使用 <code>RandomValuePropertySource</code>，它支持随机产生整数、长整型数、UUID 和字符串。例如：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>my</span>:
-  <span style=color:#f92672>number</span>: <span style=color:#e6db74>&#34;${random.int}&#34;</span>
-  <span style=color:#f92672>bignumber</span>: <span style=color:#e6db74>&#34;${random.long}&#34;</span>
-  <span style=color:#f92672>uuid</span>: <span style=color:#e6db74>&#34;${random.uuid}&#34;</span>
-  <span style=color:#f92672>name</span>: <span style=color:#e6db74>&#34;${random.value}&#34;</span>
-</code></pre></div><h2 id=使用-yaml>使用 YAML</h2>
-<p><a href=https://yaml.org/>YAML</a> 是 JSON 的超集，在声明具有层次化的配置数据时非常方便。不过，YAML 文件中的配置在从层级结构转化为扁平结构之后，才能在 <code>Environment</code> 中使用。例如，下面的 YAML 文件：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>database</span>:
-  <span style=color:#f92672>username</span>: <span style=color:#ae81ff>test-user</span>
-  <span style=color:#f92672>password</span>: <span style=color:#ae81ff>test-password</span>
-</code></pre></div><p>会被扁平化为：</p>
-<pre tabindex=0><code class=language-properties data-lang=properties>database.username=test-user
-database.password=test-password
-</code></pre><h2 id=属性的注入与使用>属性的注入与使用</h2>
-<p>Spring Boot 给我们提供了多种注入属性的方法，包括 <code>@Value</code> 和 <code>@ConfigurationProperties</code>。</p>
-<h3 id=value>@Value</h3>
-<p><code>@Value</code> 一般用于将单个属性注入到程序中。例如：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Value</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;${server.port}&#34;</span><span style=color:#f92672>)</span>
-<span style=color:#66d9ef>int</span> port<span style=color:#f92672>;</span>
-</code></pre></div><h3 id=configurationproperties>@ConfigurationProperties</h3>
-<p>当配置信息有很多个时，<code>@Value</code> 的局限性就体现出来了。有多少个配置项，就需要写多少个 <code>@Value</code>😣。这时，我们可以使用 <code>@ConfigurationProperties</code>，它支持将多个配置项绑定到 Bean 的字段上。假设我们有一段数据库的配置信息：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>database</span>:
-  <span style=color:#f92672>url</span>: <span style=color:#ae81ff>jdbc:postgresql:/localhost:5432/instance</span>
-  <span style=color:#f92672>username</span>: <span style=color:#ae81ff>test-user</span>
-  <span style=color:#f92672>password</span>: <span style=color:#ae81ff>test-password</span>
-</code></pre></div><p>我们可以通过 Java Bean 属性绑定的方式，将配置信息绑定到 Bean 的属性上：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@ConfigurationProperties</span><span style=color:#f92672>(</span>prefix<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;database&#34;</span><span style=color:#f92672>)</span>
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Database</span> <span style=color:#f92672>{</span>
-  String url<span style=color:#f92672>;</span>
-  String name<span style=color:#f92672>;</span>
-  String password<span style=color:#f92672>;</span>
-
-  <span style=color:#75715e>// getters and setters
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-</code></pre></div><p>也可以通过构造器绑定的方式，将配置信息绑定到 Bean 的属性上：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Database</span> <span style=color:#f92672>{</span>
-  String url<span style=color:#f92672>;</span>
-  String name<span style=color:#f92672>;</span>
-  String password<span style=color:#f92672>;</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Database</span><span style=color:#f92672>(</span>String url<span style=color:#f92672>,</span> String name<span style=color:#f92672>,</span> String password<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>url</span> <span style=color:#f92672>=</span> url<span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> name<span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>password</span> <span style=color:#f92672>=</span> password<span style=color:#f92672>;</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#75715e>// getters
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-</code></pre></div><h2 id=profiles>Profiles</h2>
-<p>Spring Boot 允许我们根据不同的环境组织配置文件，让某些配置只在特定的环境下才生效，这就是 Profile。通过 <code>spring.profiles.active</code> 这个环境属性，我们可以决定激活哪些 profile。例如，我们可以将它配置在 <code>application.yml</code> 中，让 <code>dev</code> 和 <code>hsqldb</code> 两个 profile 生效：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>spring</span>:
-  <span style=color:#f92672>profiles</span>:
-    <span style=color:#f92672>active</span>: <span style=color:#e6db74>&#34;dev,hsqldb&#34;</span>
-</code></pre></div><p>也可以通过命令行参数，只让 <code>dev</code> 这个 profile 生效：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ java -jar app.jar --spring.profiles.active<span style=color:#f92672>=</span>dev
-</code></pre></div><p>还可以通过环境变量等多种方式指定生效的 profile。如果没有指定生效的 profile 文件，就会启用默认的 profile。</p>
-<h2 id=参考资料>参考资料</h2>
-<ol>
-<li>Spring Boot Documentation. <a href=https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config>Externalized Configuration</a>.</li>
-</ol>
-</div>
-<footer class=entry-footer>
-<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
-<span class=screen-reader-text>分类: </span><a class=category href=/categories/spring/>Spring</a></div>
-<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-<span class=screen-reader-text>标签: </span><a class=tag href=/tags/spring-boot/>Spring Boot</a></div>
-</div>
-</footer>
-</article>
-<nav class=entry-nav>
-<div class=container><div class="prev-entry sep-before">
-<a href=/java/spring/spring-ioc/>
-<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
-Previous</span>
-<span class=screen-reader-text>上一篇: </span>Spring Ioc</a>
-</div><div class="next-entry sep-before">
-<a href=/java/java_lang/java-hashcode-equals-contracts/>
-<span class=screen-reader-text>下一篇: </span>Java 中的 hashCode() 与 equals()<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
-</span>
-</a>
-</div></div>
-</nav>
-</main>
-<footer id=footer class=footer>
-<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
-<ul><li>
-<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
-</a>
-</li><li>
-<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
-</a>
-</li><li>
-<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
-<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-</a>
-</li><li>
-<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-</a>
-</li></ul>
-</nav>
-</section><div class=copyright>
-<p> &copy; 2018-2021 Nicholas Zhan </p>
-</div>
-</div>
-</footer>
-</div>
-</div><script>window.__assets_js_src="/assets/js/"</script>
-<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script>
-</body>
-</html>
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span><span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button><ul><li class=item><a href=/>主页</a></li><li class=item><a href=/posts/>博客</a></li><li class=item><a href=/notebook/>笔记本</a></li><li class=item><a href=/linux/>Linux</a></li></ul></div></nav><div class=header-widgets><div class=container><style>.widget-breadcrumbs li:after{content:'\2f '}</style><section class='widget widget-breadcrumbs sep-after'><nav id=breadcrumbs><ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><span>Spring Boot 中的配置体系</span></li></ol></nav></section></div></div><header id=header class='header site-header'><div class='container sep-after'><div class=header-info><p class='site-title title'>Nicholas Zhan</p><p class='desc site-desc'>Java Developer, Runner, Cyclist</p></div></div></header><main id=content><article lang=zh-cn class=entry><header class='header entry-header'><div class='container sep-after'><div class=header-info><h1 class=title>Spring Boot 中的配置体系</h1></div><div class=entry-meta><span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class=screen-reader-text>Posted on</span>
+<time class=entry-date datetime=2021-08-27T20:36:10+08:00>2021, Aug 27</time></span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg><span class=screen-reader-text>by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>4 mins read</span></div></div></header><details class='container entry-toc'><summary class=title><span>目录</span></summary><nav id=TableOfContents><ul><li><a href=#配置源>配置源</a><ul><li><a href=#命令行参数>命令行参数</a></li><li><a href=#spring_application_json>SPRING_APPLICATION_JSON</a></li><li><a href=#外部应用属性>外部应用属性</a></li><li><a href=#配置随机值>配置随机值</a></li></ul></li><li><a href=#使用-yaml>使用 YAML</a></li><li><a href=#属性的注入与使用>属性的注入与使用</a><ul><li><a href=#value>@Value</a></li><li><a href=#configurationproperties>@ConfigurationProperties</a></li></ul></li><li><a href=#profiles>Profiles</a></li><li><a href=#参考资料>参考资料</a></li></ul></nav></details><div class='container entry-content'><p>开发的同学可能都遇到过一个 Spring Boot 应用要在多个环境上部署，而每个环境的配置都不同的情况。比如，开发环境用一套配置，测试环境用另一套配置，生产环境又是一套新配置。如果我们把配置放在同一个地方，然后每次都根据不同的环境进行修改，可能要不了多久，我们的头就大了。因为，我们可能一不小心把开发环境的配置放到测试环境中去了……</p><p>为了方便我们在不同环境中运行应用程序，Spring Boot 允许我们将配置信息<a href=https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config>外部化</a>。Spring Boot 支持多种外部化的配置源，包括 Java 的 properties 文件、YAML 文件、环境变量和命令行参数。</p><h2 id=配置源>配置源</h2><p>既然配置可以来自很多不同的地方，那么就有可能出现同一个配置项在多个配置源中出现的情况。所以 Spring Boot 有一个配置值覆盖规则，优先级高的配置会覆盖优先级低的，优先级从低到高依次为：</p><ol><li>默认属性（即通过 <code>SpringApplication.setDefaultProperties</code> 设置的属性）</li><li><code>@Configuration</code> 类上的 <code>@PropertySource</code> 注解</li><li>配置数据（比如 <code>application.properties</code>）。配置数据文件的优先级如下，当<code>.properties</code> 文件与 <code>.yml</code> 文件同时出现时，前者的优先级会高于后者：<ol><li>Jar 包内的 <code>application.properties</code> 和 <code>application.yml</code></li><li>Jar 包内特定 Profile 的 <code>application-{profile}.properties</code> 和 <code>application-{profile}.yml</code></li><li>Jar 包外的 <code>application.properties</code> 和 <code>application.yml</code></li><li>Jar 包外特定 Profile 的 <code>application-{profile}.properties</code> 和 <code>application-{profile}.yml</code></li></ol></li><li>由 <code>RandomValuePropertySource</code> 配置的 <code>random.*</code> 属性值</li><li>操作系统环境变量</li><li>Java 系统属性（<code>System.getProperties()</code>）</li><li>来自 <code>java:comp/env</code> 的 JNDI 属性</li><li><code>ServletContext</code> 的初始化参数</li><li><code>ServletConfig</code> 的初始化参数</li><li><code>SPRING_APPLICATION_JSON</code>（环境变量或系统属性中的单行 JSON） 中的属性值</li><li>命令行参数</li><li>测试上的 <code>properties</code> 属性。在 <code>@SpringBootTest</code> 和其它测试相关注解上有用</li><li>测试上的 <code>@TestPropertySource</code> 注解</li><li>当 devtools 激活时，<code>$HOME/.config/spring-boot</code> 目录下的 devtools 全局设置属性</li></ol><h3 id=命令行参数>命令行参数</h3><p>默认情况下，<code>SpringApplication</code> 会将所有以 <code>--</code> 开头的命令行参数转换为 <code>property</code> 并将它们加入到 Spring 的 <code>Environment</code> 中。例如：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ java -jar app.jar --name<span style=color:#f92672>=</span>value
+</span></span></code></pre></div><p>如果你不希望 <code>SpringApplication</code> 将命令行参数添加到 <code>Environment</code>，可以使用 <code>SpringApplication.setAddCommandLineProperties(false)</code> 关闭此功能。</p><h3 id=spring_application_json>SPRING_APPLICATION_JSON</h3><p>环境变量和系统属性通常有一些限制，导致部分属性名无法使用。为了解决这个问题，Spring Boot 允许我们将一组属性放到单行 JSON 中。在 Spring Boot 应用启动时，所有的 <code>spring.application.json</code> 或 <code>SPRING_APPLICATION_JSON</code> 都会被解析并加入到 <code>Environment</code> 中。例如：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ java -Dspring.application.json<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;{\&#34;name\&#34;:\&#34;value\&#34;}&#34;</span> -jar app.jar
+</span></span></code></pre></div><h3 id=外部应用属性>外部应用属性</h3><p>在应用启动时，Spring Boot 会自动从下列位置查找和加载 <code>application.properties</code>、<code>application-{profile}.properties</code>、<code>application.yml</code> 和 <code>application-{profile}.yml</code>。其中，高优先级的配置项会覆盖低优先级的配置项，配置覆盖的优先级从低到高依次为：</p><ol><li>classpath:<ul><li>classpath 根目录</li><li>classpath 目录下的 <code>/config</code> 包</li></ul></li><li>当前目录：<ul><li>当前目录</li><li>当前目录的 <code>/config</code> 子目录</li><li><code>/config</code> 子目录的直接子目录</li></ul></li></ol><p>这里的 <code>application.properties</code> 的文件名也不是写死的，Spring Boot 允许我们通过 <code>spring.config.name</code> 这个环境属性定义自己喜欢的配置文件名。例如，以下命名告知 Spring Boot 去寻找 <code>myname.properties</code> 或 <code>myname.yml</code> 文件：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ java -jar app.jar --spring.config.name<span style=color:#f92672>=</span>myname
+</span></span></code></pre></div><p>此外，我们还可以通过 <code>spring.config.location</code> 和 <code>spring.config.additional-location</code> 环境属性 <strong>显式</strong> 指出配置文件的位置。由于Spring Boot 需要使用 <code>spring.config.name</code>、<code>spring.config.location</code> 和 <code>spring.config.additional-location</code> 来决定加载哪些配置文件，所以它们必须被定义成环境属性（通常是操作系统的环境变量、系统属性或命令行参数）。</p><h3 id=配置随机值>配置随机值</h3><p>有时候，我们可能希望某个配置项的值是随机生成的。如果每次都生成一个随机值放到配置文件中去，未免太过繁琐。这时，我们可以使用 <code>RandomValuePropertySource</code>，它支持随机产生整数、长整型数、UUID 和字符串。例如：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>my</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>number</span>: <span style=color:#e6db74>&#34;${random.int}&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>bignumber</span>: <span style=color:#e6db74>&#34;${random.long}&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>uuid</span>: <span style=color:#e6db74>&#34;${random.uuid}&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#e6db74>&#34;${random.value}&#34;</span>
+</span></span></code></pre></div><h2 id=使用-yaml>使用 YAML</h2><p><a href=https://yaml.org/>YAML</a> 是 JSON 的超集，在声明具有层次化的配置数据时非常方便。不过，YAML 文件中的配置在从层级结构转化为扁平结构之后，才能在 <code>Environment</code> 中使用。例如，下面的 YAML 文件：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>database</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>username</span>: <span style=color:#ae81ff>test-user</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>password</span>: <span style=color:#ae81ff>test-password</span>
+</span></span></code></pre></div><p>会被扁平化为：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-properties data-lang=properties><span style=display:flex><span><span style=color:#a6e22e>database.username</span><span style=color:#f92672>=</span><span style=color:#e6db74>test-user</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>database.password</span><span style=color:#f92672>=</span><span style=color:#e6db74>test-password</span>
+</span></span></code></pre></div><h2 id=属性的注入与使用>属性的注入与使用</h2><p>Spring Boot 给我们提供了多种注入属性的方法，包括 <code>@Value</code> 和 <code>@ConfigurationProperties</code>。</p><h3 id=value>@Value</h3><p><code>@Value</code> 一般用于将单个属性注入到程序中。例如：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a6e22e>@Value</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;${server.port}&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>int</span> port<span style=color:#f92672>;</span>
+</span></span></code></pre></div><h3 id=configurationproperties>@ConfigurationProperties</h3><p>当配置信息有很多个时，<code>@Value</code> 的局限性就体现出来了。有多少个配置项，就需要写多少个 <code>@Value</code>😣。这时，我们可以使用 <code>@ConfigurationProperties</code>，它支持将多个配置项绑定到 Bean 的字段上。假设我们有一段数据库的配置信息：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>database</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>url</span>: <span style=color:#ae81ff>jdbc:postgresql:/localhost:5432/instance</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>username</span>: <span style=color:#ae81ff>test-user</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>password</span>: <span style=color:#ae81ff>test-password</span>
+</span></span></code></pre></div><p>我们可以通过 Java Bean 属性绑定的方式，将配置信息绑定到 Bean 的属性上：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a6e22e>@ConfigurationProperties</span><span style=color:#f92672>(</span>prefix<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;database&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Database</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  String url<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  String name<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  String password<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// getters and setters
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>也可以通过构造器绑定的方式，将配置信息绑定到 Bean 的属性上：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Database</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  String url<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  String name<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  String password<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Database</span><span style=color:#f92672>(</span>String url<span style=color:#f92672>,</span> String name<span style=color:#f92672>,</span> String password<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>url</span> <span style=color:#f92672>=</span> url<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> name<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>password</span> <span style=color:#f92672>=</span> password<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// getters
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><h2 id=profiles>Profiles</h2><p>Spring Boot 允许我们根据不同的环境组织配置文件，让某些配置只在特定的环境下才生效，这就是 Profile。通过 <code>spring.profiles.active</code> 这个环境属性，我们可以决定激活哪些 profile。例如，我们可以将它配置在 <code>application.yml</code> 中，让 <code>dev</code> 和 <code>hsqldb</code> 两个 profile 生效：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>spring</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>profiles</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>active</span>: <span style=color:#e6db74>&#34;dev,hsqldb&#34;</span>
+</span></span></code></pre></div><p>也可以通过命令行参数，只让 <code>dev</code> 这个 profile 生效：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ java -jar app.jar --spring.profiles.active<span style=color:#f92672>=</span>dev
+</span></span></code></pre></div><p>还可以通过环境变量等多种方式指定生效的 profile。如果没有指定生效的 profile 文件，就会启用默认的 profile。</p><h2 id=参考资料>参考资料</h2><ol><li>Spring Boot Documentation. <a href=https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config>Externalized Configuration</a>.</li></ol></div><footer class=entry-footer><div class='container sep-before'><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg><span class=screen-reader-text>分类: </span><a class=category href=/categories/spring/>Spring</a></div><div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg><span class=screen-reader-text>标签: </span><a class=tag href=/tags/spring-boot/>Spring Boot</a></div></div></footer></article><nav class=entry-nav><div class=container><div class='prev-entry sep-before'><a href=/java/spring/spring-ioc/><span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>Previous</span>
+<span class=screen-reader-text>上一篇: </span>Spring Ioc</a></div><div class='next-entry sep-before'><a href=/java/java_lang/java-hashcode-equals-contracts/><span class=screen-reader-text>下一篇: </span>Java 中的 hashCode() 与 equals()<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg></span></a></div></div></nav></main><footer id=footer class=footer><div class='container sep-before'><section class='widget widget-social_menu sep-after'><nav aria-label=社交菜单><ul><li><a href=https://github.com/zhannicholas target=_blank rel='noopener me'><span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg></a></li><li><a href=https://t.me/zhannicholas target=_blank rel='noopener me'><span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg></a></li><li><a href=mailto:zhan_nicholas@outlook.com target=_blank rel='noopener me'><span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a></li><li><a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel='noopener me'><span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a></li></ul></nav></section><div class=copyright><p>&copy; 2018-2022 Nicholas Zhan</p></div></div></footer></div></div><script>window.__assets_js_src="/assets/js/"</script><script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script></body></html>

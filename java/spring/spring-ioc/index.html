@@ -1,730 +1,274 @@
-<!doctype html><html lang=zh-cn dir=auto><head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="Ioc（Inverse of Control），又叫 DI（Dependence Injection）。它是这样一个过程：对象声明自己的依赖，然后容器">
-<meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="Spring Ioc • Nicholas Zhan">
-<meta property="og:description" content="Ioc（Inverse of Control），又叫 DI（Dependence Injection）。它是这样一个过程：对象声明自己的依赖，然后容器">
-<meta property="og:url" content="https://zhannicholas.github.io/java/spring/spring-ioc/">
-<meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="java"><meta property="article:tag" content="Spring"><meta property="article:tag" content="Java"><meta property="article:published_time" content="2021-08-21T13:49:54+08:00"><meta property="article:modified_time" content="2021-08-21T13:49:54+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.90.1">
-<title>Spring Ioc • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/java/spring/spring-ioc/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
-</head>
-<body class="page type-java has-sidebar">
-<div class=site><div id=sidebar class=sidebar>
-<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
-<div class=container><section class="widget widget-about sep-after">
-<header>
-<div class=logo>
-<a href=/>
-<img src=/images/logo.png>
-</a>
-</div>
-<h2 class="title site-title">
-<a href=/>
-Nicholas Zhan
-</a>
-</h2>
-<div class=desc>
-Java Developer, Runner, Cyclist
-</div>
-</header>
-</section>
-<section class="widget widget-search sep-after">
-<header>
-<h4 class="title widget-title">搜索</h4>
-</header>
-<form action=/search id=search-form class=search-form>
-<label>
-<span class=screen-reader-text>搜索</span>
-<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
-</label></form>
-</section>
-<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
-<div class=container>
-<ul><li class="item has-children has-current">
-<a href=/java/>Java</a><button class=sub-menu-toggler>
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Ioc（Inverse of Control），又叫 DI（Dependence Injection）。它是这样一个过程：对象声明自己的依赖，然后容器"><meta name=theme-color content="#ffcd00"><meta property="og:title" content="Spring Ioc • Nicholas Zhan"><meta property="og:description" content="Ioc（Inverse of Control），又叫 DI（Dependence Injection）。它是这样一个过程：对象声明自己的依赖，然后容器"><meta property="og:url" content="https://zhannicholas.github.io/java/spring/spring-ioc/"><meta property="og:site_name" content="Nicholas Zhan"><meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="java"><meta property="article:tag" content="Spring"><meta property="article:tag" content="Java"><meta property="article:published_time" content="2021-08-21T13:49:54+08:00"><meta property="article:modified_time" content="2021-08-21T13:49:54+08:00"><meta name=twitter:card content="summary"><meta name=generator content="Hugo 0.107.0"><title>Spring Ioc • Nicholas Zhan</title><link rel=canonical href=https://zhannicholas.github.io/java/spring/spring-ioc/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style></head><body class='page type-java has-sidebar'><div class=site><div id=sidebar class=sidebar><a class=screen-reader-text href=#main-menu>跳到主菜单</a><div class=container><section class='widget widget-about sep-after'><header><div class=logo><a href=/><img src=/images/logo.png></a></div><h2 class='title site-title'><a href=/>Nicholas Zhan</a></h2><div class=desc>Java Developer, Runner, Cyclist</div></header></section><section class='widget widget-search sep-after'><header><h4 class='title widget-title'>搜索</h4></header><form action=/search id=search-form class=search-form><label><span class=screen-reader-text>搜索</span>
+<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;></label></form></section><section class='widget widget-sidebar_menu sep-after'><nav id=sidebar-menu class='menu sidebar-menu' aria-label=侧边栏菜单><div class=container><ul><li class='item has-children has-current'><a href=/java/>Java</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/java/jakartaee/>Jakarta EE</a></li><li class=item>
-<a href=/java/jvm/>JVM</a></li><li class=item>
-<a href=/java/concurrency/>并发</a></li></ul></li><li class=item>
-<a href=/rust/>Rust</a></li><li class=item>
-<a href=/distributed_computing/>分布式计算</a></li><li class=item>
-<a href=/operating_systems/>操作系统</a></li><li class="item has-children">
-<a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/java/jakartaee/>Jakarta EE</a></li><li class=item><a href=/java/jvm/>JVM</a></li><li class=item><a href=/java/concurrency/>并发</a></li></ul></li><li class=item><a href=/rust/>Rust</a></li><li class=item><a href=/distributed_computing/>分布式计算</a></li><li class=item><a href=/operating_systems/>操作系统</a></li><li class='item has-children'><a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/computer_networks/http/>HTTP</a></li><li class=item>
-<a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
-</div>
-</nav>
-</section><section class="widget widget-taxonomy_cloud sep-after">
-<header>
-<h4 class="title widget-title">标签</h4>
-</header>
-<div class="container list-container">
-<ul class="list taxonomy-cloud"><li>
-<a href=/tags/communication/ style=font-size:1em>Communication</a>
-</li><li>
-<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.2380952380952381em>C算法</a>
-</li><li>
-<a href=/tags/english/ style=font-size:1em>English</a>
-</li><li>
-<a href=/tags/gc/ style=font-size:1.0952380952380953em>GC</a>
-</li><li>
-<a href=/tags/git/ style=font-size:1em>Git</a>
-</li><li>
-<a href=/tags/http/ style=font-size:1.3333333333333333em>HTTP</a>
-</li><li>
-<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
-</li><li>
-<a href=/tags/jakartaee/ style=font-size:1.0952380952380953em>JakartaEE</a>
-</li><li>
-<a href=/tags/java/ style=font-size:2em>Java</a>
-</li><li>
-<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
-</li><li>
-<a href=/tags/jvm/ style=font-size:1.1428571428571428em>JVM</a>
-</li><li>
-<a href=/tags/leetcode/ style=font-size:1.0952380952380953em>Leetcode</a>
-</li><li>
-<a href=/tags/life/ style=font-size:1em>Life</a>
-</li><li>
-<a href=/tags/linux/ style=font-size:1.1428571428571428em>Linux</a>
-</li><li>
-<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
-</li><li>
-<a href=/tags/networks/ style=font-size:1.0952380952380953em>Networks</a>
-</li><li>
-<a href=/tags/os/ style=font-size:1.2857142857142856em>OS</a>
-</li><li>
-<a href=/tags/ostep/ style=font-size:1.0952380952380953em>OSTEP</a>
-</li><li>
-<a href=/tags/python/ style=font-size:1em>Python</a>
-</li><li>
-<a href=/tags/redis/ style=font-size:1.3333333333333333em>Redis</a>
-</li><li>
-<a href=/tags/rpc/ style=font-size:1em>RPC</a>
-</li><li>
-<a href=/tags/rust/ style=font-size:1.3333333333333333em>Rust</a>
-</li><li>
-<a href=/tags/shell/ style=font-size:1.2380952380952381em>Shell</a>
-</li><li>
-<a href=/tags/sicp/ style=font-size:1em>SICP</a>
-</li><li>
-<a href=/tags/spring/ style=font-size:1em>Spring</a>
-</li><li>
-<a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a>
-</li><li>
-<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
-</li><li>
-<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
-</li><li>
-<a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0476190476190477em>分布式计算</a>
-</li><li>
-<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
-</li><li>
-<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.380952380952381em>并发</a>
-</li><li>
-<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
-</li><li>
-<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0476190476190477em>数据库</a>
-</li><li>
-<a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
-</li><li>
-<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0476190476190477em>现代操作系统</a>
-</li><li>
-<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
-</li><li>
-<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.1428571428571428em>算法导论</a>
-</li><li>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
-</li><li>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.5714285714285714em>设计模式</a>
-</li></ul>
-</div>
-</section>
-</div>
-<div class=sidebar-overlay></div>
-</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
-<div class=container>
-<a class=screen-reader-text href=#content>跳到内容</a>
+<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/computer_networks/http/>HTTP</a></li><li class=item><a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul></div></nav></section><section class='widget widget-taxonomy_cloud sep-after'><header><h4 class='title widget-title'>标签</h4></header><div class='container list-container'><ul class='list taxonomy-cloud'><li><a href=/tags/communication/ style=font-size:1em>Communication</a></li><li><a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.2380952380952381em>C算法</a></li><li><a href=/tags/english/ style=font-size:1em>English</a></li><li><a href=/tags/gc/ style=font-size:1.0952380952380953em>GC</a></li><li><a href=/tags/geography/ style=font-size:1em>Geography</a></li><li><a href=/tags/geohash/ style=font-size:1em>Geohash</a></li><li><a href=/tags/git/ style=font-size:1em>Git</a></li><li><a href=/tags/http/ style=font-size:1.3333333333333333em>HTTP</a></li><li><a href=/tags/hugo/ style=font-size:1em>Hugo</a></li><li><a href=/tags/jakartaee/ style=font-size:1.0952380952380953em>JakartaEE</a></li><li><a href=/tags/java/ style=font-size:2em>Java</a></li><li><a href=/tags/jdbc/ style=font-size:1em>JDBC</a></li><li><a href=/tags/jvm/ style=font-size:1.1428571428571428em>JVM</a></li><li><a href=/tags/leetcode/ style=font-size:1.0952380952380953em>Leetcode</a></li><li><a href=/tags/life/ style=font-size:1em>Life</a></li><li><a href=/tags/linux/ style=font-size:1.1428571428571428em>Linux</a></li><li><a href=/tags/mybatis/ style=font-size:1em>MyBatis</a></li><li><a href=/tags/networks/ style=font-size:1.0952380952380953em>Networks</a></li><li><a href=/tags/os/ style=font-size:1.2857142857142856em>OS</a></li><li><a href=/tags/ostep/ style=font-size:1.0952380952380953em>OSTEP</a></li><li><a href=/tags/python/ style=font-size:1em>Python</a></li><li><a href=/tags/redis/ style=font-size:1.3333333333333333em>Redis</a></li><li><a href=/tags/rpc/ style=font-size:1em>RPC</a></li><li><a href=/tags/rust/ style=font-size:1.3333333333333333em>Rust</a></li><li><a href=/tags/shell/ style=font-size:1.2380952380952381em>Shell</a></li><li><a href=/tags/sicp/ style=font-size:1em>SICP</a></li><li><a href=/tags/spring/ style=font-size:1em>Spring</a></li><li><a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a></li><li><a href=/tags/tomcat/ style=font-size:1em>Tomcat</a></li><li><a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a></li><li><a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.380952380952381em>并发</a></li><li><a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0476190476190477em>分布式计算</a></li><li><a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a></li><li><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.5714285714285714em>设计模式</a></li><li><a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a></li><li><a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a></li><li><a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0476190476190477em>数据库</a></li><li><a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a></li><li><a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.1428571428571428em>算法导论</a></li><li><a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0476190476190477em>现代操作系统</a></li><li><a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a></li></ul></div></section></div><div class=sidebar-overlay></div></div><div class=main><nav id=main-menu class='menu main-menu' aria-label=主菜单><div class=container><a class=screen-reader-text href=#content>跳到内容</a>
 <button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
 <span class=screen-reader-text>Toggle Sidebar</span>
-<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-</span>
-<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-</span>
-</button>
-<ul><li class=item>
-<a href=/>主页</a>
-</li><li class=item>
-<a href=/posts/>博客</a>
-</li><li class=item>
-<a href=/notebook/>笔记本</a>
-</li><li class=item>
-<a href=/linux/>Linux</a>
-</li></ul>
-</div>
-</nav><div class=header-widgets>
-<div class=container>
-<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
-<section class="widget widget-breadcrumbs sep-after">
-<nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><span>Spring Ioc</span></li></ol>
-</nav>
-</section></div>
-</div>
-<header id=header class="header site-header">
-<div class="container sep-after">
-<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
-</div>
-</div>
-</header>
-<main id=content>
-<article lang=zh-cn class=entry>
-<header class="header entry-header">
-<div class="container sep-after">
-<div class=header-info>
-<h1 class=title>Spring Ioc</h1>
-</div>
-<div class=entry-meta>
-<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-<span class=screen-reader-text>Posted on </span>
-<time class=entry-date datetime=2021-08-21T13:49:54+08:00>2021, Aug 21</time>
-</span>
-<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
-<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
-<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-12 mins read
-</span>
-</div>
-</div>
-</header>
-<details class="container entry-toc">
-<summary class=title>
-<span>目录</span>
-</summary>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#ioc-容器>Ioc 容器</a>
-<ul>
-<li><a href=#配置元数据>配置元数据</a></li>
-<li><a href=#使用-beanfactorypostprocessor-对配置元数据进行个性化配置>使用 BeanFactoryPostProcessor 对配置元数据进行个性化配置</a></li>
-</ul>
-</li>
-<li><a href=#依赖注入>依赖注入</a>
-<ul>
-<li><a href=#自动装配>自动装配</a></li>
-</ul>
-</li>
-<li><a href=#bean>Bean</a>
-<ul>
-<li><a href=#bean-的命名>Bean 的命名</a></li>
-<li><a href=#depends-on>depends-on</a></li>
-<li><a href=#延迟初始化-bean>延迟初始化 Bean</a></li>
-<li><a href=#bean-的作用域>Bean 的作用域</a></li>
-<li><a href=#bean-的生命周期>Bean 的生命周期</a></li>
-</ul>
-</li>
-<li><a href=#未完待续>未完待续</a></li>
-<li><a href=#参考资料>参考资料</a></li>
-</ul>
-</nav>
-</details>
-<div class="container entry-content">
-<p>Ioc（Inverse of Control），又叫 DI（Dependence Injection）。它是这样一个过程：对象声明自己的依赖，然后容器在创建 Bean 的时候注入这些依赖。如果不使用 IoC，我们在创建对象之前就需要先把对象的依赖创建出来，这个正向的过程会导致对象与对象之间的强耦合。如果反过来，对象不自己创建依赖，而是由 Spring 的 Ioc 容器自动装配，这就是控制反转。逆向的过程使得程序的结构变得更加灵活，没有强耦合，还有利于对象的复用。</p>
-<p><img src=/images/java/spring/spring-ioc-mindmap.png alt=Mindmap></p>
-<h2 id=ioc-容器>Ioc 容器</h2>
-<p>在 Spring 中，<code>org.springframework.context.ApplicationContext</code> 接口就是 IoC 容器的抽象表示，它负责 Bean 的实例化、配置以及组装。那么，IoC 容器是如何知道要管理哪些 Bean 呢？答案是配置元数据（Configuration Metadata）。配置元数据可以是 XML、注解，还可以是 Java 代码。</p>
-<p><img src=/images/java/spring/container-magic.png alt="The Spring Ioc container"></p>
-<h3 id=配置元数据>配置元数据</h3>
-<p>Spring 的 Ioc 容器会读取配置元数据，然后根据配置元数据去实例化、配置和组装应用程序中的 Bean。在 Spring 的早期版本中，配置信息使用的是 XML。Spring 2.5 开始支持基于注解的配置，我们常用的 <code>@Required</code> 和 <code>@Autowired</code> 就是基于注解的配置。 Spring 3.0 开始支持基于 Java 代码的配置。现在，我们甚至可以同时使用 XML 和 注解去配置 Bean。</p>
-<p>实际上，在 IoC 容器内部，这些配置元数据会被解析成 <code>BeanDefinition</code> 对象，<code>BeanDefinition</code> 封装的就是 Bean 的定义和描述信息，比如类名、构造器参数、属性值、作用域、生命周期等，容器会根据 <code>BeanDefinition</code> 中封装的信息来创建 Bean。</p>
-<h3 id=使用-beanfactorypostprocessor-对配置元数据进行个性化配置>使用 BeanFactoryPostProcessor 对配置元数据进行个性化配置</h3>
-<p>在 Spring 中，<code>BeanFactory</code> 提供了一种管理任何类型对象的高级机制，我们经常遇到的 <code>ApplicationContext</code> 则是它的一个子接口。若要用一句话来描述二者的差异，那就是：<code>BeanFactory</code> 提供配置框架和基本功能，<code>ApplicationContext</code> 则是添加了更多的企业级功能。</p>
-<p><code>BeanFactoryPostProcessor</code> 允许我们对配置元数据（<code>BeanDefinition</code>）进行个性化配置。它与后面介绍的 <code>BeanPostProcessor</code> 功能类似，只不过后者的作用是对 Bean 本身进行个性化配置。接口定义如下：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>BeanFactoryPostProcessor</span> <span style=color:#f92672>{</span>
-	<span style=color:#75715e>/**
-</span><span style=color:#75715e>	 * Modify the application context&#39;s internal bean factory after its standard
-</span><span style=color:#75715e>	 * initialization. All bean definitions will have been loaded, but no beans
-</span><span style=color:#75715e>	 * will have been instantiated yet. This allows for overriding or adding
-</span><span style=color:#75715e>	 * properties even to eager-initializing beans.
-</span><span style=color:#75715e>	 */</span>
-	<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>postProcessBeanFactory</span><span style=color:#f92672>(</span>ConfigurableListableBeanFactory beanFactory<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException<span style=color:#f92672>;</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>在 <code>postProcessBeanFactory()</code> 方法被调用前，所有的 Bean 定义信息都已经加载完毕。所以 <code>BeanFactoryPostProcessor</code> 可以在 Bean 实例化之前获取 Bean 的配置元数据，并对其进行修改。</p>
-<h2 id=依赖注入>依赖注入</h2>
-<p>依赖注入主要有两种：</p>
-<ul>
-<li><strong>基于构造器的依赖注入（Constructor-based DI）</strong>：容器调用有参构造函数（或静态工厂方法），传入参数列表，每一个参数代表一个依赖。</li>
-<li><strong>基于 Setter 的依赖注入（Setter-based DI）</strong>：容器在调用无参构造函数或无参静态工厂方法之后，再调用 Bean 的 setter 方法注入依赖。</li>
-</ul>
-<p>IoC 容器甚至支持两种注入方式的混用的情况，你可以先通过构造函数给 Bean 注入一部分依赖，再通过 setter 方法给 Bean 注入另一部分依赖。一般情况下，推荐使用构造器注入强制性依赖，使用 setter 方法注入可选的依赖。</p>
-<p>Bean 的依赖项解析过程如下：</p>
-<ul>
-<li>容器被创建出来，通过描述 Bean 的配置元数据进行初始化，检验每个 Bean 的配置信息。配置元数据可以是 XML，也可以是注解和 Java 代码</li>
-<li>对于每一个 Bean，它依赖会被表示成属性、构造器参数或静态工厂方法的参数。这些依赖将会在 Bean 被真正创建的时提供给它</li>
-<li>每个属性或构造器参数都是一个具体的值，或者指向容器内另一个 Bean 的引用</li>
-<li>对于那些是具体值的属性或构造器参数，相应的值会被转化成属性或构造器参数的实际类型</li>
-</ul>
-<h3 id=自动装配>自动装配</h3>
-<p>Spring 提供了四种自动装配模式：</p>
-<table>
-<thead>
-<tr>
-<th>Mode</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>no</td>
-<td>不使用自动装配，通过 <code>ref</code> 定义 Bean 的依赖。这是默认值</td>
-</tr>
-<tr>
-<td>byName</td>
-<td>通过属性名装配。Spring 会查找与属性同名的 Bean 进行装配</td>
-</tr>
-<tr>
-<td>byType</td>
-<td>当满足给定类型的 Bean 只有一个时，进行自动装配，有多个时抛出异常。若没有满足类型的 Bean，不进行装配。</td>
-</tr>
-<tr>
-<td>constructor</td>
-<td>与 byType 类似，只是 Bean 用作构造器参数</td>
-</tr>
-</tbody>
-</table>
-<h2 id=bean>Bean</h2>
-<p>在 Spring 中，Bean 就是那些由 IoC 容器初始化、配置和组装的对象，IoC 容器就是 Bean 的管理者。我们在前面提到，开发者通过配置元数据告诉 IoC 容器 Bean 的相关配置信息，容器将配置元数据解析成 <code>BeanDefinition</code> 对象，再通过它创建 Bean。</p>
-<h3 id=bean-的命名>Bean 的命名</h3>
-<p>通常情况下，一个 Bean 只有一个标识符（identifier）。但是，如果 Bean 需要多个标识符，也是可以的，这些多的标识符就是 Bean 的别名（alias）。但是，<strong>在同一个 IoC 容器中，是不允许有多个相同的标识符的</strong>。</p>
-<p>那么，如何指定 Bean 的标识符呢？在基于 XML 的配置里，Bean 的标识符由 <code>id</code> 和 <code>name</code> 属性指定。其中 <code>id</code> 只允许我们声明一个标识符，而 <code>name</code> 允许我们声明多个，多个标识符之间使用逗号（<code>,</code>）或分号（<code>;</code>）或空格分隔就行了。例如：<code>&lt;bean id="xx" name="xx1,xx2"/></code>有时候，在 <code>name</code> 中声明所有的别名可能并不合适，这时可以使用 <code>&lt;alias/></code> 标签来单独明别名。例如：<code>&lt;alias name="fromName" alias="toName"/></code>。如果我们没有在 <code>&lt;bean/></code> 中定义 <code>id</code> 或 <code>name</code> 的值也是可以的，这是容器或自动帮我们生成一个 Bean 的标识符。</p>
-<p>当我们使用像 <code>@Bean</code> 这种基于 Java 的配置创建 Bean 时，Bean 的标识符默认为方法的名字，例如下面代码中创建的 Bean 的标识符就是 <code>transferService</code>：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#a6e22e>@Configuration</span>
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>AppConfig</span> <span style=color:#f92672>{</span>
-  <span style=color:#a6e22e>@Bean</span>
-  <span style=color:#66d9ef>public</span> TransferServiceImpl <span style=color:#a6e22e>transferService</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> TransferServiceImpl<span style=color:#f92672>();</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><h3 id=depends-on>depends-on</h3>
-<p>有时候，我们可能是希望某个 Bean 在另一个或多个 Bean 之前初始化，这时我们可以使用 <code>depends-on</code>。例如：<code>&lt;bean id="beanOne" depends-on="beanTwo,beanThree"/></code> 告知容器在初始化 <code>beanOne</code> 之前先初始化 <code>beanTwo</code> 和 <code>beanThree</code>。</p>
-<h3 id=延迟初始化-bean>延迟初始化 Bean</h3>
-<p><code>ApplicationContext</code> 默认会在启动的时候初始化所有的单例 Bean。虽然这种饿汉式的初始化方式能够尽早将问题暴露出来，但是有时候我们希望 Bean 在第一次被使用时才创建，即延迟初始化。为了实现这个目标，我们可以使用 <code>lazy-init</code> 属性。例如，<code>&lt;bean id="beanOne" lazy-init="true"/></code> 告诉容器不要在启动时创建 <code>beanOne</code>，而是在 <code>beanOne</code> 第一次被请求时才创建它。</p>
-<h3 id=bean-的作用域>Bean 的作用域</h3>
-<p>我们前面有说，IoC 容器会使用 <code>BeanDefinition</code> 中封装的描述信息来创建 Bean。Bean 的<a href=https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-scopes>作用域（Scope）</a>描述的是：在不同场景下， <code>BeanDefinition</code> 和通过它创建出来的 Bean 的数量关系。在Spring 中，Bean 的作用域是相对于 IoC 容器来说的。Spring 默认支持了六种作用域：</p>
-<table>
-<thead>
-<tr>
-<th>Scope</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>singleton</td>
-<td>通过单个 <code>BeanDefinition</code> 创建的 Bean 在容器内只有一个实例。这也是默认的作用域</td>
-</tr>
-<tr>
-<td>prototype</td>
-<td>通过单个 <code>BeanDefinition</code> 可以创建出任意数量的 Bean 实例</td>
-</tr>
-<tr>
-<td>request</td>
-<td>在每个 HTTP 请求的生命周期内，通过单个 <code>BeanDefinition</code> 创建的实例只有一个</td>
-</tr>
-<tr>
-<td>session</td>
-<td>在每个 HTTP 会话的生命周期内，通过单个 <code>BeanDefinition</code> 创建的实例只有一个</td>
-</tr>
-<tr>
-<td>application</td>
-<td>在每个 <code>ServletContext</code> 的生命周期内，通过单个 <code>BeanDefinition</code> 创建的实例只有一个</td>
-</tr>
-<tr>
-<td>websocket</td>
-<td>在每个 <code>WebSocket</code> 的生命周期内，通过单个 <code>BeanDefinition</code> 创建的实例只有一个</td>
-</tr>
-</tbody>
-</table>
-<p>此外，Spring 还支持开发者创建自定义的 Bean 作用域，具体做法可以参考 <a href=https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-scopes-custom>Custom Scopes</a>。</p>
-<h3 id=bean-的生命周期>Bean 的生命周期</h3>
-<p>Bean 本质上是一个 Java 对象。我们先回顾下 <a href=/posts/java/jvm/java_object_lifecycle/>Java 对象的生命周期</a>，JVM 中的对象一生大概会经历以下几个阶段：</p>
-<p><img src=/images/java/spring/java-object-lifecycle.png alt="Java object lifecycle" title="Java 对象生命周期"></p>
-<p>站在 JVM 的角度来看，Bean 的生命周期也就是这样。但是，由于 Bean 是 IoC 容器管理的，容器可能给它定义额外的生命周期，也就是添加新的阶段。所以我们需要从 IoC 容器的角度看 Bean 的生命周期。</p>
-<p>IoC 容器中 Bean 的生命周期主要有 4 个大的阶段：</p>
-<ol>
-<li>实例化（Instantiation）</li>
-<li>初始化（Initialization）</li>
-<li>使用（In Use）</li>
-<li>销毁（Destruction）</li>
-</ol>
-<p>这和 Java 对象的生命周期有点不一样。但如果我们将 Bean 的生命周期看成创建、使用和销毁这三个大的阶段是不是就好理解了一些呢。Bean 的使用就不用说了，销毁也只是在容器关闭前（详见 <code>ConfigurableApplicationContext#close</code>）调用一下，复杂的都在 Bean 的创建过程。所以下面我们重点来看 Bean 的创建过程。</p>
-<h4 id=bean-的创建>Bean 的创建</h4>
-<p>先声明以下，这里说的 Bean 的创建并不只是说把 Bean 实例化出来就行了，而是指实例化和初始化两个步骤。普通非延迟初始化的 Bean 创建流程的入口其实在 <code>org.springframework.context.support.AbstractApplicationContext#refresh()</code> 方法中的 <code>finishBeanFactoryInitialization(beanFactory)</code>，感兴趣的同学可以打开源码一探究竟。一番探索之后，发现最终的 Bean 创建逻辑位于 <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#doCreateBean</code> 方法。<code>doCreateBean()</code> 的方法体还是不短，为了抓住主线，先贴出主干代码：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>protected</span> Object <span style=color:#a6e22e>doCreateBean</span><span style=color:#f92672>(</span>String beanName<span style=color:#f92672>,</span> RootBeanDefinition mbd<span style=color:#f92672>,</span> <span style=color:#a6e22e>@Nullable</span> Object<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span>
-			<span style=color:#66d9ef>throws</span> BeanCreationException <span style=color:#f92672>{</span>
-		<span style=color:#75715e>// Instantiate the bean.
-</span><span style=color:#75715e></span>		BeanWrapper instanceWrapper <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>;</span>
-		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isSingleton</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-			instanceWrapper <span style=color:#f92672>=</span> <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>factoryBeanInstanceCache</span><span style=color:#f92672>.</span><span style=color:#a6e22e>remove</span><span style=color:#f92672>(</span>beanName<span style=color:#f92672>);</span>
-		<span style=color:#f92672>}</span>
-		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>instanceWrapper <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-			instanceWrapper <span style=color:#f92672>=</span> createBeanInstance<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> mbd<span style=color:#f92672>,</span> args<span style=color:#f92672>);</span>
-		<span style=color:#f92672>}</span>
-		Object bean <span style=color:#f92672>=</span> instanceWrapper<span style=color:#f92672>.</span><span style=color:#a6e22e>getWrappedInstance</span><span style=color:#f92672>();</span>
-		<span style=color:#75715e>// ...
-</span><span style=color:#75715e></span>
-		<span style=color:#75715e>// Allow post-processors to modify the merged bean definition.
-</span><span style=color:#75715e></span>		<span style=color:#66d9ef>synchronized</span> <span style=color:#f92672>(</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>postProcessingLock</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-			<span style=color:#66d9ef>if</span> <span style=color:#f92672>(!</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>postProcessed</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-				<span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
-					applyMergedBeanDefinitionPostProcessors<span style=color:#f92672>(</span>mbd<span style=color:#f92672>,</span> beanType<span style=color:#f92672>,</span> beanName<span style=color:#f92672>);</span>
-				<span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable ex<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-					<span style=color:#75715e>// ...
-</span><span style=color:#75715e></span>				<span style=color:#f92672>}</span>
-				mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>postProcessed</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>;</span>
-			<span style=color:#f92672>}</span>
-		<span style=color:#f92672>}</span>
-
-		<span style=color:#75715e>// Eagerly cache singletons to be able to resolve circular references
-</span><span style=color:#75715e></span>		<span style=color:#75715e>// even when triggered by lifecycle interfaces like BeanFactoryAware.
-</span><span style=color:#75715e></span>		<span style=color:#66d9ef>boolean</span> earlySingletonExposure <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isSingleton</span><span style=color:#f92672>()</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>allowCircularReferences</span> <span style=color:#f92672>&amp;&amp;</span>
-				isSingletonCurrentlyInCreation<span style=color:#f92672>(</span>beanName<span style=color:#f92672>));</span>
-		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>earlySingletonExposure<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-			<span style=color:#75715e>// ...
-</span><span style=color:#75715e></span>			addSingletonFactory<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> <span style=color:#f92672>()</span> <span style=color:#f92672>-&gt;</span> getEarlyBeanReference<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> mbd<span style=color:#f92672>,</span> bean<span style=color:#f92672>));</span>
-		<span style=color:#f92672>}</span>
-
-		<span style=color:#75715e>// Initialize the bean instance.
-</span><span style=color:#75715e></span>		Object exposedObject <span style=color:#f92672>=</span> bean<span style=color:#f92672>;</span>
-		<span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
-			populateBean<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> mbd<span style=color:#f92672>,</span> instanceWrapper<span style=color:#f92672>);</span>
-			exposedObject <span style=color:#f92672>=</span> initializeBean<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> exposedObject<span style=color:#f92672>,</span> mbd<span style=color:#f92672>);</span>
-		<span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable ex<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-			<span style=color:#75715e>// ...
-</span><span style=color:#75715e></span>		<span style=color:#f92672>}</span>
-
-		<span style=color:#75715e>// Register bean as disposable.
-</span><span style=color:#75715e></span>		<span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
-			registerDisposableBeanIfNecessary<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> bean<span style=color:#f92672>,</span> mbd<span style=color:#f92672>);</span>
-		<span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>BeanDefinitionValidationException ex<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-			<span style=color:#75715e>// ...
-</span><span style=color:#75715e></span>		<span style=color:#f92672>}</span>
-
-		<span style=color:#66d9ef>return</span> exposedObject<span style=color:#f92672>;</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>这代码就清爽多了。所以 Bean 的创建步骤主要是以下几步：</p>
-<p><img src=/images/java/spring/doCreateBean.png alt="创建 Bean" title="Bean 的创建"></p>
-<h4 id=beanpostprocessor>BeanPostProcessor</h4>
-<p><code>BeanPostProcessor</code> 允许我们对 Bean 进行个性化定制处理。该接口有两个方法：</p>
-<ul>
-<li><code>postProcessBeforeInitialization(Object bean, String beanName)</code>：在 Bean 初始化之前调用</li>
-<li><code>postProcessAfterInitialization(Object bean, String beanName)</code>：在 Bean 初始化之后调用</li>
-</ul>
-<p><code>BeanPostProcessor</code> 有一系列的子接口，比如 <code>InstantiationAwareBeanPostProcessor</code> 、<code>DestructionAwareBeanPostProcessor</code>、<code>BeanFactoryPostProcessor</code>、<code>ApplicationContextAwareProcessor</code> 等。<code>BeanPostProcessor</code> 系列接口中的回调是容器级别的，对所有的 Bean 生效。不同子接口发挥作用的时间不同，后面会进行介绍。</p>
-<h4 id=实例化-bean>实例化 Bean</h4>
-<p>创建 Bean 的第一步是实例化，入口方法是 <code>AbstractAutowireCapableBeanFactory#createBeanInstance</code>。容器会根据配置元数据，采取合适的策略（工厂方法或构造器）<a href=https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-class>实例化 Bean</a>。</p>
-<p><code>InstantiationAwareBeanPostProcessor</code> 提供了三个非常重要的方法：</p>
-<ul>
-<li><code>postProcessBeforeInstantiation(Class&lt;?> beanClass, String beanName)</code>：在实例化 Bean 之前调用</li>
-<li><code>postProcessAfterInstantiation(Object bean, String beanName)</code>：在实例化 Bean 之后、正式填充属性之前调用</li>
-<li><code>postProcessProperties(PropertyValues pvs, Object bean, String beanName)</code>：在填充属性之前对属性值作处理</li>
-</ul>
-<p>加入这三个方法之后的 Bean 创建过程如下：</p>
-<p><img src=/images/java/spring/doCreateBean-instantiation-callback.png alt="实例化 Bean" title="实例化 Bean"></p>
-<h4 id=初始化-bean>初始化 Bean</h4>
-<p>初始化 Bean 的入口方法是 <code>AbstractAutowireCapableBeanFactory#initializeBean</code>，主干代码如下：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>protected</span> Object <span style=color:#a6e22e>initializeBean</span><span style=color:#f92672>(</span>String beanName<span style=color:#f92672>,</span> Object bean<span style=color:#f92672>,</span> <span style=color:#a6e22e>@Nullable</span> RootBeanDefinition mbd<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-		invokeAwareMethods<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> bean<span style=color:#f92672>);</span>
-
-		Object wrappedBean <span style=color:#f92672>=</span> bean<span style=color:#f92672>;</span>
-		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>mbd <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>||</span> <span style=color:#f92672>!</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isSynthetic</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-			wrappedBean <span style=color:#f92672>=</span> applyBeanPostProcessorsBeforeInitialization<span style=color:#f92672>(</span>wrappedBean<span style=color:#f92672>,</span> beanName<span style=color:#f92672>);</span>
-		<span style=color:#f92672>}</span>
-
-		<span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
-			invokeInitMethods<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> wrappedBean<span style=color:#f92672>,</span> mbd<span style=color:#f92672>);</span>
-		<span style=color:#f92672>}</span>
-		<span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable ex<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-			<span style=color:#75715e>// ...
-</span><span style=color:#75715e></span>		<span style=color:#f92672>}</span>
-		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>mbd <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>||</span> <span style=color:#f92672>!</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isSynthetic</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-			wrappedBean <span style=color:#f92672>=</span> applyBeanPostProcessorsAfterInitialization<span style=color:#f92672>(</span>wrappedBean<span style=color:#f92672>,</span> beanName<span style=color:#f92672>);</span>
-		<span style=color:#f92672>}</span>
-
-		<span style=color:#66d9ef>return</span> wrappedBean<span style=color:#f92672>;</span>
-	<span style=color:#f92672>}</span>
-</code></pre></div><p>从上到下的逻辑主要是：调用 <code>Aware</code> 类型的回调方法，<code>BeanPostProcessor</code> 初始化前置处理，调用初始化方法，调用 <code>BeanPostProcessor</code> 初始化后置处理。我们一个一个来看。</p>
-<h5 id=bean-初始化-aware>Bean 初始化 Aware</h5>
-<p><code>Aware</code> 类型的接口众多，但是在 Bean 的初始化过程中只可能会调用 <code>BeanNameAware</code>、<code>BeanClassLoaderAware</code> 和 <code>BeanFactoryAware</code> 三个接口的回调方法。具体逻辑可以参考<code>AbstractAutowireCapableBeanFactory#initializeBean</code> 方法调用的 <code>invokeAwareMethods(beanName, bean)</code> 方法。方法不长，我直接贴出来：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>invokeAwareMethods</span><span style=color:#f92672>(</span>String beanName<span style=color:#f92672>,</span> Object bean<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>bean <span style=color:#66d9ef>instanceof</span> Aware<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-			<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>bean <span style=color:#66d9ef>instanceof</span> BeanNameAware<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-				<span style=color:#f92672>((</span>BeanNameAware<span style=color:#f92672>)</span> bean<span style=color:#f92672>).</span><span style=color:#a6e22e>setBeanName</span><span style=color:#f92672>(</span>beanName<span style=color:#f92672>);</span>
-			<span style=color:#f92672>}</span>
-			<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>bean <span style=color:#66d9ef>instanceof</span> BeanClassLoaderAware<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-				ClassLoader bcl <span style=color:#f92672>=</span> getBeanClassLoader<span style=color:#f92672>();</span>
-				<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>bcl <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-					<span style=color:#f92672>((</span>BeanClassLoaderAware<span style=color:#f92672>)</span> bean<span style=color:#f92672>).</span><span style=color:#a6e22e>setBeanClassLoader</span><span style=color:#f92672>(</span>bcl<span style=color:#f92672>);</span>
-				<span style=color:#f92672>}</span>
-			<span style=color:#f92672>}</span>
-			<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>bean <span style=color:#66d9ef>instanceof</span> BeanFactoryAware<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-				<span style=color:#f92672>((</span>BeanFactoryAware<span style=color:#f92672>)</span> bean<span style=color:#f92672>).</span><span style=color:#a6e22e>setBeanFactory</span><span style=color:#f92672>(</span>AbstractAutowireCapableBeanFactory<span style=color:#f92672>.</span><span style=color:#a6e22e>this</span><span style=color:#f92672>);</span>
-			<span style=color:#f92672>}</span>
-		<span style=color:#f92672>}</span>
-	<span style=color:#f92672>}</span>
-</code></pre></div><h5 id=正式初始化>正式初始化</h5>
-<p><code>org.springframework.beans.factory.InitializingBean</code> 允许 Bean 在所有属性填充完毕之后执行初始化操作，接口定义如下：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>InitializingBean</span> <span style=color:#f92672>{</span>
-
-	<span style=color:#75715e>/**
-</span><span style=color:#75715e>	 * Invoked by the containing BeanFactory after it has set all bean properties
-</span><span style=color:#75715e>	 * and satisfied BeanFactoryAware, ApplicationContextAware etc.
-</span><span style=color:#75715e>	 */</span>
-	<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>afterPropertiesSet</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception<span style=color:#f92672>;</span>
-
-<span style=color:#f92672>}</span>
-</code></pre></div><p><code>afterPropertiesSet()</code> 方法会在 Bean 的属性设置完毕、各种 <code>Aware</code> 调用完成之后执行。实际上，Spring 并不推荐我们使用这个接口来进行初始化操作，因为这会导致我们的代码与 Spring 框架强耦合。推荐的做法是使用自定义的 <code>init()</code> 方法或 <a href=http://en.wikipedia.org/wiki/JSR_250>JSR-250</a> 定义的 <code>@PostConstruct</code> 注解。</p>
-<p><code>invokeInitMethods()</code> 方法会尝试先判断 Bean 是否实现 <code>InitializingBean</code> 接口。若是，则调用 Bean 的 <code>afterPropertiesSet()</code> 方法。然后，判断 Bean 是否有自定义的初始化方法。若有，则调用自定义的 <code>init()</code> 方法。你可能已经发现了，这里没有调用 <code>@PostConstruct</code> 注解的方法，因为它是在 <code>#BeanPostProcessor#postProcessBeforeInitialization</code> 中调用的，感兴趣的同学可以查看 <code>InitDestroyAnnotationBeanPostProcessor#postProcessBeforeInitialization</code> 的源码。<code>invokeInitMethods()</code> 的主干代码如下：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>protected</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>invokeInitMethods</span><span style=color:#f92672>(</span>String beanName<span style=color:#f92672>,</span> Object bean<span style=color:#f92672>,</span> <span style=color:#a6e22e>@Nullable</span> RootBeanDefinition mbd<span style=color:#f92672>)</span>
-			<span style=color:#66d9ef>throws</span> Throwable <span style=color:#f92672>{</span>
-		<span style=color:#66d9ef>boolean</span> isInitializingBean <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>bean <span style=color:#66d9ef>instanceof</span> InitializingBean<span style=color:#f92672>);</span>
-		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>isInitializingBean <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>(</span>mbd <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>||</span> <span style=color:#f92672>!</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isExternallyManagedInitMethod</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;afterPropertiesSet&#34;</span><span style=color:#f92672>)))</span> <span style=color:#f92672>{</span>
-			<span style=color:#75715e>// ...
-</span><span style=color:#75715e></span>      <span style=color:#f92672>((</span>InitializingBean<span style=color:#f92672>)</span> bean<span style=color:#f92672>).</span><span style=color:#a6e22e>afterPropertiesSet</span><span style=color:#f92672>();</span>
-      <span style=color:#75715e>// ...
-</span><span style=color:#75715e></span>		<span style=color:#f92672>}</span>
-
-		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>mbd <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>&amp;&amp;</span> bean<span style=color:#f92672>.</span><span style=color:#a6e22e>getClass</span><span style=color:#f92672>()</span> <span style=color:#f92672>!=</span> NullBean<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-			String initMethodName <span style=color:#f92672>=</span> mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>getInitMethodName</span><span style=color:#f92672>();</span>
-			<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>hasLength</span><span style=color:#f92672>(</span>initMethodName<span style=color:#f92672>)</span> <span style=color:#f92672>&amp;&amp;</span>
-					<span style=color:#f92672>!(</span>isInitializingBean <span style=color:#f92672>&amp;&amp;</span> <span style=color:#e6db74>&#34;afterPropertiesSet&#34;</span><span style=color:#f92672>.</span><span style=color:#a6e22e>equals</span><span style=color:#f92672>(</span>initMethodName<span style=color:#f92672>))</span> <span style=color:#f92672>&amp;&amp;</span>
-					<span style=color:#f92672>!</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isExternallyManagedInitMethod</span><span style=color:#f92672>(</span>initMethodName<span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
-				invokeCustomInitMethod<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> bean<span style=color:#f92672>,</span> mbd<span style=color:#f92672>);</span>
-			<span style=color:#f92672>}</span>
-		<span style=color:#f92672>}</span>
-	<span style=color:#f92672>}</span>
-</code></pre></div><p>到这里，Bean 的初始化过程基本就分析完了，我们来完善一下之前的图：</p>
-<p><img src=/images/java/spring/doCreateBean-initialization-callback.png alt="Bean 的创建过程" title="Bean 的创建过程"></p>
-<h4 id=销毁-bean>销毁 Bean</h4>
-<p>跟 <code>InitializingBean</code> 类似，Spring 为我们提供了 <code>DisposableBean</code> 用于容器关闭前执行 Bean 的清理工作。Spring 并不推荐我们使用它，因为这会导致程序代码与 Spring 强耦合。推荐的做法是使用 JSR-250 定义的 <code>@PreDestroy</code> 注解或配置自定义的 <code>destroy()</code> 方法。如果同时使用了几种，那么方法的执行顺序是：</p>
-<ol>
-<li><code>@PreDestroy</code> 注解的方法</li>
-<li><code>DisposableBean</code> 的 <code>destory()</code> 方法</li>
-<li>配置的自定义 <code>destroy()</code> 方法</li>
-</ol>
-<p>到这里，Bean 的生命周期基本就介绍完了。用一张图总结下：</p>
-<p><img src=/images/java/spring/bean-lifecycle.png alt="Bean 的生命周期" title="Bean 的生命周期"></p>
-<h4 id=其它-aware-接口>其它 Aware 接口</h4>
-<p>除了之前提到过的 <code>Aware</code> 接口，Spring 还给我们提供了很多其它的 <code>Aware</code> 接口。这些接口告诉 IoC 容器 Bean 需要对应的依赖。例如 <code>ApplicationContextAware</code> 允许 Bean 获得一个 <code>ApplicationContext</code> 的引用，<code>ResourceLoaderAware</code> 允许 Bean 获得一个 <code>ResourceLoader</code> 的引用。</p>
-<h4 id=一个例子>一个例子</h4>
-<p>纸上得来终觉浅，绝知此事要躬行。下面，让我们通过一个例子加深对 Bean 生命周期的理解。</p>
-<p>先定义一个 Bean 类，它实现了众多的接口，包含自定义的初始化方法和自定义的销毁方法，以及一个普通方法 <code>hello()</code>：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MySpringBean</span> <span style=color:#66d9ef>implements</span> ApplicationContextAware<span style=color:#f92672>,</span> BeanNameAware<span style=color:#f92672>,</span>
-        BeanClassLoaderAware<span style=color:#f92672>,</span> BeanFactoryAware<span style=color:#f92672>,</span> InitializingBean<span style=color:#f92672>,</span> DisposableBean <span style=color:#f92672>{</span>
-
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setBeanClassLoader</span><span style=color:#f92672>(</span>ClassLoader classLoader<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setBeanClassLoader...&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setBeanFactory</span><span style=color:#f92672>(</span>BeanFactory beanFactory<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setBeanFactory...&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setBeanName</span><span style=color:#f92672>(</span>String s<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setBeanName...&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>destroy</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing destroy...&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>afterPropertiesSet</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing afterPropertiesSet...&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setApplicationContext</span><span style=color:#f92672>(</span>ApplicationContext applicationContext<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setApplicationContext...&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@PostConstruct</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>postConstruct</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing @PostConstruct...&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@PreDestroy</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>preDestroy</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing @PreDestroy...&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>customInitMethod</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing custom init method...&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>customDestroyMethod</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing custom destroy method...&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>hello</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello, Spring!&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>然后定义一个 <code>BeanPostProcessor</code> 的实现类：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyBeanPostProcessor</span> <span style=color:#66d9ef>implements</span> BeanPostProcessor <span style=color:#f92672>{</span>
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>postProcessBeforeInitialization</span><span style=color:#f92672>(</span>Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessBeforeInitialization of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>return</span> bean<span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>postProcessAfterInitialization</span><span style=color:#f92672>(</span>Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessAfterInitialization of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>return</span> bean<span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>再定义一个 <code>InstantiationAwareBeanPostProcessor</code> 的实现类：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyInstantiationAwareBeanPostProcessor</span> <span style=color:#66d9ef>implements</span> InstantiationAwareBeanPostProcessor <span style=color:#f92672>{</span>
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>postProcessBeforeInstantiation</span><span style=color:#f92672>(</span>Class<span style=color:#f92672>&lt;?&gt;</span> beanClass<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessBeforeInstantiation of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>postProcessAfterInstantiation</span><span style=color:#f92672>(</span>Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessAfterInstantiation of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> PropertyValues <span style=color:#a6e22e>postProcessProperties</span><span style=color:#f92672>(</span>PropertyValues pvs<span style=color:#f92672>,</span> Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessProperties of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>return</span> pvs<span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>以及一个配置类：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#a6e22e>@Configuration</span>
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyLifeCycleConfiguration</span> <span style=color:#f92672>{</span>
-    <span style=color:#a6e22e>@Bean</span>
-    <span style=color:#66d9ef>public</span> MyBeanPostProcessor <span style=color:#a6e22e>myBeanPostProcessor</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MyBeanPostProcessor<span style=color:#f92672>();</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@Bean</span>
-    <span style=color:#66d9ef>public</span> MyInstantiationAwareBeanPostProcessor <span style=color:#a6e22e>myInstantiationAwareBeanPostProcessor</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MyInstantiationAwareBeanPostProcessor<span style=color:#f92672>();</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#a6e22e>@Bean</span><span style=color:#f92672>(</span>initMethod <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;customInitMethod&#34;</span><span style=color:#f92672>,</span> destroyMethod <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;customDestroyMethod&#34;</span><span style=color:#f92672>)</span>
-    <span style=color:#66d9ef>public</span> MySpringBean <span style=color:#a6e22e>mySpringBean</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MySpringBean<span style=color:#f92672>();</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>最后写一个测试：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=color:#a6e22e>@SpringBootTest</span>
-<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>BeanLifecycleApplicationTests</span> <span style=color:#f92672>{</span>
-    <span style=color:#a6e22e>@Autowired</span>
-    <span style=color:#66d9ef>private</span> MySpringBean mySpringBean<span style=color:#f92672>;</span>
-
-    <span style=color:#a6e22e>@Test</span>
-    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testMySpringBeanLifecycle</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        mySpringBean<span style=color:#f92672>.</span><span style=color:#a6e22e>hello</span><span style=color:#f92672>();</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>现在运行测试，各个生命周期回调的执行步骤就一览无余啦。由于容器默认还会创建其它 Bean，数量还不少，影响我们观察。所以下面执行结果中只列出了与 <code>MySpringBean</code> 相关的执行结果：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-txt data-lang=txt>Executing postProcessBeforeInstantiation of mySpringBean ...
-Executing postProcessAfterInstantiation of mySpringBean ...
-Executing postProcessProperties of mySpringBean ...
-Executing setBeanName...
-Executing setBeanClassLoader...
-Executing setBeanFactory...
-Executing setApplicationContext...
-Executing postProcessBeforeInitialization of mySpringBean ...
-Executing @PostConstruct...
-Executing afterPropertiesSet...
-Executing custom init method...
-Executing postProcessAfterInitialization of mySpringBean ...
-Hello, Spring!
-Executing @PreDestroy...
-Executing destroy...
-Executing custom destroy method...
-</code></pre></div><p>完整代码已经放到 <a href=https://github.com/zhannicholas/java-demos/tree/main/bean-lifecycle>Github</a>。</p>
-<h2 id=未完待续>未完待续</h2>
-<p>时间有限，先写到这里。写东西从来都不是一次性过程，要常看，常思考，常更新。</p>
-<h2 id=参考资料>参考资料</h2>
-<ol>
-<li><a href=https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#spring-core>Spring Framework Documentation</a>.</li>
-<li><a href=https://blog.csdn.net/riemann_/article/details/118500805>一文读懂 Spring Bean 的生命周期</a>.</li>
-</ol>
-</div>
-<footer class=entry-footer>
-<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
-<span class=screen-reader-text>分类: </span><a class=category href=/categories/spring/>Spring</a></div>
-<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-<span class=screen-reader-text>标签: </span><a class=tag href=/tags/spring/>Spring</a>, <a class=tag href=/tags/java/>Java</a></div>
-</div>
-</footer>
-</article>
-<nav class=entry-nav>
-<div class=container><div class="prev-entry sep-before">
-<a href=/java/java_lang/references_and_reachability_in_java/>
-<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
-Previous</span>
-<span class=screen-reader-text>上一篇: </span>Java 中的引用与对象可达性</a>
-</div><div class="next-entry sep-before">
-<a href=/java/spring/configurations-in-spring-boot/>
-<span class=screen-reader-text>下一篇: </span>Spring Boot 中的配置体系<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
-</span>
-</a>
-</div></div>
-</nav>
-</main>
-<footer id=footer class=footer>
-<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
-<ul><li>
-<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
-</a>
-</li><li>
-<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
-</a>
-</li><li>
-<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
-<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-</a>
-</li><li>
-<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-</a>
-</li></ul>
-</nav>
-</section><div class=copyright>
-<p> &copy; 2018-2021 Nicholas Zhan </p>
-</div>
-</div>
-</footer>
-</div>
-</div><script>window.__assets_js_src="/assets/js/"</script>
-<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script>
-</body>
-</html>
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span><span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button><ul><li class=item><a href=/>主页</a></li><li class=item><a href=/posts/>博客</a></li><li class=item><a href=/notebook/>笔记本</a></li><li class=item><a href=/linux/>Linux</a></li></ul></div></nav><div class=header-widgets><div class=container><style>.widget-breadcrumbs li:after{content:'\2f '}</style><section class='widget widget-breadcrumbs sep-after'><nav id=breadcrumbs><ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><span>Spring Ioc</span></li></ol></nav></section></div></div><header id=header class='header site-header'><div class='container sep-after'><div class=header-info><p class='site-title title'>Nicholas Zhan</p><p class='desc site-desc'>Java Developer, Runner, Cyclist</p></div></div></header><main id=content><article lang=zh-cn class=entry><header class='header entry-header'><div class='container sep-after'><div class=header-info><h1 class=title>Spring Ioc</h1></div><div class=entry-meta><span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class=screen-reader-text>Posted on</span>
+<time class=entry-date datetime=2021-08-21T13:49:54+08:00>2021, Aug 21</time></span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg><span class=screen-reader-text>by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>12 mins read</span></div></div></header><details class='container entry-toc'><summary class=title><span>目录</span></summary><nav id=TableOfContents><ul><li><a href=#ioc-容器>Ioc 容器</a><ul><li><a href=#配置元数据>配置元数据</a></li><li><a href=#使用-beanfactorypostprocessor-对配置元数据进行个性化配置>使用 BeanFactoryPostProcessor 对配置元数据进行个性化配置</a></li></ul></li><li><a href=#依赖注入>依赖注入</a><ul><li><a href=#自动装配>自动装配</a></li></ul></li><li><a href=#bean>Bean</a><ul><li><a href=#bean-的命名>Bean 的命名</a></li><li><a href=#depends-on>depends-on</a></li><li><a href=#延迟初始化-bean>延迟初始化 Bean</a></li><li><a href=#bean-的作用域>Bean 的作用域</a></li><li><a href=#bean-的生命周期>Bean 的生命周期</a></li></ul></li><li><a href=#未完待续>未完待续</a></li><li><a href=#参考资料>参考资料</a></li></ul></nav></details><div class='container entry-content'><p>Ioc（Inverse of Control），又叫 DI（Dependence Injection）。它是这样一个过程：对象声明自己的依赖，然后容器在创建 Bean 的时候注入这些依赖。如果不使用 IoC，我们在创建对象之前就需要先把对象的依赖创建出来，这个正向的过程会导致对象与对象之间的强耦合。如果反过来，对象不自己创建依赖，而是由 Spring 的 Ioc 容器自动装配，这就是控制反转。逆向的过程使得程序的结构变得更加灵活，没有强耦合，还有利于对象的复用。</p><p><img src=/images/java/spring/spring-ioc-mindmap.png alt=Mindmap></p><h2 id=ioc-容器>Ioc 容器</h2><p>在 Spring 中，<code>org.springframework.context.ApplicationContext</code> 接口就是 IoC 容器的抽象表示，它负责 Bean 的实例化、配置以及组装。那么，IoC 容器是如何知道要管理哪些 Bean 呢？答案是配置元数据（Configuration Metadata）。配置元数据可以是 XML、注解，还可以是 Java 代码。</p><p><img src=/images/java/spring/container-magic.png alt="The Spring Ioc container"></p><h3 id=配置元数据>配置元数据</h3><p>Spring 的 Ioc 容器会读取配置元数据，然后根据配置元数据去实例化、配置和组装应用程序中的 Bean。在 Spring 的早期版本中，配置信息使用的是 XML。Spring 2.5 开始支持基于注解的配置，我们常用的 <code>@Required</code> 和 <code>@Autowired</code> 就是基于注解的配置。 Spring 3.0 开始支持基于 Java 代码的配置。现在，我们甚至可以同时使用 XML 和 注解去配置 Bean。</p><p>实际上，在 IoC 容器内部，这些配置元数据会被解析成 <code>BeanDefinition</code> 对象，<code>BeanDefinition</code> 封装的就是 Bean 的定义和描述信息，比如类名、构造器参数、属性值、作用域、生命周期等，容器会根据 <code>BeanDefinition</code> 中封装的信息来创建 Bean。</p><h3 id=使用-beanfactorypostprocessor-对配置元数据进行个性化配置>使用 BeanFactoryPostProcessor 对配置元数据进行个性化配置</h3><p>在 Spring 中，<code>BeanFactory</code> 提供了一种管理任何类型对象的高级机制，我们经常遇到的 <code>ApplicationContext</code> 则是它的一个子接口。若要用一句话来描述二者的差异，那就是：<code>BeanFactory</code> 提供配置框架和基本功能，<code>ApplicationContext</code> 则是添加了更多的企业级功能。</p><p><code>BeanFactoryPostProcessor</code> 允许我们对配置元数据（<code>BeanDefinition</code>）进行个性化配置。它与后面介绍的 <code>BeanPostProcessor</code> 功能类似，只不过后者的作用是对 Bean 本身进行个性化配置。接口定义如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>BeanFactoryPostProcessor</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>	<span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>	 * Modify the application context&#39;s internal bean factory after its standard
+</span></span></span><span style=display:flex><span><span style=color:#75715e>	 * initialization. All bean definitions will have been loaded, but no beans
+</span></span></span><span style=display:flex><span><span style=color:#75715e>	 * will have been instantiated yet. This allows for overriding or adding
+</span></span></span><span style=display:flex><span><span style=color:#75715e>	 * properties even to eager-initializing beans.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>	 */</span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>postProcessBeanFactory</span><span style=color:#f92672>(</span>ConfigurableListableBeanFactory beanFactory<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>在 <code>postProcessBeanFactory()</code> 方法被调用前，所有的 Bean 定义信息都已经加载完毕。所以 <code>BeanFactoryPostProcessor</code> 可以在 Bean 实例化之前获取 Bean 的配置元数据，并对其进行修改。</p><h2 id=依赖注入>依赖注入</h2><p>依赖注入主要有两种：</p><ul><li><strong>基于构造器的依赖注入（Constructor-based DI）</strong>：容器调用有参构造函数（或静态工厂方法），传入参数列表，每一个参数代表一个依赖。</li><li><strong>基于 Setter 的依赖注入（Setter-based DI）</strong>：容器在调用无参构造函数或无参静态工厂方法之后，再调用 Bean 的 setter 方法注入依赖。</li></ul><p>IoC 容器甚至支持两种注入方式的混用的情况，你可以先通过构造函数给 Bean 注入一部分依赖，再通过 setter 方法给 Bean 注入另一部分依赖。一般情况下，推荐使用构造器注入强制性依赖，使用 setter 方法注入可选的依赖。</p><p>Bean 的依赖项解析过程如下：</p><ul><li>容器被创建出来，通过描述 Bean 的配置元数据进行初始化，检验每个 Bean 的配置信息。配置元数据可以是 XML，也可以是注解和 Java 代码</li><li>对于每一个 Bean，它依赖会被表示成属性、构造器参数或静态工厂方法的参数。这些依赖将会在 Bean 被真正创建的时提供给它</li><li>每个属性或构造器参数都是一个具体的值，或者指向容器内另一个 Bean 的引用</li><li>对于那些是具体值的属性或构造器参数，相应的值会被转化成属性或构造器参数的实际类型</li></ul><h3 id=自动装配>自动装配</h3><p>Spring 提供了四种自动装配模式：</p><table><thead><tr><th>Mode</th><th>Description</th></tr></thead><tbody><tr><td>no</td><td>不使用自动装配，通过 <code>ref</code> 定义 Bean 的依赖。这是默认值</td></tr><tr><td>byName</td><td>通过属性名装配。Spring 会查找与属性同名的 Bean 进行装配</td></tr><tr><td>byType</td><td>当满足给定类型的 Bean 只有一个时，进行自动装配，有多个时抛出异常。若没有满足类型的 Bean，不进行装配。</td></tr><tr><td>constructor</td><td>与 byType 类似，只是 Bean 用作构造器参数</td></tr></tbody></table><h2 id=bean>Bean</h2><p>在 Spring 中，Bean 就是那些由 IoC 容器初始化、配置和组装的对象，IoC 容器就是 Bean 的管理者。我们在前面提到，开发者通过配置元数据告诉 IoC 容器 Bean 的相关配置信息，容器将配置元数据解析成 <code>BeanDefinition</code> 对象，再通过它创建 Bean。</p><h3 id=bean-的命名>Bean 的命名</h3><p>通常情况下，一个 Bean 只有一个标识符（identifier）。但是，如果 Bean 需要多个标识符，也是可以的，这些多的标识符就是 Bean 的别名（alias）。但是，<strong>在同一个 IoC 容器中，是不允许有多个相同的标识符的</strong>。</p><p>那么，如何指定 Bean 的标识符呢？在基于 XML 的配置里，Bean 的标识符由 <code>id</code> 和 <code>name</code> 属性指定。其中 <code>id</code> 只允许我们声明一个标识符，而 <code>name</code> 允许我们声明多个，多个标识符之间使用逗号（<code>,</code>）或分号（<code>;</code>）或空格分隔就行了。例如：<code>&lt;bean id="xx" name="xx1,xx2"/></code>有时候，在 <code>name</code> 中声明所有的别名可能并不合适，这时可以使用 <code>&lt;alias/></code> 标签来单独明别名。例如：<code>&lt;alias name="fromName" alias="toName"/></code>。如果我们没有在 <code>&lt;bean/></code> 中定义 <code>id</code> 或 <code>name</code> 的值也是可以的，这是容器或自动帮我们生成一个 Bean 的标识符。</p><p>当我们使用像 <code>@Bean</code> 这种基于 Java 的配置创建 Bean 时，Bean 的标识符默认为方法的名字，例如下面代码中创建的 Bean 的标识符就是 <code>transferService</code>：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@Configuration</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>AppConfig</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>@Bean</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> TransferServiceImpl <span style=color:#a6e22e>transferService</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> TransferServiceImpl<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><h3 id=depends-on>depends-on</h3><p>有时候，我们可能是希望某个 Bean 在另一个或多个 Bean 之前初始化，这时我们可以使用 <code>depends-on</code>。例如：<code>&lt;bean id="beanOne" depends-on="beanTwo,beanThree"/></code> 告知容器在初始化 <code>beanOne</code> 之前先初始化 <code>beanTwo</code> 和 <code>beanThree</code>。</p><h3 id=延迟初始化-bean>延迟初始化 Bean</h3><p><code>ApplicationContext</code> 默认会在启动的时候初始化所有的单例 Bean。虽然这种饿汉式的初始化方式能够尽早将问题暴露出来，但是有时候我们希望 Bean 在第一次被使用时才创建，即延迟初始化。为了实现这个目标，我们可以使用 <code>lazy-init</code> 属性。例如，<code>&lt;bean id="beanOne" lazy-init="true"/></code> 告诉容器不要在启动时创建 <code>beanOne</code>，而是在 <code>beanOne</code> 第一次被请求时才创建它。</p><h3 id=bean-的作用域>Bean 的作用域</h3><p>我们前面有说，IoC 容器会使用 <code>BeanDefinition</code> 中封装的描述信息来创建 Bean。Bean 的<a href=https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-scopes>作用域（Scope）</a>描述的是：在不同场景下， <code>BeanDefinition</code> 和通过它创建出来的 Bean 的数量关系。在Spring 中，Bean 的作用域是相对于 IoC 容器来说的。Spring 默认支持了六种作用域：</p><table><thead><tr><th>Scope</th><th>Description</th></tr></thead><tbody><tr><td>singleton</td><td>通过单个 <code>BeanDefinition</code> 创建的 Bean 在容器内只有一个实例。这也是默认的作用域</td></tr><tr><td>prototype</td><td>通过单个 <code>BeanDefinition</code> 可以创建出任意数量的 Bean 实例</td></tr><tr><td>request</td><td>在每个 HTTP 请求的生命周期内，通过单个 <code>BeanDefinition</code> 创建的实例只有一个</td></tr><tr><td>session</td><td>在每个 HTTP 会话的生命周期内，通过单个 <code>BeanDefinition</code> 创建的实例只有一个</td></tr><tr><td>application</td><td>在每个 <code>ServletContext</code> 的生命周期内，通过单个 <code>BeanDefinition</code> 创建的实例只有一个</td></tr><tr><td>websocket</td><td>在每个 <code>WebSocket</code> 的生命周期内，通过单个 <code>BeanDefinition</code> 创建的实例只有一个</td></tr></tbody></table><p>此外，Spring 还支持开发者创建自定义的 Bean 作用域，具体做法可以参考 <a href=https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-scopes-custom>Custom Scopes</a>。</p><h3 id=bean-的生命周期>Bean 的生命周期</h3><p>Bean 本质上是一个 Java 对象。我们先回顾下 <a href=/posts/java/jvm/java_object_lifecycle/>Java 对象的生命周期</a>，JVM 中的对象一生大概会经历以下几个阶段：</p><p><img src=/images/java/spring/java-object-lifecycle.png alt="Java object lifecycle" title="Java 对象生命周期"></p><p>站在 JVM 的角度来看，Bean 的生命周期也就是这样。但是，由于 Bean 是 IoC 容器管理的，容器可能给它定义额外的生命周期，也就是添加新的阶段。所以我们需要从 IoC 容器的角度看 Bean 的生命周期。</p><p>IoC 容器中 Bean 的生命周期主要有 4 个大的阶段：</p><ol><li>实例化（Instantiation）</li><li>初始化（Initialization）</li><li>使用（In Use）</li><li>销毁（Destruction）</li></ol><p>这和 Java 对象的生命周期有点不一样。但如果我们将 Bean 的生命周期看成创建、使用和销毁这三个大的阶段是不是就好理解了一些呢。Bean 的使用就不用说了，销毁也只是在容器关闭前（详见 <code>ConfigurableApplicationContext#close</code>）调用一下，复杂的都在 Bean 的创建过程。所以下面我们重点来看 Bean 的创建过程。</p><h4 id=bean-的创建>Bean 的创建</h4><p>先声明以下，这里说的 Bean 的创建并不只是说把 Bean 实例化出来就行了，而是指实例化和初始化两个步骤。普通非延迟初始化的 Bean 创建流程的入口其实在 <code>org.springframework.context.support.AbstractApplicationContext#refresh()</code> 方法中的 <code>finishBeanFactoryInitialization(beanFactory)</code>，感兴趣的同学可以打开源码一探究竟。一番探索之后，发现最终的 Bean 创建逻辑位于 <code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#doCreateBean</code> 方法。<code>doCreateBean()</code> 的方法体还是不短，为了抓住主线，先贴出主干代码：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>protected</span> Object <span style=color:#a6e22e>doCreateBean</span><span style=color:#f92672>(</span>String beanName<span style=color:#f92672>,</span> RootBeanDefinition mbd<span style=color:#f92672>,</span> <span style=color:#a6e22e>@Nullable</span> Object<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>			<span style=color:#66d9ef>throws</span> BeanCreationException <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>		<span style=color:#75715e>// Instantiate the bean.
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>		BeanWrapper instanceWrapper <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isSingleton</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			instanceWrapper <span style=color:#f92672>=</span> <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>factoryBeanInstanceCache</span><span style=color:#f92672>.</span><span style=color:#a6e22e>remove</span><span style=color:#f92672>(</span>beanName<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>instanceWrapper <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			instanceWrapper <span style=color:#f92672>=</span> createBeanInstance<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> mbd<span style=color:#f92672>,</span> args<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>		Object bean <span style=color:#f92672>=</span> instanceWrapper<span style=color:#f92672>.</span><span style=color:#a6e22e>getWrappedInstance</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>		<span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span>		<span style=color:#75715e>// Allow post-processors to modify the merged bean definition.
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>		<span style=color:#66d9ef>synchronized</span> <span style=color:#f92672>(</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>postProcessingLock</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			<span style=color:#66d9ef>if</span> <span style=color:#f92672>(!</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>postProcessed</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>				<span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>					applyMergedBeanDefinitionPostProcessors<span style=color:#f92672>(</span>mbd<span style=color:#f92672>,</span> beanType<span style=color:#f92672>,</span> beanName<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>				<span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable ex<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>					<span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>				<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>				mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>postProcessed</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>			<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#75715e>// Eagerly cache singletons to be able to resolve circular references
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>		<span style=color:#75715e>// even when triggered by lifecycle interfaces like BeanFactoryAware.
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>		<span style=color:#66d9ef>boolean</span> earlySingletonExposure <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isSingleton</span><span style=color:#f92672>()</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>allowCircularReferences</span> <span style=color:#f92672>&amp;&amp;</span>
+</span></span><span style=display:flex><span>				isSingletonCurrentlyInCreation<span style=color:#f92672>(</span>beanName<span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>earlySingletonExposure<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			<span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>			addSingletonFactory<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> <span style=color:#f92672>()</span> <span style=color:#f92672>-&gt;</span> getEarlyBeanReference<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> mbd<span style=color:#f92672>,</span> bean<span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#75715e>// Initialize the bean instance.
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>		Object exposedObject <span style=color:#f92672>=</span> bean<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			populateBean<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> mbd<span style=color:#f92672>,</span> instanceWrapper<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>			exposedObject <span style=color:#f92672>=</span> initializeBean<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> exposedObject<span style=color:#f92672>,</span> mbd<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable ex<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			<span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#75715e>// Register bean as disposable.
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>		<span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			registerDisposableBeanIfNecessary<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> bean<span style=color:#f92672>,</span> mbd<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>BeanDefinitionValidationException ex<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			<span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>return</span> exposedObject<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>这代码就清爽多了。所以 Bean 的创建步骤主要是以下几步：</p><p><img src=/images/java/spring/doCreateBean.png alt="创建 Bean" title="Bean 的创建"></p><h4 id=beanpostprocessor>BeanPostProcessor</h4><p><code>BeanPostProcessor</code> 允许我们对 Bean 进行个性化定制处理。该接口有两个方法：</p><ul><li><code>postProcessBeforeInitialization(Object bean, String beanName)</code>：在 Bean 初始化之前调用</li><li><code>postProcessAfterInitialization(Object bean, String beanName)</code>：在 Bean 初始化之后调用</li></ul><p><code>BeanPostProcessor</code> 有一系列的子接口，比如 <code>InstantiationAwareBeanPostProcessor</code> 、<code>DestructionAwareBeanPostProcessor</code>、<code>BeanFactoryPostProcessor</code>、<code>ApplicationContextAwareProcessor</code> 等。<code>BeanPostProcessor</code> 系列接口中的回调是容器级别的，对所有的 Bean 生效。不同子接口发挥作用的时间不同，后面会进行介绍。</p><h4 id=实例化-bean>实例化 Bean</h4><p>创建 Bean 的第一步是实例化，入口方法是 <code>AbstractAutowireCapableBeanFactory#createBeanInstance</code>。容器会根据配置元数据，采取合适的策略（工厂方法或构造器）<a href=https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-class>实例化 Bean</a>。</p><p><code>InstantiationAwareBeanPostProcessor</code> 提供了三个非常重要的方法：</p><ul><li><code>postProcessBeforeInstantiation(Class&lt;?> beanClass, String beanName)</code>：在实例化 Bean 之前调用</li><li><code>postProcessAfterInstantiation(Object bean, String beanName)</code>：在实例化 Bean 之后、正式填充属性之前调用</li><li><code>postProcessProperties(PropertyValues pvs, Object bean, String beanName)</code>：在填充属性之前对属性值作处理</li></ul><p>加入这三个方法之后的 Bean 创建过程如下：</p><p><img src=/images/java/spring/doCreateBean-instantiation-callback.png alt="实例化 Bean" title="实例化 Bean"></p><h4 id=初始化-bean>初始化 Bean</h4><p>初始化 Bean 的入口方法是 <code>AbstractAutowireCapableBeanFactory#initializeBean</code>，主干代码如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>protected</span> Object <span style=color:#a6e22e>initializeBean</span><span style=color:#f92672>(</span>String beanName<span style=color:#f92672>,</span> Object bean<span style=color:#f92672>,</span> <span style=color:#a6e22e>@Nullable</span> RootBeanDefinition mbd<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>		invokeAwareMethods<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> bean<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		Object wrappedBean <span style=color:#f92672>=</span> bean<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>mbd <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>||</span> <span style=color:#f92672>!</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isSynthetic</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			wrappedBean <span style=color:#f92672>=</span> applyBeanPostProcessorsBeforeInitialization<span style=color:#f92672>(</span>wrappedBean<span style=color:#f92672>,</span> beanName<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			invokeInitMethods<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> wrappedBean<span style=color:#f92672>,</span> mbd<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable ex<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			<span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>mbd <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>||</span> <span style=color:#f92672>!</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isSynthetic</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			wrappedBean <span style=color:#f92672>=</span> applyBeanPostProcessorsAfterInitialization<span style=color:#f92672>(</span>wrappedBean<span style=color:#f92672>,</span> beanName<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>return</span> wrappedBean<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>	<span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>从上到下的逻辑主要是：调用 <code>Aware</code> 类型的回调方法，<code>BeanPostProcessor</code> 初始化前置处理，调用初始化方法，调用 <code>BeanPostProcessor</code> 初始化后置处理。我们一个一个来看。</p><h5 id=bean-初始化-aware>Bean 初始化 Aware</h5><p><code>Aware</code> 类型的接口众多，但是在 Bean 的初始化过程中只可能会调用 <code>BeanNameAware</code>、<code>BeanClassLoaderAware</code> 和 <code>BeanFactoryAware</code> 三个接口的回调方法。具体逻辑可以参考<code>AbstractAutowireCapableBeanFactory#initializeBean</code> 方法调用的 <code>invokeAwareMethods(beanName, bean)</code> 方法。方法不长，我直接贴出来：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>invokeAwareMethods</span><span style=color:#f92672>(</span>String beanName<span style=color:#f92672>,</span> Object bean<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>bean <span style=color:#66d9ef>instanceof</span> Aware<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>bean <span style=color:#66d9ef>instanceof</span> BeanNameAware<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>				<span style=color:#f92672>((</span>BeanNameAware<span style=color:#f92672>)</span> bean<span style=color:#f92672>).</span><span style=color:#a6e22e>setBeanName</span><span style=color:#f92672>(</span>beanName<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>			<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>			<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>bean <span style=color:#66d9ef>instanceof</span> BeanClassLoaderAware<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>				ClassLoader bcl <span style=color:#f92672>=</span> getBeanClassLoader<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>				<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>bcl <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>					<span style=color:#f92672>((</span>BeanClassLoaderAware<span style=color:#f92672>)</span> bean<span style=color:#f92672>).</span><span style=color:#a6e22e>setBeanClassLoader</span><span style=color:#f92672>(</span>bcl<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>				<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>			<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>			<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>bean <span style=color:#66d9ef>instanceof</span> BeanFactoryAware<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>				<span style=color:#f92672>((</span>BeanFactoryAware<span style=color:#f92672>)</span> bean<span style=color:#f92672>).</span><span style=color:#a6e22e>setBeanFactory</span><span style=color:#f92672>(</span>AbstractAutowireCapableBeanFactory<span style=color:#f92672>.</span><span style=color:#a6e22e>this</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>			<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>	<span style=color:#f92672>}</span>
+</span></span></code></pre></div><h5 id=正式初始化>正式初始化</h5><p><code>org.springframework.beans.factory.InitializingBean</code> 允许 Bean 在所有属性填充完毕之后执行初始化操作，接口定义如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>InitializingBean</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>	 * Invoked by the containing BeanFactory after it has set all bean properties
+</span></span></span><span style=display:flex><span><span style=color:#75715e>	 * and satisfied BeanFactoryAware, ApplicationContextAware etc.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>	 */</span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>afterPropertiesSet</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p><code>afterPropertiesSet()</code> 方法会在 Bean 的属性设置完毕、各种 <code>Aware</code> 调用完成之后执行。实际上，Spring 并不推荐我们使用这个接口来进行初始化操作，因为这会导致我们的代码与 Spring 框架强耦合。推荐的做法是使用自定义的 <code>init()</code> 方法或 <a href=http://en.wikipedia.org/wiki/JSR_250>JSR-250</a> 定义的 <code>@PostConstruct</code> 注解。</p><p><code>invokeInitMethods()</code> 方法会尝试先判断 Bean 是否实现 <code>InitializingBean</code> 接口。若是，则调用 Bean 的 <code>afterPropertiesSet()</code> 方法。然后，判断 Bean 是否有自定义的初始化方法。若有，则调用自定义的 <code>init()</code> 方法。你可能已经发现了，这里没有调用 <code>@PostConstruct</code> 注解的方法，因为它是在 <code>#BeanPostProcessor#postProcessBeforeInitialization</code> 中调用的，感兴趣的同学可以查看 <code>InitDestroyAnnotationBeanPostProcessor#postProcessBeforeInitialization</code> 的源码。<code>invokeInitMethods()</code> 的主干代码如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>protected</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>invokeInitMethods</span><span style=color:#f92672>(</span>String beanName<span style=color:#f92672>,</span> Object bean<span style=color:#f92672>,</span> <span style=color:#a6e22e>@Nullable</span> RootBeanDefinition mbd<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>			<span style=color:#66d9ef>throws</span> Throwable <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>boolean</span> isInitializingBean <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>bean <span style=color:#66d9ef>instanceof</span> InitializingBean<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>isInitializingBean <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>(</span>mbd <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>||</span> <span style=color:#f92672>!</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isExternallyManagedInitMethod</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;afterPropertiesSet&#34;</span><span style=color:#f92672>)))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			<span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#f92672>((</span>InitializingBean<span style=color:#f92672>)</span> bean<span style=color:#f92672>).</span><span style=color:#a6e22e>afterPropertiesSet</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>mbd <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>&amp;&amp;</span> bean<span style=color:#f92672>.</span><span style=color:#a6e22e>getClass</span><span style=color:#f92672>()</span> <span style=color:#f92672>!=</span> NullBean<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>			String initMethodName <span style=color:#f92672>=</span> mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>getInitMethodName</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>			<span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>hasLength</span><span style=color:#f92672>(</span>initMethodName<span style=color:#f92672>)</span> <span style=color:#f92672>&amp;&amp;</span>
+</span></span><span style=display:flex><span>					<span style=color:#f92672>!(</span>isInitializingBean <span style=color:#f92672>&amp;&amp;</span> <span style=color:#e6db74>&#34;afterPropertiesSet&#34;</span><span style=color:#f92672>.</span><span style=color:#a6e22e>equals</span><span style=color:#f92672>(</span>initMethodName<span style=color:#f92672>))</span> <span style=color:#f92672>&amp;&amp;</span>
+</span></span><span style=display:flex><span>					<span style=color:#f92672>!</span>mbd<span style=color:#f92672>.</span><span style=color:#a6e22e>isExternallyManagedInitMethod</span><span style=color:#f92672>(</span>initMethodName<span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>				invokeCustomInitMethod<span style=color:#f92672>(</span>beanName<span style=color:#f92672>,</span> bean<span style=color:#f92672>,</span> mbd<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>			<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>		<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>	<span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>到这里，Bean 的初始化过程基本就分析完了，我们来完善一下之前的图：</p><p><img src=/images/java/spring/doCreateBean-initialization-callback.png alt="Bean 的创建过程" title="Bean 的创建过程"></p><h4 id=销毁-bean>销毁 Bean</h4><p>跟 <code>InitializingBean</code> 类似，Spring 为我们提供了 <code>DisposableBean</code> 用于容器关闭前执行 Bean 的清理工作。Spring 并不推荐我们使用它，因为这会导致程序代码与 Spring 强耦合。推荐的做法是使用 JSR-250 定义的 <code>@PreDestroy</code> 注解或配置自定义的 <code>destroy()</code> 方法。如果同时使用了几种，那么方法的执行顺序是：</p><ol><li><code>@PreDestroy</code> 注解的方法</li><li><code>DisposableBean</code> 的 <code>destory()</code> 方法</li><li>配置的自定义 <code>destroy()</code> 方法</li></ol><p>到这里，Bean 的生命周期基本就介绍完了。用一张图总结下：</p><p><img src=/images/java/spring/bean-lifecycle.png alt="Bean 的生命周期" title="Bean 的生命周期"></p><h4 id=其它-aware-接口>其它 Aware 接口</h4><p>除了之前提到过的 <code>Aware</code> 接口，Spring 还给我们提供了很多其它的 <code>Aware</code> 接口。这些接口告诉 IoC 容器 Bean 需要对应的依赖。例如 <code>ApplicationContextAware</code> 允许 Bean 获得一个 <code>ApplicationContext</code> 的引用，<code>ResourceLoaderAware</code> 允许 Bean 获得一个 <code>ResourceLoader</code> 的引用。</p><h4 id=一个例子>一个例子</h4><p>纸上得来终觉浅，绝知此事要躬行。下面，让我们通过一个例子加深对 Bean 生命周期的理解。</p><p>先定义一个 Bean 类，它实现了众多的接口，包含自定义的初始化方法和自定义的销毁方法，以及一个普通方法 <code>hello()</code>：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MySpringBean</span> <span style=color:#66d9ef>implements</span> ApplicationContextAware<span style=color:#f92672>,</span> BeanNameAware<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>        BeanClassLoaderAware<span style=color:#f92672>,</span> BeanFactoryAware<span style=color:#f92672>,</span> InitializingBean<span style=color:#f92672>,</span> DisposableBean <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setBeanClassLoader</span><span style=color:#f92672>(</span>ClassLoader classLoader<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setBeanClassLoader...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setBeanFactory</span><span style=color:#f92672>(</span>BeanFactory beanFactory<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setBeanFactory...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setBeanName</span><span style=color:#f92672>(</span>String s<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setBeanName...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>destroy</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing destroy...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>afterPropertiesSet</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing afterPropertiesSet...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setApplicationContext</span><span style=color:#f92672>(</span>ApplicationContext applicationContext<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing setApplicationContext...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@PostConstruct</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>postConstruct</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing @PostConstruct...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@PreDestroy</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>preDestroy</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing @PreDestroy...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>customInitMethod</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing custom init method...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>customDestroyMethod</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing custom destroy method...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>hello</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello, Spring!&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>然后定义一个 <code>BeanPostProcessor</code> 的实现类：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyBeanPostProcessor</span> <span style=color:#66d9ef>implements</span> BeanPostProcessor <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>postProcessBeforeInitialization</span><span style=color:#f92672>(</span>Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessBeforeInitialization of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> bean<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>postProcessAfterInitialization</span><span style=color:#f92672>(</span>Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessAfterInitialization of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> bean<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>再定义一个 <code>InstantiationAwareBeanPostProcessor</code> 的实现类：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyInstantiationAwareBeanPostProcessor</span> <span style=color:#66d9ef>implements</span> InstantiationAwareBeanPostProcessor <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>postProcessBeforeInstantiation</span><span style=color:#f92672>(</span>Class<span style=color:#f92672>&lt;?&gt;</span> beanClass<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessBeforeInstantiation of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>postProcessAfterInstantiation</span><span style=color:#f92672>(</span>Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessAfterInstantiation of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> PropertyValues <span style=color:#a6e22e>postProcessProperties</span><span style=color:#f92672>(</span>PropertyValues pvs<span style=color:#f92672>,</span> Object bean<span style=color:#f92672>,</span> String beanName<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> BeansException <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Executing postProcessProperties of &#34;</span> <span style=color:#f92672>+</span> beanName <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; ...&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> pvs<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>以及一个配置类：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@Configuration</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyLifeCycleConfiguration</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Bean</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> MyBeanPostProcessor <span style=color:#a6e22e>myBeanPostProcessor</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MyBeanPostProcessor<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Bean</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> MyInstantiationAwareBeanPostProcessor <span style=color:#a6e22e>myInstantiationAwareBeanPostProcessor</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MyInstantiationAwareBeanPostProcessor<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Bean</span><span style=color:#f92672>(</span>initMethod <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;customInitMethod&#34;</span><span style=color:#f92672>,</span> destroyMethod <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;customDestroyMethod&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> MySpringBean <span style=color:#a6e22e>mySpringBean</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MySpringBean<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>最后写一个测试：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@SpringBootTest</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>BeanLifecycleApplicationTests</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Autowired</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> MySpringBean mySpringBean<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Test</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testMySpringBeanLifecycle</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        mySpringBean<span style=color:#f92672>.</span><span style=color:#a6e22e>hello</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>现在运行测试，各个生命周期回调的执行步骤就一览无余啦。由于容器默认还会创建其它 Bean，数量还不少，影响我们观察。所以下面执行结果中只列出了与 <code>MySpringBean</code> 相关的执行结果：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-txt data-lang=txt><span style=display:flex><span>Executing postProcessBeforeInstantiation of mySpringBean ...
+</span></span><span style=display:flex><span>Executing postProcessAfterInstantiation of mySpringBean ...
+</span></span><span style=display:flex><span>Executing postProcessProperties of mySpringBean ...
+</span></span><span style=display:flex><span>Executing setBeanName...
+</span></span><span style=display:flex><span>Executing setBeanClassLoader...
+</span></span><span style=display:flex><span>Executing setBeanFactory...
+</span></span><span style=display:flex><span>Executing setApplicationContext...
+</span></span><span style=display:flex><span>Executing postProcessBeforeInitialization of mySpringBean ...
+</span></span><span style=display:flex><span>Executing @PostConstruct...
+</span></span><span style=display:flex><span>Executing afterPropertiesSet...
+</span></span><span style=display:flex><span>Executing custom init method...
+</span></span><span style=display:flex><span>Executing postProcessAfterInitialization of mySpringBean ...
+</span></span><span style=display:flex><span>Hello, Spring!
+</span></span><span style=display:flex><span>Executing @PreDestroy...
+</span></span><span style=display:flex><span>Executing destroy...
+</span></span><span style=display:flex><span>Executing custom destroy method...
+</span></span></code></pre></div><p>完整代码已经放到 <a href=https://github.com/zhannicholas/java-demos/tree/main/bean-lifecycle>Github</a>。</p><h2 id=未完待续>未完待续</h2><p>时间有限，先写到这里。写东西从来都不是一次性过程，要常看，常思考，常更新。</p><h2 id=参考资料>参考资料</h2><ol><li><a href=https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#spring-core>Spring Framework Documentation</a>.</li><li><a href=https://blog.csdn.net/riemann_/article/details/118500805>一文读懂 Spring Bean 的生命周期</a>.</li></ol></div><footer class=entry-footer><div class='container sep-before'><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg><span class=screen-reader-text>分类: </span><a class=category href=/categories/spring/>Spring</a></div><div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg><span class=screen-reader-text>标签: </span><a class=tag href=/tags/spring/>Spring</a>, <a class=tag href=/tags/java/>Java</a></div></div></footer></article><nav class=entry-nav><div class=container><div class='prev-entry sep-before'><a href=/java/java_lang/references_and_reachability_in_java/><span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>Previous</span>
+<span class=screen-reader-text>上一篇: </span>Java 中的引用与对象可达性</a></div><div class='next-entry sep-before'><a href=/java/spring/configurations-in-spring-boot/><span class=screen-reader-text>下一篇: </span>Spring Boot 中的配置体系<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg></span></a></div></div></nav></main><footer id=footer class=footer><div class='container sep-before'><section class='widget widget-social_menu sep-after'><nav aria-label=社交菜单><ul><li><a href=https://github.com/zhannicholas target=_blank rel='noopener me'><span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg></a></li><li><a href=https://t.me/zhannicholas target=_blank rel='noopener me'><span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg></a></li><li><a href=mailto:zhan_nicholas@outlook.com target=_blank rel='noopener me'><span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a></li><li><a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel='noopener me'><span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a></li></ul></nav></section><div class=copyright><p>&copy; 2018-2022 Nicholas Zhan</p></div></div></footer></div></div><script>window.__assets_js_src="/assets/js/"</script><script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script></body></html>

@@ -1,440 +1,142 @@
-<!doctype html><html lang=zh-cn dir=auto><head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="任何软件都不可避免地出现各种或大或小的 Bug，软件设计的一大目标就是软件的健壮性，而错误处理就是提高软件健壮性的一大利器。作为一门对安全比较">
-<meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="Rust 基础：错误处理 • Nicholas Zhan">
-<meta property="og:description" content="任何软件都不可避免地出现各种或大或小的 Bug，软件设计的一大目标就是软件的健壮性，而错误处理就是提高软件健壮性的一大利器。作为一门对安全比较">
-<meta property="og:url" content="https://zhannicholas.github.io/rust/rust_basics_error_handling/">
-<meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="rust"><meta property="article:tag" content="Rust"><meta property="article:published_time" content="2021-09-29T20:55:48+08:00"><meta property="article:modified_time" content="2021-09-29T20:55:48+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.90.1">
-<title>Rust 基础：错误处理 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/rust/rust_basics_error_handling/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
-</head>
-<body class="page type-rust has-sidebar">
-<div class=site><div id=sidebar class=sidebar>
-<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
-<div class=container><section class="widget widget-about sep-after">
-<header>
-<div class=logo>
-<a href=/>
-<img src=/images/logo.png>
-</a>
-</div>
-<h2 class="title site-title">
-<a href=/>
-Nicholas Zhan
-</a>
-</h2>
-<div class=desc>
-Java Developer, Runner, Cyclist
-</div>
-</header>
-</section>
-<section class="widget widget-search sep-after">
-<header>
-<h4 class="title widget-title">搜索</h4>
-</header>
-<form action=/search id=search-form class=search-form>
-<label>
-<span class=screen-reader-text>搜索</span>
-<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
-</label></form>
-</section>
-<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
-<div class=container>
-<ul><li class="item has-children">
-<a href=/java/>Java</a><button class=sub-menu-toggler>
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="任何软件都不可避免地出现各种或大或小的 Bug，软件设计的一大目标就是软件的健壮性，而错误处理就是提高软件健壮性的一大利器。作为一门对安全比较"><meta name=theme-color content="#ffcd00"><meta property="og:title" content="Rust 基础：错误处理 • Nicholas Zhan"><meta property="og:description" content="任何软件都不可避免地出现各种或大或小的 Bug，软件设计的一大目标就是软件的健壮性，而错误处理就是提高软件健壮性的一大利器。作为一门对安全比较"><meta property="og:url" content="https://zhannicholas.github.io/rust/rust_basics_error_handling/"><meta property="og:site_name" content="Nicholas Zhan"><meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="rust"><meta property="article:tag" content="Rust"><meta property="article:published_time" content="2021-09-29T20:55:48+08:00"><meta property="article:modified_time" content="2021-09-29T20:55:48+08:00"><meta name=twitter:card content="summary"><meta name=generator content="Hugo 0.107.0"><title>Rust 基础：错误处理 • Nicholas Zhan</title><link rel=canonical href=https://zhannicholas.github.io/rust/rust_basics_error_handling/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style></head><body class='page type-rust has-sidebar'><div class=site><div id=sidebar class=sidebar><a class=screen-reader-text href=#main-menu>跳到主菜单</a><div class=container><section class='widget widget-about sep-after'><header><div class=logo><a href=/><img src=/images/logo.png></a></div><h2 class='title site-title'><a href=/>Nicholas Zhan</a></h2><div class=desc>Java Developer, Runner, Cyclist</div></header></section><section class='widget widget-search sep-after'><header><h4 class='title widget-title'>搜索</h4></header><form action=/search id=search-form class=search-form><label><span class=screen-reader-text>搜索</span>
+<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;></label></form></section><section class='widget widget-sidebar_menu sep-after'><nav id=sidebar-menu class='menu sidebar-menu' aria-label=侧边栏菜单><div class=container><ul><li class='item has-children'><a href=/java/>Java</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/java/jakartaee/>Jakarta EE</a></li><li class=item>
-<a href=/java/jvm/>JVM</a></li><li class=item>
-<a href=/java/concurrency/>并发</a></li></ul></li><li class="item has-current">
-<a href=/rust/>Rust</a></li><li class=item>
-<a href=/distributed_computing/>分布式计算</a></li><li class=item>
-<a href=/operating_systems/>操作系统</a></li><li class="item has-children">
-<a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/java/jakartaee/>Jakarta EE</a></li><li class=item><a href=/java/jvm/>JVM</a></li><li class=item><a href=/java/concurrency/>并发</a></li></ul></li><li class='item has-current'><a href=/rust/>Rust</a></li><li class=item><a href=/distributed_computing/>分布式计算</a></li><li class=item><a href=/operating_systems/>操作系统</a></li><li class='item has-children'><a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/computer_networks/http/>HTTP</a></li><li class=item>
-<a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
-</div>
-</nav>
-</section><section class="widget widget-taxonomy_cloud sep-after">
-<header>
-<h4 class="title widget-title">标签</h4>
-</header>
-<div class="container list-container">
-<ul class="list taxonomy-cloud"><li>
-<a href=/tags/communication/ style=font-size:1em>Communication</a>
-</li><li>
-<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.2380952380952381em>C算法</a>
-</li><li>
-<a href=/tags/english/ style=font-size:1em>English</a>
-</li><li>
-<a href=/tags/gc/ style=font-size:1.0952380952380953em>GC</a>
-</li><li>
-<a href=/tags/git/ style=font-size:1em>Git</a>
-</li><li>
-<a href=/tags/http/ style=font-size:1.3333333333333333em>HTTP</a>
-</li><li>
-<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
-</li><li>
-<a href=/tags/jakartaee/ style=font-size:1.0952380952380953em>JakartaEE</a>
-</li><li>
-<a href=/tags/java/ style=font-size:2em>Java</a>
-</li><li>
-<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
-</li><li>
-<a href=/tags/jvm/ style=font-size:1.1428571428571428em>JVM</a>
-</li><li>
-<a href=/tags/leetcode/ style=font-size:1.0952380952380953em>Leetcode</a>
-</li><li>
-<a href=/tags/life/ style=font-size:1em>Life</a>
-</li><li>
-<a href=/tags/linux/ style=font-size:1.1428571428571428em>Linux</a>
-</li><li>
-<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
-</li><li>
-<a href=/tags/networks/ style=font-size:1.0952380952380953em>Networks</a>
-</li><li>
-<a href=/tags/os/ style=font-size:1.2857142857142856em>OS</a>
-</li><li>
-<a href=/tags/ostep/ style=font-size:1.0952380952380953em>OSTEP</a>
-</li><li>
-<a href=/tags/python/ style=font-size:1em>Python</a>
-</li><li>
-<a href=/tags/redis/ style=font-size:1.3333333333333333em>Redis</a>
-</li><li>
-<a href=/tags/rpc/ style=font-size:1em>RPC</a>
-</li><li>
-<a href=/tags/rust/ style=font-size:1.3333333333333333em>Rust</a>
-</li><li>
-<a href=/tags/shell/ style=font-size:1.2380952380952381em>Shell</a>
-</li><li>
-<a href=/tags/sicp/ style=font-size:1em>SICP</a>
-</li><li>
-<a href=/tags/spring/ style=font-size:1em>Spring</a>
-</li><li>
-<a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a>
-</li><li>
-<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
-</li><li>
-<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
-</li><li>
-<a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0476190476190477em>分布式计算</a>
-</li><li>
-<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
-</li><li>
-<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.380952380952381em>并发</a>
-</li><li>
-<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
-</li><li>
-<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0476190476190477em>数据库</a>
-</li><li>
-<a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
-</li><li>
-<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0476190476190477em>现代操作系统</a>
-</li><li>
-<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
-</li><li>
-<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.1428571428571428em>算法导论</a>
-</li><li>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
-</li><li>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.5714285714285714em>设计模式</a>
-</li></ul>
-</div>
-</section>
-</div>
-<div class=sidebar-overlay></div>
-</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
-<div class=container>
-<a class=screen-reader-text href=#content>跳到内容</a>
+<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/computer_networks/http/>HTTP</a></li><li class=item><a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul></div></nav></section><section class='widget widget-taxonomy_cloud sep-after'><header><h4 class='title widget-title'>标签</h4></header><div class='container list-container'><ul class='list taxonomy-cloud'><li><a href=/tags/communication/ style=font-size:1em>Communication</a></li><li><a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.2380952380952381em>C算法</a></li><li><a href=/tags/english/ style=font-size:1em>English</a></li><li><a href=/tags/gc/ style=font-size:1.0952380952380953em>GC</a></li><li><a href=/tags/geography/ style=font-size:1em>Geography</a></li><li><a href=/tags/geohash/ style=font-size:1em>Geohash</a></li><li><a href=/tags/git/ style=font-size:1em>Git</a></li><li><a href=/tags/http/ style=font-size:1.3333333333333333em>HTTP</a></li><li><a href=/tags/hugo/ style=font-size:1em>Hugo</a></li><li><a href=/tags/jakartaee/ style=font-size:1.0952380952380953em>JakartaEE</a></li><li><a href=/tags/java/ style=font-size:2em>Java</a></li><li><a href=/tags/jdbc/ style=font-size:1em>JDBC</a></li><li><a href=/tags/jvm/ style=font-size:1.1428571428571428em>JVM</a></li><li><a href=/tags/leetcode/ style=font-size:1.0952380952380953em>Leetcode</a></li><li><a href=/tags/life/ style=font-size:1em>Life</a></li><li><a href=/tags/linux/ style=font-size:1.1428571428571428em>Linux</a></li><li><a href=/tags/mybatis/ style=font-size:1em>MyBatis</a></li><li><a href=/tags/networks/ style=font-size:1.0952380952380953em>Networks</a></li><li><a href=/tags/os/ style=font-size:1.2857142857142856em>OS</a></li><li><a href=/tags/ostep/ style=font-size:1.0952380952380953em>OSTEP</a></li><li><a href=/tags/python/ style=font-size:1em>Python</a></li><li><a href=/tags/redis/ style=font-size:1.3333333333333333em>Redis</a></li><li><a href=/tags/rpc/ style=font-size:1em>RPC</a></li><li><a href=/tags/rust/ style=font-size:1.3333333333333333em>Rust</a></li><li><a href=/tags/shell/ style=font-size:1.2380952380952381em>Shell</a></li><li><a href=/tags/sicp/ style=font-size:1em>SICP</a></li><li><a href=/tags/spring/ style=font-size:1em>Spring</a></li><li><a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a></li><li><a href=/tags/tomcat/ style=font-size:1em>Tomcat</a></li><li><a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a></li><li><a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.380952380952381em>并发</a></li><li><a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0476190476190477em>分布式计算</a></li><li><a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a></li><li><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.5714285714285714em>设计模式</a></li><li><a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a></li><li><a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a></li><li><a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0476190476190477em>数据库</a></li><li><a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a></li><li><a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.1428571428571428em>算法导论</a></li><li><a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0476190476190477em>现代操作系统</a></li><li><a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a></li></ul></div></section></div><div class=sidebar-overlay></div></div><div class=main><nav id=main-menu class='menu main-menu' aria-label=主菜单><div class=container><a class=screen-reader-text href=#content>跳到内容</a>
 <button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
 <span class=screen-reader-text>Toggle Sidebar</span>
-<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-</span>
-<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-</span>
-</button>
-<ul><li class=item>
-<a href=/>主页</a>
-</li><li class=item>
-<a href=/posts/>博客</a>
-</li><li class=item>
-<a href=/notebook/>笔记本</a>
-</li><li class=item>
-<a href=/linux/>Linux</a>
-</li></ul>
-</div>
-</nav><div class=header-widgets>
-<div class=container>
-<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
-<section class="widget widget-breadcrumbs sep-after">
-<nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/rust/>Rust</a></li><li><span>Rust 基础：错误处理</span></li></ol>
-</nav>
-</section></div>
-</div>
-<header id=header class="header site-header">
-<div class="container sep-after">
-<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
-</div>
-</div>
-</header>
-<main id=content>
-<article lang=zh-cn class=entry>
-<header class="header entry-header">
-<div class="container sep-after">
-<div class=header-info>
-<h1 class=title>Rust 基础：错误处理</h1>
-</div>
-<div class=entry-meta>
-<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-<span class=screen-reader-text>Posted on </span>
-<time class=entry-date datetime=2021-09-29T20:55:48+08:00>2021, Sep 29</time>
-</span>
-<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
-<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
-<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-5 mins read
-</span>
-</div>
-</div>
-</header>
-<details class="container entry-toc">
-<summary class=title>
-<span>目录</span>
-</summary>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#不可恢复错误与-panic>不可恢复错误与 <code>panic!</code></a>
-<ul>
-<li><a href=#backtrace>Backtrace</a></li>
-</ul>
-</li>
-<li><a href=#可恢复错误与-resultt-e>可恢复错误与 <code>Result&lt;T, E></code></a>
-<ul>
-<li><a href=#错误的传播>错误的传播</a></li>
-</ul>
-</li>
-<li><a href=#参考资料>参考资料</a></li>
-</ul>
-</nav>
-</details>
-<div class="container entry-content">
-<p>任何软件都不可避免地出现各种或大或小的 Bug，软件设计的一大目标就是软件的健壮性，而错误处理就是提高软件健壮性的一大利器。作为一门对安全比较执着的编程语言，Rust 给我们开发者提供了很多处理错误的功能特性。</p>
-<p>Rust 中的错误（error）分为两种：可恢复错误（recoverable error）和不可恢复错误（unrecoverable error）。在 Java 中，不仅有错误（error），还有异常（exception），但 Rust 中是没有异常的。对于可恢复错误，Rust 给我们提供了 <code>Result&lt;T, E></code> 这种数据类型，供我们作进一步决定。而对于不可恢复错误，Rust 给我们提供了一个叫做 <code>panic!</code> 的宏，<code>panic!</code> 会在程序遭遇不可恢复错误时立即停止程序的执行。</p>
-<h2 id=不可恢复错误与-panic>不可恢复错误与 <code>panic!</code></h2>
-<p>有时候，你碰到的错误（比如数组下标越界）会让你束手无策。这时，你可以使用 Rust 提供的 <code>panic!</code> 宏直接终止程序，防止更坏的事情发生。当 <code>panic!</code> 执行时，Rust 程序默认会先打印出失败信息，<a href=https://doc.rust-lang.org/nomicon/unwinding.html>解退（unwinding）</a>并清理栈，然后退出。解退是一种比较优雅退出方式，与之相对的是直接终止（abort）。二者的区别在于，解退会清理数据，归还内存，而直接终止就不会清理数据，回收内存的工作交给了操作系统。</p>
-<p>先来看一个简单的 <code>panic!</code>：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
-    panic!(<span style=color:#e6db74>&#34;crash and burn&#34;</span>);
-}
-</code></pre></div><p>这个程序一运行，就会出现错误信息：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>&gt; cargo run
-   Compiling error_handling v0.1.0 (F:\Code\Rust\rust-study\error_handling)
-    Finished dev [unoptimized + debuginfo] target(s) <span style=color:#66d9ef>in</span> 3.19s
-     Running `target\debug\error_handling.exe`
-thread <span style=color:#e6db74>&#39;main&#39;</span> panicked at <span style=color:#e6db74>&#39;crash and burn&#39;</span>, src\main.rs<span style=color:#960050;background-color:#1e0010>:</span>2<span style=color:#960050;background-color:#1e0010>:</span>5
-note<span style=color:#960050;background-color:#1e0010>:</span> run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-error<span style=color:#960050;background-color:#1e0010>:</span> <span style=color:#66d9ef>process</span> didn<span style=color:#960050;background-color:#1e0010>&#39;</span>t exit successfully<span style=color:#960050;background-color:#1e0010>:</span> `target\debug\error_handling.exe` (exit code<span style=color:#960050;background-color:#1e0010>:</span> 101)
-</code></pre></div><p>倒数第三行展示了 panic 出现的具体位置——src/main.rs 的第二行，倒数第二行则告诉了我们展示回溯（backtrace）的方法，最后一行则是给出了进程成功退出以及退出码的信息。</p>
-<h3 id=backtrace>Backtrace</h3>
-<p>如果 panic 出现在我们写的代码还好，这时可以直接看到错误发生在哪一行。但如果 panic 出现在 Rust 的核心库或者标准库内部会怎样呢？我们来看一个数组下标越界的例子：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
-    <span style=color:#66d9ef>let</span> v <span style=color:#f92672>=</span> vec![<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>];
-    v[<span style=color:#ae81ff>99</span>];
-}
-</code></pre></div><p>这份代码能够正常通过编译，但是在运行的时候会出现以下错误：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>&gt; cargo run
-   Compiling error_handling v0.1.0 (F:\Code\Rust\rust-study\error_handling)
-    Finished dev [unoptimized + debuginfo] target(s) <span style=color:#66d9ef>in</span> 2.67s
-     Running `target\debug\error_handling.exe`
-thread <span style=color:#e6db74>&#39;main&#39;</span> panicked at <span style=color:#e6db74>&#39;index out of bounds: the len is 3 but the index is 99&#39;</span>, src\main.rs<span style=color:#960050;background-color:#1e0010>:</span>3<span style=color:#960050;background-color:#1e0010>:</span>5
-note<span style=color:#960050;background-color:#1e0010>:</span> run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-error<span style=color:#960050;background-color:#1e0010>:</span> <span style=color:#66d9ef>process</span> didn<span style=color:#960050;background-color:#1e0010>&#39;</span>t exit successfully<span style=color:#960050;background-color:#1e0010>:</span> `target\debug\error_handling.exe` (exit code<span style=color:#960050;background-color:#1e0010>:</span> 101)
-</code></pre></div><p>虽然错误信息告诉了我们错误发生在第三行，但没有给出具体是哪个地方导致了 panic 的出现。根据提示，我们可以使用环境变量 <code>RUST_BACKTRACE=1</code> 来展示 backtrace。</p>
-<p>Backtrace 是一个由执行到 panic 发生位置过程中被调用的函数组成的列表。通过它，我们就能一步一步地走到 panic 出现的具体位置。我们修改环境变量，重新运行程序：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>&gt; $env:RUST_BACKTRACE=1
-&gt; cargo run
-    Finished dev [unoptimized + debuginfo] target(s) <span style=color:#66d9ef>in</span> 0.06s
-     Running `target\debug\error_handling.exe`
-thread <span style=color:#e6db74>&#39;main&#39;</span> panicked at <span style=color:#e6db74>&#39;index out of bounds: the len is 3 but the index is 99&#39;</span>, src\main.rs<span style=color:#960050;background-color:#1e0010>:</span>3<span style=color:#960050;background-color:#1e0010>:</span>5
-stack backtrace<span style=color:#960050;background-color:#1e0010>:</span>
-   0<span style=color:#960050;background-color:#1e0010>:</span> std::panicking::begin_panic_handler
-             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\/library\std\src\panicking.rs<span style=color:#960050;background-color:#1e0010>:</span>515
-   1<span style=color:#960050;background-color:#1e0010>:</span> core::panicking::panic_fmt
-             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\/library\core\src\panicking.rs<span style=color:#960050;background-color:#1e0010>:</span>92
-   2<span style=color:#960050;background-color:#1e0010>:</span> core::panicking::panic_bounds_check
-             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\/library\core\src\panicking.rs<span style=color:#960050;background-color:#1e0010>:</span>69
-   3<span style=color:#960050;background-color:#1e0010>:</span> core::slice::index::{{impl}}::index&lt;i32&gt;
-             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\library\core\src\slice\index.rs<span style=color:#960050;background-color:#1e0010>:</span>184
-   4<span style=color:#960050;background-color:#1e0010>:</span> core::slice::index::{{impl}}::index&lt;i32,usize&gt;
-             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\library\core\src\slice\index.rs<span style=color:#960050;background-color:#1e0010>:</span>15
-   5<span style=color:#960050;background-color:#1e0010>:</span> alloc::vec::{{impl}}::index&lt;i32,usize,alloc::alloc::Global&gt;
-             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\library\alloc\src\vec\mod.rs<span style=color:#960050;background-color:#1e0010>:</span>2428
-   6<span style=color:#960050;background-color:#1e0010>:</span> error_handling::main
-             at .\src\main.rs<span style=color:#960050;background-color:#1e0010>:</span>3
-   7<span style=color:#960050;background-color:#1e0010>:</span> core::ops::<span style=color:#66d9ef>function</span>::FnOnce::call_once&lt;fn(),tuple&lt;&gt;&gt;
-             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\library\core\src\ops\<span style=color:#66d9ef>function</span>.rs<span style=color:#960050;background-color:#1e0010>:</span>227
-note<span style=color:#960050;background-color:#1e0010>:</span> Some details are omitted, run with `RUST_BACKTRACE=full` <span style=color:#66d9ef>for</span> a verbose backtrace.
-error<span style=color:#960050;background-color:#1e0010>:</span> <span style=color:#66d9ef>process</span> didn<span style=color:#960050;background-color:#1e0010>&#39;</span>t exit successfully<span style=color:#960050;background-color:#1e0010>:</span> `target\debug\error_handling.exe` (exit code<span style=color:#960050;background-color:#1e0010>:</span> 101)
-</code></pre></div><p>这次输出的信息就多了不少。在 backtrace 中，最下面是我们写的代码，最上面则是库中发生 panic 的具体位置。若要避免 panic，我们就需要修改自己的代码，防止代码缺陷被库函数触发库函数内的 panic。</p>
-<h2 id=可恢复错误与-resultt-e>可恢复错误与 <code>Result&lt;T, E></code></h2>
-<p><code>panic!</code> 一般用于那些我们无法处理的错误，但在实际的编程过程中，大部分失败情况都是我们能够处理的。这时，我们一般会拿到错误信息，然后根据错误信息进行相关处理，确保程序能够继续执行下去。</p>
-<p><code>Result&lt;T, E></code> 这个枚举类型就是专门用来处理可能出现的失败的，它的定义如下：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>enum</span> Result<span style=color:#f92672>&lt;</span>T, E<span style=color:#f92672>&gt;</span> {
-    OK(T),
-    Err(E),
-}
-</code></pre></div><p><code>Result</code> 包含 <code>OK</code> 和 <code>Err</code> 这两个 variant，分别表示成功和失败的情况。这里的 <code>T</code> 和 <code>E</code> 都是泛型参数，分别用来表示 <code>OK</code> 中成功的返回值的类型和 <code>Err</code> 中失败的错误类型。</p>
-<p>我们来看一个打开文件的例子：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>use</span> std::fs::File;
-
-<span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
-    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>);
-}
-</code></pre></div><p>打开一个文件可能有多种结果：如果文件存在并且是可读的，我们就能从 <code>Result</code> 的 <code>OK</code> 中得到一个文件句柄（file handle），否则得到的将会是 <code>Err</code> 中携带的错误。错误可能是文件不存在，也可能是我们没有文件的读取权限……。如果是文件不存在，我们就可以主动创建文件，然后继续执行后续步骤。这就是一个可恢复错误的例子。先来看最简单的，文件不存在时直接退出：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>use</span> std::fs::File;
-
-<span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
-    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>);
-
-    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> <span style=color:#66d9ef>match</span> f {
-        Ok(file) <span style=color:#f92672>=&gt;</span> file,
-        Err(error) <span style=color:#f92672>=&gt;</span> panic!(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, error),
-    };
-}
-</code></pre></div><p>以上代码用 <code>match</code> 去匹配枚举类 <code>Result</code>，成功时得到文件句柄，失败时输出错误信息并退出程序。如果我们想在文件不存在时创建文件该怎么做呢？这种情况下，就需要去判断错误的类型：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>use</span> std::fs::File;
-<span style=color:#66d9ef>use</span> std::io::ErrorKind;
-
-<span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
-    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>);
-
-    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> <span style=color:#66d9ef>match</span> f {
-        Ok(file) <span style=color:#f92672>=&gt;</span> file,
-        Err(error) <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>match</span> error.kind() {
-            ErrorKind::NotFound <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>match</span> File::create(<span style=color:#e6db74>&#34;hello.txt&#34;</span>) {
-                Ok(fc) <span style=color:#f92672>=&gt;</span> fc,
-                Err(e) <span style=color:#f92672>=&gt;</span> panic!(<span style=color:#e6db74>&#34;Problem creating the file: {:?}&#34;</span>, e),
-            },
-            other_error <span style=color:#f92672>=&gt;</span> {
-                panic!(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, other_error)
-            }
-        },
-    };
-}
-</code></pre></div><p>现在代码开起来开始有点复杂了。实际上，<code>Result</code> 有一个方法叫 <code>unwrap_or_else</code>，它可以代替上面的 <code>match</code> 表达式：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>use</span> std::fs::File;
-<span style=color:#66d9ef>use</span> std::io::ErrorKind;
-
-<span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
-    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>).unwrap_or_else(<span style=color:#f92672>|</span>error<span style=color:#f92672>|</span> {
-        <span style=color:#66d9ef>if</span> error.kind() <span style=color:#f92672>==</span> ErrorKind::NotFound {
-            File::create(<span style=color:#e6db74>&#34;hello.txt&#34;</span>).unwrap_or_else(<span style=color:#f92672>|</span>error<span style=color:#f92672>|</span> {
-                panic!(<span style=color:#e6db74>&#34;Problem creating the file: {:?}&#34;</span>, error);
-            })
-        } <span style=color:#66d9ef>else</span> {
-            panic!(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, error);
-        }
-    });
-}
-</code></pre></div><h3 id=错误的传播>错误的传播</h3>
-<p>有时候，我们可能并不像自己处理错误，而是希望将错误的处理交给调用我们代码的人。当我们这么做时，就将错误传播（propagating）给了调用方，给了调用方更多的控制能力。例如，当文件不存在时，直接返回错误给调用方：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>use</span> std::fs::File;
-<span style=color:#66d9ef>use</span> std::io;
-<span style=color:#66d9ef>use</span> std::io::Read;
-
-<span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>read_username_from_file</span>() -&gt; Result<span style=color:#f92672>&lt;</span>String, io::Error<span style=color:#f92672>&gt;</span> {
-    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>);
-
-    <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> f <span style=color:#f92672>=</span> <span style=color:#66d9ef>match</span> f {
-        Ok(file) <span style=color:#f92672>=&gt;</span> file,
-        Err(e) <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>return</span> Err(e),
-    };
-
-    <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> s <span style=color:#f92672>=</span> String::new();
-
-    <span style=color:#66d9ef>match</span> f.read_to_string(<span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s) {
-        Ok(_) <span style=color:#f92672>=&gt;</span> Ok(s),
-        Err(e) <span style=color:#f92672>=&gt;</span> Err(e),
-    }
-}
-</code></pre></div><p>为了提高代码的可读性，Rust 还给我们提供了一个传播错误的简便写法——使用 <code>?</code> 操作符。例如，<code>?</code> 操作符改写上述代码的结果如下：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>read_username_from_file</span>() -&gt; Result<span style=color:#f92672>&lt;</span>String, io::Error<span style=color:#f92672>&gt;</span> {
-    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>)<span style=color:#f92672>?</span>;
-
-    <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> s <span style=color:#f92672>=</span> String::new();
-
-    f.read_to_string(<span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s)<span style=color:#f92672>?</span>;
-    OK(s)
-}
-</code></pre></div><p><code>?</code> 甚至还支持链式操作：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>read_username_from_file</span>() -&gt; Result<span style=color:#f92672>&lt;</span>String, io::Error<span style=color:#f92672>&gt;</span> {
-    <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> s <span style=color:#f92672>=</span> String::new();
-    File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>)<span style=color:#f92672>?</span>.read_to_string(<span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s)<span style=color:#f92672>?</span>;
-    OK(s)
-}
-</code></pre></div><p>但是，<code>?</code> 的使用是有限制的。它只能用在返回结果类型是 <code>Result</code>、<code>Option</code> 或实现了 <code>std::ops::Try</code> 的类型的函数上。</p>
-<h2 id=参考资料>参考资料</h2>
-<ol>
-<li>Steve Klabnik, Carol Nichols. <a href=https://doc.rust-lang.org/stable/book/>The Rust Programming Language</a>.</li>
-</ol>
-</div>
-<footer class=entry-footer>
-<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
-<span class=screen-reader-text>分类: </span><a class=category href=/categories/rust/>Rust</a></div>
-<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-<span class=screen-reader-text>标签: </span><a class=tag href=/tags/rust/>Rust</a></div>
-</div>
-</footer>
-</article>
-<nav class=entry-nav>
-<div class=container><div class="prev-entry sep-before">
-<a href=/rust/rust_basics_enums_and_patterns_matching/>
-<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
-Previous</span>
-<span class=screen-reader-text>上一篇: </span>Rust 基础：枚举与模式匹配</a>
-</div></div>
-</nav>
-</main>
-<footer id=footer class=footer>
-<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
-<ul><li>
-<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
-</a>
-</li><li>
-<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
-</a>
-</li><li>
-<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
-<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-</a>
-</li><li>
-<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-</a>
-</li></ul>
-</nav>
-</section><div class=copyright>
-<p> &copy; 2018-2021 Nicholas Zhan </p>
-</div>
-</div>
-</footer>
-</div>
-</div><script>window.__assets_js_src="/assets/js/"</script>
-<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script>
-</body>
-</html>
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span><span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button><ul><li class=item><a href=/>主页</a></li><li class=item><a href=/posts/>博客</a></li><li class=item><a href=/notebook/>笔记本</a></li><li class=item><a href=/linux/>Linux</a></li></ul></div></nav><div class=header-widgets><div class=container><style>.widget-breadcrumbs li:after{content:'\2f '}</style><section class='widget widget-breadcrumbs sep-after'><nav id=breadcrumbs><ol><li><a href=/>主页</a></li><li><a href=/rust/>Rust</a></li><li><span>Rust 基础：错误处理</span></li></ol></nav></section></div></div><header id=header class='header site-header'><div class='container sep-after'><div class=header-info><p class='site-title title'>Nicholas Zhan</p><p class='desc site-desc'>Java Developer, Runner, Cyclist</p></div></div></header><main id=content><article lang=zh-cn class=entry><header class='header entry-header'><div class='container sep-after'><div class=header-info><h1 class=title>Rust 基础：错误处理</h1></div><div class=entry-meta><span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class=screen-reader-text>Posted on</span>
+<time class=entry-date datetime=2021-09-29T20:55:48+08:00>2021, Sep 29</time></span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg><span class=screen-reader-text>by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>5 mins read</span></div></div></header><details class='container entry-toc'><summary class=title><span>目录</span></summary><nav id=TableOfContents><ul><li><a href=#不可恢复错误与-panic>不可恢复错误与 <code>panic!</code></a><ul><li><a href=#backtrace>Backtrace</a></li></ul></li><li><a href=#可恢复错误与-resultt-e>可恢复错误与 <code>Result&lt;T, E></code></a><ul><li><a href=#错误的传播>错误的传播</a></li></ul></li><li><a href=#参考资料>参考资料</a></li></ul></nav></details><div class='container entry-content'><p>任何软件都不可避免地出现各种或大或小的 Bug，软件设计的一大目标就是软件的健壮性，而错误处理就是提高软件健壮性的一大利器。作为一门对安全比较执着的编程语言，Rust 给我们开发者提供了很多处理错误的功能特性。</p><p>Rust 中的错误（error）分为两种：可恢复错误（recoverable error）和不可恢复错误（unrecoverable error）。在 Java 中，不仅有错误（error），还有异常（exception），但 Rust 中是没有异常的。对于可恢复错误，Rust 给我们提供了 <code>Result&lt;T, E></code> 这种数据类型，供我们作进一步决定。而对于不可恢复错误，Rust 给我们提供了一个叫做 <code>panic!</code> 的宏，<code>panic!</code> 会在程序遭遇不可恢复错误时立即停止程序的执行。</p><h2 id=不可恢复错误与-panic>不可恢复错误与 <code>panic!</code></h2><p>有时候，你碰到的错误（比如数组下标越界）会让你束手无策。这时，你可以使用 Rust 提供的 <code>panic!</code> 宏直接终止程序，防止更坏的事情发生。当 <code>panic!</code> 执行时，Rust 程序默认会先打印出失败信息，<a href=https://doc.rust-lang.org/nomicon/unwinding.html>解退（unwinding）</a>并清理栈，然后退出。解退是一种比较优雅退出方式，与之相对的是直接终止（abort）。二者的区别在于，解退会清理数据，归还内存，而直接终止就不会清理数据，回收内存的工作交给了操作系统。</p><p>先来看一个简单的 <code>panic!</code>：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
+</span></span><span style=display:flex><span>    panic!(<span style=color:#e6db74>&#34;crash and burn&#34;</span>);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>这个程序一运行，就会出现错误信息：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>&gt; cargo run
+</span></span><span style=display:flex><span>   Compiling error_handling v0.1.0 (F:\Code\Rust\rust-study\error_handling)
+</span></span><span style=display:flex><span>    Finished dev [unoptimized + debuginfo] target(s) <span style=color:#66d9ef>in</span> <span style=color:#ae81ff>3</span>.19s
+</span></span><span style=display:flex><span>     Running `target\debug\error_handling.exe`
+</span></span><span style=display:flex><span>thread <span style=color:#e6db74>&#39;main&#39;</span> panicked at <span style=color:#e6db74>&#39;crash and burn&#39;</span>, src\main.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>2</span><span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>5</span>
+</span></span><span style=display:flex><span>note<span style=color:#960050;background-color:#1e0010>:</span> run with `RUST_BACKTRACE=<span style=color:#ae81ff>1</span>` environment variable to display a backtrace
+</span></span><span style=display:flex><span>error<span style=color:#960050;background-color:#1e0010>:</span> <span style=color:#66d9ef>process</span> didn<span style=color:#960050;background-color:#1e0010>&#39;</span>t exit successfully<span style=color:#960050;background-color:#1e0010>:</span> `target\debug\error_handling.exe` (exit code<span style=color:#960050;background-color:#1e0010>:</span> <span style=color:#ae81ff>101</span>)
+</span></span></code></pre></div><p>倒数第三行展示了 panic 出现的具体位置——src/main.rs 的第二行，倒数第二行则告诉了我们展示回溯（backtrace）的方法，最后一行则是给出了进程成功退出以及退出码的信息。</p><h3 id=backtrace>Backtrace</h3><p>如果 panic 出现在我们写的代码还好，这时可以直接看到错误发生在哪一行。但如果 panic 出现在 Rust 的核心库或者标准库内部会怎样呢？我们来看一个数组下标越界的例子：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> v <span style=color:#f92672>=</span> vec![<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>];
+</span></span><span style=display:flex><span>    v[<span style=color:#ae81ff>99</span>];
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>这份代码能够正常通过编译，但是在运行的时候会出现以下错误：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>&gt; cargo run
+</span></span><span style=display:flex><span>   Compiling error_handling v0.1.0 (F:\Code\Rust\rust-study\error_handling)
+</span></span><span style=display:flex><span>    Finished dev [unoptimized + debuginfo] target(s) <span style=color:#66d9ef>in</span> <span style=color:#ae81ff>2</span>.67s
+</span></span><span style=display:flex><span>     Running `target\debug\error_handling.exe`
+</span></span><span style=display:flex><span>thread <span style=color:#e6db74>&#39;main&#39;</span> panicked at <span style=color:#e6db74>&#39;index out of bounds: the len is 3 but the index is 99&#39;</span>, src\main.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>3</span><span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>5</span>
+</span></span><span style=display:flex><span>note<span style=color:#960050;background-color:#1e0010>:</span> run with `RUST_BACKTRACE=<span style=color:#ae81ff>1</span>` environment variable to display a backtrace
+</span></span><span style=display:flex><span>error<span style=color:#960050;background-color:#1e0010>:</span> <span style=color:#66d9ef>process</span> didn<span style=color:#960050;background-color:#1e0010>&#39;</span>t exit successfully<span style=color:#960050;background-color:#1e0010>:</span> `target\debug\error_handling.exe` (exit code<span style=color:#960050;background-color:#1e0010>:</span> <span style=color:#ae81ff>101</span>)
+</span></span></code></pre></div><p>虽然错误信息告诉了我们错误发生在第三行，但没有给出具体是哪个地方导致了 panic 的出现。根据提示，我们可以使用环境变量 <code>RUST_BACKTRACE=1</code> 来展示 backtrace。</p><p>Backtrace 是一个由执行到 panic 发生位置过程中被调用的函数组成的列表。通过它，我们就能一步一步地走到 panic 出现的具体位置。我们修改环境变量，重新运行程序：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>&gt; $env:RUST_BACKTRACE=<span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>&gt; cargo run
+</span></span><span style=display:flex><span>    Finished dev [unoptimized + debuginfo] target(s) <span style=color:#66d9ef>in</span> <span style=color:#ae81ff>0</span>.06s
+</span></span><span style=display:flex><span>     Running `target\debug\error_handling.exe`
+</span></span><span style=display:flex><span>thread <span style=color:#e6db74>&#39;main&#39;</span> panicked at <span style=color:#e6db74>&#39;index out of bounds: the len is 3 but the index is 99&#39;</span>, src\main.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>3</span><span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>5</span>
+</span></span><span style=display:flex><span>stack backtrace<span style=color:#960050;background-color:#1e0010>:</span>
+</span></span><span style=display:flex><span>   <span style=color:#ae81ff>0</span><span style=color:#960050;background-color:#1e0010>:</span> std::panicking::begin_panic_handler
+</span></span><span style=display:flex><span>             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\/library\std\src\panicking.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>515</span>
+</span></span><span style=display:flex><span>   <span style=color:#ae81ff>1</span><span style=color:#960050;background-color:#1e0010>:</span> core::panicking::panic_fmt
+</span></span><span style=display:flex><span>             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\/library\core\src\panicking.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>92</span>
+</span></span><span style=display:flex><span>   <span style=color:#ae81ff>2</span><span style=color:#960050;background-color:#1e0010>:</span> core::panicking::panic_bounds_check
+</span></span><span style=display:flex><span>             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\/library\core\src\panicking.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>69</span>
+</span></span><span style=display:flex><span>   <span style=color:#ae81ff>3</span><span style=color:#960050;background-color:#1e0010>:</span> core::slice::index::{{impl}}::index&lt;i32&gt;
+</span></span><span style=display:flex><span>             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\library\core\src\slice\index.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>184</span>
+</span></span><span style=display:flex><span>   <span style=color:#ae81ff>4</span><span style=color:#960050;background-color:#1e0010>:</span> core::slice::index::{{impl}}::index&lt;i32,usize&gt;
+</span></span><span style=display:flex><span>             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\library\core\src\slice\index.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>15</span>
+</span></span><span style=display:flex><span>   <span style=color:#ae81ff>5</span><span style=color:#960050;background-color:#1e0010>:</span> alloc::vec::{{impl}}::index&lt;i32,usize,alloc::alloc::Global&gt;
+</span></span><span style=display:flex><span>             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\library\alloc\src\vec\mod.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>2428</span>
+</span></span><span style=display:flex><span>   <span style=color:#ae81ff>6</span><span style=color:#960050;background-color:#1e0010>:</span> error_handling::main
+</span></span><span style=display:flex><span>             at .\src\main.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span>   <span style=color:#ae81ff>7</span><span style=color:#960050;background-color:#1e0010>:</span> core::ops::function::FnOnce::call_once&lt;fn(),tuple&lt;&gt;&gt;
+</span></span><span style=display:flex><span>             at /rustc/a178d0322ce20e33eac124758e837cbd80a6f633\library\core\src\ops\function.rs<span style=color:#960050;background-color:#1e0010>:</span><span style=color:#ae81ff>227</span>
+</span></span><span style=display:flex><span>note<span style=color:#960050;background-color:#1e0010>:</span> Some details are omitted, run with `RUST_BACKTRACE=full` <span style=color:#66d9ef>for</span> a verbose backtrace.
+</span></span><span style=display:flex><span>error<span style=color:#960050;background-color:#1e0010>:</span> <span style=color:#66d9ef>process</span> didn<span style=color:#960050;background-color:#1e0010>&#39;</span>t exit successfully<span style=color:#960050;background-color:#1e0010>:</span> `target\debug\error_handling.exe` (exit code<span style=color:#960050;background-color:#1e0010>:</span> <span style=color:#ae81ff>101</span>)
+</span></span></code></pre></div><p>这次输出的信息就多了不少。在 backtrace 中，最下面是我们写的代码，最上面则是库中发生 panic 的具体位置。若要避免 panic，我们就需要修改自己的代码，防止代码缺陷被库函数触发库函数内的 panic。</p><h2 id=可恢复错误与-resultt-e>可恢复错误与 <code>Result&lt;T, E></code></h2><p><code>panic!</code> 一般用于那些我们无法处理的错误，但在实际的编程过程中，大部分失败情况都是我们能够处理的。这时，我们一般会拿到错误信息，然后根据错误信息进行相关处理，确保程序能够继续执行下去。</p><p><code>Result&lt;T, E></code> 这个枚举类型就是专门用来处理可能出现的失败的，它的定义如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#66d9ef>enum</span> Result<span style=color:#f92672>&lt;</span>T, E<span style=color:#f92672>&gt;</span> {
+</span></span><span style=display:flex><span>    OK(T),
+</span></span><span style=display:flex><span>    Err(E),
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><code>Result</code> 包含 <code>OK</code> 和 <code>Err</code> 这两个 variant，分别表示成功和失败的情况。这里的 <code>T</code> 和 <code>E</code> 都是泛型参数，分别用来表示 <code>OK</code> 中成功的返回值的类型和 <code>Err</code> 中失败的错误类型。</p><p>我们来看一个打开文件的例子：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#66d9ef>use</span> std::fs::File;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>打开一个文件可能有多种结果：如果文件存在并且是可读的，我们就能从 <code>Result</code> 的 <code>OK</code> 中得到一个文件句柄（file handle），否则得到的将会是 <code>Err</code> 中携带的错误。错误可能是文件不存在，也可能是我们没有文件的读取权限……。如果是文件不存在，我们就可以主动创建文件，然后继续执行后续步骤。这就是一个可恢复错误的例子。先来看最简单的，文件不存在时直接退出：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#66d9ef>use</span> std::fs::File;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> <span style=color:#66d9ef>match</span> f {
+</span></span><span style=display:flex><span>        Ok(file) <span style=color:#f92672>=&gt;</span> file,
+</span></span><span style=display:flex><span>        Err(error) <span style=color:#f92672>=&gt;</span> panic!(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, error),
+</span></span><span style=display:flex><span>    };
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>以上代码用 <code>match</code> 去匹配枚举类 <code>Result</code>，成功时得到文件句柄，失败时输出错误信息并退出程序。如果我们想在文件不存在时创建文件该怎么做呢？这种情况下，就需要去判断错误的类型：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#66d9ef>use</span> std::fs::File;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>use</span> std::io::ErrorKind;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> <span style=color:#66d9ef>match</span> f {
+</span></span><span style=display:flex><span>        Ok(file) <span style=color:#f92672>=&gt;</span> file,
+</span></span><span style=display:flex><span>        Err(error) <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>match</span> error.kind() {
+</span></span><span style=display:flex><span>            ErrorKind::NotFound <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>match</span> File::create(<span style=color:#e6db74>&#34;hello.txt&#34;</span>) {
+</span></span><span style=display:flex><span>                Ok(fc) <span style=color:#f92672>=&gt;</span> fc,
+</span></span><span style=display:flex><span>                Err(e) <span style=color:#f92672>=&gt;</span> panic!(<span style=color:#e6db74>&#34;Problem creating the file: {:?}&#34;</span>, e),
+</span></span><span style=display:flex><span>            },
+</span></span><span style=display:flex><span>            other_error <span style=color:#f92672>=&gt;</span> {
+</span></span><span style=display:flex><span>                panic!(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, other_error)
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>    };
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>现在代码开起来开始有点复杂了。实际上，<code>Result</code> 有一个方法叫 <code>unwrap_or_else</code>，它可以代替上面的 <code>match</code> 表达式：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#66d9ef>use</span> std::fs::File;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>use</span> std::io::ErrorKind;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>).unwrap_or_else(<span style=color:#f92672>|</span>error<span style=color:#f92672>|</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> error.kind() <span style=color:#f92672>==</span> ErrorKind::NotFound {
+</span></span><span style=display:flex><span>            File::create(<span style=color:#e6db74>&#34;hello.txt&#34;</span>).unwrap_or_else(<span style=color:#f92672>|</span>error<span style=color:#f92672>|</span> {
+</span></span><span style=display:flex><span>                panic!(<span style=color:#e6db74>&#34;Problem creating the file: {:?}&#34;</span>, error);
+</span></span><span style=display:flex><span>            })
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>            panic!(<span style=color:#e6db74>&#34;Problem opening the file: {:?}&#34;</span>, error);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    });
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=错误的传播>错误的传播</h3><p>有时候，我们可能并不像自己处理错误，而是希望将错误的处理交给调用我们代码的人。当我们这么做时，就将错误传播（propagating）给了调用方，给了调用方更多的控制能力。例如，当文件不存在时，直接返回错误给调用方：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#66d9ef>use</span> std::fs::File;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>use</span> std::io;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>use</span> std::io::Read;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>read_username_from_file</span>() -&gt; Result<span style=color:#f92672>&lt;</span>String, io::Error<span style=color:#f92672>&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> f <span style=color:#f92672>=</span> <span style=color:#66d9ef>match</span> f {
+</span></span><span style=display:flex><span>        Ok(file) <span style=color:#f92672>=&gt;</span> file,
+</span></span><span style=display:flex><span>        Err(e) <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>return</span> Err(e),
+</span></span><span style=display:flex><span>    };
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> s <span style=color:#f92672>=</span> String::new();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>match</span> f.read_to_string(<span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s) {
+</span></span><span style=display:flex><span>        Ok(_) <span style=color:#f92672>=&gt;</span> Ok(s),
+</span></span><span style=display:flex><span>        Err(e) <span style=color:#f92672>=&gt;</span> Err(e),
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>为了提高代码的可读性，Rust 还给我们提供了一个传播错误的简便写法——使用 <code>?</code> 操作符。例如，<code>?</code> 操作符改写上述代码的结果如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>read_username_from_file</span>() -&gt; Result<span style=color:#f92672>&lt;</span>String, io::Error<span style=color:#f92672>&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> f <span style=color:#f92672>=</span> File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>)<span style=color:#f92672>?</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> s <span style=color:#f92672>=</span> String::new();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    f.read_to_string(<span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s)<span style=color:#f92672>?</span>;
+</span></span><span style=display:flex><span>    OK(s)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><code>?</code> 甚至还支持链式操作：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>read_username_from_file</span>() -&gt; Result<span style=color:#f92672>&lt;</span>String, io::Error<span style=color:#f92672>&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> <span style=color:#66d9ef>mut</span> s <span style=color:#f92672>=</span> String::new();
+</span></span><span style=display:flex><span>    File::open(<span style=color:#e6db74>&#34;hello.txt&#34;</span>)<span style=color:#f92672>?</span>.read_to_string(<span style=color:#f92672>&amp;</span><span style=color:#66d9ef>mut</span> s)<span style=color:#f92672>?</span>;
+</span></span><span style=display:flex><span>    OK(s)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>但是，<code>?</code> 的使用是有限制的。它只能用在返回结果类型是 <code>Result</code>、<code>Option</code> 或实现了 <code>std::ops::Try</code> 的类型的函数上。</p><h2 id=参考资料>参考资料</h2><ol><li>Steve Klabnik, Carol Nichols. <a href=https://doc.rust-lang.org/stable/book/>The Rust Programming Language</a>.</li></ol></div><footer class=entry-footer><div class='container sep-before'><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg><span class=screen-reader-text>分类: </span><a class=category href=/categories/rust/>Rust</a></div><div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg><span class=screen-reader-text>标签: </span><a class=tag href=/tags/rust/>Rust</a></div></div></footer></article><nav class=entry-nav><div class=container><div class='prev-entry sep-before'><a href=/rust/rust_basics_enums_and_patterns_matching/><span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>Previous</span>
+<span class=screen-reader-text>上一篇: </span>Rust 基础：枚举与模式匹配</a></div></div></nav></main><footer id=footer class=footer><div class='container sep-before'><section class='widget widget-social_menu sep-after'><nav aria-label=社交菜单><ul><li><a href=https://github.com/zhannicholas target=_blank rel='noopener me'><span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg></a></li><li><a href=https://t.me/zhannicholas target=_blank rel='noopener me'><span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg></a></li><li><a href=mailto:zhan_nicholas@outlook.com target=_blank rel='noopener me'><span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a></li><li><a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel='noopener me'><span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a></li></ul></nav></section><div class=copyright><p>&copy; 2018-2022 Nicholas Zhan</p></div></div></footer></div></div><script>window.__assets_js_src="/assets/js/"</script><script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script></body></html>

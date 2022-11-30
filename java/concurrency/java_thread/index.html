@@ -1,620 +1,210 @@
-<!doctype html><html lang=zh-cn dir=auto><head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="进程（process）是资源分配的基本单元，而线程（thread）是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源">
-<meta name=theme-color content="#ffcd00">
-<meta property="og:title" content="Java 线程 • Nicholas Zhan">
-<meta property="og:description" content="进程（process）是资源分配的基本单元，而线程（thread）是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源">
-<meta property="og:url" content="https://zhannicholas.github.io/java/concurrency/java_thread/">
-<meta property="og:site_name" content="Nicholas Zhan">
-<meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="java"><meta property="article:tag" content="Java"><meta property="article:tag" content="并发"><meta property="article:published_time" content="2020-12-13T18:32:20+08:00"><meta property="article:modified_time" content="2020-12-13T18:32:20+08:00"><meta name=twitter:card content="summary">
-<meta name=generator content="Hugo 0.90.1">
-<title>Java 线程 • Nicholas Zhan</title>
-<link rel=canonical href=https://zhannicholas.github.io/java/concurrency/java_thread/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style>
-</head>
-<body class="page type-java has-sidebar">
-<div class=site><div id=sidebar class=sidebar>
-<a class=screen-reader-text href=#main-menu>跳到主菜单</a>
-<div class=container><section class="widget widget-about sep-after">
-<header>
-<div class=logo>
-<a href=/>
-<img src=/images/logo.png>
-</a>
-</div>
-<h2 class="title site-title">
-<a href=/>
-Nicholas Zhan
-</a>
-</h2>
-<div class=desc>
-Java Developer, Runner, Cyclist
-</div>
-</header>
-</section>
-<section class="widget widget-search sep-after">
-<header>
-<h4 class="title widget-title">搜索</h4>
-</header>
-<form action=/search id=search-form class=search-form>
-<label>
-<span class=screen-reader-text>搜索</span>
-<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;>
-</label></form>
-</section>
-<section class="widget widget-sidebar_menu sep-after"><nav id=sidebar-menu class="menu sidebar-menu" aria-label=侧边栏菜单>
-<div class=container>
-<ul><li class="item has-children has-current">
-<a href=/java/>Java</a><button class=sub-menu-toggler>
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="进程（process）是资源分配的基本单元，而线程（thread）是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源"><meta name=theme-color content="#ffcd00"><meta property="og:title" content="Java 线程 • Nicholas Zhan"><meta property="og:description" content="进程（process）是资源分配的基本单元，而线程（thread）是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源"><meta property="og:url" content="https://zhannicholas.github.io/java/concurrency/java_thread/"><meta property="og:site_name" content="Nicholas Zhan"><meta property="og:type" content="article"><meta property="og:image" content="https://www.gravatar.com/avatar/85f2cc2a45fd9533b91a65214224f9d7?s=256"><meta property="article:section" content="java"><meta property="article:tag" content="Java"><meta property="article:tag" content="并发"><meta property="article:published_time" content="2020-12-13T18:32:20+08:00"><meta property="article:modified_time" content="2020-12-13T18:32:20+08:00"><meta name=twitter:card content="summary"><meta name=generator content="Hugo 0.107.0"><title>Java 线程 • Nicholas Zhan</title><link rel=canonical href=https://zhannicholas.github.io/java/concurrency/java_thread/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/assets/css/main.ab98e12b.css><link rel=stylesheet href=/css/custom.css><style>:root{--color-accent:#ffcd00}</style></head><body class='page type-java has-sidebar'><div class=site><div id=sidebar class=sidebar><a class=screen-reader-text href=#main-menu>跳到主菜单</a><div class=container><section class='widget widget-about sep-after'><header><div class=logo><a href=/><img src=/images/logo.png></a></div><h2 class='title site-title'><a href=/>Nicholas Zhan</a></h2><div class=desc>Java Developer, Runner, Cyclist</div></header></section><section class='widget widget-search sep-after'><header><h4 class='title widget-title'>搜索</h4></header><form action=/search id=search-form class=search-form><label><span class=screen-reader-text>搜索</span>
+<input id=search-term class=search-term type=search name=q placeholder=搜索&mldr;></label></form></section><section class='widget widget-sidebar_menu sep-after'><nav id=sidebar-menu class='menu sidebar-menu' aria-label=侧边栏菜单><div class=container><ul><li class='item has-children has-current'><a href=/java/>Java</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/java/jakartaee/>Jakarta EE</a></li><li class=item>
-<a href=/java/jvm/>JVM</a></li><li class="item has-current">
-<a href=/java/concurrency/>并发</a></li></ul></li><li class=item>
-<a href=/rust/>Rust</a></li><li class=item>
-<a href=/distributed_computing/>分布式计算</a></li><li class=item>
-<a href=/operating_systems/>操作系统</a></li><li class="item has-children">
-<a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
+<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/java/jakartaee/>Jakarta EE</a></li><li class=item><a href=/java/jvm/>JVM</a></li><li class='item has-current'><a href=/java/concurrency/>并发</a></li></ul></li><li class=item><a href=/rust/>Rust</a></li><li class=item><a href=/distributed_computing/>分布式计算</a></li><li class=item><a href=/operating_systems/>操作系统</a></li><li class='item has-children'><a href=/computer_networks/>计算机网络</a><button class=sub-menu-toggler>
 <span class=screen-reader-text>expand sub menu</span>
-<span class=sign></span>
-</button>
-<ul class=sub-menu><li class=item>
-<a href=/computer_networks/http/>HTTP</a></li><li class=item>
-<a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul>
-</div>
-</nav>
-</section><section class="widget widget-taxonomy_cloud sep-after">
-<header>
-<h4 class="title widget-title">标签</h4>
-</header>
-<div class="container list-container">
-<ul class="list taxonomy-cloud"><li>
-<a href=/tags/communication/ style=font-size:1em>Communication</a>
-</li><li>
-<a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.2380952380952381em>C算法</a>
-</li><li>
-<a href=/tags/english/ style=font-size:1em>English</a>
-</li><li>
-<a href=/tags/gc/ style=font-size:1.0952380952380953em>GC</a>
-</li><li>
-<a href=/tags/git/ style=font-size:1em>Git</a>
-</li><li>
-<a href=/tags/http/ style=font-size:1.3333333333333333em>HTTP</a>
-</li><li>
-<a href=/tags/hugo/ style=font-size:1em>Hugo</a>
-</li><li>
-<a href=/tags/jakartaee/ style=font-size:1.0952380952380953em>JakartaEE</a>
-</li><li>
-<a href=/tags/java/ style=font-size:2em>Java</a>
-</li><li>
-<a href=/tags/jdbc/ style=font-size:1em>JDBC</a>
-</li><li>
-<a href=/tags/jvm/ style=font-size:1.1428571428571428em>JVM</a>
-</li><li>
-<a href=/tags/leetcode/ style=font-size:1.0952380952380953em>Leetcode</a>
-</li><li>
-<a href=/tags/life/ style=font-size:1em>Life</a>
-</li><li>
-<a href=/tags/linux/ style=font-size:1.1428571428571428em>Linux</a>
-</li><li>
-<a href=/tags/mybatis/ style=font-size:1em>MyBatis</a>
-</li><li>
-<a href=/tags/networks/ style=font-size:1.0952380952380953em>Networks</a>
-</li><li>
-<a href=/tags/os/ style=font-size:1.2857142857142856em>OS</a>
-</li><li>
-<a href=/tags/ostep/ style=font-size:1.0952380952380953em>OSTEP</a>
-</li><li>
-<a href=/tags/python/ style=font-size:1em>Python</a>
-</li><li>
-<a href=/tags/redis/ style=font-size:1.3333333333333333em>Redis</a>
-</li><li>
-<a href=/tags/rpc/ style=font-size:1em>RPC</a>
-</li><li>
-<a href=/tags/rust/ style=font-size:1.3333333333333333em>Rust</a>
-</li><li>
-<a href=/tags/shell/ style=font-size:1.2380952380952381em>Shell</a>
-</li><li>
-<a href=/tags/sicp/ style=font-size:1em>SICP</a>
-</li><li>
-<a href=/tags/spring/ style=font-size:1em>Spring</a>
-</li><li>
-<a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a>
-</li><li>
-<a href=/tags/tomcat/ style=font-size:1em>Tomcat</a>
-</li><li>
-<a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a>
-</li><li>
-<a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0476190476190477em>分布式计算</a>
-</li><li>
-<a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a>
-</li><li>
-<a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.380952380952381em>并发</a>
-</li><li>
-<a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a>
-</li><li>
-<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0476190476190477em>数据库</a>
-</li><li>
-<a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a>
-</li><li>
-<a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0476190476190477em>现代操作系统</a>
-</li><li>
-<a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a>
-</li><li>
-<a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.1428571428571428em>算法导论</a>
-</li><li>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a>
-</li><li>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.5714285714285714em>设计模式</a>
-</li></ul>
-</div>
-</section>
-</div>
-<div class=sidebar-overlay></div>
-</div><div class=main><nav id=main-menu class="menu main-menu" aria-label=主菜单>
-<div class=container>
-<a class=screen-reader-text href=#content>跳到内容</a>
+<span class=sign></span></button><ul class=sub-menu><li class=item><a href=/computer_networks/http/>HTTP</a></li><li class=item><a href=/computer_networks/fundamentals/>基础知识</a></li></ul></li></ul></div></nav></section><section class='widget widget-taxonomy_cloud sep-after'><header><h4 class='title widget-title'>标签</h4></header><div class='container list-container'><ul class='list taxonomy-cloud'><li><a href=/tags/communication/ style=font-size:1em>Communication</a></li><li><a href=/tags/c%E7%AE%97%E6%B3%95/ style=font-size:1.2380952380952381em>C算法</a></li><li><a href=/tags/english/ style=font-size:1em>English</a></li><li><a href=/tags/gc/ style=font-size:1.0952380952380953em>GC</a></li><li><a href=/tags/geography/ style=font-size:1em>Geography</a></li><li><a href=/tags/geohash/ style=font-size:1em>Geohash</a></li><li><a href=/tags/git/ style=font-size:1em>Git</a></li><li><a href=/tags/http/ style=font-size:1.3333333333333333em>HTTP</a></li><li><a href=/tags/hugo/ style=font-size:1em>Hugo</a></li><li><a href=/tags/jakartaee/ style=font-size:1.0952380952380953em>JakartaEE</a></li><li><a href=/tags/java/ style=font-size:2em>Java</a></li><li><a href=/tags/jdbc/ style=font-size:1em>JDBC</a></li><li><a href=/tags/jvm/ style=font-size:1.1428571428571428em>JVM</a></li><li><a href=/tags/leetcode/ style=font-size:1.0952380952380953em>Leetcode</a></li><li><a href=/tags/life/ style=font-size:1em>Life</a></li><li><a href=/tags/linux/ style=font-size:1.1428571428571428em>Linux</a></li><li><a href=/tags/mybatis/ style=font-size:1em>MyBatis</a></li><li><a href=/tags/networks/ style=font-size:1.0952380952380953em>Networks</a></li><li><a href=/tags/os/ style=font-size:1.2857142857142856em>OS</a></li><li><a href=/tags/ostep/ style=font-size:1.0952380952380953em>OSTEP</a></li><li><a href=/tags/python/ style=font-size:1em>Python</a></li><li><a href=/tags/redis/ style=font-size:1.3333333333333333em>Redis</a></li><li><a href=/tags/rpc/ style=font-size:1em>RPC</a></li><li><a href=/tags/rust/ style=font-size:1.3333333333333333em>Rust</a></li><li><a href=/tags/shell/ style=font-size:1.2380952380952381em>Shell</a></li><li><a href=/tags/sicp/ style=font-size:1em>SICP</a></li><li><a href=/tags/spring/ style=font-size:1em>Spring</a></li><li><a href=/tags/spring-boot/ style=font-size:1em>Spring Boot</a></li><li><a href=/tags/tomcat/ style=font-size:1em>Tomcat</a></li><li><a href=/tags/zookeeper/ style=font-size:1em>ZooKeeper</a></li><li><a href=/tags/%E5%B9%B6%E5%8F%91/ style=font-size:1.380952380952381em>并发</a></li><li><a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/ style=font-size:1.0476190476190477em>分布式计算</a></li><li><a href=/tags/%E5%B7%A5%E7%A8%8B%E6%80%9D%E7%BB%B4/ style=font-size:1em>工程思维</a></li><li><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ style=font-size:1.5714285714285714em>设计模式</a></li><li><a href=/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/ style=font-size:1em>设计原则</a></li><li><a href=/tags/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/ style=font-size:1em>生产者消费者</a></li><li><a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ style=font-size:1.0476190476190477em>数据库</a></li><li><a href=/tags/%E6%90%9C%E7%B4%A2/ style=font-size:1em>搜索</a></li><li><a href=/tags/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA/ style=font-size:1.1428571428571428em>算法导论</a></li><li><a href=/tags/%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ style=font-size:1.0476190476190477em>现代操作系统</a></li><li><a href=/tags/%E6%B8%B8%E8%AE%B0/ style=font-size:1em>游记</a></li></ul></div></section></div><div class=sidebar-overlay></div></div><div class=main><nav id=main-menu class='menu main-menu' aria-label=主菜单><div class=container><a class=screen-reader-text href=#content>跳到内容</a>
 <button id=sidebar-toggler class=sidebar-toggler aria-controls=sidebar>
 <span class=screen-reader-text>Toggle Sidebar</span>
-<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-</span>
-<span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-</span>
-</button>
-<ul><li class=item>
-<a href=/>主页</a>
-</li><li class=item>
-<a href=/posts/>博客</a>
-</li><li class=item>
-<a href=/notebook/>笔记本</a>
-</li><li class=item>
-<a href=/linux/>Linux</a>
-</li></ul>
-</div>
-</nav><div class=header-widgets>
-<div class=container>
-<style>.widget-breadcrumbs li:after{content:'\2f '}</style>
-<section class="widget widget-breadcrumbs sep-after">
-<nav id=breadcrumbs>
-<ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><a href=/java/concurrency/>并发</a></li><li><span>Java 线程</span></li></ol>
-</nav>
-</section></div>
-</div>
-<header id=header class="header site-header">
-<div class="container sep-after">
-<div class=header-info><p class="site-title title">Nicholas Zhan</p><p class="desc site-desc">Java Developer, Runner, Cyclist</p>
-</div>
-</div>
-</header>
-<main id=content>
-<article lang=zh-cn class=entry>
-<header class="header entry-header">
-<div class="container sep-after">
-<div class=header-info>
-<h1 class=title>Java 线程</h1>
-</div>
-<div class=entry-meta>
-<span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-<span class=screen-reader-text>Posted on </span>
-<time class=entry-date datetime=2020-12-13T18:32:20+08:00>2020, Dec 13</time>
-</span>
-<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg>
-<span class=screen-reader-text> by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
-<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>
-10 mins read
-</span>
-</div>
-</div>
-</header>
-<details class="container entry-toc">
-<summary class=title>
-<span>目录</span>
-</summary>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#创建线程>创建线程</a>
-<ul>
-<li><a href=#继承-thread-类>继承 Thread 类</a></li>
-<li><a href=#实现-runnable-接口>实现 Runnable 接口</a></li>
-<li><a href=#实现-callable-接口>实现 Callable 接口</a></li>
-<li><a href=#使用线程池>使用线程池</a></li>
-</ul>
-</li>
-<li><a href=#线程的启动>线程的启动</a></li>
-<li><a href=#停止线程>停止线程</a>
-<ul>
-<li><a href=#被弃用的停止方法>被弃用的停止方法</a></li>
-<li><a href=#使用状态标记>使用状态标记</a></li>
-<li><a href=#使用-interrupt>使用 interrupt</a></li>
-</ul>
-</li>
-<li><a href=#线程的状态>线程的状态</a>
-<ul>
-<li><a href=#wait-与-notify><code>wait()</code> 与 <code>notify()</code></a></li>
-<li><a href=#sleep-与-wait><code>sleep()</code> 与 <code>wait()</code></a></li>
-<li><a href=#sleep-与-yield><code>sleep()</code> 与 <code>yield()</code></a></li>
-<li><a href=#join><code>join()</code></a></li>
-</ul>
-</li>
-<li><a href=#多线程同步>多线程同步</a>
-<ul>
-<li><a href=#同步的实现>同步的实现</a></li>
-</ul>
-</li>
-<li><a href=#线程优先级>线程优先级</a></li>
-<li><a href=#参考资料>参考资料</a></li>
-</ul>
-</nav>
-</details>
-<div class="container entry-content">
-<p>进程（process）是资源分配的基本单元，而线程（thread）是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源。和进程相比，线程更加轻量化，所以线程又叫<em>轻量级进程</em>。</p>
-<h2 id=创建线程>创建线程</h2>
-<p>网上好多资料都说有三种创建线程的方式：</p>
-<ol>
-<li>继承<code>Thread</code>类，重写<code>run()</code>方法。</li>
-<li>实现<code>Runnable</code>接口。</li>
-<li>实现<code>Callable</code>接口。</li>
-</ol>
-<p>但本质上只有一种创建线程的方式，那就是构造一个 <code>Thread</code> 类。为什么这么说呢？我们来看上面几种方式的实际使用情况：</p>
-<h3 id=继承-thread-类>继承 Thread 类</h3>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ExtendsThread</span> <span style=color:#66d9ef>extends</span> Thread <span style=color:#f92672>{</span>
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;通过继承 Thread 类来实现线程&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>通过继承 Thread 类来实现线程最大的缺点就是代码未来的可扩展性被限制。Java 是不支持多继承的，一旦我们的类继承了 Thread 类，那么它就不能再继承其它类了。</p>
-<h3 id=实现-runnable-接口>实现 Runnable 接口</h3>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>RunnableThread</span> <span style=color:#66d9ef>implements</span> Runnable <span style=color:#f92672>{</span>
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;通过实现 Runnable 接口来实现线程&#34;</span><span style=color:#f92672>);</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p><code>Thread</code> 本身也实现了 <code>Runnable</code> 接口。</p>
-<h3 id=实现-callable-接口>实现 Callable 接口</h3>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>CallableTask</span> <span style=color:#66d9ef>implements</span> Callable<span style=color:#f92672>&lt;</span>Long<span style=color:#f92672>&gt;</span> <span style=color:#f92672>{</span>
-    <span style=color:#a6e22e>@Override</span>
-    <span style=color:#66d9ef>public</span> Long <span style=color:#a6e22e>call</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;通过实现 Callable 接口来实现线程&#34;</span><span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>return</span> System<span style=color:#f92672>.</span><span style=color:#a6e22e>currentTimeMillis</span><span style=color:#f92672>();</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-
-Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleThreadExecutor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> CallableTask<span style=color:#f92672>());</span>
-</code></pre></div><p>实现 <code>Callable</code> 接口与实现 <code>Runnable</code> 接口最大的区别在于返回值：前者有返回值的，而后者无返回值。</p>
-<blockquote>
-<p>The Callable interface is similar to Runnable, in that both are designed for classes whose instances are potentially executed by another thread. A Runnable, however, does not return a result and cannot throw a checked exception.</p>
-</blockquote>
-<p>但是，不管是 <code>Runnable</code> 还是 <code>Callable</code>，它们都表示 <strong>被线程执行的任务</strong>，它们本身并不是线程。接口的不同实现只是意味着交给线程执行的内容不同而已。</p>
-<h3 id=使用线程池>使用线程池</h3>
-<p>我们可能还会想到线程池，使用线程池的时候，貌似不需要我们手动创建线程。那么线程池中的线程是如何创建的呢？实际上，线程池中的线程本质上是通过 <code>ThreadFactory</code> 创建的，不过最终的线程还是通过 <code>new Thread()</code> 创建出来的。我们可以来看一下 <code>ThreadFactory</code> 的默认实现 <code>DefaultThreadFactory</code> 的源码：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>DefaultThreadFactory</span> <span style=color:#66d9ef>implements</span> ThreadFactory <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> AtomicInteger poolNumber <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> AtomicInteger<span style=color:#f92672>(</span>1<span style=color:#f92672>);</span>
-    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> ThreadGroup group<span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> AtomicInteger threadNumber <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> AtomicInteger<span style=color:#f92672>(</span>1<span style=color:#f92672>);</span>
-    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> String namePrefix<span style=color:#f92672>;</span>
-
-    DefaultThreadFactory<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        SecurityManager s <span style=color:#f92672>=</span> System<span style=color:#f92672>.</span><span style=color:#a6e22e>getSecurityManager</span><span style=color:#f92672>();</span>
-        group <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>s <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>?</span> s<span style=color:#f92672>.</span><span style=color:#a6e22e>getThreadGroup</span><span style=color:#f92672>()</span> <span style=color:#f92672>:</span> Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>().</span><span style=color:#a6e22e>getThreadGroup</span><span style=color:#f92672>();</span>
-        namePrefix <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;pool-&#34;</span> <span style=color:#f92672>+</span> poolNumber<span style=color:#f92672>.</span><span style=color:#a6e22e>getAndIncrement</span><span style=color:#f92672>()</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;-thread-&#34;</span><span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> Thread <span style=color:#a6e22e>newThread</span><span style=color:#f92672>(</span>Runnable r<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-        Thread t <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Thread<span style=color:#f92672>(</span>group<span style=color:#f92672>,</span> r<span style=color:#f92672>,</span> namePrefix <span style=color:#f92672>+</span> threadNumber<span style=color:#f92672>.</span><span style=color:#a6e22e>getAndIncrement</span><span style=color:#f92672>(),</span> 0<span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>t<span style=color:#f92672>.</span><span style=color:#a6e22e>isDaemon</span><span style=color:#f92672>())</span>
-            t<span style=color:#f92672>.</span><span style=color:#a6e22e>setDaemon</span><span style=color:#f92672>(</span><span style=color:#66d9ef>false</span><span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>t<span style=color:#f92672>.</span><span style=color:#a6e22e>getPriority</span><span style=color:#f92672>()</span> <span style=color:#f92672>!=</span> Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>NORM_PRIORITY</span><span style=color:#f92672>)</span>
-            t<span style=color:#f92672>.</span><span style=color:#a6e22e>setPriority</span><span style=color:#f92672>(</span>Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>NORM_PRIORITY</span><span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>return</span> t<span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><h2 id=线程的启动>线程的启动</h2>
-<p>线程的启动很简单，调用 <code>Thread</code> 类的 <code>start()</code> 方法即可。<code>start()</code> 方法最终会调用 <code>Runnable</code> 的 <code>run()</code> 方法来执行任务。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Override</span>
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>target <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-        target<span style=color:#f92672>.</span><span style=color:#a6e22e>run</span><span style=color:#f92672>();</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>那么，<code>start()</code> 与 <code>run()</code> 有何不同呢？首先，<code>run()</code> 方法是通过实现 <code>Runnable</code> 接口得来的，而 <code>start()</code> 是 <code>Thread</code> 类自身的一个方法，用于启动当前线程：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>/**
-</span><span style=color:#75715e>* Causes this thread to begin execution; the Java Virtual Machine
-</span><span style=color:#75715e>* calls the {@code run} method of this thread.
-</span><span style=color:#75715e>* &lt;p&gt;
-</span><span style=color:#75715e>* The result is that two threads are running concurrently: the
-</span><span style=color:#75715e>* current thread (which returns from the call to the
-</span><span style=color:#75715e>* {@code start} method) and the other thread (which executes its
-</span><span style=color:#75715e>* {@code run} method).
-</span><span style=color:#75715e>* &lt;p&gt;
-</span><span style=color:#75715e>* It is never legal to start a thread more than once.
-</span><span style=color:#75715e>* In particular, a thread may not be restarted once it has completed
-</span><span style=color:#75715e>* execution.
-</span><span style=color:#75715e>*/</span>
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>synchronized</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>start</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>/**
-</span><span style=color:#75715e>    * This method is not invoked for the main method thread or &#34;system&#34;
-</span><span style=color:#75715e>    * group threads created/set up by the VM. Any new functionality added
-</span><span style=color:#75715e>    * to this method in the future may have to also be added to the VM.
-</span><span style=color:#75715e>    *
-</span><span style=color:#75715e>    * A zero status value corresponds to state &#34;NEW&#34;.
-</span><span style=color:#75715e>    */</span>
-    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>threadStatus <span style=color:#f92672>!=</span> 0<span style=color:#f92672>)</span>
-        <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> IllegalThreadStateException<span style=color:#f92672>();</span>
-
-    <span style=color:#75715e>/* Notify the group that this thread is about to be started
-</span><span style=color:#75715e>    * so that it can be added to the group&#39;s list of threads
-</span><span style=color:#75715e>    * and the group&#39;s unstarted count can be decremented. */</span>
-    group<span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
-
-    <span style=color:#66d9ef>boolean</span> started <span style=color:#f92672>=</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
-        start0<span style=color:#f92672>();</span>
-        started <span style=color:#f92672>=</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span> <span style=color:#66d9ef>finally</span> <span style=color:#f92672>{</span>
-        <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
-            <span style=color:#66d9ef>if</span> <span style=color:#f92672>(!</span>started<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-                group<span style=color:#f92672>.</span><span style=color:#a6e22e>threadStartFailed</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
-            <span style=color:#f92672>}</span>
-        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable ignore<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-            <span style=color:#75715e>/* do nothing. If start0 threw a Throwable then
-</span><span style=color:#75715e>            it will be passed up the call stack */</span>
-        <span style=color:#f92672>}</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>另外，<code>start()</code> 方法通过 <code>synchronized</code> 来保证线程安全，并且只能调用一次，还会影响线程的状态（由NEW变为RUNNABLE），而 <code>run()</code> 只是一个普通方法，可以被多次调用，并且不会改变线程的状态。</p>
-<h2 id=停止线程>停止线程</h2>
-<p>通常，我们不会手动停止一个线程，而是让线程运行到结束，自然停止。但是有许多特殊的情况需要我们提前停止线程，比如：用户突然关闭程序，或程序运行出错重启等。</p>
-<h3 id=被弃用的停止方法>被弃用的停止方法</h3>
-<p>Java 在 <code>Thread</code> 类中提供了 <code>stop()</code> 方法，用于强行停止当前线程。但这个方法自 JDK1.2 开始就被标记为 <code>@Deprecated</code>，一同被标记的还有 <code>suspend()</code> 和 <code>resume()</code> 方法。那么，为何 JDK 要弃用这些方法呢？因为 <code>stop()</code> 会直接停止当前线程，线程就没有足够的时间来处理停止前需要完成的工作，可能会导致数据的完整性等问题。 <code>suspend()</code> 和 <code>resume()</code> 的问题则在于：调用 <code>suspend()</code> 的线程不释放锁就直接进入休眠，这可能导致死锁，因为如果线程在休眠期间持有锁的话，这把锁在线程被 <code>resume()</code> 之前是不会被释放的。</p>
-<p>来看一个具体的例子：假设线程 A 调用 <code>suspend()</code> 让线程 B 挂起，线程 B 进入休眠，而线程 B 刚好持有锁 L。假设此时线程 A 想要访问线程 B 持有的锁 L，由于线程 B 没释放锁 L 就休眠了，所以线程 A 是拿不到锁 L 的，它就会陷入阻塞。这样一来，线程 A 和线程 B 都无法继续向下执行。</p>
-<p>Java SE 的 API 文档里面其实也给出了这三个方法被弃用的原因（<a href=https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/doc-files/threadPrimitiveDeprecation.html> Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?</a>），并给出了相关的替代方案。</p>
-<h3 id=使用状态标记>使用状态标记</h3>
-<p>对于大多数情况，JDK 建议我们使用一个状态变量来指示目标线程是否应该停止运行。目标线程周期性地检查这个状态变量的值，当状态变量暗示要停止目标线程时，就从 <code>run()</code> 方法返回。为了确保停止请求的及时传播，这个状态变量应该被 <code>volatile</code> 修饰，或者对该变量的访问进行同步处理。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>volatile</span> Thread blinker<span style=color:#f92672>;</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>stop</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    blinker <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>;</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    Thread thisThread <span style=color:#f92672>=</span> Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>();</span>
-    <span style=color:#66d9ef>while</span> <span style=color:#f92672>(</span>blinker <span style=color:#f92672>==</span> thisThread<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-        <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
-            Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>sleep</span><span style=color:#f92672>(</span>interval<span style=color:#f92672>);</span>
-        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>InterruptedException e<span style=color:#f92672>){</span>
-        <span style=color:#f92672>}</span>
-        repaint<span style=color:#f92672>();</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>然而，并不是仅仅使用 <code>volatile</code> 标记状态变量就百分百没问题了，我们还得倍加小心。下面是网上的一个例子：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>VolatileCannotStop</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// 生产者
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Producer</span> <span style=color:#66d9ef>implements</span> Runnable <span style=color:#f92672>{</span>
-        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>volatile</span> <span style=color:#66d9ef>boolean</span> canceled <span style=color:#f92672>=</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
-        <span style=color:#66d9ef>private</span> BlockingQueue<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> storage<span style=color:#f92672>;</span>
-        <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Producer</span><span style=color:#f92672>(</span>BlockingQueue<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> storage<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-            <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>storage</span> <span style=color:#f92672>=</span> storage<span style=color:#f92672>;</span>
-        <span style=color:#f92672>}</span>
-
-        <span style=color:#a6e22e>@Override</span>
-        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-            <span style=color:#66d9ef>int</span> num <span style=color:#f92672>=</span> 0<span style=color:#f92672>;</span>
-            <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
-                <span style=color:#66d9ef>while</span> <span style=color:#f92672>(</span>num <span style=color:#f92672>&lt;=</span> 100000 <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>!</span>canceled<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-                    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>num <span style=color:#f92672>%</span> 50 <span style=color:#f92672>==</span> 0<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-                        storage<span style=color:#f92672>.</span><span style=color:#a6e22e>put</span><span style=color:#f92672>(</span>num<span style=color:#f92672>);</span>   <span style=color:#75715e>// 阻塞操作
-</span><span style=color:#75715e></span>                        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span>num <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;是50的倍数，放入仓库&#34;</span><span style=color:#f92672>);</span>
-                    <span style=color:#f92672>}</span>
-                    num<span style=color:#f92672>++;</span>
-                <span style=color:#f92672>}</span>
-            <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>InterruptedException e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-                e<span style=color:#f92672>.</span><span style=color:#a6e22e>printStackTrace</span><span style=color:#f92672>();</span>
-            <span style=color:#f92672>}</span> <span style=color:#66d9ef>finally</span> <span style=color:#f92672>{</span>
-                System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;生产者结束运行&#34;</span><span style=color:#f92672>);</span>
-            <span style=color:#f92672>}</span>
-        <span style=color:#f92672>}</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#75715e>// 消费者
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Consumer</span> <span style=color:#f92672>{</span>
-        BlockingQueue storage<span style=color:#f92672>;</span>
-        <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Consumer</span><span style=color:#f92672>(</span>BlockingQueue storage<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-            <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>storage</span> <span style=color:#f92672>=</span> storage<span style=color:#f92672>;</span>
-        <span style=color:#f92672>}</span>
-
-        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>needMoreNums</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-            <span style=color:#66d9ef>return</span> Math<span style=color:#f92672>.</span><span style=color:#a6e22e>random</span><span style=color:#f92672>()</span> <span style=color:#f92672>&gt;</span> 0<span style=color:#f92672>.</span><span style=color:#a6e22e>97</span><span style=color:#f92672>;</span>
-        <span style=color:#f92672>}</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span><span style=color:#f92672>(</span>String<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> InterruptedException <span style=color:#f92672>{</span>
-        BlockingQueue storage <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ArrayBlockingQueue<span style=color:#f92672>(</span>8<span style=color:#f92672>);</span>
-        Producer producer <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Producer<span style=color:#f92672>(</span>storage<span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>new</span> Thread<span style=color:#f92672>(</span>producer<span style=color:#f92672>).</span><span style=color:#a6e22e>start</span><span style=color:#f92672>();</span>
-        Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>sleep</span><span style=color:#f92672>(</span>500<span style=color:#f92672>);</span>
-        Consumer consumer <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Consumer<span style=color:#f92672>(</span>storage<span style=color:#f92672>);</span>
-        <span style=color:#66d9ef>while</span> <span style=color:#f92672>(</span>consumer<span style=color:#f92672>.</span><span style=color:#a6e22e>needMoreNums</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-            System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span>consumer<span style=color:#f92672>.</span><span style=color:#a6e22e>storage</span><span style=color:#f92672>.</span><span style=color:#a6e22e>take</span><span style=color:#f92672>()</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;被消费了&#34;</span><span style=color:#f92672>);</span>
-            Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>sleep</span><span style=color:#f92672>(</span>100<span style=color:#f92672>);</span>  <span style=color:#75715e>// 这段时间内消费者又可以将 storage 塞满，然后阻塞
-</span><span style=color:#75715e></span>        <span style=color:#f92672>}</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;消费者不需要更多数据了&#34;</span><span style=color:#f92672>);</span>
-
-        <span style=color:#75715e>// 一旦消费者不需要更多数据了，我们就应该让生产者停下来，然而实际情况却是生产者停不下类
-</span><span style=color:#75715e></span>        producer<span style=color:#f92672>.</span><span style=color:#a6e22e>canceled</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>;</span>
-        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span>producer<span style=color:#f92672>.</span><span style=color:#a6e22e>canceled</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>直接看 <code>main()</code> 方法，首先创建了生产者/消费者共用的仓库 <code>storage</code>，仓库容量是 8，然后创建生产者并启动生产者线程，紧接着主线程进行 500 毫秒的休眠，保障生产者有足够的时间把仓库塞满，仓库被塞满后生产者就会阻塞，500 毫秒后消费者也被创建出来，并判断是否需要使用更多的数字，然后每次消费后休眠 100 毫秒，这样的业务逻辑是有可能出现在实际生产中的。</p>
-<p>当消费者不再需要数据，就会将 <code>canceled</code> 的标记位设置为 true，理论上此时生产者会跳出 <code>while</code> 循环，并打印输出<code>生产者运行结束</code>。然而结果并不是我们想象的那样，尽管已经把 <code>canceled</code> 设置成 true，但生产者仍然没有停止，这是因为在这种情况下，生产者在执行 <code>storage.put(num)</code> 时会被阻塞，在它被叫醒之前是没有办法进入下一次循环判断 <code>canceled</code> 的值的，所以在这种情况下用 <code>volatile</code> 是没有办法让生产者停下来的。在这种情况下，应该使用 <code>interrupt()</code> 来中断线程。即使生产者处于阻塞状态，它仍然能够感受到中断信号，并作出响应。</p>
-<h3 id=使用-interrupt>使用 interrupt</h3>
-<p>在 Java 中，停止线程的正确姿势是使用 <code>interrupt()</code>。但 <code>interrupt()</code> 仅仅起到通知被停止线程的作用。而对于被停止的线程而言，它拥有完全的自主权，可以选择立即停止，也可以选择一段时间后停止，甚至可以选择不停止。不采用强制停止的做法的原因是：贸然强行停止线程可能造成一些安全问题，若要避免这些问题，就需要给目标线程一些时间进行收尾工作。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>while</span> <span style=color:#f92672>(!</span>Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>().</span><span style=color:#a6e22e>isInterrupted</span><span style=color:#f92672>()</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>(</span>has more work to <span style=color:#66d9ef>do</span><span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>do</span> more work
-<span style=color:#f92672>}</span>
-</code></pre></div><p>调用某个线程的 <code>interrupt()</code> 方法之后，这个线程的中断标记位就会被设置成 true。每个线程都有这样的标记位，当线程执行时，应该定期检查这个标记位，如果标记位被设置成 true，就说明有程序想终止该线程。下面是一个具体的例子：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>StopThread</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span><span style=color:#f92672>(</span>String<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> InterruptedException <span style=color:#f92672>{</span>
-        Thread t <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Thread<span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> Runnable<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-            <span style=color:#a6e22e>@Override</span>
-            <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-                <span style=color:#66d9ef>int</span> count <span style=color:#f92672>=</span> 0<span style=color:#f92672>;</span>
-                <span style=color:#66d9ef>while</span> <span style=color:#f92672>(!</span>Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>().</span><span style=color:#a6e22e>isInterrupted</span><span style=color:#f92672>()</span> <span style=color:#f92672>&amp;&amp;</span> count <span style=color:#f92672>&lt;</span> 1000<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-                    System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;count = &#34;</span> <span style=color:#f92672>+</span> <span style=color:#f92672>(</span>count<span style=color:#f92672>++));</span>
-                <span style=color:#f92672>}</span>
-            <span style=color:#f92672>}</span>
-        <span style=color:#f92672>});</span>
-        t<span style=color:#f92672>.</span><span style=color:#a6e22e>start</span><span style=color:#f92672>();</span>
-        Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>sleep</span><span style=color:#f92672>(</span>5<span style=color:#f92672>);</span>
-        t<span style=color:#f92672>.</span><span style=color:#a6e22e>interrupt</span><span style=color:#f92672>();</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>程序还没打印完 1000 个数就会停下来，因为对应的线程被 <code>interrupt</code> 了。</p>
-<p>休眠中的线程是可以感受到中断信号的，被中断的线程会抛出一个 <code>InterruptedException</code>，同时清除中断信号，将中断标记位设置成 false。调用方可以捕获这个异常，进行处理，还可以再次中断线程。再次中断后，后续执行的方法依然可以检测到调用过程发生过中断，可以做出相应的处理，整个线程可以正常退出。</p>
-<h2 id=线程的状态>线程的状态</h2>
-<p>Java线程在其生命周期中可能处于6种状态（这6种状态指的线程在 JVM 中的状态，并不是操作系统中线程的状态），同一时刻，线程只能处于其中的一个状态。</p>
-<table>
-<thead>
-<tr>
-<th>状态</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>NEW</td>
-<td>A thread that has not yet started is in this state.</td>
-</tr>
-<tr>
-<td>RUNNABLE</td>
-<td>A thread executing in the Java virtual machine is in this state.</td>
-</tr>
-<tr>
-<td>BLOCKED</td>
-<td>A thread that is blocked waiting for a monitor lock is in this state.</td>
-</tr>
-<tr>
-<td>WAITING</td>
-<td>A thread that is waiting indefinitely for another thread to perform a particular action is in this state.</td>
-</tr>
-<tr>
-<td>TIMED_WAITING</td>
-<td>A thread that is waiting for another thread to perform an action for up to a specified waiting time is in this state.</td>
-</tr>
-<tr>
-<td>TERMINATED</td>
-<td>A thread that has exited is in this state.</td>
-</tr>
-</tbody>
-</table>
-<p>以下是线程之间的状态迁移图：</p>
-<p><img src=/images/java/concurrency/thread-state-transfering-diagram.png alt="Java thread state transfering"></p>
-<h3 id=wait-与-notify><code>wait()</code> 与 <code>notify()</code></h3>
-<p>若 <code>synchronized</code> 关键字修饰的某个共享资源 R 的锁已经被线程 T1 获得，其它需要资源 R 的锁才能运行的线程就会被阻塞直至 T1 释放 R 上的锁。一般情况下，这个锁是在同步代码块执行完才被释放的。</p>
-<p>但是在同步代码块执行期间，已持有锁的线程 T1 可以调用资源 R 的 <code>wait()</code> 方法释放锁，然后进入等待状态，当前线程被挂起。锁的持有者可以调用 <code>notify()</code> 方法随机唤醒一个处于等待状态的线程，或 <code>notifyAll()</code> 方法去唤醒所有处于等待状态的线程。</p>
-<p>只有持有与共享资源 R 相关联的 <code>monitor</code> 的锁的线程才应该去调用 <code>notify()</code> 或 <code>notifyAll()</code> 方法。一个线程可以通过3种方式获得与资源 R 相关联的 <code>monitor</code> 的锁，这三种方式刚好对应于同步代码块的三种形式。因为只有持有 <code>monitor</code> 的锁，才能进入同步代码块。</p>
-<h3 id=sleep-与-wait><code>sleep()</code> 与 <code>wait()</code></h3>
-<p><code>sleep()</code> 与 <code>wait()</code> 都可以暂停线程执行，但它们还有一些区别：</p>
-<ol>
-<li>原理不同。<code>sleep()</code> 是 <code>Thread</code> 类的静态方法，是线程自己用来控制自身执行的，它可以使线程自己暂停一段时间，把执行的机会让给其它线程，等睡眠时间一到，便会自动“醒来”。而 <code>wait()</code> 是 <code>Object</code> 类的方法，用于线程间的通信，这个方法会使当前持有对象锁的线程释放锁并进入等待状态，直至其它线程调用对象的 <code>notify()</code> 或 <code>notifyAll()</code> 方法才会醒来。<code>wait()</code> 方法也支持设置超时时间。</li>
-<li>对锁的处理机制不同。调用 <code>sleep()</code> 方法只是让当前线程暂停一段时间，不涉及线程间通信，也不会释放锁。而调用 <code>wait()</code> 方法会释放锁。</li>
-<li>使用区域不同。<code>sleep()</code> 方法可以在任何区域使用。而由于调用 <code>wait()</code> 方法前必须先获得对象锁，因此只能在同步代码块内使用。</li>
-<li>对异常的处理方式不同。调用 <code>sleep()</code> 方法时必须处理 <code>InterruptedException</code> 异常。而调用 <code>wait()</code> 方法时不用关心异常处理。</li>
-</ol>
-<h3 id=sleep-与-yield><code>sleep()</code> 与 <code>yield()</code></h3>
-<p><code>sleep()</code>方法与<code>yield()</code>方法都属于<code>Thread</code>类，它们的区别主要体现在：</p>
-<ol>
-<li>前者被调用后会立马进入阻塞状态，在一段时间内不会再执行。而后者只是使当前线程重新回到<code>RUNNABLE</code>状态，因此可能马上又被执行。</li>
-<li>前者在方法声明上抛出了<code>InterruptedException</code>异常，而后者没有声明任何异常。</li>
-</ol>
-<h3 id=join><code>join()</code></h3>
-<p>JDK中对<code>join()</code>方法的解释为：Waits for this thread to die.</p>
-<p>实际上，当线程A调用了线程B的<code>join()</code>方法后，线程A会让出CPU的执行权给线程B。直到线程B执行完成或者过了超时时间，线程A才会继续执行。</p>
-<h2 id=多线程同步>多线程同步</h2>
-<h3 id=同步的实现>同步的实现</h3>
-<p>Java 提供了多种多线程同步的方法：</p>
-<ol>
-<li>使用 <code>synchronized</code> 关键字。见<a href=../synchronization/><code>Synchronized</code>关键字</a>。</li>
-<li>使用 <code>wait()</code> 与 <code>notify()</code> 方法。</li>
-<li>使用 <code>Lock</code>。见<a href=../locks/>Locks</a>。</li>
-</ol>
-<h2 id=线程优先级>线程优先级</h2>
-<p><code>Thread</code> 类定义了三个和线程优先级有关的属性：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>/**
-</span><span style=color:#75715e>* The minimum priority that a thread can have.
-</span><span style=color:#75715e>*/</span>
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> MIN_PRIORITY <span style=color:#f92672>=</span> 1<span style=color:#f92672>;</span>
-
-<span style=color:#75715e>/**
-</span><span style=color:#75715e>* The default priority that is assigned to a thread.
-</span><span style=color:#75715e>*/</span>
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> NORM_PRIORITY <span style=color:#f92672>=</span> 5<span style=color:#f92672>;</span>
-
-<span style=color:#75715e>/**
-</span><span style=color:#75715e>* The maximum priority that a thread can have.
-</span><span style=color:#75715e>*/</span>
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> MAX_PRIORITY <span style=color:#f92672>=</span> 10<span style=color:#f92672>;</span>
-</code></pre></div><p>优先级越高的线程获得 CPU 时间片的概率越大，但这并不是意味着优先级越高的线程一定越先执行。在 Java 中，设置线程优先级方法是 <code>setPriority(int newPriority)</code>，有效的优先级范围为：<code>1-10</code>。</p>
-<h2 id=参考资料>参考资料</h2>
-<ol>
-<li>Brian Goetz, Tim Peierls, Joshua Bloch, Joseph Bowbeer, David Holmes, and Doug Lea. <em>Java Concurrency in Practice</em>. Addison-Wesley Professional, 2006.</li>
-<li>方腾飞, 魏鹏, 程晓明. Java并发编程的艺术. 机械工业出版社, 2015.</li>
-<li><a href=https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/doc-files/threadPrimitiveDeprecation.html>Java Thread Primitive Deprecation</a>.</li>
-</ol>
-</div>
-<footer class=entry-footer>
-<div class="container sep-before"><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg>
-<span class=screen-reader-text>分类: </span><a class=category href=/categories/java/>Java</a></div>
-<div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-<span class=screen-reader-text>标签: </span><a class=tag href=/tags/java/>Java</a>, <a class=tag href=/tags/%E5%B9%B6%E5%8F%91/>并发</a></div>
-</div>
-</footer>
-</article>
-<nav class=entry-nav>
-<div class=container><div class="prev-entry sep-before">
-<a href=/java/concurrency/synchronization/>
-<span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
-Previous</span>
-<span class=screen-reader-text>上一篇: </span>Java 中的 synchronized</a>
-</div><div class="next-entry sep-before">
-<a href=/java/concurrency/java_thread_pool/>
-<span class=screen-reader-text>下一篇: </span>Java 线程池<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
-</span>
-</a>
-</div></div>
-</nav>
-</main>
-<footer id=footer class=footer>
-<div class="container sep-before"><section class="widget widget-social_menu sep-after"><nav aria-label=社交菜单>
-<ul><li>
-<a href=https://github.com/zhannicholas target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
-</a>
-</li><li>
-<a href=https://t.me/zhannicholas target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg>
-</a>
-</li><li>
-<a href=mailto:zhan_nicholas@outlook.com target=_blank rel="noopener me">
-<span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-</a>
-</li><li>
-<a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel="noopener me">
-<span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-</a>
-</li></ul>
-</nav>
-</section><div class=copyright>
-<p> &copy; 2018-2021 Nicholas Zhan </p>
-</div>
-</div>
-</footer>
-</div>
-</div><script>window.__assets_js_src="/assets/js/"</script>
-<script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script>
-</body>
-</html>
+<span class=open><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span><span class=close><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></button><ul><li class=item><a href=/>主页</a></li><li class=item><a href=/posts/>博客</a></li><li class=item><a href=/notebook/>笔记本</a></li><li class=item><a href=/linux/>Linux</a></li></ul></div></nav><div class=header-widgets><div class=container><style>.widget-breadcrumbs li:after{content:'\2f '}</style><section class='widget widget-breadcrumbs sep-after'><nav id=breadcrumbs><ol><li><a href=/>主页</a></li><li><a href=/java/>Java</a></li><li><a href=/java/concurrency/>并发</a></li><li><span>Java 线程</span></li></ol></nav></section></div></div><header id=header class='header site-header'><div class='container sep-after'><div class=header-info><p class='site-title title'>Nicholas Zhan</p><p class='desc site-desc'>Java Developer, Runner, Cyclist</p></div></div></header><main id=content><article lang=zh-cn class=entry><header class='header entry-header'><div class='container sep-after'><div class=header-info><h1 class=title>Java 线程</h1></div><div class=entry-meta><span class=posted-on><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class=screen-reader-text>Posted on</span>
+<time class=entry-date datetime=2020-12-13T18:32:20+08:00>2020, Dec 13</time></span>
+<span class=byline><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M21 21V20c0-2.76-4-5-9-5s-9 2.24-9 5v1"/><path d="M16 6.37A4 4 0 1112.63 3 4 4 0 0116 6.37z"/></svg><span class=screen-reader-text>by </span><a href=/authors/zhannicholas>Nicholas Zhan</a></span>
+<span class=reading-time><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 15"/></svg>10 mins read</span></div></div></header><details class='container entry-toc'><summary class=title><span>目录</span></summary><nav id=TableOfContents><ul><li><a href=#创建线程>创建线程</a><ul><li><a href=#继承-thread-类>继承 Thread 类</a></li><li><a href=#实现-runnable-接口>实现 Runnable 接口</a></li><li><a href=#实现-callable-接口>实现 Callable 接口</a></li><li><a href=#使用线程池>使用线程池</a></li></ul></li><li><a href=#线程的启动>线程的启动</a></li><li><a href=#停止线程>停止线程</a><ul><li><a href=#被弃用的停止方法>被弃用的停止方法</a></li><li><a href=#使用状态标记>使用状态标记</a></li><li><a href=#使用-interrupt>使用 interrupt</a></li></ul></li><li><a href=#线程的状态>线程的状态</a><ul><li><a href=#wait-与-notify><code>wait()</code> 与 <code>notify()</code></a></li><li><a href=#sleep-与-wait><code>sleep()</code> 与 <code>wait()</code></a></li><li><a href=#sleep-与-yield><code>sleep()</code> 与 <code>yield()</code></a></li><li><a href=#join><code>join()</code></a></li></ul></li><li><a href=#多线程同步>多线程同步</a><ul><li><a href=#同步的实现>同步的实现</a></li></ul></li><li><a href=#线程优先级>线程优先级</a></li><li><a href=#参考资料>参考资料</a></li></ul></nav></details><div class='container entry-content'><p>进程（process）是资源分配的基本单元，而线程（thread）是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源。和进程相比，线程更加轻量化，所以线程又叫<em>轻量级进程</em>。</p><h2 id=创建线程>创建线程</h2><p>网上好多资料都说有三种创建线程的方式：</p><ol><li>继承<code>Thread</code>类，重写<code>run()</code>方法。</li><li>实现<code>Runnable</code>接口。</li><li>实现<code>Callable</code>接口。</li></ol><p>但本质上只有一种创建线程的方式，那就是构造一个 <code>Thread</code> 类。为什么这么说呢？我们来看上面几种方式的实际使用情况：</p><h3 id=继承-thread-类>继承 Thread 类</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ExtendsThread</span> <span style=color:#66d9ef>extends</span> Thread <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;通过继承 Thread 类来实现线程&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>通过继承 Thread 类来实现线程最大的缺点就是代码未来的可扩展性被限制。Java 是不支持多继承的，一旦我们的类继承了 Thread 类，那么它就不能再继承其它类了。</p><h3 id=实现-runnable-接口>实现 Runnable 接口</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>RunnableThread</span> <span style=color:#66d9ef>implements</span> Runnable <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;通过实现 Runnable 接口来实现线程&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p><code>Thread</code> 本身也实现了 <code>Runnable</code> 接口。</p><h3 id=实现-callable-接口>实现 Callable 接口</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>CallableTask</span> <span style=color:#66d9ef>implements</span> Callable<span style=color:#f92672>&lt;</span>Long<span style=color:#f92672>&gt;</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Long <span style=color:#a6e22e>call</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;通过实现 Callable 接口来实现线程&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> System<span style=color:#f92672>.</span><span style=color:#a6e22e>currentTimeMillis</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Executors<span style=color:#f92672>.</span><span style=color:#a6e22e>newSingleThreadExecutor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> CallableTask<span style=color:#f92672>());</span>
+</span></span></code></pre></div><p>实现 <code>Callable</code> 接口与实现 <code>Runnable</code> 接口最大的区别在于返回值：前者有返回值的，而后者无返回值。</p><blockquote><p>The Callable interface is similar to Runnable, in that both are designed for classes whose instances are potentially executed by another thread. A Runnable, however, does not return a result and cannot throw a checked exception.</p></blockquote><p>但是，不管是 <code>Runnable</code> 还是 <code>Callable</code>，它们都表示 <strong>被线程执行的任务</strong>，它们本身并不是线程。接口的不同实现只是意味着交给线程执行的内容不同而已。</p><h3 id=使用线程池>使用线程池</h3><p>我们可能还会想到线程池，使用线程池的时候，貌似不需要我们手动创建线程。那么线程池中的线程是如何创建的呢？实际上，线程池中的线程本质上是通过 <code>ThreadFactory</code> 创建的，不过最终的线程还是通过 <code>new Thread()</code> 创建出来的。我们可以来看一下 <code>ThreadFactory</code> 的默认实现 <code>DefaultThreadFactory</code> 的源码：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>DefaultThreadFactory</span> <span style=color:#66d9ef>implements</span> ThreadFactory <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> AtomicInteger poolNumber <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> AtomicInteger<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> ThreadGroup group<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> AtomicInteger threadNumber <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> AtomicInteger<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> String namePrefix<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    DefaultThreadFactory<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        SecurityManager s <span style=color:#f92672>=</span> System<span style=color:#f92672>.</span><span style=color:#a6e22e>getSecurityManager</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>        group <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>s <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>?</span> s<span style=color:#f92672>.</span><span style=color:#a6e22e>getThreadGroup</span><span style=color:#f92672>()</span> <span style=color:#f92672>:</span> Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>().</span><span style=color:#a6e22e>getThreadGroup</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>        namePrefix <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;pool-&#34;</span> <span style=color:#f92672>+</span> poolNumber<span style=color:#f92672>.</span><span style=color:#a6e22e>getAndIncrement</span><span style=color:#f92672>()</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;-thread-&#34;</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Thread <span style=color:#a6e22e>newThread</span><span style=color:#f92672>(</span>Runnable r<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        Thread t <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Thread<span style=color:#f92672>(</span>group<span style=color:#f92672>,</span> r<span style=color:#f92672>,</span> namePrefix <span style=color:#f92672>+</span> threadNumber<span style=color:#f92672>.</span><span style=color:#a6e22e>getAndIncrement</span><span style=color:#f92672>(),</span> <span style=color:#ae81ff>0</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>t<span style=color:#f92672>.</span><span style=color:#a6e22e>isDaemon</span><span style=color:#f92672>())</span>
+</span></span><span style=display:flex><span>            t<span style=color:#f92672>.</span><span style=color:#a6e22e>setDaemon</span><span style=color:#f92672>(</span><span style=color:#66d9ef>false</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>t<span style=color:#f92672>.</span><span style=color:#a6e22e>getPriority</span><span style=color:#f92672>()</span> <span style=color:#f92672>!=</span> Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>NORM_PRIORITY</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>            t<span style=color:#f92672>.</span><span style=color:#a6e22e>setPriority</span><span style=color:#f92672>(</span>Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>NORM_PRIORITY</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> t<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><h2 id=线程的启动>线程的启动</h2><p>线程的启动很简单，调用 <code>Thread</code> 类的 <code>start()</code> 方法即可。<code>start()</code> 方法最终会调用 <code>Runnable</code> 的 <code>run()</code> 方法来执行任务。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>target <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        target<span style=color:#f92672>.</span><span style=color:#a6e22e>run</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>那么，<code>start()</code> 与 <code>run()</code> 有何不同呢？首先，<code>run()</code> 方法是通过实现 <code>Runnable</code> 接口得来的，而 <code>start()</code> 是 <code>Thread</code> 类自身的一个方法，用于启动当前线程：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* Causes this thread to begin execution; the Java Virtual Machine
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* calls the {@code run} method of this thread.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* &lt;p&gt;
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* The result is that two threads are running concurrently: the
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* current thread (which returns from the call to the
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* {@code start} method) and the other thread (which executes its
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* {@code run} method).
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* &lt;p&gt;
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* It is never legal to start a thread more than once.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* In particular, a thread may not be restarted once it has completed
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* execution.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>*/</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>synchronized</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>start</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    * This method is not invoked for the main method thread or &#34;system&#34;
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    * group threads created/set up by the VM. Any new functionality added
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    * to this method in the future may have to also be added to the VM.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    * A zero status value corresponds to state &#34;NEW&#34;.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>threadStatus <span style=color:#f92672>!=</span> <span style=color:#ae81ff>0</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> IllegalThreadStateException<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/* Notify the group that this thread is about to be started
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    * so that it can be added to the group&#39;s list of threads
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    * and the group&#39;s unstarted count can be decremented. */</span>
+</span></span><span style=display:flex><span>    group<span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>boolean</span> started <span style=color:#f92672>=</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        start0<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>        started <span style=color:#f92672>=</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span> <span style=color:#66d9ef>finally</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> <span style=color:#f92672>(!</span>started<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                group<span style=color:#f92672>.</span><span style=color:#a6e22e>threadStartFailed</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>Throwable ignore<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#75715e>/* do nothing. If start0 threw a Throwable then
+</span></span></span><span style=display:flex><span><span style=color:#75715e>            it will be passed up the call stack */</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>另外，<code>start()</code> 方法通过 <code>synchronized</code> 来保证线程安全，并且只能调用一次，还会影响线程的状态（由NEW变为RUNNABLE），而 <code>run()</code> 只是一个普通方法，可以被多次调用，并且不会改变线程的状态。</p><h2 id=停止线程>停止线程</h2><p>通常，我们不会手动停止一个线程，而是让线程运行到结束，自然停止。但是有许多特殊的情况需要我们提前停止线程，比如：用户突然关闭程序，或程序运行出错重启等。</p><h3 id=被弃用的停止方法>被弃用的停止方法</h3><p>Java 在 <code>Thread</code> 类中提供了 <code>stop()</code> 方法，用于强行停止当前线程。但这个方法自 JDK1.2 开始就被标记为 <code>@Deprecated</code>，一同被标记的还有 <code>suspend()</code> 和 <code>resume()</code> 方法。那么，为何 JDK 要弃用这些方法呢？因为 <code>stop()</code> 会直接停止当前线程，线程就没有足够的时间来处理停止前需要完成的工作，可能会导致数据的完整性等问题。 <code>suspend()</code> 和 <code>resume()</code> 的问题则在于：调用 <code>suspend()</code> 的线程不释放锁就直接进入休眠，这可能导致死锁，因为如果线程在休眠期间持有锁的话，这把锁在线程被 <code>resume()</code> 之前是不会被释放的。</p><p>来看一个具体的例子：假设线程 A 调用 <code>suspend()</code> 让线程 B 挂起，线程 B 进入休眠，而线程 B 刚好持有锁 L。假设此时线程 A 想要访问线程 B 持有的锁 L，由于线程 B 没释放锁 L 就休眠了，所以线程 A 是拿不到锁 L 的，它就会陷入阻塞。这样一来，线程 A 和线程 B 都无法继续向下执行。</p><p>Java SE 的 API 文档里面其实也给出了这三个方法被弃用的原因（<a href=https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/doc-files/threadPrimitiveDeprecation.html> Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?</a>），并给出了相关的替代方案。</p><h3 id=使用状态标记>使用状态标记</h3><p>对于大多数情况，JDK 建议我们使用一个状态变量来指示目标线程是否应该停止运行。目标线程周期性地检查这个状态变量的值，当状态变量暗示要停止目标线程时，就从 <code>run()</code> 方法返回。为了确保停止请求的及时传播，这个状态变量应该被 <code>volatile</code> 修饰，或者对该变量的访问进行同步处理。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>volatile</span> Thread blinker<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>stop</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    blinker <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    Thread thisThread <span style=color:#f92672>=</span> Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>while</span> <span style=color:#f92672>(</span>blinker <span style=color:#f92672>==</span> thisThread<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>sleep</span><span style=color:#f92672>(</span>interval<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>InterruptedException e<span style=color:#f92672>){</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        repaint<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>然而，并不是仅仅使用 <code>volatile</code> 标记状态变量就百分百没问题了，我们还得倍加小心。下面是网上的一个例子：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>VolatileCannotStop</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 生产者
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Producer</span> <span style=color:#66d9ef>implements</span> Runnable <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>volatile</span> <span style=color:#66d9ef>boolean</span> canceled <span style=color:#f92672>=</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>private</span> BlockingQueue<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> storage<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Producer</span><span style=color:#f92672>(</span>BlockingQueue<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> storage<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>storage</span> <span style=color:#f92672>=</span> storage<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> num <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>while</span> <span style=color:#f92672>(</span>num <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>100000</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>!</span>canceled<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>num <span style=color:#f92672>%</span> <span style=color:#ae81ff>50</span> <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                        storage<span style=color:#f92672>.</span><span style=color:#a6e22e>put</span><span style=color:#f92672>(</span>num<span style=color:#f92672>);</span>   <span style=color:#75715e>// 阻塞操作
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span>num <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;是50的倍数，放入仓库&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>                    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>                    num<span style=color:#f92672>++;</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>InterruptedException e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                e<span style=color:#f92672>.</span><span style=color:#a6e22e>printStackTrace</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>}</span> <span style=color:#66d9ef>finally</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;生产者结束运行&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 消费者
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Consumer</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        BlockingQueue storage<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Consumer</span><span style=color:#f92672>(</span>BlockingQueue storage<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>storage</span> <span style=color:#f92672>=</span> storage<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>needMoreNums</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> Math<span style=color:#f92672>.</span><span style=color:#a6e22e>random</span><span style=color:#f92672>()</span> <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>0.97</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span><span style=color:#f92672>(</span>String<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> InterruptedException <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        BlockingQueue storage <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ArrayBlockingQueue<span style=color:#f92672>(</span><span style=color:#ae81ff>8</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        Producer producer <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Producer<span style=color:#f92672>(</span>storage<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>new</span> Thread<span style=color:#f92672>(</span>producer<span style=color:#f92672>).</span><span style=color:#a6e22e>start</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>        Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>sleep</span><span style=color:#f92672>(</span><span style=color:#ae81ff>500</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        Consumer consumer <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Consumer<span style=color:#f92672>(</span>storage<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>while</span> <span style=color:#f92672>(</span>consumer<span style=color:#f92672>.</span><span style=color:#a6e22e>needMoreNums</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span>consumer<span style=color:#f92672>.</span><span style=color:#a6e22e>storage</span><span style=color:#f92672>.</span><span style=color:#a6e22e>take</span><span style=color:#f92672>()</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;被消费了&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>            Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>sleep</span><span style=color:#f92672>(</span><span style=color:#ae81ff>100</span><span style=color:#f92672>);</span>  <span style=color:#75715e>// 这段时间内消费者又可以将 storage 塞满，然后阻塞
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;消费者不需要更多数据了&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 一旦消费者不需要更多数据了，我们就应该让生产者停下来，然而实际情况却是生产者停不下类
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        producer<span style=color:#f92672>.</span><span style=color:#a6e22e>canceled</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>        System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span>producer<span style=color:#f92672>.</span><span style=color:#a6e22e>canceled</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>直接看 <code>main()</code> 方法，首先创建了生产者/消费者共用的仓库 <code>storage</code>，仓库容量是 8，然后创建生产者并启动生产者线程，紧接着主线程进行 500 毫秒的休眠，保障生产者有足够的时间把仓库塞满，仓库被塞满后生产者就会阻塞，500 毫秒后消费者也被创建出来，并判断是否需要使用更多的数字，然后每次消费后休眠 100 毫秒，这样的业务逻辑是有可能出现在实际生产中的。</p><p>当消费者不再需要数据，就会将 <code>canceled</code> 的标记位设置为 true，理论上此时生产者会跳出 <code>while</code> 循环，并打印输出<code>生产者运行结束</code>。然而结果并不是我们想象的那样，尽管已经把 <code>canceled</code> 设置成 true，但生产者仍然没有停止，这是因为在这种情况下，生产者在执行 <code>storage.put(num)</code> 时会被阻塞，在它被叫醒之前是没有办法进入下一次循环判断 <code>canceled</code> 的值的，所以在这种情况下用 <code>volatile</code> 是没有办法让生产者停下来的。在这种情况下，应该使用 <code>interrupt()</code> 来中断线程。即使生产者处于阻塞状态，它仍然能够感受到中断信号，并作出响应。</p><h3 id=使用-interrupt>使用 interrupt</h3><p>在 Java 中，停止线程的正确姿势是使用 <code>interrupt()</code>。但 <code>interrupt()</code> 仅仅起到通知被停止线程的作用。而对于被停止的线程而言，它拥有完全的自主权，可以选择立即停止，也可以选择一段时间后停止，甚至可以选择不停止。不采用强制停止的做法的原因是：贸然强行停止线程可能造成一些安全问题，若要避免这些问题，就需要给目标线程一些时间进行收尾工作。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>while</span><span style=color:#960050;background-color:#1e0010> </span><span style=color:#f92672>(!</span>Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>().</span><span style=color:#a6e22e>isInterrupted</span><span style=color:#f92672>()</span><span style=color:#960050;background-color:#1e0010> </span><span style=color:#f92672>&amp;&amp;</span><span style=color:#960050;background-color:#1e0010> </span><span style=color:#f92672>(</span>has more<span style=color:#960050;background-color:#1e0010> </span>work<span style=color:#960050;background-color:#1e0010> </span>to<span style=color:#960050;background-color:#1e0010> </span><span style=color:#66d9ef>do</span><span style=color:#f92672>))</span><span style=color:#960050;background-color:#1e0010> </span><span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>    </span><span style=color:#66d9ef>do</span><span style=color:#960050;background-color:#1e0010> </span>more<span style=color:#960050;background-color:#1e0010> </span>work
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>调用某个线程的 <code>interrupt()</code> 方法之后，这个线程的中断标记位就会被设置成 true。每个线程都有这样的标记位，当线程执行时，应该定期检查这个标记位，如果标记位被设置成 true，就说明有程序想终止该线程。下面是一个具体的例子：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>StopThread</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span><span style=color:#f92672>(</span>String<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> InterruptedException <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        Thread t <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Thread<span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> Runnable<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>run</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>int</span> count <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>while</span> <span style=color:#f92672>(!</span>Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>currentThread</span><span style=color:#f92672>().</span><span style=color:#a6e22e>isInterrupted</span><span style=color:#f92672>()</span> <span style=color:#f92672>&amp;&amp;</span> count <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>1000</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                    System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;count = &#34;</span> <span style=color:#f92672>+</span> <span style=color:#f92672>(</span>count<span style=color:#f92672>++));</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>});</span>
+</span></span><span style=display:flex><span>        t<span style=color:#f92672>.</span><span style=color:#a6e22e>start</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>        Thread<span style=color:#f92672>.</span><span style=color:#a6e22e>sleep</span><span style=color:#f92672>(</span><span style=color:#ae81ff>5</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        t<span style=color:#f92672>.</span><span style=color:#a6e22e>interrupt</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>程序还没打印完 1000 个数就会停下来，因为对应的线程被 <code>interrupt</code> 了。</p><p>休眠中的线程是可以感受到中断信号的，被中断的线程会抛出一个 <code>InterruptedException</code>，同时清除中断信号，将中断标记位设置成 false。调用方可以捕获这个异常，进行处理，还可以再次中断线程。再次中断后，后续执行的方法依然可以检测到调用过程发生过中断，可以做出相应的处理，整个线程可以正常退出。</p><h2 id=线程的状态>线程的状态</h2><p>Java线程在其生命周期中可能处于6种状态（这6种状态指的线程在 JVM 中的状态，并不是操作系统中线程的状态），同一时刻，线程只能处于其中的一个状态。</p><table><thead><tr><th>状态</th><th>说明</th></tr></thead><tbody><tr><td>NEW</td><td>A thread that has not yet started is in this state.</td></tr><tr><td>RUNNABLE</td><td>A thread executing in the Java virtual machine is in this state.</td></tr><tr><td>BLOCKED</td><td>A thread that is blocked waiting for a monitor lock is in this state.</td></tr><tr><td>WAITING</td><td>A thread that is waiting indefinitely for another thread to perform a particular action is in this state.</td></tr><tr><td>TIMED_WAITING</td><td>A thread that is waiting for another thread to perform an action for up to a specified waiting time is in this state.</td></tr><tr><td>TERMINATED</td><td>A thread that has exited is in this state.</td></tr></tbody></table><p>以下是线程之间的状态迁移图：</p><p><img src=/images/java/concurrency/thread-state-transfering-diagram.png alt="Java thread state transfering"></p><h3 id=wait-与-notify><code>wait()</code> 与 <code>notify()</code></h3><p>若 <code>synchronized</code> 关键字修饰的某个共享资源 R 的锁已经被线程 T1 获得，其它需要资源 R 的锁才能运行的线程就会被阻塞直至 T1 释放 R 上的锁。一般情况下，这个锁是在同步代码块执行完才被释放的。</p><p>但是在同步代码块执行期间，已持有锁的线程 T1 可以调用资源 R 的 <code>wait()</code> 方法释放锁，然后进入等待状态，当前线程被挂起。锁的持有者可以调用 <code>notify()</code> 方法随机唤醒一个处于等待状态的线程，或 <code>notifyAll()</code> 方法去唤醒所有处于等待状态的线程。</p><p>只有持有与共享资源 R 相关联的 <code>monitor</code> 的锁的线程才应该去调用 <code>notify()</code> 或 <code>notifyAll()</code> 方法。一个线程可以通过3种方式获得与资源 R 相关联的 <code>monitor</code> 的锁，这三种方式刚好对应于同步代码块的三种形式。因为只有持有 <code>monitor</code> 的锁，才能进入同步代码块。</p><h3 id=sleep-与-wait><code>sleep()</code> 与 <code>wait()</code></h3><p><code>sleep()</code> 与 <code>wait()</code> 都可以暂停线程执行，但它们还有一些区别：</p><ol><li>原理不同。<code>sleep()</code> 是 <code>Thread</code> 类的静态方法，是线程自己用来控制自身执行的，它可以使线程自己暂停一段时间，把执行的机会让给其它线程，等睡眠时间一到，便会自动“醒来”。而 <code>wait()</code> 是 <code>Object</code> 类的方法，用于线程间的通信，这个方法会使当前持有对象锁的线程释放锁并进入等待状态，直至其它线程调用对象的 <code>notify()</code> 或 <code>notifyAll()</code> 方法才会醒来。<code>wait()</code> 方法也支持设置超时时间。</li><li>对锁的处理机制不同。调用 <code>sleep()</code> 方法只是让当前线程暂停一段时间，不涉及线程间通信，也不会释放锁。而调用 <code>wait()</code> 方法会释放锁。</li><li>使用区域不同。<code>sleep()</code> 方法可以在任何区域使用。而由于调用 <code>wait()</code> 方法前必须先获得对象锁，因此只能在同步代码块内使用。</li><li>对异常的处理方式不同。调用 <code>sleep()</code> 方法时必须处理 <code>InterruptedException</code> 异常。而调用 <code>wait()</code> 方法时不用关心异常处理。</li></ol><h3 id=sleep-与-yield><code>sleep()</code> 与 <code>yield()</code></h3><p><code>sleep()</code>方法与<code>yield()</code>方法都属于<code>Thread</code>类，它们的区别主要体现在：</p><ol><li>前者被调用后会立马进入阻塞状态，在一段时间内不会再执行。而后者只是使当前线程重新回到<code>RUNNABLE</code>状态，因此可能马上又被执行。</li><li>前者在方法声明上抛出了<code>InterruptedException</code>异常，而后者没有声明任何异常。</li></ol><h3 id=join><code>join()</code></h3><p>JDK中对<code>join()</code>方法的解释为：Waits for this thread to die.</p><p>实际上，当线程A调用了线程B的<code>join()</code>方法后，线程A会让出CPU的执行权给线程B。直到线程B执行完成或者过了超时时间，线程A才会继续执行。</p><h2 id=多线程同步>多线程同步</h2><h3 id=同步的实现>同步的实现</h3><p>Java 提供了多种多线程同步的方法：</p><ol><li>使用 <code>synchronized</code> 关键字。见<a href=../synchronization/><code>Synchronized</code>关键字</a>。</li><li>使用 <code>wait()</code> 与 <code>notify()</code> 方法。</li><li>使用 <code>Lock</code>。见<a href=../locks/>Locks</a>。</li></ol><h2 id=线程优先级>线程优先级</h2><p><code>Thread</code> 类定义了三个和线程优先级有关的属性：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* The minimum priority that a thread can have.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>*/</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> MIN_PRIORITY <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* The default priority that is assigned to a thread.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>*/</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> NORM_PRIORITY <span style=color:#f92672>=</span> <span style=color:#ae81ff>5</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>* The maximum priority that a thread can have.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>*/</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> MAX_PRIORITY <span style=color:#f92672>=</span> <span style=color:#ae81ff>10</span><span style=color:#f92672>;</span>
+</span></span></code></pre></div><p>优先级越高的线程获得 CPU 时间片的概率越大，但这并不是意味着优先级越高的线程一定越先执行。在 Java 中，设置线程优先级方法是 <code>setPriority(int newPriority)</code>，有效的优先级范围为：<code>1-10</code>。</p><h2 id=参考资料>参考资料</h2><ol><li>Brian Goetz, Tim Peierls, Joshua Bloch, Joseph Bowbeer, David Holmes, and Doug Lea. <em>Java Concurrency in Practice</em>. Addison-Wesley Professional, 2006.</li><li>方腾飞, 魏鹏, 程晓明. Java并发编程的艺术. 机械工业出版社, 2015.</li><li><a href=https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/doc-files/threadPrimitiveDeprecation.html>Java Thread Primitive Deprecation</a>.</li></ol></div><footer class=entry-footer><div class='container sep-before'><div class=categories><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5A2 2 0 014 3H9l2 3h9a2 2 0 012 2z"/></svg><span class=screen-reader-text>分类: </span><a class=category href=/categories/java/>Java</a></div><div class=tags><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2H12l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg><span class=screen-reader-text>标签: </span><a class=tag href=/tags/java/>Java</a>, <a class=tag href=/tags/%E5%B9%B6%E5%8F%91/>并发</a></div></div></footer></article><nav class=entry-nav><div class=container><div class='prev-entry sep-before'><a href=/java/concurrency/synchronization/><span aria-hidden=true><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>Previous</span>
+<span class=screen-reader-text>上一篇: </span>Java 中的 synchronized</a></div><div class='next-entry sep-before'><a href=/java/concurrency/java_thread_pool/><span class=screen-reader-text>下一篇: </span>Java 线程池<span aria-hidden=true>下一个<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg></span></a></div></div></nav></main><footer id=footer class=footer><div class='container sep-before'><section class='widget widget-social_menu sep-after'><nav aria-label=社交菜单><ul><li><a href=https://github.com/zhannicholas target=_blank rel='noopener me'><span class=screen-reader-text>Open Github account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg></a></li><li><a href=https://t.me/zhannicholas target=_blank rel='noopener me'><span class=screen-reader-text>Open Telegram account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72.0-.6-.27-.84-.95L6.3 13.7.85 12c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z"/></svg></a></li><li><a href=mailto:zhan_nicholas@outlook.com target=_blank rel='noopener me'><span class=screen-reader-text>Contact via Email</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a></li><li><a href=https://linkedin.com/in/%e4%bc%9f%e4%bc%9f-%e8%a9%b9-27871a104 target=_blank rel='noopener me'><span class=screen-reader-text>Open Linkedin account in new tab</span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a></li></ul></nav></section><div class=copyright><p>&copy; 2018-2022 Nicholas Zhan</p></div></div></footer></div></div><script>window.__assets_js_src="/assets/js/"</script><script src=/assets/js/main.c3bcf2df.js></script><script src=/js/custom.js></script></body></html>
