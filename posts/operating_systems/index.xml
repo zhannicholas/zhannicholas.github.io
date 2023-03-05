@@ -1,23 +1,47 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>操作系统 on Nicholas Zhan</title>
-    <link>https://zhannicholas.github.io/posts/operating_systems/</link>
-    <description>Recent content in 操作系统 on Nicholas Zhan</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 13 Dec 2020 19:45:38 +0800</lastBuildDate>
-    
-	<atom:link href="https://zhannicholas.github.io/posts/operating_systems/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>Operating_systems</title>
-      <link>https://zhannicholas.github.io/posts/operating_systems/operating_systems/</link>
-      <pubDate>Sun, 13 Dec 2020 18:57:36 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/posts/operating_systems/operating_systems/</guid>
-      <description>计算机系统由硬件系统和软件系统两大部分组成。硬件包括处理器、主存、磁盘、打印机、键盘、鼠标、显示器、网络接口以及各种输入/输出设备等。操作系</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>操作系统 on 's Digital Garden</title><link>https://zhannicholas.github.io/posts/operating_systems/</link><description>Recent content in 操作系统 on 's Digital Garden</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 13 Dec 2020 19:45:38 +0800</lastBuildDate><atom:link href="https://zhannicholas.github.io/posts/operating_systems/index.xml" rel="self" type="application/rss+xml"/><item><title>虚拟机</title><link>https://zhannicholas.github.io/posts/operating_systems/virtual_machines/</link><pubDate>Sun, 13 Dec 2020 19:45:38 +0800</pubDate><guid>https://zhannicholas.github.io/posts/operating_systems/virtual_machines/</guid><description>虚拟化的主要思想是 虚拟机监视程序(Virtual Machine Monitor, VMM) 在同一物理机上创建出有多台(虚拟)机器的假象，VMM又称虚拟机管理程序(hypervisor)。我们可以将hypervisior分为两类：第一类hypervisor和第二类hypervisor。前者运行在裸机上，而后者主要依赖于底层操作系统提供的服务和抽象。无论采用何种方式，虚拟化技术都允许在单一计算机上运行多个虚拟机，并且这些虚拟机能运行不同的操作系统。
+type 1 and type 2 hypervisors 有两种类型的hypervisor：
+Type 1 hypervisors (native/bare metal hypervisors). Type 2 hypervisors (hosted hypervisors). Goldberg对两类虚拟化技术进行了区分。从技术的角度看，一类hypervisor更像是一个操作系统，因为它是唯一一个运行在最高特权模式下的程序。二类hypervisor是一个依赖操作系统分配和调度资源的程序，就像是一个普通的进程，尽管如此，它还是伪装成了一个具有CPU和各种设备的完整计算机。
+参考资料 ANDREW S. TANENBAUM, HERBERT BOS. Modern Operating Systems, 4th Edition. Pearson, 2015.</description></item><item><title>虚拟化</title><link>https://zhannicholas.github.io/posts/operating_systems/virtualization/</link><pubDate>Sun, 13 Dec 2020 19:44:17 +0800</pubDate><guid>https://zhannicholas.github.io/posts/operating_systems/virtualization/</guid><description>虚拟化技术允许在一台物理机上创建多台虚拟机器。这些虚拟机器本身并不拥有物理资源，但它们却可以像普通的机器一样完成任务，每台虚拟器都不知道其它虚拟机的存在。Hypervisor是位于底层物理资源和虚拟环境之间的一个管理层，它创建彼此相互隔离的虚拟环境并为虚拟环境分配物理资源。Hypervisor又称虚拟机监视程序(Virtual Machine Monitor, VMM)。安装有hypervisor的物理机被称为宿主机(host machine)，而被hypervisor创建并管理的虚拟资源就是 虚拟机(virtual machine) 或 客户机(guest machine)。
+虚拟化的类型 根据虚拟机隔离情况的不同，有三种虚拟化方式：
+全虚拟化(full virtualization)。 半虚拟化(paravirtualization)。 操作系统虚拟化(operating system virtualization)。 全虚拟化 在全虚拟化的虚拟平台中，Guest OS并不知道自己是一台虚拟机，它会认为自己是运行在物理硬件设备上的Host OS。因为hypervisor将操作系统管理的所有硬件设备逻辑抽象为虚拟设备，然后交给Guest OS使用。实际上是Hypervisor为Guest OS制造了一种假象，让Guest OS认为底层硬件平台归自己所有。
+全虚拟化为每台虚拟机提供了完全隔离的虚拟环境，大多数操作系统都直接在虚拟机中安装，而不需要任何修改。
+半虚拟化 半虚拟化需要在对Guest OS的内核代码进行一定的修改之后，才能使Guest OS在半虚拟化的hypervisor中运行。半虚拟化不需要虚拟机陷入特权指令，因此对系统的侵入更小。Guest OS直到hypervisor的存在，并通过hypercall直接与hypervisor交流。
+操作系统虚拟化 操作系统级别的虚拟化是操作系统的一个特性，内核知道多个用户空间实例的存在。我们称这种虚拟化为容器化(containerzation)，而将这些用户空间的实例称为容器(container)。程序可以在容器内运行，但它们只能访问容器内的内容和使用分配给容器的设备。容器认为自己拥有所有可用资源，实际上它们只能访问分配给容器的那些资源。
+Hypervisors 虚拟机需要表现得与真实的机器一样，比如：我们既能像启动真机一样启动它，也能在它上面按照任意的操作系统……
+hypervisor的任务就是高效实现这种假象，它需要在以下三个方面表现良好：
+安全性(safety)：hypervisor应该具有虚拟化资源的完全控制权。 保真性(fidelity)：虚拟机上的程序应该同其在物理机上运行的表现一致。 高效性(efficiency)：虚拟机中运行的绝大部分代码都不应该受到VMM的干涉。 毫无疑问，在**解释器(interpreter)**中逐条考查并准确执行每一条指令是安全的。有些指令可以直接执行，而其它不能完全执行的指令则需要由解释器进行模拟(使VMM上运行的操作系统认为自己正确的执行了指令)。
+在早期的x86体系结构上，虚拟化一直都是一个问题。每个包含内核态和用户态的CPU都有一个特殊的指令集，其中的指令在内核态与用户态下的执行行为不同，这些指令包括I/O操作和修改MMU设置的指令，称为敏感指令(sensitive instruction)。还有一个指令集，其中的指令在用户态执行时会导致陷入，称为特权指令(privileged instruction)。Popek和Goldberg指出机器可虚拟化的一个必要条件是敏感指令为特权指令的子集，即：若要在用户态做不应该在用户态做的事，硬件必须陷入。但Intel 386不具备这一特性：很多Intel 386敏感指令在用户态执行时要么被忽略，要么具有不同的行为。因此，那时的386及其后继不能被虚拟化，也不能直接支持hypervisor。除了敏感指令在用户态不能陷入以外，386还存在可以在用户态读取敏感状态而不造成陷入的指令。例如：在2005年前的x86处理器上，程序可以通过读取代码段选择符判断自身时运行在内核态还是用户态，若虚拟机中的操作系统这么做并发现自己运行在用户态，就会做出错误的决策。
+从2005年起，Intel和AMD开始在CPU中引入虚拟化支持，使这个问题最终得到解决。这项技术在Intel CPU中被称作VT(Virtualization Technology)，而在AMD CPU中称作SVN(Secure Virtual Machine)。它们的基本思想使创建可运行虚拟机的容器，客户操作系统在容器中启动并持续运行，直到发生异常并陷入hypervisor。这就使得在x86平台实现经典的 陷入模拟(trap-and-emulate) 成为可能。
+Hypervisor创建并管理虚拟环境，分为两种：
+Type 1 hypervisors (native/type metal hypervisors). Type 2 hypervisors (hosted hypervisors). 虚拟机 一章详细介绍了两类hypervisor。
+参考资料 ANDREW S. TANENBAUM, HERBERT BOS.</description></item><item><title>操作系统：进程与线程</title><link>https://zhannicholas.github.io/posts/operating_systems/processes_and_threads/</link><pubDate>Sun, 13 Dec 2020 19:36:01 +0800</pubDate><guid>https://zhannicholas.github.io/posts/operating_systems/processes_and_threads/</guid><description>操作系统中最核心的概念是进程：它是对正在运行的程序的一个抽象。进程通常需要做很多事情，比如游戏运行起来就是一个进程，游戏内部需要渲染图形、响应用户操作、连接网络等，为了保障良好的用户体验，这些功能不能相互阻塞，因此需要多线程；进程需要空间存储指令和数据，因此用到了内存；有时候，进程需要将一部分数据持久化保存，这就用到了文件系统……
+进程 进程（process） 是对正在运行的程序的一个抽象，代表一个正在执行的程序的实例，包括程序计数器、寄存器和变量的当前值。也可以这么说，进程是程序启动后在内存中创建的一个执行副本。
+进程的创建 通常有 4 种事件会导致进程的创建：
+系统初始化。 正在运行的程序执行了创建进程的系统调用。 用户请求创建一个新进程。 一个批处理作业的初始化。 从技术上看，在所有这些情形中，新进程都是由于一个已经存在的进程执行了一个用于创建进程的系统调用而出现的。
+在 UNIX 系统中，创建新进程使用的是系统调用 fork，而 Windows 中则是CreateProcess 函数。在 UNIX 和 Windows 中，进程创建之后，父进程和子进程有各自不同的地址空间。如果其中某个进程修改了其地址空间内的一个字，其它进程是察觉不到的。在 UNIX 中，子进程的初始地址空间是父进程地址空间的一个副本，但这里其实有涉及到两个不同的地址空间。不可写的内存是共享的。一些 UNIX 系统在父子进程之间共享程序正文，因为程序正文是不可修改的。子进程也可能会共享父进程所有的内存，但这种情况下采用的是 copy-on-write 这种共享方式，一旦有进程想要修改部分内存，就必须先复制这块地址空间，以确保修改发生在私有区域。可写的内存是不可共享的。在 Windows 中，父进程的地址空间和子进程的地址空间从一开始就是不同的。
+进程的终止 进程在创建之后，就开始运行，完成其工作。进程会在某些条件下终止：
+正常退出（自愿的）。多数进程是由于完成了它们工作而终止，这个时候它们会执行一个系统调用而退出。在 UNIX 中该调用是 exit，Windows 中则是ExitProcess。 出错退出（自愿的）。例如需要的文件不存在。 严重错误（非自愿）。例如执行了非法指令、引用了不可访问的内存等。 被其它进程杀死（非自愿）。某个进程执行一个系统调用通知草走系统杀死某个其它进程。在 UNIX 中，这个调用是 kill，Windows 中，则是 TerminateProcess 函数。 进程的状态 每个进程都是一个独立的实体，有自己的程序计数器和内部状态。进程之间经常相互作用，从而导致进程状态的迁移。
+进程的实现 为了实现进程，操作系统维护着一张 进程表（process table），又称 进程控制块（process control block）。每个进程占用一个进程表项。进程表项包含了进程状态的重要信息，包括程序计数器、堆栈指针、内存分配情况、所打开文件的状态、账号和调度信息，以及其它在进程由运行态转为就绪或阻塞态时必须保存的信息，从而保证该进程随后能再次启动，就像从未被中断过一样。一个进程在执行过程中可能被中断数千次，但每当被中断的进程被重新被执行时，操作系统都会将进程状态恢复到中断发生前进程的状态。
+线程 线程（thread） 具有很多进程的特质，又被称为 轻量级进程（lightweight process）。进程把资源集中在一起（资源管理的单位是进程），而线程则是在 CPU 上被调度执行的实体。一个进程内的多个线程共享同一个地址空间和其它资源。每个进程都有自己独立的地址空间，而一个进程内的多个线程都有完全一样的地址空间，这意味着它们也共享同样的全局变量。由于各个线程都可以访问进程地址空间中的每一个内存地址，所以一个线程可以读、写、甚至清除另一个线程的堆栈，线程之间是没有保护的。
+每个进程的中内容有：地址空间、全局变量、打开的文件、子进程、时钟信息、信号与信号处理程序、账户信息。而每个线程中的内容有：程序计数器、寄存器、堆栈、状态。每个线程都有自己的堆栈，堆栈中的栈帧供各个被调用但是还没有从中返回的过程使用，栈帧保存了相应过程的局部变量以及过程调用完之后使用的返回地址。
+进程间通信 有时候，进程之间需要相互通信。进程间通信需要解决的三个问题：
+进程如何把信息传递给其它进程。 如何确保两个或更多的进程在关键活动中不会出现交叉。 当进程间出现依赖时，如何保证正确的顺序。 临界区 竞争条件（race condition） 说的是两个或多个进程对共享资源的读写存在竞争，当所有的进程执行完成后，共享资源的值是不可预测的，因为它取决于进程执行的精确顺序。</description></item><item><title>操作系统：死锁</title><link>https://zhannicholas.github.io/posts/operating_systems/deadlocks/</link><pubDate>Sun, 13 Dec 2020 19:18:38 +0800</pubDate><guid>https://zhannicholas.github.io/posts/operating_systems/deadlocks/</guid><description>在多道程序设计环境中，多个线程可能会争夺有限的资源。线程先请求资源，若请求不能被立即满足，线程就会进入等待状态。有时候，两个线程各自持有不同的资源并等待对方所持有的资源，这种情况可能导致 死锁(deadlock)。死锁的定义为：every process in a set of processes is waiting for an event that can be caused only by another process in the set。虽然定义中使用了进程，但这也适用于线程。
+资源 大部分死锁是由线程无法获得互斥资源引起的，这些资源可以是各种硬件设备(如打印机)、也可以是一段信息(如数据库内的记录)。资源种类繁多，一类资源可以具有若干实例，任何一个实例都可以满足对该类资源的请求。简而言之，资源(resource) 就是任何能够被获取、使用并最终释放的东西。线程在使用某个资源前必须先请求该资源，并且必须在使用完之后释放它。很明显，线程所请求的资源数量不得超过系统内资源的总量。
+资源可以分为两种：可抢占的(preemptable) 和 不可抢占的(nonpreepmptable)。通常情况下，死锁和不可抢占资源有关。可抢占资源中潜在的死锁可以通过资源的重分配来化解。
+一般情况下，和使用资源有关的事件如下：
+请求。线程请求资源，若请求不能被立即满足，线程必须等待。 使用。线程在资源上执行某些操作。 释放。线程释放资源。 资源的请求和释放可能是通过系统调用来完成的。例如，某些系统可能提供了诸如request()/release()、open()/close()或wait()/signal()一类的系统调用。对于被内核管理的资源，操作系统会维护一张系统表，表中记录了每个资源是空闲的还是已分配的(还会记录资源被分配给了哪个线程)。如果线程请求的资源已将被分配给其它线程，就将它加入到对应资源的等待队列中。
+死锁的特征 死锁的必要条件 当以下四个条件同时满足时，就会出现死锁：
+互斥(Mutual exclusion)。资源要么因其已被分配给某个线程而不可用，要么就是可用的。 占有并等待(Hold and wait)。线程持有至少一个资源并等待其它线程正持有的资源。 非抢占(No preemption)。在持有资源的线程完成前，该资源不可被其它线程抢占。 循环等待(Circular wait)。一组线程形成等待环路，环路中的每一个线程都在等待下一个线程持有的资源。 虽然死锁只有在以上四个条件同时满足时才会出现，但这四个条件并不是完全独立的。例如，循环等待条件暗示了占有并等待条件。
+资源分配图 系统资源分配图(system resource-allocation graph, RAG) 是一个有向图，它可以精确的描述死锁。它由一组顶点V和一组边E构成，其中，V又由两部分组成：系统中的所有活动线程T和系统中所有的资源类型R(注意是资源类型而不是资源数量)；E有两种类型：request edge和assignment edge，request edge $T_i \to R_i$ 表示线程 $T_i$ 请求并等待资源 $R_j$ 的实例，而assignment edge $R_j \to T_i$ 表示线程 $T_i$ 已经持有一个资源 $R_j$ 的实例。为了便于识别，我们用圆形表示线程，用矩形表示资源，在矩形内部用点表示资源的实例。</description></item><item><title>操作系统：主存</title><link>https://zhannicholas.github.io/posts/operating_systems/main_memory/</link><pubDate>Sun, 13 Dec 2020 19:01:49 +0800</pubDate><guid>https://zhannicholas.github.io/posts/operating_systems/main_memory/</guid><description>物理地址与虚拟地址 Computer Systems: A Programmer&amp;rsquo;s Perspective 一书中是这么描述物理地址的：计算机系统的主存被组织成一个由 M 个连续的字节大小的单元组成的数组，每个字节都有一个唯一的 物理地址（Physical Address）。也就是说，物理地址表示的是数据在主存中的物理位置。
+早期的计算机中没有存储器抽象，每一个程序都直接访问物理地址，我们把 CPU 直接访问物理地址的这种寻址方式称为 物理寻址(physical addressing)。而 虚拟地址(Virtual Address) 是 CPU 在程序运行期间生成的一个地址，虚拟地址又叫逻辑地址（Logical Address），虚拟寻址（virtual addressing） 是现代计算机所采用的寻址形式。内存管理单元（Memory Management Unit, MMU） 是 CPU 上的一个专用硬件，负责完成虚拟地址到物理地址的映射，这个过程叫做 地址翻译（address translation）。
+上图左边展示了一个物理寻址的示例，该示例展示了一条指令，它从物理地址 4 开始读取 4 个字节。当 CPU 执行这条指令时，会生成一个物理地址，CPU 通过内存总线将物理地址 4 传给主存。主存从物理地址 4 开始取出 4 个字节，并将它返给 CPU。而上图右边展现了一个虚拟寻址的例子，CPU 在执行指令时拿到的是一个虚拟地址 4100，它将这个虚拟地址传给 MMU，MMU 将这个虚拟地址映射到物理地址 4，然后将物理地址传给主存。
+使用物理地址存在的一些问题：首先，用户程序可以访问任意地址，容易破坏操作系统。此外，使用物理地址会让同时运行多个程序变得很困难。
+地址空间 要使多个应用程序同时处于内存中并且不互相影响，就需要解决两个问题：保护和重定位。地址空间（address space） 是一个地址集合，进程可用它在内存中寻址。每个进程都有一个自己独立的地址空间，一般情况下，进程各自的地址空间是相互独立的。
+计算机的物理内存总是有限的，而所有进程所需的 RAM 总量通常比内存要大得多。有两种处理内存超载的通用方法：交换（swapping） 和 虚拟内存（virtual memory）。交换技术将一个进程完整地载入内存，运行一段时间，然后再将它存回硬盘。空闲进程主要存储在硬盘上，所以只要它们不运行就不会占用内存。虚拟内存能够使程序在只有一部分被载入内存的情况下运行。
+空闲内存管理 操作系统必须对动态分配的内存进行管理。追踪内存的使用情况的方式主要有两种：位图（bitmap） 和 空闲链表（free list）。
+位图 使用位图时，内存被划分为分配单元（分配单元的大小根据实际情况确定，小到几个字，大到几千个字节），每个分配单元对应于位图中的一位。位图中用 1 表示空闲，0 表示已被使用；也可以用 0 表示空闲，1 表示已使用。因此，位图又称 位向量（bit vector）。</description></item><item><title>操作系统所处的位置</title><link>https://zhannicholas.github.io/posts/operating_systems/operating_systems/</link><pubDate>Sun, 13 Dec 2020 18:57:36 +0800</pubDate><guid>https://zhannicholas.github.io/posts/operating_systems/operating_systems/</guid><description>计算机系统由硬件系统和软件系统两大部分组成。硬件包括处理器、主存、磁盘、打印机、键盘、鼠标、显示器、网络接口以及各种输入/输出设备等。操作系统管理这些硬件资源，并为用户程序提供了一个更简单的计算机模型。软件系统包括系统软件和应用软件，操作系统属于系统软件。
+大多数计算机有两种运行模式：内核态(kernel mode)和用户态(user mode)。操作系统运行在内核态，在内核态模式下，操作系统具有对所有硬件的完全访问权，可以执行机器能够运行的任何指令。软件系统的其余部分运行在用户态。在用户态下，只能使用机器指令的一个子集，例如用户态下不能使用有关 I/O 和内存保护的指令。为了从操作系统中获得服务，用户程序必须使用 系统调用(system call) 以陷入内核并调用操作系统，TRAP 指令把用户态切换到内核态并启用操作系统，当有关工作完成后，在系统调用后面的指令把控制权返回给用户程序。
+操作系统运行在裸机之上，为所有其它的软件提供基础的运行环境。它有两个基本独立的任务：为应用程序提供一个资源集的清晰抽象，管理硬件资源。
+用户接口程序一般指 shell 或 GUI(Graphical User Interface)，它运行在用户态的最底层，允许用户通过他们运行其它程序，诸如 Web 浏览器、音乐播放器等。我们常见的 bash (Bourne Again SHell)就是大多数 Linux 系统默认的 shell 程序。除了用户可直接使用的 shell 和 GUI 外，操作系统一般还提供了供编程人员调用的 API。
+抽象是管理复杂性的一个关键。好的抽象可以把一个几乎不可能管理的任务划分为两个可管理的部分：第一部分是有关抽象的定义和实现，第二部分是随时使用这些抽象解决问题。操作系统的一个主要任务就是隐藏硬件，创建好抽象，并实现和管理它所创建的抽象对象，最终呈现给应用程序(以及程序员)良好、清晰、一致的抽象。
+参考资料 ANDREW S. TANENBAUM, HERBERT BOS. Modern Operating Systems, 4th Edition. Pearson, 2015.</description></item></channel></rss>

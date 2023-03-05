@@ -1,1 +1,42 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Networks on Nicholas Zhan</title><link>https://zhannicholas.github.io/tags/networks/</link><description>Recent content in Networks on Nicholas Zhan</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Sun, 13 Dec 2020 16:34:55 +0800</lastBuildDate><atom:link href="https://zhannicholas.github.io/tags/networks/index.xml" rel="self" type="application/rss+xml"/><item><title>路由算法</title><link>https://zhannicholas.github.io/computer_networks/fundamentals/routing_algorithms/</link><pubDate>Sun, 13 Dec 2020 16:34:55 +0800</pubDate><guid>https://zhannicholas.github.io/computer_networks/fundamentals/routing_algorithms/</guid><description>网络层的主要功能就是将数据包从源主机路由到目标主机。在大多数网络中，数据包需要经过多跳才能到达目的地。路由算法负责为入境数据包选择一条输出线</description></item><item><title>延迟与带宽</title><link>https://zhannicholas.github.io/computer_networks/fundamentals/latency_and_bandwidth/</link><pubDate>Sun, 13 Dec 2020 16:06:22 +0800</pubDate><guid>https://zhannicholas.github.io/computer_networks/fundamentals/latency_and_bandwidth/</guid><description>延迟（Latency） 和**带宽（Bandwidth）**是衡量网络性能的两个关键指标。 延迟 延迟是指一个数据包(或一条消息)从发送到被接收这</description></item><item><title>Ip寻址</title><link>https://zhannicholas.github.io/computer_networks/fundamentals/ip_address/</link><pubDate>Sun, 13 Dec 2020 15:44:47 +0800</pubDate><guid>https://zhannicholas.github.io/computer_networks/fundamentals/ip_address/</guid><description>IP地址 IPv4采用的是32位地址，而Ipv6采用的是128位地址。Internet上的每台主机和路由器都有IP地址，但一个IP地址并不真正</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Networks on 's Digital Garden</title><link>https://zhannicholas.github.io/tags/networks/</link><description>Recent content in Networks on 's Digital Garden</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 13 Dec 2020 16:34:55 +0800</lastBuildDate><atom:link href="https://zhannicholas.github.io/tags/networks/index.xml" rel="self" type="application/rss+xml"/><item><title>计算机网络路由算法</title><link>https://zhannicholas.github.io/posts/computer_networks/routing_algorithms/</link><pubDate>Sun, 13 Dec 2020 16:34:55 +0800</pubDate><guid>https://zhannicholas.github.io/posts/computer_networks/routing_algorithms/</guid><description>网络层的主要功能就是将数据包从源主机路由到目标主机。在大多数网络中，数据包需要经过多跳才能到达目的地。路由算法负责为入境数据包选择一条输出线路。路由算法主要分为两大类：自适应算法和非自适应算法。非自适应算法不会根据当前测量或估计的流量和拓扑结构来调整路由决策，整个过程是静态的。而自适应算法会改变路由决策，路由决策的改变会反映网络拓扑结构的变化，通常也会反映网络流量的变化情况，其过程是动态的。
+最短路径算法 构造一张网络图，图中的每个节点代表一个路由器，每条边代表一条通信线路。为了选择一对给定路由器之间的路由线路，算法只需要找出这对给定路由器之间的最短路径即可。
+Dijkstra 算法是一种非常有名的最短路径算法，它能够找出图中源节点到全部目标节点的最短路径。算法要求所有边的权重都为非负值，恰好网络拓扑中不可能存在非负值。
+算法在运行过程中维护了一组节点集合 S，并且从源点 s 出发到集合 S 中的每一个节点之间的最小距离都已经被找到。用 V 表示由图中所有节点构成的集合，算法重复的从节点集 V-S 中选出到源点 s 路径最短节点 u，将 u 加入集合 S，然后更新源点 **s**到集合 V-S 中各节点的估计距离。重复这个过程，直到遍历完所有顶点(集合 V-S 为空)。下图展示了这个过程：
+最短路径算法的缺点在于其需要知道整个网络的拓扑图。
+泛洪算法 泛洪(flooding)算法的思想是：将每一个入境的数据包都发送到除该数据包入境线路以外所有的线路。算法的鲁棒性非常好，只要源主机和目标主机之间存在一条可用通路，数据包便可到达目的地。算法能够选择每一条可能的路径（包括最短路径），但算法会产生大量的重复数据包。
+距离矢量算法 **距离矢量路由(distance vector routing)**算法是一种动态路由算法。算法要求每个路由器都维护一张表，表中记录了当前已知的到网络中其它路由器的最佳距离及所使用的链路。每个路由器回合所有的相邻的其它路由器交换信息并结合获取的信息不断更新自己的表，最终算法收敛时，每个路由器都可以得到到达其它路由器的最佳链路。路由器之间交换信息采用的就是 RIP(路由信息协议(Router Information Protocol)。
+距离矢量路由算法虽然总能收敛到正确的答案，但这个收敛速度可能非常慢。当网络拓扑结构发生变化之后，可能出现无穷计数问题。算法对好消息(一条更近的链路)的反应非常迅速，对坏消息(某条链路不可用时，尝试切换到其它链路)的反应却异常迟缓。问题的核心在于，当B发现自己联系不上C时，A告诉B它有一条通往C的路径，B无从判断自己是否就在A到C的这个路径上面。
+链路状态路由 由于距离矢量算法存在无穷计数问题，它后来被**链路状态路由(link state routing)**算法取代了。
+链路状态路由算法可以用五个部分来描述，每一个路由器必须完成这五个部分：
+发现邻居节点，并了解邻居节点的网络位置 设置到每个邻居节点的距离或成本度量值 构造一个包含所有刚刚获知的链路状态信息包 将这个包发给所有其他的路由器，并接收来自其它路由器的信息包 计算出到每个其它路由器的最短路径 实际上，算法将完整的网络拓扑结构发给了每一个路由器，然后每个路由器运行Dijstra算法就可以找出自己到其它路由器的最短路径。
+链路状态路由算法在实际的网络中使用非常广泛，典型的有 IS-IS(Intermediate System-Intermediate System) 和 OSPF(Open Shortest Path First) 。
+参考文献 ANDREW S. TANENBAUM, DAVID J. WETHERALL. Computer Networks, Fifth Edition. Pearson, 2011.</description></item><item><title>网络延迟与带宽</title><link>https://zhannicholas.github.io/posts/computer_networks/latency_and_bandwidth/</link><pubDate>Sun, 13 Dec 2020 16:06:22 +0800</pubDate><guid>https://zhannicholas.github.io/posts/computer_networks/latency_and_bandwidth/</guid><description>延迟（Latency） 和**带宽（Bandwidth）**是衡量网络性能的两个关键指标。
+延迟 延迟是指一个数据包(或一条消息)从发送到被接收这个过程中所花费的时间。
+延迟的构成 对于通过因特网连接的一对客户端-服务器而言，延迟包含以下四部分：
+传播延迟(Propagation delay)：数据包从发送方到接收方所经过的时间，取决于发送方与接收方之间的距离与信号的传播速率 发送延迟(Transmission delay)：将整个数据包传送到链路上所需时间，取决于包的长度和链路的传输速率 处理延迟(Processing delay)：路由器处理包头，检测错误，以及决定包的目的地所花费的时间 排队延迟(Queuing delay)：当包到达的速度超过了路由器的处理速度时，新抵达的数据包会在一个缓冲区中排队。数据包在队列中排队直到可以被处理所经过的时间就是排队延迟 一般而言，源到目标的距离越长，传播延迟就越长；源到目标之间的路由器越多，发送延迟和处理延迟就越长；路径上的负载越重，出现排队的可能性就越大；
+数据包在传输介质中传播。一旦选定传输介质，包的传播速度其实也就定下来了。虽然难以使数据包传送得更快，但却可以把服务器放到离用户更近的地方，从而减少用户的等待时间，这其实就是CDN的工作原理。
+最后一英里延迟 有趣的是，大量的传播延迟并不是出现在当数据包跨越大洋从一个大陆到另一个大陆的时候，而通常是出现在最后的几英里中。要能够连上Internet，ISP需要路由线缆、聚合信号并转发至路由节点。受连接类型、路由策略、发布技术等影响，数据包从用户到ISP的主路由器会耗费大量的时间。因此，选择一个合适的ISP有时候可以显著降低延迟。
+带宽 带宽是指一个逻辑或物理信道上的最大吞吐率，通常用单位时间内传输的比特数(bit/s)来表示。
+采样定理(Nyquist–Shannon sampling theorem) 采样是将一个信号转换为数字序列的过程。Nyquist曾经推导出一个公式，用来表示一个有限带宽的无噪声信道的最大数据传输速率。后来，Shannon进一步把Nyquist的工作扩展到了有随机噪声(热动力引起)的信道的情形。
+Nyquist证明，对于一个任意一个信号，如果这个信号通过了一个带宽为 B 的低通滤波器，那么只要进行每秒 **2B**次确切采样，就可以完全重构出被过滤的信号。如果信号包含了 V 个离散等级，那么Nyquist推导出的公式可以表示为：
+$$ maximum \ data \ rate = 2Blog_2V \ bits/sec $$
+通过Nyquist定理，我们可以知道：在无噪声的1kHz信道上不可能以超过2000bit/s的速率传输二进制(离散等级为2)信号。
+对于任何一个信道，由于系统中分子的运动，随机(热)噪声总是存在的。信号功率与噪声功率的比值被称为 信噪比(SNR, Signal-to-Noise Ratio)。如果将信号功率和噪声功率分别记作 S和 N，那么信噪比为：S/N。通常情况下，为了表示更大范围，信噪比会被写成对数形式
+$$ 10log_{10}S/N $$
+对数的取值单位称为分贝(dB, decibel)。例如，10 的信噪比为 10 分贝，而 100 的信噪比为 20 分贝。
+Shannon的成果为：对于一个带宽为 **B**Hz，信噪比为 S/N 的有噪声信道，其最大速率为：
+$$ maximum \ number \ of \ bits/sec = Blog_2(1 + S/N) $$</description></item><item><title>IP寻址</title><link>https://zhannicholas.github.io/posts/computer_networks/ip_address/</link><pubDate>Sun, 13 Dec 2020 15:44:47 +0800</pubDate><guid>https://zhannicholas.github.io/posts/computer_networks/ip_address/</guid><description>IP地址 IPv4采用的是32位地址，而Ipv6采用的是128位地址。Internet上的每台主机和路由器都有IP地址，但一个IP地址并不真正指向一台主机或路由器，而是指向一个网络接口。如果一台主机在两个网络上，那么它必须拥有两个IP地址。不过，大多数主机都在一个网络内，只有一个IP地址，但路由器有多个接口，从而有多个IP地址。
+IPv4 IPv4的书写格式是点分十进制表示法，将4个字节中的每个字节都写成一个0~255之间的整数，然后用.分隔。例如：32位的16进制地址80D00297可以写成128.208.2.151。
+分类和特殊寻址 在1993年以前，IP地址被分为5类，这种分配被称为 分类寻址(classful addressing)。一个IPv4地址又32比特组成，其中包括一个网络号(唯一标识互联网中的某个子网)、一个主机号(唯一标识网络内的一台主机)。
+IP地址被划分为了上图中的A、B、C、D、E五个类别。今天，表明一个IP地址是否属于A、B或C类网络的标志位已不再使用。
+有一些地址有着特俗的含义。全0这个地址(0.0.0.0)在主机启动的时候用，表示“这个网络”或“这个主机”。全1(255.255.255.255)这个地址表示指定网络中的所有主机，它允许在本地网络上进行广播。网络号为全0的地址表示本地网络的所有主机。主机号为全1并具有正确网络号的地址允许在该网络内进行广播。所有127.xx.yy.zz形式的地址保留，给本地环路测试用。
+到了1990前后，按照当时IP地址的分配速度，到1996年前后就可能用完所有的IP地址，当时采取了3种解决方案：
+开发新的IP协议和寻址方案，结果有了现在的IPv6 修改当前IP地址的分配方案，结果有了CIDR(Classless Inter Domain Routing, 无类域间路由) 让未注册的计算机通过NAT的方式访问互联网 CIDR CIDR中已经没有IP地址分类的概念了，它允许使用任意长度的地址前缀，提高了IP地址空间的利用率。
+每个32位的地址由高位的可变长网络和低位的主机两部分组成。同一个网络上的所有主机地址中的网络值是相同的，这意味着一个网络对应一块连续的IP地址空间，这块地址空间就被称为地址的 前缀(prefix)。前缀长度相当于网络部分中1的二进制掩码，例如前缀长度为24，其可以写成255.255.255.0或/24，这种写法被称为 子网掩码(subnet mask)。子网掩码可以和一个IP地址进行与运算，运算结果为该IP的网络部分。
+将多个小前缀的地址块合并成一个大前缀的地址块的过程称为 路由聚合(route aggregation)。
+CIDR的工作原理：当一个数据包到达时，路由器扫描路由表以便确定目的地是否在前缀的地址块内。这个时候有可能匹配到多个具有不同前缀的表项，这种情况下使用具有最长前缀的表项。
+NAT NAT(Network Address Translation) 的思想是ISP为每个家庭或每个公司分配一个IP地址(或者尽可能少的分配IP地址)，用这个分配的IP地址来传输Internet流量。在网络内部，每台主机都有其唯一的IP地址，该地址用来进行网络内部路由。当一个数据包需要从网络内部去往其它网络时，必须进行地址转换，把其内部IP地址换成共享的那个IP地址。
+有三类保留的IP地址可供内部网络主机使用：
+范围 数量 10.0.0.0 ~ 10.255.255.255/8 16777216 172.16.0.0 ~ 172.31.255.255/12 1048576 192.168.0.0 ~ 192.168.255.255/16 65536 最常用的NAT寻址算法的工作流程如下：
+当内部网络上的主机发送一个TCP或UDP包给网络外的主机时，路由器将数据包中的源IP地址和端口号保存为地址转换表中的一条记录 路由器用自己的IP替换掉数据包中的源IP地址，用一个虚拟的端口号替换源端口，这个虚拟的端口号指向包含发送主机地址信息的那条记录 路由器将修改了源IP地址和源端口的数据包转发给目标主机 当路由器从外部主机接收到一个TCP或UDP包时，它使用包中的目的端口号访问地址转换表中的记录，并用记录的内容替换数据包中的目的地址和端口号，然后将修改后的数据包转发给内部网络中的主机 IPv6 IPv6不仅解决了IPv4地址耗尽的问题，还做了很多的改进。IPv6地址由16个字节组成，16个字节被分成8组来书写，每一组4个16进制数字，组之间用冒号隔开。
+参考资料 ANDREW S. TANENBAUM, DAVID J. WETHERALL. Computer Networks, Fifth Edition. Pearson, 2011.</description></item></channel></rss>

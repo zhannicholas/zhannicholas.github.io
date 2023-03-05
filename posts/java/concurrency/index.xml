@@ -1,50 +1,49 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Java并发 on Nicholas Zhan</title>
-    <link>https://zhannicholas.github.io/posts/java/concurrency/</link>
-    <description>Recent content in Java并发 on Nicholas Zhan</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 13 Dec 2020 18:35:11 +0800</lastBuildDate>
-    
-	<atom:link href="https://zhannicholas.github.io/posts/java/concurrency/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>Java线程池</title>
-      <link>https://zhannicholas.github.io/posts/java/concurrency/thread_pool/</link>
-      <pubDate>Sun, 13 Dec 2020 18:35:11 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/posts/java/concurrency/thread_pool/</guid>
-      <description>线程池是管理一组同构工作线程的资源池。线程池与工作队列（Work Queue）密切相关，其中工作队列中保存了所有等待执行的任务。工作者线程（W</description>
-    </item>
-    
-    <item>
-      <title>Java线程</title>
-      <link>https://zhannicholas.github.io/posts/java/concurrency/thread/</link>
-      <pubDate>Sun, 13 Dec 2020 18:32:20 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/posts/java/concurrency/thread/</guid>
-      <description>进程是资源分配的基本单元，而线程是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源。和进程相比，线程更加轻量化，所以</description>
-    </item>
-    
-    <item>
-      <title>同步</title>
-      <link>https://zhannicholas.github.io/posts/java/concurrency/synchronization/</link>
-      <pubDate>Sun, 13 Dec 2020 18:31:16 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/posts/java/concurrency/synchronization/</guid>
-      <description>Java语言提供了多种线程间通信机制（同步、while轮询、等待/通知、管道等等），其中最基础的通信方式就是 同步（synchronizati</description>
-    </item>
-    
-    <item>
-      <title>Locks</title>
-      <link>https://zhannicholas.github.io/posts/java/concurrency/locks/</link>
-      <pubDate>Sun, 13 Dec 2020 18:29:44 +0800</pubDate>
-      
-      <guid>https://zhannicholas.github.io/posts/java/concurrency/locks/</guid>
-      <description>文章中涉及的源代码摘自 OpenJdk 11。 乐观锁与悲观锁 乐观锁与悲观锁是一种广义上的概念，体现了我们看待线程同步的不同角度。 乐观锁 乐观锁采用的思想是：冲</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>并发 on 's Digital Garden</title><link>https://zhannicholas.github.io/posts/java/concurrency/</link><description>Recent content in 并发 on 's Digital Garden</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 01 Sep 2021 09:46:58 +0800</lastBuildDate><atom:link href="https://zhannicholas.github.io/posts/java/concurrency/index.xml" rel="self" type="application/rss+xml"/><item><title>Java 中的原子类</title><link>https://zhannicholas.github.io/posts/java/concurrency/java_atomic_variables/</link><pubDate>Wed, 01 Sep 2021 09:46:58 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/java_atomic_variables/</guid><description>一谈到原子类（或原子变量），我们可能就会想知道它和我们编程中常说的原子性（Atomicy）之间是否有关系。若一组操作具备“要么全部成功，要么全部失败，不能一部分成功一部分失败”的性质，那么这组操作就是原子操作，这组操作具备原子性。
+在 Java 中，原子操作可以通过锁和循环 CAS 的方式实现。其中 CAS 操作是利用处理器提供的 COMPXCHG 指令实现的。自旋 CAS 实现的基本思路是循环进行 CAS 操作直到成功为止。但 CAS 存在三个问题：
+ABA问题。可以使用版本号来解决。 循环时间长开销大。这一般出现在自旋CAS长时间不成功的情况下。 只能保证一个共享变量的原子操作。对于多个共享变量的原子操作，一般采用锁来解决，也可以将多个共享变量封装进一个对象，然后使用AtomicReference类来解决。 JVM 内部实现了很多锁机制，有意思的是除了偏向锁，JVM 实现锁的方式都用了循环 CAS，即当一个线程进入同步代码块时使用循环 CAS 获取锁，离开同步代码块时使用循环 CAS 释放锁。CAS 最直接的体现就是 java.util.concurrent.atomic 包下定义的各种无锁原子类，这些原子类都支持单个变量上的原子操作。举个例子，i++ 在并发环境中并不是线程安全的，要保证线程安全，我们需要给 i++ 加锁。实际上，我们也可以直接使用原子类提供的 getAndIncrement 方法完成同样的操作。由于原子类底层采用的 CAS 实现，在并发竞争不是特别激烈的情况下，效率要高于同步互斥锁。
+根据操作类型的不同，可以大致将 java.util.concurrent.atomic 下的原子类分成六种：
+类型 具体类 基本类型原子类（AtomicXxx） AtomicInteger, AtomicLong, AtomicBoolean 引用类型原子类（AtomicXxxReference） AtomicReference, AtomicStampedReference, AtomicMarkableReference 数组类型原子类（AtomicXxxArray） AtomicIntegerArray, AtomicLongArray, AtomicReferenceArray 字段更新原子类（AtomicXxxFieldUpdater） AtomicIntegerFieldUpdater, AtomicLongFieldUpdater, AtomicReferenceFieldUpdater 加法器（Adder） LongAdder, DoubleAdder 累加器（Accumulator） LongAccumulator, DoubleAccumulator 下面分别最这六大类型的原子类进行介绍。
+基本类型原子类 基本类型原子类包括三种：AtomicInteger、AtomicLong 和 AtomicBoolean。其中 AtomicInteger 和 AtomicLong 是对 int、long 的封装，而 AtomicBoolean 内部封装的变量的类型并不是 boolean，而是 int，它用 0 和 1 分别表示 false 和 true。三种类型都提供了对内部封装变量的原子性访问和更新操作，我们可以在并发环境中放心使用。</description></item><item><title>Java 中的并发队列</title><link>https://zhannicholas.github.io/posts/java/concurrency/java_concurrent_queue/</link><pubDate>Tue, 31 Aug 2021 21:11:09 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/java_concurrent_queue/</guid><description>并发队列（或线程安全的队列）是在我们在进行多线程并发编程时经常使用的一种数据结构。并发队列不仅具备基本队列的所有特性，还是线程安全的。由于并发队列在实现时已经考虑了各种线程安全问题，所以我们可以在并发环境中直接使用，而不用担心出现线程安全问题，有利于降低开发难度和工作量。
+Java 中的并发队列可以分为阻塞队列和非阻塞队列两大类。
+阻塞队列 除了队列的基本功能外，阻塞队列最大的特点在于 阻塞：在读取元素时，若队列为空，则阻塞读取操作直到队列非空；在写入元素时，若队列已满，则阻塞写入操作直到队列中出现可用空间。
+阻塞队列的典型代表是 BlockingQueue 接口的各个实现类，主要有 ArrayBlockingQueue、LinkedBlockingQueue、SynchronousQueue、DelayQueue、PriorityBlockingQueue 和 LinkedTransferQueue。
+根据阻塞队列容量的大小，又可以将其分为有界队列和无界队列。有界队列的典型代表是 ArrayBlockingQueue，一旦队列满了就无法入队新的元素了，因为它不会扩容。无界队列的典型代表是 LinkedBlockingQueue，其容量最大为 Integer.MAX_VALUE，即 2^31 - 1，这么大的容量几乎不可能被填满，故可以近似看成无限容量。
+在阻塞队列中有很多相似的方法，比较容易混淆。因此，有必要对它们进行分类整理，根据方法是否抛出异常、是否返回特殊值、是否阻塞、是否具有超时时间，JDK 已经分类好了：
+Throws exception Special value Blocks Times out Insert add(e) offer(e) put(e) offer(e, time, unit) Remove remove() poll() take() poll(time, unit) Examine element() peek() not applicable not applicable 根据操作类型的不同，特殊值（Special Value）略有差异：布尔类型的特殊值为 false，对象类型的特殊值为 null。
+非阻塞队列 非阻塞队列家族则没有阻塞队列家族这么庞大，典型代表是 ConcurrentLinkedQueue，其内部通过 CAS 保证线程安全，不会阻塞线程，适合并发不是特别剧烈的场景。</description></item><item><title>线程安全</title><link>https://zhannicholas.github.io/posts/java/concurrency/thread_safety/</link><pubDate>Tue, 27 Apr 2021 20:38:39 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/thread_safety/</guid><description>我们在工作中经常听人提起线程安全，但要是被问到什么是线程安全，我们可能就会挠挠脑袋了。因为线程安全并没有一个明确的定义。Java Concurrency in Practice 这本 Java 并发宝典是这样解释线程安全的：
+当多个线程访问某个类时，这个类始终都能表现出正确的行为，那么就称这个类是线程安全的。线程安全性对多个线程之间的操作提出了要求：多个线程之间的操作无论采用何种执行时序或交替方式，都要保证不变性条件不被破坏。
+若一个类既不包含任何域，也不包含任何对其它类中域的引用，则称这个类是无状态的。无状态的对象一定是线程安全的。
+本文的绝大部分内容也来自这本书。
+线程安全问题 如果线程不安全，会出现哪些问题呢？常见的问题有三类：
+运行结果错误 对象逃逸 活跃性问题 运行结果错误 最常见线程安全问题可能就是 运行结果错误 了。比如：
+public class UnsafeCounter { private static volatile int count = 0; public static void main(String[] args) throws InterruptedException { Runnable r = () -&amp;gt; { for (int i = 0; i &amp;lt; 1000; i++) { count++; } }; Thread t1 = new Thread(r); t1.start(); Thread t2 = new Thread(r); t2.start(); // 等待两个线程运行结束 t1.</description></item><item><title>生产者消费者模式的几种实现方案</title><link>https://zhannicholas.github.io/posts/java/concurrency/producer_consumer_pattern/</link><pubDate>Mon, 26 Apr 2021 22:44:40 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/producer_consumer_pattern/</guid><description>生产者/消费者模式（Producer/Consumer Pattern）是一种非常常见的程序设计模式，广泛用于消息队列、解耦等场景中。简单来说，就是有一个共享的数据结构连接着生产者与消费者，生产者负责生产数据并将数据添加到共享数据结构中，而消费者负责从共享数据结构中取走数据并消费。如果生产者的生产速度特别快，而消费者的消费速度又特别慢，就会出现“产能过剩”的情况，反之则是“产能不足”。
+上面提到的共享数据结构其实扮演了缓冲区的角色，它平衡了生产者与消费者之间的能力。当缓冲区满时，生产者被阻塞，但当消费者拿走数据空出位置之后，消费者就会通知生产者进行生产；而当缓冲区空时，消费者被阻塞，等待数据到来，在生产者将生产的数据放到共享数据结构之后，就会通知消费者去消费。
+一般情况下，这个共享数据结构的空间是有限的，因此生产者-消费者问题又称有界缓冲区问题（bounded-buffer problem)）。
+在 Java 中，实现生产者/消费者模式的方法又很多种，常见的有基于阻塞队列（BlockingQueue）的、也有基于 Condition 的，还有基于 wait/notify 的。
+使用阻塞队列实现生产者/消费者模式 这时，阻塞队列承担的就是共享数据结构的功能。
+public class BlockingQueueProducerConsumer { public static void main(String[] args) { BlockingQueue&amp;lt;Object&amp;gt; buffer = new ArrayBlockingQueue&amp;lt;&amp;gt;(10); Runnable producer = () -&amp;gt; { while (true) { try { buffer.put(new Object()); } catch (InterruptedException e) { e.printStackTrace(); } } }; Runnable consumer = () -&amp;gt; { while (true) { try { buffer.take(); } catch (InterruptedException e) { e.printStackTrace(); } } }; new Thread(producer).</description></item><item><title>Java 线程池</title><link>https://zhannicholas.github.io/posts/java/concurrency/java_thread_pool/</link><pubDate>Sun, 13 Dec 2020 18:35:11 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/java_thread_pool/</guid><description>线程池是管理一组同构工作线程的资源池，内部主要分为四部分：
+线程池管理器：负责线程池的创建、销毁、添加任务等管理工作。 工作队列（Work Queue）：保存所有等待执行的任务。 工作者线程（Worker Thread）：从工作队列中取出一个任务并执行，然后返回线程池并等待下一个任务。 任务（Task）：实现了统一的接口，被工作者线程处理和执行。 与“为每个任务都创建一个线程”相比，使用线程池不仅可以平摊线程在创建和销毁过程中产生的巨大开销，还能提高程序的响应性（当请求到达时，工作线程通常已经存在，可以节省创建线程的时间）。通过调整线程池的大小，不仅可以创建足够多的线程以使 CPU 保持忙碌状态，还可以防止多线程相互竞争资源而使应用程序耗尽内存或失败。最后，线程池可以统一管理资源，方便我们对任务进行管理等。
+设置线程池的大小 我们调整线程池大小的主要目的是为了充分利用 CPU 和内存等资源，从而最大限度地提高程序的性能。线程池的理想大小取决于被提交的任务的类型以及所部署系统的特性。通常不应该在代码中固定线程池的大小，而应该通过某种配置机制来提供，或者根据 Runtime.getRuntime().availableProcessors() 来获取可用处理器的数量之后动态计算。
+如果线程池过大，那么大量的线程将在相对很少的 CPU 和内存资源上发生竞争，这不仅会导致更高的内存使用量，而且还可能耗尽资源。如果线程池过小，那么将导致许多空闲的处理器无法执行工作，从而降低吞吐率。
+Java Concurrency in Practice 一书建议我们：对于计算密集型任务，在拥有 N 个处理器的系统上，当线程池的大小为 N+1 时，通常能实现最优的利用率（即使当计算密集型的线程偶尔由于缺页故障或者其他原因而暂停时，这个“额外”的线程也能确保 CPU 的时钟周期不被浪费）。对于包含I/O操作或其它阻塞操作的任务，由于线程并不会一直执行，因此线程池的规模应该更大。要正确的设置线程池的大小，必须估算出任务的等待时间与计算时间的比值。书中还给了我们另一个计算线程数的公式。
+假设：
+$$N_{cpu} = number\ of\ CPUs$$ $$U_{cpu} = target\ CPU\ utilization, 0\ \le \ U_{cpu} \le \ 1$$ $$\frac{W}{C} = ratio\ of\ wait\ time\ to\ compute\ time$$
+若要使处理器达到期望的使用率，线程池的最有大小等于：
+$$N_{threads} = N_{cpu} * U_{cpu} * (1 + \frac{W})$$
+创建线程池 我们可以使用 ThreadPoolExecutor 来创建一个线程池：</description></item><item><title>Java 线程</title><link>https://zhannicholas.github.io/posts/java/concurrency/java_thread/</link><pubDate>Sun, 13 Dec 2020 18:32:20 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/java_thread/</guid><description>进程（process）是资源分配的基本单元，而线程（thread）是程序执行的基本单元。一个进程可以包含多个线程，多个线程之间共享进程的资源。和进程相比，线程更加轻量化，所以线程又叫轻量级进程。
+创建线程 网上好多资料都说有三种创建线程的方式：
+继承Thread类，重写run()方法。 实现Runnable接口。 实现Callable接口。 但本质上只有一种创建线程的方式，那就是构造一个 Thread 类。为什么这么说呢？我们来看上面几种方式的实际使用情况：
+继承 Thread 类 public class ExtendsThread extends Thread { @Override public void run() { System.out.println(&amp;#34;通过继承 Thread 类来实现线程&amp;#34;); } } 通过继承 Thread 类来实现线程最大的缺点就是代码未来的可扩展性被限制。Java 是不支持多继承的，一旦我们的类继承了 Thread 类，那么它就不能再继承其它类了。
+实现 Runnable 接口 class RunnableThread implements Runnable { @Override public void run() { System.out.println(&amp;#34;通过实现 Runnable 接口来实现线程&amp;#34;); } Thread 本身也实现了 Runnable 接口。
+实现 Callable 接口 class CallableTask implements Callable&amp;lt;Long&amp;gt; { @Override public Long call() throws Exception { System.</description></item><item><title>Java 中的 synchronized</title><link>https://zhannicholas.github.io/posts/java/concurrency/synchronization/</link><pubDate>Sun, 13 Dec 2020 18:31:16 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/synchronization/</guid><description>Java语言提供了多种线程间通信机制（同步、while轮询、等待/通知、管道等等），其中最基础的通信方式就是 同步（synchronization）。Java中的同步是通过monitor来实现的，每个Java对象都有一个与之相关联的monitor，线程可以在其上进行加锁和释放锁的操作。同一时刻只能有一个线程持有某个monitor的锁，任何其它尝试给该monitor加锁的线程在获得锁之前都会被阻塞。一个线程可以多次给某个monitor加锁，这就是锁的重入，多次加锁对应着多次解锁，因为每次unlock操作只会消除一次lock的效应。
+Synchronized 关键字 Java提供了一种内置的锁机制来支持原子性：同步代码块（Synchronized Block）。同步代码块就是用 synchronized 关键字修饰的代码块，它包括两个部分：作为锁的对象引用和由这个锁保护的代码块。
+用关键字 synchronized 修饰的方法是一种横跨整个方法体的同步代码块，其中该同步代码块的锁就是和该方法相关的对象（方法执行期间 this 关键字所代表的对象）。静态 synchronized 方法以 Class 对象为锁：
+static synchronized void staticMethod() { // do something } 以下是以 lock 对象为锁：
+synchronized（lock）{ // access or modify the shared state that is protected by the lock } 而以下是以调用同步方法的实例本身为锁：
+synchronized void instanceMethod() { // do somehing ... } 同步代码块是可重入的。
+Java对象头 The Java® Virtual Machine Specification (Java SE 11 Edition) 本身并没有规定程序运行时对象的具体内存布局，因此在不同的虚拟机实现中，对象和数组的内存布局可能有所不同。下面主要关注 HotSpot VM 这一 JVM 实现。</description></item><item><title>Java：锁</title><link>https://zhannicholas.github.io/posts/java/concurrency/locks/</link><pubDate>Sun, 13 Dec 2020 18:29:44 +0800</pubDate><guid>https://zhannicholas.github.io/posts/java/concurrency/locks/</guid><description>文章中涉及的源代码摘自 OpenJdk 11。
+乐观锁与悲观锁 乐观锁与悲观锁是一种广义上的概念，体现了我们看待线程同步的不同角度。
+乐观锁 乐观锁采用的思想是：冲突检测。例如：如果 A 和 B 同时编辑同一份文件，使用乐观锁策略， A 和 B 都能得到文件的一份拷贝并可以自由的编辑。假设 A 先完成工作，那么他可以毫无困难的更新他的修改。而当 B 在 A 提交之后完成工作并向提交他的修改时，并发控制策略将会起作用，如果检测到冲突，B 的提交将会被拒绝。
+乐观锁认为锁的持有者在使用数据的过程中不会有别的线程修改数据，所以不会添加锁，只有在提交数据时才会进行检测。Java 中的乐观锁大部分是通过 CAS (Compare And Swap) 实现的。CAS 是一种无锁算法，用来将某一内存地址的值从一个状态更新到另一个状态。CAS 操作包含三个参数：内存地址、预期原值和新值。如果内存地址的值和预期的原值相等的话，那么就可以把该位置的值更新为新值，否则不做任何修改。例如， AtomicInteger 类中的 compareAndSet() 方法：
+public final boolean compareAndSet(int expectedValue, int newValue) { return U.compareAndSetInt(this, VALUE, expectedValue, newValue); } CAS 虽然高效，但是它存在一个问题：在其调用期间，目标内存地址的值改变了数次，但该地址的当前值却有可能与调用者之前获取到的值相等，这在某些情况下是有问题的。也就是说，CAS 无法探测到“某个值被修改，然后再被改回原值”的情况，这就是所谓的 ABA 问题。ABA 问题的常见处理方式是添加版本号，线程每次修改值之后就更新版本号，JDK 中的 AtomicStampedReference 类就是一个典型的例子，它内部维护了一个“版本号” Stamp，每次在比较时既比较当前值又比较版本号，这样就解决了 ABA 问题。
+public class AtomicStampedReference&amp;lt;V&amp;gt; { private static class Pair&amp;lt;T&amp;gt; { final T reference; final int stamp; private Pair(T reference, int stamp) { this.</description></item></channel></rss>

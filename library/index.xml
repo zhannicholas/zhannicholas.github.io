@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Libraries on 's Digital Garden</title><link>https://zhannicholas.github.io/library/</link><description>Recent content in Libraries on 's Digital Garden</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 07 Dec 2021 20:00:10 +0800</lastBuildDate><atom:link href="https://zhannicholas.github.io/library/index.xml" rel="self" type="application/rss+xml"/><item><title>Notes from Java Performance</title><link>https://zhannicholas.github.io/library/java_performance/</link><pubDate>Tue, 07 Dec 2021 20:00:10 +0800</pubDate><guid>https://zhannicholas.github.io/library/java_performance/</guid><description>Notes from Java Performance, 2nd Edition by Scott Oaks.
+Fundamentals To be a good Java Performance engineer, we need some specific knowledge. This knowledge falls into two broad categories:
+The performance of the Java Virtual Machine (JVM) itself: the way that the JVM is configured affects many aspects of a program’s performance. To understand how the features of the Java platform affect performance. JVM tuning flags With a few exceptions, the JVM accepts two kinds of flags: boolean flags, and flags that require a parameter.</description></item><item><title>Operating System: The Three Pieces</title><link>https://zhannicholas.github.io/library/ostep/</link><pubDate>Sun, 14 Mar 2021 23:03:01 +0800</pubDate><guid>https://zhannicholas.github.io/library/ostep/</guid><description>在我读过的写操作系统的书里，这应该是写得最好的了。本书的内容很好的体现了书名中“Three Easy Pieces”的思想，“Three Easy Pieces&amp;quot;即：虚拟化（virtualization）、并发（concurrency）和持久化（persistence）。
+Yeats famously said “Education is not the filling of a pail but the lighting of a fire.” His larger point is obviously on the mark: the real point of education is to get you interested in something, to learn something more about the subject matter on your own and not just what you have to digest to get a good grade in some class.
+And the author said: the real point of the educational process: to go forth, to study many new and fascinating topics, to learn, to mature, and most importantly, to find something that lights a fire for you.</description></item><item><title>《超级搜索术》读书笔记</title><link>https://zhannicholas.github.io/library/%E8%B6%85%E7%BA%A7%E6%90%9C%E7%B4%A2%E6%9C%AF/</link><pubDate>Mon, 08 Mar 2021 23:09:31 +0800</pubDate><guid>https://zhannicholas.github.io/library/%E8%B6%85%E7%BA%A7%E6%90%9C%E7%B4%A2%E6%9C%AF/</guid><description>人生中 99% 的问题早已有答案，你只要搜索就好。只要你去搜索，就能一直站在巨人的肩膀上去寻求新突破，做出微创新。 ——朱丹
+前言 朱丹老师的《超级搜索术 : 帮你找到99%问题的答案 》是一本讲搜索技巧的书，也是一本介绍学习技巧的书，内容不难，却很实用。大学期间，笔者为了获得虫部落 的邀请码，玩过多期搜索游戏，趣味十足。那时候，我的技巧还比较散，从未像这本书中这么成体系，读完本书倒也有了一种豁然开朗的感觉。
+信息素养：对信息进行搜索、获取、判断和利用，从而了解陌生事物，解决切身问题。其过程包括信息获取、信息输入、信息加工与输出等环节。
+信息素养的四大能力：识别需求、获取信息、甄别信息和运用信息。
+搜索解决问题的闭环行动框架（1-&amp;gt;2-&amp;gt;3-&amp;gt;4-&amp;gt;5-&amp;gt;1&amp;hellip;）：
+分析问题、界定需求 选择搜索工具 构造检索公式 筛选检索结果 优化检索策略 &amp;hellip;
+识别需求 找对问题——6W2H模型 找对问题的目的在于精准挖掘需求。6W2H 指的是为什么（Why）、是什么（What）、什么时候（When）、在哪里（Where）、是谁（Who）、哪一个（Which）、怎么做（How）和成本如何（How much）。
+分解问题——柚子模型 分解问题的目的在于找到真正的执行方案。柚子有三层，先剥去黄色外皮，再剥白色内皮，看见第三层果肉，才可食之。复杂问题下的信息挖掘类似，挖第一层和第二层的时候还不足以解决实际问题，当挖到第三层的时候，就意味着我们可以制定方案开始行动了。
+资源获取 搜索指令 正确使用搜索指令有利于过滤垃圾信息，更快更准确地获取我们想要的结果。下面是一些常见的搜索指令：
+关键词 作用 用法 site 将搜索结果限定在某个网站中 关键词+空格+site+英文冒号+搜索范围所限定的网站 filetype 将搜索结果限定为某种文件类型 关键词+空格+filetype+英文冒号+文件格式 时间1..时间2 限定搜索结果的时间范围 关键词+空格+20xx年+两个英文句号+20xx年 intitle 限定搜索标题中所包含的关键词 关键词+空格+intitle+英文冒号+需要限定的关键词 inurl 限定搜索结果的网址中应包含的字段 inurl:xxx。它的使用范围比 site 要广，可替代 site 使用 - 让搜索结果中不包含某些词 关键词-过滤词 此外还有一些高级指令，比如基于与或非的布尔表达式等。
+通过搜索拓展人脉 常见渠道：微博、在行、知乎、搜索引擎、邮件、天眼查、垂直领域平台、微信QQ等社交平台、在线文档、社群等。
+常见方式：私信、邮箱、微信号、领英账号、手机号、公开提问、企业法人等。
+通过搜索获取知识 跳槽：看准网看公司评价、面试经验、工资水平和大体职位，通过公司官网或公众号确认信息跟踪动态，人脉搜索助力。
+考研：考研论坛，计算机有王道论坛。
+新领域：百度百科、维基百科、淘宝、百度经验、wikiHow 等。
+生活经验：支付宝微信的便民板块等。
+深度资源搜索 网盘搜索、磁力搜索。
+做学术有百度学术、必应学术、中国知网、万方等。
+搜索引擎原理 简单来说，搜索引擎的工作原理大致可分为以下四步：</description></item><item><title>《现代操作系统》读书笔记</title><link>https://zhannicholas.github.io/library/modern_operating_systems/</link><pubDate>Sun, 13 Dec 2020 19:56:36 +0800</pubDate><guid>https://zhannicholas.github.io/library/modern_operating_systems/</guid><description>多处理机系统 从计算机诞生之日起，人们就无休止地追求着更强大地计算能力。过去地解决方案是使时钟走得更快，但是现在时钟速度已经很难再进一步提升了。计算机虽然可以变得很小，但是会遇到散热问题：计算机运行得越快，产生的热量就越多，而计算机越小散热越难。总而言之，对于计算机的时钟来说：从1MHz到1GHz需要的是更好的芯片制造工艺，而从1GHz到1THz需要的是完全不同的方法。
+获得更强计算能力的另一种方法是大量使用并行计算机。这些机器都拥有很多CPU，虽然每个CPU的速度都和普通的CPU一样，但是它们总体的计算能力比单个CPU要强大得多。
+电子部件之间的所有通信的本质就是它们之间发送具有良好结构定义的位串，其差别在于所涉及的时间范围、距离范围和逻辑组织。上图展示了三种不同的并行计算机系统模型：
+(a)图展示了一个极端的例子，系统中的所有CPU通过共享内存通信，每个CPU都可以读写整个物理存储器，访问一个内存字通常需要1~10ns。 在(b)图所示的系统中，许多CPU-内存通过高速互联网络连接在一起，这种系统被称为消息传递型计算机。每个内存都局部对应一个CPU，并且只能被该CPU访问。这些CPU通过互联网络发送多字信息通信，一条短消息通常可在10~50μs内发出，但是内存访问时间仍然比(a)中系统要长。 (c)中所有的计算机系统都通过一个广域网连接，形成一个分布式系统。每台计算机都有自己的内存，计算机之间通过消息传递进行通信，消息传递的时间通常为10~100ms。如此长的延迟会造成使用这类松耦合系统的方式和(b)中的紧耦合方式不同。 三种类型的系统在通信延迟上各不相同，分别有三个数量级的差别。
+多处理机(MULTIPROCESSORS) **共享内存多处理机(shared-memory multiprocessor)**是一种多个CPU以完全共享地方式访问同一个公用RAM的计算机系统。运行在任何一个CPU上的程序都能看到一个普通的虚拟地址空间。
+多处理机硬件 所有的多处理机中的每个CPU都可以访问全部的共享内存。若机器上读取每个内存字(memory word)的速度都是一样快的，则称这种机器为UMA(Uniform Memory Access)，否则称这种机器为NUMA(Nonuniform Memory Access)。
+UMA 基于总线的UMA 下图展示了三种基于总线的UMA:
+最简单的多处理机是基于单总线的(图(a))。多个CPU以及一个或多个内存模块通过公用的总线进行通信。当一个CPU需要读取一个内存字时，它会先检查总线是否空闲。如果总线忙，它就等待直到总线空闲。当总线空闲时，CPU把所需字的地址放到总线上，发出控制信号，然后等待内存将它所需的字放到总线上。这种设计存在问题，当CPU数量不多时，总线的使用权是很好管理的，一旦CPU数量过多，总线的管理就变得异常复杂。此外，总线成为了系统的瓶颈，多数CPU在大部分时间内是空闲的。
+为了解决这一问题，可以为每个CPU添加一个高速缓存(图(b))。CPU可以直接从高速缓存中读取数据，总线流量大大减少。一般而言，高速缓存的读取单位不再是单个字，而是一个高速缓存行(cache line)。为了防止数据出现不一致现象，需要执行缓存一致性协议。
+图(c)中的每个CPU不仅有一个高速缓存，还有一个私有内存。CPU通过专门的私有总线访问这个私有内存。为了利用这一配置，编译器应该把所有程序的代码、字符串、常量以及其它只读数据放入私有内存，而将程序的共享变量放入共享内存。在多数情况下，这种配置可以极大的减少总线流量，但是这需要编译器的积极配合。
+其它UMA 除了基于总线的UMA，还有基于交叉开关和多级交换网络的UMA。
+连接n个CPU和k个内存的最简单的电路就是交叉开关(crossbar switch)。将n个CPU和k个内存排列成一个n×k的矩阵，矩阵中的每个位置都是一个交叉点(crosspoint)。交叉点是一个小的电子开关，其开关状态取决于对应的CPU和内存是否需要连接。交叉开关是一个非阻塞网络，即不会因为有些交叉点被占据而拒绝连接。当两个CPU同时访问同一个内存时，还是可能出现竞争的。不过通过将内存分为k个单元，竞争的概率降低到了1/k。交叉开关的缺点是：交叉点的数量会以n×k的方式增长，对于大规模的系统并不适用。
+**多级交换网络(multistage switching networks)**是另外一种完全不同的设计，由2×2的交叉开关构建。对于一个2×2的开关(两输入和两输出)，到达任意一个输入的消息可以被交换到任意一个输出上。omega网络就是典型的多级交换网络。
+NUMA 单总线的UMA多处理机通常只限于拥有数十个CPU的系统，交叉开关和多级交换网络需要大量(昂贵)的硬件，并且也不能太大。为了支持100个及更多的CPU，必须做一些改变，这就导致了NUMA的出现。NUMA和UMA一样，都为所有的CPU提供了蛋依的地址空间，但是在NUMA中，对局部内存模块的访问要比远端内存模块的访问要快。虽然为UMA编写的程序可以不经修改就在NUMA机器上运行，但是其效率会比在UMA上差。
+所有的NUMA机器都具备一下三种关键特性，他们也是NUMA与其它多处理机的主要区别：
+具有对所有CPU都可见的单个地址空间。 通过LOAD和STORE指令访问远端内存。 对远端内存的访问慢于局部内存。 若机器必须访问远端内存(因为需要的数据没有被缓存)，系统被称为NC-NUMA (Non Cache-coherent NUMA)。当cache处于一致状态时，系统被称为CC-NUMA (Cache-Coherent NUMA)。
+多核芯片 随着芯片制造技术的发展，晶体管的体积越来越小，从而有可能将越来越多的晶体管放入一个芯片中。随后的问题是：“如何利用这些晶体管？”，其中的一个选择时给芯片添加cache。当cache的大小达到一定程度时，继续增加cache的大小虽然有可能提高命中率，却不能显著提升应用的性能。另一个选择是将两个或更多的CPU(通常称为核(core))放到同一个芯片上。在多核(multicore)芯片中，cache仍然是至关重要的，并且遍布整个芯片。多核芯片通常被称为片级多处理机(Chip-level MultiProcessors, CMP)。
+众核芯片 “多核”只是简单的表示核的数量多于一个，但是当核的数量持续增加时，它们就就有了另一个名称——众核。**众核(manycore)**芯片是指包括几十、几百甚至成千上万个核心的多核处理器。
+超大量核带来了一个问题：用来保持缓存一致性的机制会变得异常的复杂。很多工程师担心硬件上保持缓存一致性的开销会非常高，以至于这些新增的核并不能带来多大的性能提升，因为处理器一直忙于维护缓存状态的一致性。更加糟糕的是，保持缓存目录的一致性还将消耗大量的内存，这就是著名的一致性堡垒(coherency wall)。
+GPU是目前最常见的众核处理器，它拥有专用的内存和成千上万个微小的核。
+多处理机操作系统 每个CPU都有自己的操作系统 组织一个多处理机操作系统的最简单办法可能就是：静态的将内存划分为和CPU一样多的部分，为每个CPU提供私有内存及私有操作系统副本，以n各CPUn各独立计算机的形式运行。这样的优点是：允许所有的CPU共享操作系统的代码，而且只需要提供数据的私有副本。
+这一机制比有n个分离的计算机要好，因为它允许所有的机器共享同一套磁盘、内存和其它I/O设备。但这一设计存在不少潜在的问题：因为进程不是共享的，所以可能出现一个CPU过载而其它CPU空载；因为物理页也不是共享的，所以可能一个CPU不断地进行页调度而另一个CPU有多余的页；由于操作系统独立的维护近期使用过的磁盘块的cache，可能出现某一修改过的磁盘块同时出现在多个cache中，这回导致不一致的结果。避免这一问题的唯一途径是取消cache，但这样会显著降低性能。
+主从多处理机 下面展示的模型是主从模型(master-slave)，CPU1为主CPU，其它为从CPU：
+在这种模型下，操作系统的一个副本及其数据都都在CPU1上，用户进程运行在其它CPU上。随后所有的系统调用都被重定向到CPU1上，如果CPU1上有剩余的时间片，还可以运行用户进程。
+主从模型解决了分区模型中的多数问题，但是主CPU成为了系统的瓶颈，因为它要处理所有的系统调用。这种模型对小型多处理机是可行的，但不适用于大型多处理机。
+对称多处理机 对称多处理机(Symmetric MultiProcessor, SMP) 消除了上述的不对称性，在内存中有操作系统的一个副本，但任何CPU都可以运行它。当有系统调用时，进行系统调用的CPU陷入内核并进行处理。
+这个模型动态地平衡进程和内存，因为它只有一套操作系统数据表。它还消除了主CPU带来的瓶颈问题。因为没有主CPU，所以需要解决多个CPU可能同时运行操作系统代码的问题。最简单的办法就是在操作系统中使用互斥信号量，如果互斥信号量被锁住，就等待。按照这种方式，任何CPU都可以运行操作系统，但在任一时刻只有那个获得锁的CPU可以运行操作系统，这一方法被称为大内核锁(Big Kernel Lock, BLK)。</description></item><item><title>Design concepts for engineers</title><link>https://zhannicholas.github.io/library/design_concepts_for_engineers/</link><pubDate>Sun, 13 Dec 2020 19:52:15 +0800</pubDate><guid>https://zhannicholas.github.io/library/design_concepts_for_engineers/</guid><description>Taken from Design Concepts for Engineers (Fifth Edition) 2020.11.22
+第1章 工程是什么 作为一名有抱负的工程师，你有很多需要学习的东西。你必须掌握工程的基础知识：数学、物理、化学和生物。你必须学习所学学科的专业课程，例如电路、力学、结构、材料和计算。同时，你必须学习如何通过终生学习来保持技术进步。制造出真正有效的产品的能力是工程师的标志。设计技能是工程师区别于其它基础科学专业人士的能力。
+设计过程是工程专业的本质，因此你必须熟练掌握它，才能够顺利走向成功。
+一个好的工程师通常非常熟悉其他学科和专业，工程师成功的关键就在于接受广泛的多学科的教育。
+在计算机行业中，专门处理大规模软件系统的人称为“系统工程师”。然而，传统的系统工程师则是指设计与实现复杂工程系统的人。系统工程师不仅能够完成项目的初始设计，还能够处理后勤、团队协作和项目监督中的各种问题。
+要成为一个成功的工程师，必须拥有技术、理论和实践能力，还必须善于组织、沟通和写作。工程基础中3个最主要的技能包括知识、经验和直觉。这些才能并不是工程师技能的全部，但是对于一名工程师来说，这是至关重要的。
+设计的效率取决于良好的沟通。
+第2章 设计是什么 分析、设计与复制 工程师要完成的是试图满足一组预先确定的需求，而不是去发现物理现象背后的秘密。分析与设计之间的不同也表现在以下的形式：如果答案是通过类似拼凑碎片组成拼图的方式获得的，那么这项活动很有可能是分析。另一方面，如果有多个解决方案，并且如果决定一个合适的路径需要创造、选择、测试、迭代、评估和重新测试，那么该活动就是设计。分析通常会作为设计过程中的一个步骤，但是设计还要包括创造、选择和测试等其它关键因素。
+复制指的是一个重建已完成设计的过程，它是工程的重要组成部分，是制造业的核心。
+工程师一定要具有远见和创造力。
+设计周期 生成想法 创意是将设计与分析和复制区分开来的突出特征之一。生成想法的最典型方法之一就是头脑风暴。
+头脑风暴的基本规则 当团队决定进行头脑风暴时，该团队应该提前就一系列规则达成一致，创造一个友好的、没有威胁的、鼓励开放思想的环境。每次头脑风暴都可以有其具体的规则，下面几条可以用作指南：
+不要犹豫。任何好的想法随时可能出现。 没有界限。任何想法永远都不会太荒谬或者太出格。 不要批评。在进入最后的小组讨论阶段之前，不要随意批评一个想法。 不要退缩。在进入最后的小组讨论阶段之前，不要对想法打折扣。 没有限制。想法永远不会嫌多。 没有约束。参与者可以从任何专业领域生成想法。 不要害羞。团队的参与者在提出一个想法的过程中都不会感到局促不安。 优秀的工程师 vs 糟糕的工程师 优秀的工程师 糟糕的工程师 以开放的心态听取新的想法 很少听别人的想法 在选择设计方法之前，考虑各种解决方案 只追求最新的设计方法 仅在测试，修改和重新测试之后才考虑完结项目 一旦出现成功的迹象就认为大功告成；不进行彻底的测试就提交产品 绝对不能通过反复试验来得到一组设计参数 认为纯粹的试错就是工程设计 使用“我需要理解为什么”和“让我们考虑几种可能性”这样的短语 使用诸如“足够好”和“我不明白为什么它不起作用，反正就是这样了”的短语 我意识到我是一个糟糕的工程师，我要努力变得优秀。
+第3章 项目管理与团队合作技能 一个好的工程师必须知道如何在团队中工作，保持项目进度，保持良好的文档，处理法律问题，并在一个完善的管理计划中工作。
+在团队中工作 有效的团队是指能够一起高效工作的团队。它可以最大潜力的发挥作用，并在其各个成员的特俗能力下共生兴旺。有效团队的一个关键特征就是队友之间良好的支持态度。以下准则是建立有效团队的一种可能方法：
+明确领导角色。 达成一致的目标。 定义明确的角色。 定义工作流程。 培养良好的人际关系。 管理任务：保持项目正常进行 时间管理对于任何工程项目的成功都是至关重要的。以下是几个常用的时间管理工具：
+清单。一个简单的清单能够起到对特定项目的相关工程任务的监督作用。 时间表。时间表是维持项目按计划进行的宝贵工具。 甘特图。当一个项目设计并行任务和许多工作人员时，甘特图比时间表更适合进行时间管理。 PERT图。一种用于优化和调度复杂的、相互关联的活动的方法。 文档：项目成功的关键 工程设计绝不是独立进行的，即使是最简单的项目也涉及设计师和最终用户。工程师彼此交流的一种方式仔细地保存记录。作为一名专业的工程师，你有责任收集并保存设计概念、草图、详细图纸、测试结果、重新设计、报告和原理图，无论这些内容是否能够应用于相关项目。文档跟踪是团队其他成员重视或验证你的工作时重要的信息传递工具。同时，文档也是与自己沟通的好方法，许多工程师由于很少保存记录而不能重现设计结果。专业工程师的标志之一就是保持有组织、整洁、最新的专业文档记录。文档编制不应该事后执行，如果一个项目被一个团队成员拖累，但由于文档是同步的，另一个团队成员可以毫不拖延地恢复该项目。</description></item><item><title>《设计模式的艺术》读书笔记</title><link>https://zhannicholas.github.io/library/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/</link><pubDate>Mon, 01 Oct 2018 13:28:15 +0800</pubDate><guid>https://zhannicholas.github.io/library/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%89%BA%E6%9C%AF/</guid><description>单例模式 单例模式(Singleton Pattern)：确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例，这个类就是单例类。
+从单例模式的定义来看，它有3个要点：
+它只有唯一一个实例； 它必须自行创建这个实例； 它必须向整个系统提供这个实例； 基本实现方案 将构造函数设为私有，确保外界无法通过 new 创建该对象； 提供公有的静态方法，返回单例类的唯一实例，供外界访问； 创建唯一的实例，并通过公有的静态方法返回； 单例模式的结构图如下：
+根据这个图，可以很容易写出对应的代码：
+// 单例类 public class Singleton { // 私有静态成员变量 private static Singleton instance = null; // 私有构造函数 private Singleton(){} // 公有静态成员方法，返回单例 public static Singleton getInstance(){ if(instance == null) instance = new Singleton(); return instance; } } 饿汉式单例类(Eager Singleton) 饿汉式单例类的结构图如下：
+从图中可以看出，当类 加载 的时候，静态变量instance就会被初始化，此时会调用私有的构造函数创建类的唯一实例。代码如下：
+// 饿汉式单例类 public class EagerSingleton { private static final EagerSingleton instance = new EagerSingleton(); private EagerSingleton(){} public static EagerSingleton getInstance(){ return instance; } } 懒汉式单例类(Lazy Singleton) 懒汉式单例类的结构图如下：</description></item><item><title>《C 算法》读书笔记</title><link>https://zhannicholas.github.io/library/algorithms_in_c/</link><pubDate>Sat, 02 Jun 2018 10:07:28 +0800</pubDate><guid>https://zhannicholas.github.io/library/algorithms_in_c/</guid><description>二叉树 树是满足一定要求的顶点和边的非空集合。二叉树的每个节点至多有2个子节点。 一种表示方法：
+struct Node{type key; Node *lchild, *richild;} typedef Node *link; 这种表示方法只适合从根节点开始自顶向下的操作，而不适合自底向上的操作。不过可以在节点的定义中加入指向父节点的连接支持这种功能。 与二叉树类似的还有M叉树，它的每个节点最多只有M个节点。广义的树每个节点可以有任意多个子节点，可以用二叉树来表示它们，方法就是——“左孩子，右兄弟”。树的序列就形成了有序森林。
+二叉树和有序森林之间存在一一的对应关系。
+二叉树的一些数学性质 一棵二叉树有 N 个内部节点，有 N + 1 个外部节点（叶子节点）。 包含 N 个内部节点的二叉树有 2N 个链接： N - 1 个外部节点的链接和 N + 1 个内部节点的链接。 树中节点的所在的层是它的父节点的下一层（根节点位于第 0 层）。树的高度为树节点的最大层。树的路径长度为所有树节点的层总和：外部路径长度为所有外部节点的层总和，内部路径长度为所有内部节点的层总和。 这里有一个计算树路径长度的简便方法：对于所有的 k , 求 k 与 k 层节点数之积的总和。 具有 N 个内部节点的二叉树的外部路径长度比内部路径长度大 2N 。 具有 N 个内部节点的二叉树的高度的最小值为 lgN ，最大值为 N - 1 。 当树退化成只有一个叶子节点的时候，就是最坏的情况。 具有 N 个内部节点的二叉树内部路径长度最小值为 Nlg(N/4) ，最大值为 N(N - 1)/2 。 树的遍历 前序遍历 根-&amp;gt;左孩子-&amp;gt;右孩子 中序遍历 左孩子-&amp;gt;根-&amp;gt;右孩子 后序遍历 左孩子-&amp;gt;右孩子-&amp;gt;根 层次遍历 从上到下，从左到右 前序遍历（递归版）：</description></item></channel></rss>
